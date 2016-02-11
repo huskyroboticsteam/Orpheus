@@ -14,7 +14,13 @@
 
 cv::Mat slMat2cvMat(const sl::Mat &input);
 sl::Camera zed;
-cv::VideoWriter writer;
+//cv::VideoWriter writer;
+
+void 
+need_data_callback(GstElement * appsrc, guint unused, MyContext * ctx)
+{
+  printf("Hello\n");  
+}
 
 void getSomeImages()
 {
@@ -28,7 +34,7 @@ void getSomeImages()
         cv::Mat three_channel_bgr;
         cv::Mat img_cv = slMat2cvMat(img_zed);
         cv::cvtColor(img_cv, three_channel_bgr, cv::COLOR_BGRA2BGR);
-        writer.write(three_channel_bgr);
+        //writer.write(three_channel_bgr);
         std::this_thread::sleep_for(std::chrono::milliseconds(20));
     }
 }
@@ -83,19 +89,21 @@ int main(int argc, char *argv[])
 
     sl::Mat sl_depth_f32;
 
-    writer.open("appsrc ! video/x-raw,format=BGR ! autovideoconvert ! video/x-raw,format=I420 ! intervideosink", 0, 10, cv::Size(img_zed.getWidth(), img_zed.getHeight()), true);
+    //writer.open("appsrc name=mysrc ! video/x-raw,format=BGR ! autovideoconvert ! video/x-raw,format=I420 ! intervideosink", 0, 10, cv::Size(img_zed.getWidth(), img_zed.getHeight()), true);
 
     g_server_data data;
+    data.argc = 5;
     data.argv[0] = argv[0];
     data.argv[1] = "intervideosrc";
     data.argv[2] = "zed_depth";
     data.argv[3] = "8888";
-    data.argv[4] = "intervideosrc ! autovideoconvert ! rtpvrawpay name=pay0 pt=96";
+    data.argv[4] = "appsrc name=mysrc ! video/x-raw,format=BGR ! autovideoconvert ! video/x-raw,format=I420 ! rtpvrawpay name=pay0 pt=96";
     
-    if(!writer.isOpened())
-	printf("\033[7;31mFailed to Open Writer\n\033[0m");
+    //if(!writer.isOpened())
+//	printf("\033[7;31mFailed to Open Writer\n\033[0m");
     
-    GThread *t1 = g_thread_new("memes", g_start_server, &data);
+    std::thread t1(start_server, data.argc, (char **) data.argv, need_data_callback);
+    printf("Thread started\n"); 
     std::thread t2(getSomeImages);
 
     for(char key = ' '; key != 'q'; key = cv::waitKey(10))

@@ -11,6 +11,32 @@ using namespace std;
 
 unordered_map<string, tuple<const char*, int, int, vector<float>*, const char*>> table;
 
+void
+media_configure (GstRTSPMediaFactory * factory, GstRTSPMedia * media, gpointer user_data)
+{
+  printf("MEDIA_CONFIGURE\n");
+  GstElement *element, *appsrc;
+  MyContext *ctx;
+
+  element = gst_rtsp_media_get_element(media);
+  appsrc = gst_bin_get_by_name_recurse_up (GST_BIN (element), "mysrc");
+
+  gst_util_set_object_arg (G_OBJECT (appsrc), "format", "time");
+
+  ctx = g_new0(MyContext, 1);
+  ctx->white = FALSE;
+  ctx->timestamp = 0;
+
+  g_object_set_data_full (G_OBJECT (media), "my-extra-data", ctx, (GDestroyNotify) g_free);
+  
+  printf("Connecting need-data\n");
+  g_signal_connect (appsrc, "need-data", (GCallback) *(void (**) (GstElement *, guint, MyContext *)) user_data, ctx);
+
+  gst_object_unref(appsrc);
+  gst_object_unref(element);
+  printf("Configured pipeline\n");
+}
+
 char *
 construct_pipeline(const char * devpath, const char * input_type, int width, int height, float scale)
 {
@@ -45,8 +71,8 @@ setup_map()
     table["USB 2.0 Camera"] = make_tuple("5557", 1920, 1080, usb2list, "YUY2");  
 }
 
-int
-start_server (int argc, char *argv[])
+int 
+start_server (int argc, char *argv[], void (*fnc) (GstElement *, guint, MyContext *))
 {
     GMainLoop *loop;
     GstRTSPServer *server;
@@ -56,7 +82,7 @@ start_server (int argc, char *argv[])
     vector<char *> pipelines;
     setup_map();
     gst_init(&argc, &argv);
-  
+
     if (argc == 3)  // Want to run a predefined camera which is at defined path
     {
         devname = argv[1];
@@ -124,6 +150,11 @@ start_server (int argc, char *argv[])
         GstRTSPMediaFactory * factory = gst_rtsp_media_factory_new ();
         gst_rtsp_media_factory_set_launch (factory, pipelines[i]);
         gst_rtsp_media_factory_set_shared (factory, TRUE);
+        if (fnc != NULL) 
+        {
+            g_signal_connect (factory, "media-configure", (GCallback) media_configure, NULL); 
+            printf("Connected configure\n");
+        }
         printf("%s\n", pipelines[i]);
         snprintf(attachment, 10, "/feed%hu", i); 
         gst_rtsp_mount_points_add_factory (mounts, attachment, factory);
@@ -140,11 +171,4 @@ start_server (int argc, char *argv[])
     g_main_loop_run (loop);
     g_main_loop_unref(loop);
     return 0;
-}
-
-void *g_start_server(void *data)
-{
-    g_server_data *as_struct = reinterpret_cast<g_server_data *>(data);
-    start_server(as_struct->argc, const_cast<char **>(as_struct->argv));
-    return nullptr;
 }
