@@ -94,15 +94,11 @@ ObstacleDetection get_obstacle_data()
 
     cv::Mat img_cv;
     cv::Mat cv_depth_f32;
-    if(g_img.empty())
-        std::cout << "G_IMG IS EMPTY" << std::endl;
     {
         std::lock_guard<std::mutex> lk(img_lock);
         img_cv = g_img;
         cv_depth_f32 = g_depth;
     }
-    if(img_cv.empty())
-        std::cout << "IMG CV IS EMPTY" << std::endl;
 #define TIME std::chrono::duration<float, std::milli>(end - start).count()
 #define NOW std::chrono::high_resolution_clock::now();
 
@@ -267,7 +263,7 @@ int zdInit()
 int gsInit()
 {
     zdInit();
-    g_server_data data;
+    static g_server_data data;
     data.argc = 5;
     data.argv[0] = "sebastian";
     data.argv[1] = "intervideosrc";
@@ -291,9 +287,9 @@ int gsInit()
 
 #ifdef DEBUG
     // gstreamer
-    g_server_data data2;
+    static g_server_data data2;
     data2.argc = 5;
-    data2.argv[0] = camera_path;
+    data2.argv[0] = "sebastian";
     data2.argv[1] = "intervideosrc";
     data2.argv[2] = "zed_depth_debug";
     data2.argv[3] = "8888";

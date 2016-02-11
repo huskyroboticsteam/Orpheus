@@ -31,3 +31,4 @@ zed_depth-only: zed_depth.cpp zed_depth.h
 
 clean:
 	rm $(DEPTH)
+	rm *.o

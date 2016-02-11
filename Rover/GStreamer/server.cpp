@@ -39,8 +39,13 @@ setup_map()
     vector<float> * usb2list = new vector<float>;
     usb2list->push_back(0.25f);
     usb2list->push_back(0.1f);
+    vector<float> * usb3list = new vector<float>; 
+    usb3list->push_back(0.5f);
+    usb3list->push_back(0.25f);
+    usb3list->push_back(0.1f);
     table["ZED"] = make_tuple("5556", 4416, 1242, zedlist, "YUY2");
     table["USB 2.0 Camera"] = make_tuple("5557", 1920, 1080, usb2list, "YUY2");  
+    table["Stereo Vision 1"] = make_tuple("5558", 1280, 720, usb3list, "YUY2");  
 }
 
 int 
@@ -68,7 +73,7 @@ start_server (int argc, char *argv[])
         {
             string input = "v4l2src device=";
             input += devpath;
-            input += " ! videorate ! video/x-raw, framerate=10/1 ! intervideosink";
+            input += " ! videorate ! video/x-raw, framerate=24/1 ! intervideosink";
             GstElement * inputpipe = gst_parse_launch(input.c_str(), NULL);
             int ret = gst_element_set_state(inputpipe, GST_STATE_PLAYING);
 

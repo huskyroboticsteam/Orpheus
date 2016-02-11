@@ -68,10 +68,10 @@ int main(int argc, char *argv[])
         int mypid = fork();
         if(mypid == 0)
         {
-            int ret;
+            int ret = 0;
             if (strcmp(name, "ZED") == 0) 
             {
-                ret = execl("../RoutePlanning/RobotSim/RobotSim/build/routeplanning", argv[0], NULL);
+            //    ret = execl("../RoutePlanning/RobotSim/RobotSim/build/routeplanning", argv[0], NULL);
             }
             else
             {
