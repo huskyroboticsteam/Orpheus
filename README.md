@@ -19,7 +19,7 @@ pip3 install PyQt5
 pip3 install numpy
 
 ### SDL2 Installation:
-pip install PySDL2
+pip3 install PySDL2
 
 Also download SDL.dll from http://libsdl.org/release/SDL2-2.0.5-win32-x64.zip
 Add to Python 3 install directory under DLLs
