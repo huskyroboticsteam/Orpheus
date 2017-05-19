@@ -4,7 +4,7 @@ Code base for the 2017-18 buld season
 ## UI Dependencies
 
 ### Python VLC
-pip install python-vlc
+pip3 install python-vlc
 ALSO make sure 64 bit VLC player (required for built version of UI) is installed to the OS:
 
 | Operating System | Installation |
