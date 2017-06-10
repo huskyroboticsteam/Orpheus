@@ -1,0 +1,158 @@
+\hypertarget{class_robotics_library_1_1_filters_1_1_low_pass}{}\section{Robotics\+Library.\+Filters.\+Low\+Pass$<$ T $>$ Class Template Reference}
+\label{class_robotics_library_1_1_filters_1_1_low_pass}\index{Robotics\+Library.\+Filters.\+Low\+Pass$<$ T $>$@{Robotics\+Library.\+Filters.\+Low\+Pass$<$ T $>$}}
+
+
+The Low Pass filter is intended for use as an average-\/gathering system, using a low pass filter with time constant {\ttfamily L\+P\+Fk}. 
+
+
+Inheritance diagram for Robotics\+Library.\+Filters.\+Low\+Pass$<$ T $>$\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{d4/d3a/class_robotics_library_1_1_filters_1_1_low_pass}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_robotics_library_1_1_filters_1_1_low_pass_ada79534600a7f4a4dab17c40976a2f74}{Low\+Pass} (double \hyperlink{class_robotics_library_1_1_filters_1_1_low_pass_aa10538fde21bb3d7a4c5640b615c4013}{L\+P\+Fk}=0.\+25)
+\begin{DoxyCompactList}\small\item\em Constructs a low pass filter with time constant {\ttfamily L\+P\+Fk}.\end{DoxyCompactList}\item 
+void \hyperlink{class_robotics_library_1_1_filters_1_1_low_pass_adba4c542b4935845404729ebb2222b72}{Feed} (T Input)
+\begin{DoxyCompactList}\small\item\em Feeds a value into the filter. \end{DoxyCompactList}\item 
+void \hyperlink{class_robotics_library_1_1_filters_1_1_low_pass_a9b8d610c0f54a17e84ea5e9252c9e215}{Feed} (T Input, T Rate)
+\begin{DoxyCompactList}\small\item\em Feeds filter with specified rate. Not used for average filter. \end{DoxyCompactList}\item 
+void \hyperlink{class_robotics_library_1_1_filters_1_1_low_pass_a4cc6f562359e222b75c634075cfc4881}{Reset} ()
+\begin{DoxyCompactList}\small\item\em Resets the low pass filter to the default value of {\ttfamily T} \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Properties}
+\begin{DoxyCompactItemize}
+\item 
+T \hyperlink{class_robotics_library_1_1_filters_1_1_low_pass_a83f66e4bfd6737c56614f3bb9a73876f}{Output}\hspace{0.3cm}{\ttfamily  \mbox{[}get, private set\mbox{]}}
+\item 
+double \hyperlink{class_robotics_library_1_1_filters_1_1_low_pass_aa10538fde21bb3d7a4c5640b615c4013}{L\+P\+Fk}\hspace{0.3cm}{\ttfamily  \mbox{[}get, private set\mbox{]}}
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+T \hyperlink{class_robotics_library_1_1_filters_1_1_low_pass_a0d00e590f0cdafdd06200870121e9b07}{Last\+Value}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The Low Pass filter is intended for use as an average-\/gathering system, using a low pass filter with time constant {\ttfamily L\+P\+Fk}.
+
+Implementation Details\+:
+
+$\ast$\+Construct Low Pass filter given a time constant {\ttfamily L\+P\+Fk}
+
+$\ast$\+Iteratively add values into the filter using {\ttfamily \hyperlink{class_robotics_library_1_1_filters_1_1_low_pass_adba4c542b4935845404729ebb2222b72}{Feed(\+T Input)}}
+
+$\ast$\+Get the filter output by calling {\ttfamily Your\+Filter\+Instance.\+Output}
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & A type, which must be a numeric.\\
+\hline
+\end{DoxyTemplParams}
+\begin{Desc}
+\item[Type Constraints]\begin{description}
+\item[{\em T} : {\em I\+Comparable}]\end{description}
+\end{Desc}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_robotics_library_1_1_filters_1_1_low_pass_ada79534600a7f4a4dab17c40976a2f74}\label{class_robotics_library_1_1_filters_1_1_low_pass_ada79534600a7f4a4dab17c40976a2f74}} 
+\index{Robotics\+Library\+::\+Filters\+::\+Low\+Pass@{Robotics\+Library\+::\+Filters\+::\+Low\+Pass}!Low\+Pass@{Low\+Pass}}
+\index{Low\+Pass@{Low\+Pass}!Robotics\+Library\+::\+Filters\+::\+Low\+Pass@{Robotics\+Library\+::\+Filters\+::\+Low\+Pass}}
+\subsubsection{\texorpdfstring{Low\+Pass()}{LowPass()}}
+{\footnotesize\ttfamily \hyperlink{class_robotics_library_1_1_filters_1_1_low_pass}{Robotics\+Library.\+Filters.\+Low\+Pass}$<$ T $>$.\hyperlink{class_robotics_library_1_1_filters_1_1_low_pass}{Low\+Pass} (\begin{DoxyParamCaption}\item[{double}]{L\+P\+Fk = {\ttfamily 0.25} }\end{DoxyParamCaption})}
+
+
+
+Constructs a low pass filter with time constant {\ttfamily L\+P\+Fk}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em L\+P\+Fk} & Low Pass Filter Time Constant.\\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{class_robotics_library_1_1_filters_1_1_low_pass_adba4c542b4935845404729ebb2222b72}\label{class_robotics_library_1_1_filters_1_1_low_pass_adba4c542b4935845404729ebb2222b72}} 
+\index{Robotics\+Library\+::\+Filters\+::\+Low\+Pass@{Robotics\+Library\+::\+Filters\+::\+Low\+Pass}!Feed@{Feed}}
+\index{Feed@{Feed}!Robotics\+Library\+::\+Filters\+::\+Low\+Pass@{Robotics\+Library\+::\+Filters\+::\+Low\+Pass}}
+\subsubsection{\texorpdfstring{Feed()}{Feed()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void \hyperlink{class_robotics_library_1_1_filters_1_1_low_pass}{Robotics\+Library.\+Filters.\+Low\+Pass}$<$ T $>$.Feed (\begin{DoxyParamCaption}\item[{T}]{Input }\end{DoxyParamCaption})}
+
+
+
+Feeds a value into the filter. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Input} & Value to feed into the filter.\\
+\hline
+\end{DoxyParams}
+
+
+Implements \hyperlink{interface_robotics_library_1_1_filters_1_1_i_filter_a64855020add7b0354c2773696521c84e}{Robotics\+Library.\+Filters.\+I\+Filter$<$ T $>$}.
+
+\mbox{\Hypertarget{class_robotics_library_1_1_filters_1_1_low_pass_a9b8d610c0f54a17e84ea5e9252c9e215}\label{class_robotics_library_1_1_filters_1_1_low_pass_a9b8d610c0f54a17e84ea5e9252c9e215}} 
+\index{Robotics\+Library\+::\+Filters\+::\+Low\+Pass@{Robotics\+Library\+::\+Filters\+::\+Low\+Pass}!Feed@{Feed}}
+\index{Feed@{Feed}!Robotics\+Library\+::\+Filters\+::\+Low\+Pass@{Robotics\+Library\+::\+Filters\+::\+Low\+Pass}}
+\subsubsection{\texorpdfstring{Feed()}{Feed()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void \hyperlink{class_robotics_library_1_1_filters_1_1_low_pass}{Robotics\+Library.\+Filters.\+Low\+Pass}$<$ T $>$.Feed (\begin{DoxyParamCaption}\item[{T}]{Input,  }\item[{T}]{Rate }\end{DoxyParamCaption})}
+
+
+
+Feeds filter with specified rate. Not used for average filter. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Input} & Value to feed into the filer.\\
+\hline
+{\em Rate} & Current rate to feed into the filter.\\
+\hline
+\end{DoxyParams}
+
+
+Implements \hyperlink{interface_robotics_library_1_1_filters_1_1_i_filter_a24d363fb2957923a256448e04634d9ca}{Robotics\+Library.\+Filters.\+I\+Filter$<$ T $>$}.
+
+\mbox{\Hypertarget{class_robotics_library_1_1_filters_1_1_low_pass_a4cc6f562359e222b75c634075cfc4881}\label{class_robotics_library_1_1_filters_1_1_low_pass_a4cc6f562359e222b75c634075cfc4881}} 
+\index{Robotics\+Library\+::\+Filters\+::\+Low\+Pass@{Robotics\+Library\+::\+Filters\+::\+Low\+Pass}!Reset@{Reset}}
+\index{Reset@{Reset}!Robotics\+Library\+::\+Filters\+::\+Low\+Pass@{Robotics\+Library\+::\+Filters\+::\+Low\+Pass}}
+\subsubsection{\texorpdfstring{Reset()}{Reset()}}
+{\footnotesize\ttfamily void \hyperlink{class_robotics_library_1_1_filters_1_1_low_pass}{Robotics\+Library.\+Filters.\+Low\+Pass}$<$ T $>$.Reset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Resets the low pass filter to the default value of {\ttfamily T} 
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{class_robotics_library_1_1_filters_1_1_low_pass_a0d00e590f0cdafdd06200870121e9b07}\label{class_robotics_library_1_1_filters_1_1_low_pass_a0d00e590f0cdafdd06200870121e9b07}} 
+\index{Robotics\+Library\+::\+Filters\+::\+Low\+Pass@{Robotics\+Library\+::\+Filters\+::\+Low\+Pass}!Last\+Value@{Last\+Value}}
+\index{Last\+Value@{Last\+Value}!Robotics\+Library\+::\+Filters\+::\+Low\+Pass@{Robotics\+Library\+::\+Filters\+::\+Low\+Pass}}
+\subsubsection{\texorpdfstring{Last\+Value}{LastValue}}
+{\footnotesize\ttfamily T \hyperlink{class_robotics_library_1_1_filters_1_1_low_pass}{Robotics\+Library.\+Filters.\+Low\+Pass}$<$ T $>$.Last\+Value\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+\subsection{Property Documentation}
+\mbox{\Hypertarget{class_robotics_library_1_1_filters_1_1_low_pass_aa10538fde21bb3d7a4c5640b615c4013}\label{class_robotics_library_1_1_filters_1_1_low_pass_aa10538fde21bb3d7a4c5640b615c4013}} 
+\index{Robotics\+Library\+::\+Filters\+::\+Low\+Pass@{Robotics\+Library\+::\+Filters\+::\+Low\+Pass}!L\+P\+Fk@{L\+P\+Fk}}
+\index{L\+P\+Fk@{L\+P\+Fk}!Robotics\+Library\+::\+Filters\+::\+Low\+Pass@{Robotics\+Library\+::\+Filters\+::\+Low\+Pass}}
+\subsubsection{\texorpdfstring{L\+P\+Fk}{LPFk}}
+{\footnotesize\ttfamily double \hyperlink{class_robotics_library_1_1_filters_1_1_low_pass}{Robotics\+Library.\+Filters.\+Low\+Pass}$<$ T $>$.L\+P\+Fk\hspace{0.3cm}{\ttfamily [get]}, {\ttfamily [private set]}}
+
+\mbox{\Hypertarget{class_robotics_library_1_1_filters_1_1_low_pass_a83f66e4bfd6737c56614f3bb9a73876f}\label{class_robotics_library_1_1_filters_1_1_low_pass_a83f66e4bfd6737c56614f3bb9a73876f}} 
+\index{Robotics\+Library\+::\+Filters\+::\+Low\+Pass@{Robotics\+Library\+::\+Filters\+::\+Low\+Pass}!Output@{Output}}
+\index{Output@{Output}!Robotics\+Library\+::\+Filters\+::\+Low\+Pass@{Robotics\+Library\+::\+Filters\+::\+Low\+Pass}}
+\subsubsection{\texorpdfstring{Output}{Output}}
+{\footnotesize\ttfamily T \hyperlink{class_robotics_library_1_1_filters_1_1_low_pass}{Robotics\+Library.\+Filters.\+Low\+Pass}$<$ T $>$.Output\hspace{0.3cm}{\ttfamily [get]}, {\ttfamily [private set]}}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Filters/\hyperlink{_low_pass_8cs}{Low\+Pass.\+cs}\end{DoxyCompactItemize}

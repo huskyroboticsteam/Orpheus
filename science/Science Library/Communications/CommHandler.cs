@@ -7,18 +7,37 @@ using RoboticsLibrary.Errors;
 
 namespace RoboticsLibrary.Communications
 {
+    /// <summary>
+    /// CommsHandler
+    /// handles communications
+    /// send/receive
+    /// including parsing information
+    /// from source.
+    /// </summary>
     public static class CommHandler
     {
 
-        private static TcpListener TcpListener;
-        private static IPEndPoint Endpoint;
-        private static Queue<Packet> SendQueue;
+        private static TcpListener TcpListener;  // TcpListener for comms activity
+        private static IPEndPoint Endpoint;      // Comms endpoint
+        private static Queue<Packet> SendQueue;  // Send queue for comms 
         private static Thread SendThread, ReceiveThread;
         private static float PacketIntervalTime; // Minimum time in between packet sending. (Is not accounted for in SendAsyncPacket)
         private static int ReceiveBufferSize, PortNumber;
         private static bool Continue;    // Whether or not the process continues
         private static bool Initialized; // Whether or not the system is initialized
 
+        /// <summary>
+        /// Starts the CommHandler
+        /// </summary>
+        /// <param name="Port">
+        /// Port to listen on</param>
+        /// <param name="CycleTime">
+        /// Minimum cycle time in between packet send/receive</param>
+        /// <param name="ReceiveBufferSize">
+        /// Buffer receive size.</param>
+        /// <returns>
+        /// Returns true is initialization succeeded, false otherwise.
+        /// </returns>
         public static bool Start(int Port = 2024, float CycleTime = 0.02f, int ReceiveBufferSize = 64)
         {
             CommHandler.PacketIntervalTime = CycleTime;
@@ -32,6 +51,12 @@ namespace RoboticsLibrary.Communications
             return true;            
         }
 
+        /// <summary>
+        /// Initializes CommHandler (internal use only)
+        /// </summary>
+        /// <returns>
+        /// Returns whether or not initialization succeeded
+        /// </returns>
         private static bool Initialize()
         {
             try
@@ -53,13 +78,17 @@ namespace RoboticsLibrary.Communications
             return true;
         }
 
+        /// <summary>
+        /// Stops communications.
+        /// </summary>
         public static void Stop()
         {
             CommHandler.Continue = false;
         }
 
         /// <summary>
-        /// Use for restarting system. Important!!
+        /// Use for restarting Comms.
+        /// * * * Important!!
         /// </summary>
         public static void Restart()
         {
@@ -72,11 +101,23 @@ namespace RoboticsLibrary.Communications
             }
         }
 
+        /// <summary>
+        /// Adds packet to send buffer.
+        /// </summary>
+        /// <param name="Packet">Packet to add.</param>
         public static void AddCyclePacket(Packet Packet)
         {
             CommHandler.SendQueue.Enqueue(Packet);
         }
 
+        /// <summary>
+        /// Sends a packet out of phase with
+        /// the send cycles.
+        /// </summary>
+        /// <param name="Packet">Packet to send asynchronously</param>
+        /// <returns>
+        /// Whether or not the send succeeded.
+        /// </returns>
         public static bool SendAsyncPacket(Packet Packet)
         {
             try
@@ -91,6 +132,12 @@ namespace RoboticsLibrary.Communications
             return true;
         }
 
+        /// <summary>
+        /// Internal use only.
+        /// Sends the next packet in the queue.
+        /// </summary>
+        /// <returns>
+        /// Whether or not the send succeeded.</returns>
         private static bool SendNextPacket()
         {
             try
@@ -108,6 +155,11 @@ namespace RoboticsLibrary.Communications
             return true;
         }
 
+        /// <summary>
+        /// Send loop start.
+        /// Internal use only.
+        /// Meant for threading.
+        /// </summary>
         private static void Send()
         {
             while (CommHandler.Continue)
@@ -120,6 +172,10 @@ namespace RoboticsLibrary.Communications
             }
         }
 
+        /// <summary>
+        /// Receives messages and sends them
+        /// to be parsed.
+        /// </summary>
         private static void Receive()
         {
             while (CommHandler.Continue)

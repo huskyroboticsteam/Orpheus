@@ -1,0 +1,84 @@
+\hypertarget{class_robotics_library_1_1_communications_1_1_parse}{}\section{Robotics\+Library.\+Communications.\+Parse Class Reference}
+\label{class_robotics_library_1_1_communications_1_1_parse}\index{Robotics\+Library.\+Communications.\+Parse@{Robotics\+Library.\+Communications.\+Parse}}
+
+
+Handles packet parsing, using handlers of incoming message I\+Ds.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+delegate void \hyperlink{class_robotics_library_1_1_communications_1_1_parse_a592095b5638ced6eacabbce7acdb5e75}{Parse\+Method} (\hyperlink{class_robotics_library_1_1_communications_1_1_message}{Message} New\+Message)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \hyperlink{class_robotics_library_1_1_communications_1_1_parse_a2edbe1773ccbf303fb505ce0ad2ee838}{Set\+Parse\+Handler} (byte Message\+Id, \hyperlink{class_robotics_library_1_1_communications_1_1_parse_a592095b5638ced6eacabbce7acdb5e75}{Parse\+Method} \hyperlink{class_robotics_library_1_1_communications_1_1_parse_a592095b5638ced6eacabbce7acdb5e75}{Parse\+Method})
+\begin{DoxyCompactList}\small\item\em Sets the handler for parsing of the appropriate Message\+Id. \end{DoxyCompactList}\item 
+static void \hyperlink{class_robotics_library_1_1_communications_1_1_parse_ad148efeadd6ab19f2fa53d4b90acf890}{Parse\+Message} (\hyperlink{class_robotics_library_1_1_communications_1_1_message}{Message} New\+Message)
+\begin{DoxyCompactList}\small\item\em Appropriately parses incoming message. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{class_robotics_library_1_1_communications_1_1_parse_a592095b5638ced6eacabbce7acdb5e75}{Parse\+Method} \mbox{[}$\,$\mbox{]} \hyperlink{class_robotics_library_1_1_communications_1_1_parse_aa2e45508e6d9222047bfbec487628c87}{Parsing\+Handlers} = new \hyperlink{class_robotics_library_1_1_communications_1_1_parse_a592095b5638ced6eacabbce7acdb5e75}{Parse\+Method}\mbox{[}256\mbox{]}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Handles packet parsing, using handlers of incoming message I\+Ds. 
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{class_robotics_library_1_1_communications_1_1_parse_ad148efeadd6ab19f2fa53d4b90acf890}\label{class_robotics_library_1_1_communications_1_1_parse_ad148efeadd6ab19f2fa53d4b90acf890}} 
+\index{Robotics\+Library\+::\+Communications\+::\+Parse@{Robotics\+Library\+::\+Communications\+::\+Parse}!Parse\+Message@{Parse\+Message}}
+\index{Parse\+Message@{Parse\+Message}!Robotics\+Library\+::\+Communications\+::\+Parse@{Robotics\+Library\+::\+Communications\+::\+Parse}}
+\subsubsection{\texorpdfstring{Parse\+Message()}{ParseMessage()}}
+{\footnotesize\ttfamily static void Robotics\+Library.\+Communications.\+Parse.\+Parse\+Message (\begin{DoxyParamCaption}\item[{\hyperlink{class_robotics_library_1_1_communications_1_1_message}{Message}}]{New\+Message }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Appropriately parses incoming message. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em New\+Message} & \hyperlink{class_robotics_library_1_1_communications_1_1_message}{Message} to parse.\\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_robotics_library_1_1_communications_1_1_parse_a592095b5638ced6eacabbce7acdb5e75}\label{class_robotics_library_1_1_communications_1_1_parse_a592095b5638ced6eacabbce7acdb5e75}} 
+\index{Robotics\+Library\+::\+Communications\+::\+Parse@{Robotics\+Library\+::\+Communications\+::\+Parse}!Parse\+Method@{Parse\+Method}}
+\index{Parse\+Method@{Parse\+Method}!Robotics\+Library\+::\+Communications\+::\+Parse@{Robotics\+Library\+::\+Communications\+::\+Parse}}
+\subsubsection{\texorpdfstring{Parse\+Method()}{ParseMethod()}}
+{\footnotesize\ttfamily delegate void Robotics\+Library.\+Communications.\+Parse.\+Parse\+Method (\begin{DoxyParamCaption}\item[{\hyperlink{class_robotics_library_1_1_communications_1_1_message}{Message}}]{New\+Message }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_robotics_library_1_1_communications_1_1_parse_a2edbe1773ccbf303fb505ce0ad2ee838}\label{class_robotics_library_1_1_communications_1_1_parse_a2edbe1773ccbf303fb505ce0ad2ee838}} 
+\index{Robotics\+Library\+::\+Communications\+::\+Parse@{Robotics\+Library\+::\+Communications\+::\+Parse}!Set\+Parse\+Handler@{Set\+Parse\+Handler}}
+\index{Set\+Parse\+Handler@{Set\+Parse\+Handler}!Robotics\+Library\+::\+Communications\+::\+Parse@{Robotics\+Library\+::\+Communications\+::\+Parse}}
+\subsubsection{\texorpdfstring{Set\+Parse\+Handler()}{SetParseHandler()}}
+{\footnotesize\ttfamily static void Robotics\+Library.\+Communications.\+Parse.\+Set\+Parse\+Handler (\begin{DoxyParamCaption}\item[{byte}]{Message\+Id,  }\item[{\hyperlink{class_robotics_library_1_1_communications_1_1_parse_a592095b5638ced6eacabbce7acdb5e75}{Parse\+Method}}]{Parse\+Method }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Sets the handler for parsing of the appropriate Message\+Id. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Message\+Id} & \hyperlink{class_robotics_library_1_1_communications_1_1_message}{Message} ID for parsing.\\
+\hline
+{\em Parse\+Method} & Method used when incoming packet of {\ttfamily Message\+Id} is received.\\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{class_robotics_library_1_1_communications_1_1_parse_aa2e45508e6d9222047bfbec487628c87}\label{class_robotics_library_1_1_communications_1_1_parse_aa2e45508e6d9222047bfbec487628c87}} 
+\index{Robotics\+Library\+::\+Communications\+::\+Parse@{Robotics\+Library\+::\+Communications\+::\+Parse}!Parsing\+Handlers@{Parsing\+Handlers}}
+\index{Parsing\+Handlers@{Parsing\+Handlers}!Robotics\+Library\+::\+Communications\+::\+Parse@{Robotics\+Library\+::\+Communications\+::\+Parse}}
+\subsubsection{\texorpdfstring{Parsing\+Handlers}{ParsingHandlers}}
+{\footnotesize\ttfamily \hyperlink{class_robotics_library_1_1_communications_1_1_parse_a592095b5638ced6eacabbce7acdb5e75}{Parse\+Method} \mbox{[}$\,$\mbox{]} Robotics\+Library.\+Communications.\+Parse.\+Parsing\+Handlers = new \hyperlink{class_robotics_library_1_1_communications_1_1_parse_a592095b5638ced6eacabbce7acdb5e75}{Parse\+Method}\mbox{[}256\mbox{]}\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Communications/\hyperlink{_parse_8cs}{Parse.\+cs}\end{DoxyCompactItemize}

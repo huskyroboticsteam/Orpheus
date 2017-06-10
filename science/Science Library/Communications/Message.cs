@@ -6,12 +6,29 @@ using RoboticsLibrary.Utilities;
 
 namespace RoboticsLibrary.Communications
 {
+    /// <summary>
+    /// This class is intended
+    /// to encode incoming data.
+    /// </summary>
     public class Message
     {
-        public int Timesamp, Id;
-        public byte[] Data;
-        public IPEndPoint From;
 
+        public int Timesamp, Id; // Stores message timestamp and id
+        public byte[] Data;      // Stored message data (discluding timestamp and id)
+        public IPEndPoint From;  // Endpoint that the message was received from.
+
+        /// <summary>
+        /// Constructs a message given
+        /// incoming data.
+        /// Data encoded with:
+        /// Timestamp data[0] to data[3]
+        /// ID at data[4]
+        /// Data encoded after data[4], i.e. data[5:]
+        /// </summary>
+        /// <param name="IncomingData">
+        /// Incoming data array</param>
+        /// <param name="From">
+        /// Given from endpoint</param>
         public Message(byte[] IncomingData, IPEndPoint From)
         {
             // Retrieve necessary data for instantiation
@@ -24,5 +41,6 @@ namespace RoboticsLibrary.Communications
             this.Timesamp = UtilMain.ByteArrayToInt(TimeBytes);
             this.From = From;
         }
+
     }
 }

@@ -1,0 +1,83 @@
+\hypertarget{class_robotics_library_1_1_communications_1_1_message}{}\section{Robotics\+Library.\+Communications.\+Message Class Reference}
+\label{class_robotics_library_1_1_communications_1_1_message}\index{Robotics\+Library.\+Communications.\+Message@{Robotics\+Library.\+Communications.\+Message}}
+
+
+This class is intended to encode incoming data.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_robotics_library_1_1_communications_1_1_message_a9e6e25188a64e3cc1c71282c2578cc4e}{Message} (byte\mbox{[}$\,$\mbox{]} Incoming\+Data, I\+P\+End\+Point \hyperlink{class_robotics_library_1_1_communications_1_1_message_a51a162a1d00eb020c5af595cc84bf604}{From})
+\begin{DoxyCompactList}\small\item\em Constructs a message given incoming data. Data encoded with\+: Timestamp data\mbox{[}0\mbox{]} to data\mbox{[}3\mbox{]} ID at data\mbox{[}4\mbox{]} Data encoded after data\mbox{[}4\mbox{]}, i.\+e. data\mbox{[}5\+:\mbox{]} \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{class_robotics_library_1_1_communications_1_1_message_ae1ab1ac8b229f8ba8bc9ff8762c83236}{Timesamp}
+\item 
+byte \mbox{[}$\,$\mbox{]} \hyperlink{class_robotics_library_1_1_communications_1_1_message_a69bb31eb51f778726ae40b2257e7e053}{Data}
+\item 
+I\+P\+End\+Point \hyperlink{class_robotics_library_1_1_communications_1_1_message_a51a162a1d00eb020c5af595cc84bf604}{From}
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{class_robotics_library_1_1_communications_1_1_message_a018b1bfaa0ad1ace329a785fa687d9b3}{Id}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This class is intended to encode incoming data. 
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_robotics_library_1_1_communications_1_1_message_a9e6e25188a64e3cc1c71282c2578cc4e}\label{class_robotics_library_1_1_communications_1_1_message_a9e6e25188a64e3cc1c71282c2578cc4e}} 
+\index{Robotics\+Library\+::\+Communications\+::\+Message@{Robotics\+Library\+::\+Communications\+::\+Message}!Message@{Message}}
+\index{Message@{Message}!Robotics\+Library\+::\+Communications\+::\+Message@{Robotics\+Library\+::\+Communications\+::\+Message}}
+\subsubsection{\texorpdfstring{Message()}{Message()}}
+{\footnotesize\ttfamily Robotics\+Library.\+Communications.\+Message.\+Message (\begin{DoxyParamCaption}\item[{byte \mbox{[}$\,$\mbox{]}}]{Incoming\+Data,  }\item[{I\+P\+End\+Point}]{From }\end{DoxyParamCaption})}
+
+
+
+Constructs a message given incoming data. Data encoded with\+: Timestamp data\mbox{[}0\mbox{]} to data\mbox{[}3\mbox{]} ID at data\mbox{[}4\mbox{]} Data encoded after data\mbox{[}4\mbox{]}, i.\+e. data\mbox{[}5\+:\mbox{]} 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Incoming\+Data} & Incoming data array\\
+\hline
+{\em From} & Given from endpoint\\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{class_robotics_library_1_1_communications_1_1_message_a69bb31eb51f778726ae40b2257e7e053}\label{class_robotics_library_1_1_communications_1_1_message_a69bb31eb51f778726ae40b2257e7e053}} 
+\index{Robotics\+Library\+::\+Communications\+::\+Message@{Robotics\+Library\+::\+Communications\+::\+Message}!Data@{Data}}
+\index{Data@{Data}!Robotics\+Library\+::\+Communications\+::\+Message@{Robotics\+Library\+::\+Communications\+::\+Message}}
+\subsubsection{\texorpdfstring{Data}{Data}}
+{\footnotesize\ttfamily byte \mbox{[}$\,$\mbox{]} Robotics\+Library.\+Communications.\+Message.\+Data}
+
+\mbox{\Hypertarget{class_robotics_library_1_1_communications_1_1_message_a51a162a1d00eb020c5af595cc84bf604}\label{class_robotics_library_1_1_communications_1_1_message_a51a162a1d00eb020c5af595cc84bf604}} 
+\index{Robotics\+Library\+::\+Communications\+::\+Message@{Robotics\+Library\+::\+Communications\+::\+Message}!From@{From}}
+\index{From@{From}!Robotics\+Library\+::\+Communications\+::\+Message@{Robotics\+Library\+::\+Communications\+::\+Message}}
+\subsubsection{\texorpdfstring{From}{From}}
+{\footnotesize\ttfamily I\+P\+End\+Point Robotics\+Library.\+Communications.\+Message.\+From}
+
+\mbox{\Hypertarget{class_robotics_library_1_1_communications_1_1_message_a018b1bfaa0ad1ace329a785fa687d9b3}\label{class_robotics_library_1_1_communications_1_1_message_a018b1bfaa0ad1ace329a785fa687d9b3}} 
+\index{Robotics\+Library\+::\+Communications\+::\+Message@{Robotics\+Library\+::\+Communications\+::\+Message}!Id@{Id}}
+\index{Id@{Id}!Robotics\+Library\+::\+Communications\+::\+Message@{Robotics\+Library\+::\+Communications\+::\+Message}}
+\subsubsection{\texorpdfstring{Id}{Id}}
+{\footnotesize\ttfamily int Robotics\+Library.\+Communications.\+Message.\+Id\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_robotics_library_1_1_communications_1_1_message_ae1ab1ac8b229f8ba8bc9ff8762c83236}\label{class_robotics_library_1_1_communications_1_1_message_ae1ab1ac8b229f8ba8bc9ff8762c83236}} 
+\index{Robotics\+Library\+::\+Communications\+::\+Message@{Robotics\+Library\+::\+Communications\+::\+Message}!Timesamp@{Timesamp}}
+\index{Timesamp@{Timesamp}!Robotics\+Library\+::\+Communications\+::\+Message@{Robotics\+Library\+::\+Communications\+::\+Message}}
+\subsubsection{\texorpdfstring{Timesamp}{Timesamp}}
+{\footnotesize\ttfamily int Robotics\+Library.\+Communications.\+Message.\+Timesamp}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Communications/\hyperlink{_message_8cs}{Message.\+cs}\end{DoxyCompactItemize}

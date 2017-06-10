@@ -4,6 +4,7 @@ using System.Text;
 using System.Net;
 using System.Net.Sockets;
 using System.Net.NetworkInformation;
+using RoboticsLibrary.Errors;
 
 namespace RoboticsLibrary.Utilities
 {
@@ -40,6 +41,18 @@ namespace RoboticsLibrary.Utilities
             }
         }
 
+        /// <summary>
+        /// Returns subarray of given array.
+        /// </summary>
+        /// <typeparam name="T">
+        /// Datatype of array
+        /// </typeparam>
+        /// <param name="data">Array to manipulate</param>
+        /// <param name="index">Starting index of subarray.</param>
+        /// <param name="length">Length of wanted subarray.</param>
+        /// <returns>
+        /// Sub array of data[index:index+length-1] (inclusive)
+        /// </returns>
         public static T[] SubArray<T>(this T[] data, int index, int length)
         {
             T[] result = new T[length];
@@ -47,9 +60,24 @@ namespace RoboticsLibrary.Utilities
             return result;
         }
 
+        /// <summary>
+        /// Converts a byte array into a 32 bit integer.
+        /// * * * Caution integer overflow.
+        /// </summary>
+        /// <param name="Array">Byte array given for int conversion.</param>
+        /// <param name="StartIndex">
+        /// Defaults to 0. The start index in the bytearray for integer conversion.</param>
+        /// <returns>
+        /// 32-bit int representation of the given byte array.
+        /// Throws <c>OverflowException</c> if integer overflow occurs.
+        /// </returns>
         public static int ByteArrayToInt(byte[] Array, int StartIndex = 0)
         {
-            return BitConverter.ToInt32(Array, StartIndex);
+            if ((Array.Length * 8 - StartIndex) <= 32)
+            {
+                return BitConverter.ToInt32(Array, StartIndex);
+            }
+            throw new OverflowException();
         }
 
     }

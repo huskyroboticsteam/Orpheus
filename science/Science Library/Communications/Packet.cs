@@ -7,26 +7,42 @@ using RoboticsLibrary.Errors;
 
 namespace RoboticsLibrary.Communications
 {
+    /// <summary>
+    /// Handles packet architecture.
+    /// </summary>
     public class Packet
     {
-
+        
+        // Default packet endpoint
         private static IPEndPoint DefaultEndpoint = new IPEndPoint(IPAddress.Parse("192.168.0.1"), 600);
 
-        private byte Id;
-        private byte[] Timestamp;
-        private byte[] Data;
-        private IPEndPoint PacketEndpoint;
-        private TcpClient Client;
+        private byte Id;                    // Packet ID
+        private byte[] Timestamp;           // Packet send timestamp
+        private byte[] Data;                // Packet data
+        private IPEndPoint PacketEndpoint;  // Packet endpoint
+        private TcpClient Client;           // Packet Tcp client
 
+        /// <summary>
+        /// Constructs new packet of given ID.
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <param name="PacketEndpoint">
+        /// Endpoint for the packet. If null, defaults to given
+        /// <c>DefaultEndpoint</c></param>
         public Packet(int Id, IPEndPoint PacketEndpoint = null)
         {
             this.PacketEndpoint = PacketEndpoint ?? DefaultEndpoint;
             this.Client = new TcpClient(this.PacketEndpoint);
-            this.Id = (byte)Id;
-            this.Timestamp = new byte[4];
-            this.Data = new byte[1]; // Temporary
+            this.Id = (byte)Id;             // Setup ID
+            this.Timestamp = new byte[4];   // Initialize timestamp
+            this.Data = new byte[1];        // Temporary set to bytearray of length 1
+                                            // to prevent null pointer exception.
         }
 
+        /// <summary>
+        /// Appends data to packet.
+        /// </summary>
+        /// <param name="Data">Data to append to packet.</param>
         public void AppendData(byte[] Data)
         {
             List<byte> TempList = new List<byte>(this.Data);
@@ -34,6 +50,13 @@ namespace RoboticsLibrary.Communications
             this.Data = TempList.ToArray();
         }
 
+        /// <summary>
+        /// Sends packet
+        /// </summary>
+        /// <returns>
+        /// true if Send successful,
+        /// false is Send unsuccessful.
+        /// </returns>
         public bool Send()
         {
             try
@@ -59,6 +82,10 @@ namespace RoboticsLibrary.Communications
             return true;
         }
 
+        /// <summary>
+        /// Sets time for packet.
+        /// Internal use only.
+        /// </summary>
         private void SetTime()
         {
             int UnixTime = (int)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
@@ -70,6 +97,12 @@ namespace RoboticsLibrary.Communications
             this.Timestamp = TimeArray;
         }
 
+        /// <summary>
+        /// Sets the packet class's default Endpoint.
+        /// </summary>
+        /// <param name="Endpoint">
+        /// New default endpoint for the packet class.
+        /// </param>
         public static void SetDefaultEndpoint(IPEndPoint Endpoint)
         {
             Packet.DefaultEndpoint = Endpoint;

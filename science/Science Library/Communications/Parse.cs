@@ -5,6 +5,10 @@ using RoboticsLibrary.Errors;
 
 namespace RoboticsLibrary.Communications
 {
+    /// <summary>
+    /// Handles packet parsing,
+    /// using handlers of incoming message IDs.
+    /// </summary>
     public static class Parse
     {
 
@@ -13,12 +17,23 @@ namespace RoboticsLibrary.Communications
         // Stored parsing Handlers for all possible message ids
         private static ParseMethod[] ParsingHandlers = new ParseMethod[256];
 
-        public static void SetParseMethod(byte MessageId, ParseMethod ParseMethod)
+        /// <summary>
+        /// Sets the handler for parsing of the appropriate
+        /// MessageId.
+        /// </summary>
+        /// <param name="MessageId">
+        /// Message ID for parsing.</param>
+        /// <param name="ParseMethod">Method used when incoming packet
+        /// of <c>MessageId</c> is received.</param>
+        public static void SetParseHandler(byte MessageId, ParseMethod ParseMethod)
         {
-            int Id = (int)MessageId;
-            Parse.ParsingHandlers[Id] = ParseMethod;
+            Parse.ParsingHandlers[MessageId] = ParseMethod;
         }
 
+        /// <summary>
+        /// Appropriately parses incoming message.
+        /// </summary>
+        /// <param name="NewMessage">Message to parse.</param>
         public static void ParseMessage(Message NewMessage)
         {
             try

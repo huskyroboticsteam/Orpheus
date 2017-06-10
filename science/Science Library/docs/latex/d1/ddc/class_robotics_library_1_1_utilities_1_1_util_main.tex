@@ -1,0 +1,84 @@
+\hypertarget{class_robotics_library_1_1_utilities_1_1_util_main}{}\section{Robotics\+Library.\+Utilities.\+Util\+Main Class Reference}
+\label{class_robotics_library_1_1_utilities_1_1_util_main}\index{Robotics\+Library.\+Utilities.\+Util\+Main@{Robotics\+Library.\+Utilities.\+Util\+Main}}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static bool \hyperlink{class_robotics_library_1_1_utilities_1_1_util_main_ace1cebf392a2b212cd010f7e718dee7d}{Is\+Numeric\+Type} (Type Type)
+\begin{DoxyCompactList}\small\item\em {\ttfamily \hyperlink{class_robotics_library_1_1_utilities_1_1_util_main_ace1cebf392a2b212cd010f7e718dee7d}{Is\+Numeric\+Type(\+Type Type)}} Determines if the given type is numeric. \end{DoxyCompactList}\item 
+static T \mbox{[}$\,$\mbox{]} \hyperlink{class_robotics_library_1_1_utilities_1_1_util_main_ab6835fcaf2e37cfa3b57b1400e7c91df}{Sub\+Array$<$ T $>$} (this T\mbox{[}$\,$\mbox{]} data, int index, int length)
+\begin{DoxyCompactList}\small\item\em Returns subarray of given array. \end{DoxyCompactList}\item 
+static int \hyperlink{class_robotics_library_1_1_utilities_1_1_util_main_ae9449018f0029862548f017f4d00de05}{Byte\+Array\+To\+Int} (byte\mbox{[}$\,$\mbox{]} Array, int Start\+Index=0)
+\begin{DoxyCompactList}\small\item\em Converts a byte array into a 32 bit integer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{class_robotics_library_1_1_utilities_1_1_util_main_ae9449018f0029862548f017f4d00de05}\label{class_robotics_library_1_1_utilities_1_1_util_main_ae9449018f0029862548f017f4d00de05}} 
+\index{Robotics\+Library\+::\+Utilities\+::\+Util\+Main@{Robotics\+Library\+::\+Utilities\+::\+Util\+Main}!Byte\+Array\+To\+Int@{Byte\+Array\+To\+Int}}
+\index{Byte\+Array\+To\+Int@{Byte\+Array\+To\+Int}!Robotics\+Library\+::\+Utilities\+::\+Util\+Main@{Robotics\+Library\+::\+Utilities\+::\+Util\+Main}}
+\subsubsection{\texorpdfstring{Byte\+Array\+To\+Int()}{ByteArrayToInt()}}
+{\footnotesize\ttfamily static int Robotics\+Library.\+Utilities.\+Util\+Main.\+Byte\+Array\+To\+Int (\begin{DoxyParamCaption}\item[{byte \mbox{[}$\,$\mbox{]}}]{Array,  }\item[{int}]{Start\+Index = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Converts a byte array into a 32 bit integer. 
+
+
+\begin{DoxyItemize}
+\item $\ast$ $\ast$ Caution integer overflow. 
+\end{DoxyItemize}
+
+
+\begin{DoxyParams}{Parameters}
+{\em Array} & Byte array given for int conversion.\\
+\hline
+{\em Start\+Index} & Defaults to 0. The start index in the bytearray for integer conversion.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+32-\/bit int representation of the given byte array. Throws {\ttfamily Overflow\+Exception} if integer overflow occurs. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_robotics_library_1_1_utilities_1_1_util_main_ace1cebf392a2b212cd010f7e718dee7d}\label{class_robotics_library_1_1_utilities_1_1_util_main_ace1cebf392a2b212cd010f7e718dee7d}} 
+\index{Robotics\+Library\+::\+Utilities\+::\+Util\+Main@{Robotics\+Library\+::\+Utilities\+::\+Util\+Main}!Is\+Numeric\+Type@{Is\+Numeric\+Type}}
+\index{Is\+Numeric\+Type@{Is\+Numeric\+Type}!Robotics\+Library\+::\+Utilities\+::\+Util\+Main@{Robotics\+Library\+::\+Utilities\+::\+Util\+Main}}
+\subsubsection{\texorpdfstring{Is\+Numeric\+Type()}{IsNumericType()}}
+{\footnotesize\ttfamily static bool Robotics\+Library.\+Utilities.\+Util\+Main.\+Is\+Numeric\+Type (\begin{DoxyParamCaption}\item[{Type}]{Type }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+{\ttfamily \hyperlink{class_robotics_library_1_1_utilities_1_1_util_main_ace1cebf392a2b212cd010f7e718dee7d}{Is\+Numeric\+Type(\+Type Type)}} Determines if the given type is numeric. 
+
+\begin{DoxyReturn}{Returns}
+Returns {\ttfamily true} if param  Type 
+\end{DoxyReturn}
+is a numeric, otherwise returns {\ttfamily false}.\mbox{\Hypertarget{class_robotics_library_1_1_utilities_1_1_util_main_ab6835fcaf2e37cfa3b57b1400e7c91df}\label{class_robotics_library_1_1_utilities_1_1_util_main_ab6835fcaf2e37cfa3b57b1400e7c91df}} 
+\index{Robotics\+Library\+::\+Utilities\+::\+Util\+Main@{Robotics\+Library\+::\+Utilities\+::\+Util\+Main}!Sub\+Array$<$ T $>$@{Sub\+Array$<$ T $>$}}
+\index{Sub\+Array$<$ T $>$@{Sub\+Array$<$ T $>$}!Robotics\+Library\+::\+Utilities\+::\+Util\+Main@{Robotics\+Library\+::\+Utilities\+::\+Util\+Main}}
+\subsubsection{\texorpdfstring{Sub\+Array$<$ T $>$()}{SubArray< T >()}}
+{\footnotesize\ttfamily static T \mbox{[}$\,$\mbox{]} Robotics\+Library.\+Utilities.\+Util\+Main.\+Sub\+Array$<$ T $>$ (\begin{DoxyParamCaption}\item[{this T \mbox{[}$\,$\mbox{]}}]{data,  }\item[{int}]{index,  }\item[{int}]{length }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Returns subarray of given array. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & Datatype of array \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Array to manipulate\\
+\hline
+{\em index} & Starting index of subarray.\\
+\hline
+{\em length} & Length of wanted subarray.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Sub array of data\mbox{[}index\+:index+length-\/1\mbox{]} (inclusive) 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Utilities/\hyperlink{_util_main_8cs}{Util\+Main.\+cs}\end{DoxyCompactItemize}

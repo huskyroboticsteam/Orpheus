@@ -9,9 +9,18 @@ namespace RoboticsLibrary.Filters
     /// The Average filter is intended
     /// for use as an average-gathering
     /// system, using a rolling average
-    /// with "roll-length" <param>FilterCount</param>.</summary>
+    /// with "roll-length" <c>FilterCount</c>.</summary>
     /// 
+    /// Implementation Details:
     /// 
+    /// *Construct Average filter given a rolling
+    ///  filter length, <c>FilterCount</c>
+    /// 
+    /// *Iteratively add values into the filter
+    ///  using <c>Feed(T Input)</c>
+    /// 
+    /// *Get the filter output by calling
+    ///  <c>YourFilterInstance.Output</c>
     /// 
     /// <typeparam name="T">
     /// A type, which must be a numeric.</typeparam>
@@ -31,9 +40,11 @@ namespace RoboticsLibrary.Filters
                     Iterations;         // Number of iterations in the filter
 
         /// <summary>
-        /// 
+        /// Construct an average filter with
+        /// given roll-length.
         /// </summary>
-        /// <param name="FilterCount"></param>
+        /// <param name="FilterCount">
+        /// Roll length for the average filter.</param>
         public Average(int FilterCount = 10)
         {
             if (!UtilMain.IsNumericType(typeof(T)))
@@ -51,9 +62,10 @@ namespace RoboticsLibrary.Filters
         }
 
         /// <summary>
-        /// 
+        /// Feeds a value into the filter.
         /// </summary>
-        /// <param name="Input"></param>
+        /// <param name="Input">
+        /// Value to feed into the filter.</param>
         public void Feed(T Input)
         {
             // Increase number of iterations by 1
@@ -73,10 +85,13 @@ namespace RoboticsLibrary.Filters
         }
 
         /// <summary>
-        /// 
+        /// Feeds filter with specified rate.
+        /// Not used for average filter.
         /// </summary>
-        /// <param name="Input"></param>
-        /// <param name="Rate"></param>
+        /// <param name="Input">
+        /// Value to feed into the filer.</param>
+        /// <param name="Rate">
+        /// Current rate to feed into the filter.</param>
         public void Feed(T Input, T Rate)
         {
             this.Feed(Input); // Average filter is independent of rate
