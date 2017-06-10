@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Science Onboard", "Science Onboard\Science Onboard.csproj", "{D33A5CED-F246-4423-B237-DBE217B208DB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Science Base", "Science Base\Science Base.csproj", "{12D16A1D-C562-427C-B570-48EA44633728}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Science Library", "Science Library\Science Library.csproj", "{A43E6103-949B-4EFD-9A17-662EA79DF9C7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D33A5CED-F246-4423-B237-DBE217B208DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D33A5CED-F246-4423-B237-DBE217B208DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D33A5CED-F246-4423-B237-DBE217B208DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D33A5CED-F246-4423-B237-DBE217B208DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12D16A1D-C562-427C-B570-48EA44633728}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12D16A1D-C562-427C-B570-48EA44633728}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12D16A1D-C562-427C-B570-48EA44633728}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12D16A1D-C562-427C-B570-48EA44633728}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A43E6103-949B-4EFD-9A17-662EA79DF9C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A43E6103-949B-4EFD-9A17-662EA79DF9C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A43E6103-949B-4EFD-9A17-662EA79DF9C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A43E6103-949B-4EFD-9A17-662EA79DF9C7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
