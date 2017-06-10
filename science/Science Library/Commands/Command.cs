@@ -4,10 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Science_Library
+namespace RoboticsLibrary.Commands
 {
-    public class Main
+    public class Command
     {
-		// Nothing yet.
+
+        public Command()
+        {
+
+        }
+
     }
 }
