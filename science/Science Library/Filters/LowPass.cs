@@ -27,17 +27,8 @@ namespace RoboticsLibrary.Filters
     public class LowPass<T> : IFilter<T> where T : IComparable
     {
 
-        public T Output
-        {
-            private set { Output = value; }
-            get { return Output; }
-        } // Output for the Low Pass Filter
-
-        public double LPFk
-        {
-            private set { LPFk = value; }
-            get { return LPFk; }
-        } // Time constant for the Low Pass Filter
+        public T Output { get; private set; } // Output for the Low Pass Filter
+        public double LPFk { get; private set; } // Time constant for the Low Pass Filter
 
         private T LastValue; // Last filter value (internal use)
 

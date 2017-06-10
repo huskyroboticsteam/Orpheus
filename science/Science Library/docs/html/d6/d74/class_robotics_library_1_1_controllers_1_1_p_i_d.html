@@ -82,20 +82,75 @@ $(document).ready(function(){initNavTree('d6/d74/class_robotics_library_1_1_cont
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#properties">Properties</a> &#124;
+<a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="../../d6/d0f/class_robotics_library_1_1_controllers_1_1_p_i_d-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">RoboticsLibrary.Controllers.PID Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Class built to create a <a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html" title="Class built to create a PID control loop in python Based off of the PID control algorithm: https://en...">PID</a> control loop in python Based off of the <a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html" title="Class built to create a PID control loop in python Based off of the PID control algorithm: https://en...">PID</a> control algorithm: <a href="https://en.wikipedia.org/wiki/PID_controller">https://en.wikipedia.org/wiki/PID_controller</a>  
+ <a href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a14aece719f5fecdc6c63f566d4d335aa"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html#a14aece719f5fecdc6c63f566d4d335aa">PID</a> ()</td></tr>
-<tr class="separator:a14aece719f5fecdc6c63f566d4d335aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2b61da609180184fe7a40cba5d8d7cbf"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html#a2b61da609180184fe7a40cba5d8d7cbf">PID</a> (double <a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html#a4764d2e429482ed1f8391e99e41a7e88">Kp</a>=0.0, double <a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html#a11e36b7dec5f85a7a0b209288059aa3f">Ki</a>=0.0, double <a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html#acd3c1beab5e18d1e6a50bc3164a8bec1">Kd</a>=0.0)</td></tr>
+<tr class="separator:a2b61da609180184fe7a40cba5d8d7cbf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a933cc736e6142b6ff531c33243c35549"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html#a933cc736e6142b6ff531c33243c35549">Feed</a> (double Input)</td></tr>
+<tr class="memdesc:a933cc736e6142b6ff531c33243c35549"><td class="mdescLeft">&#160;</td><td class="mdescRight">Feeds the <a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html" title="Class built to create a PID control loop in python Based off of the PID control algorithm: https://en...">PID</a> controller with given input value. The input is the desired controlled value, the output is the relative control value to the control mechanism (e.g. a motor). Tune <a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html" title="Class built to create a PID control loop in python Based off of the PID control algorithm: https://en...">PID</a> coeficients accordingly and limit output to desired limits.  <a href="#a933cc736e6142b6ff531c33243c35549">More...</a><br /></td></tr>
+<tr class="separator:a933cc736e6142b6ff531c33243c35549"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa4d528cb3b0adef1dfe42879319fcbb5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html#aa4d528cb3b0adef1dfe42879319fcbb5">SetTarget</a> (double <a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html#af5293a3d22a040b5a88ff0240fe01870">Target</a>)</td></tr>
+<tr class="memdesc:aa4d528cb3b0adef1dfe42879319fcbb5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the <a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html" title="Class built to create a PID control loop in python Based off of the PID control algorithm: https://en...">PID</a> target to a new target.  <a href="#aa4d528cb3b0adef1dfe42879319fcbb5">More...</a><br /></td></tr>
+<tr class="separator:aa4d528cb3b0adef1dfe42879319fcbb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab9aaa784943a2afcb07cf7b87cb8d5c3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html#ab9aaa784943a2afcb07cf7b87cb8d5c3">SetCoefficients</a> (double <a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html#a4764d2e429482ed1f8391e99e41a7e88">Kp</a>, double <a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html#a11e36b7dec5f85a7a0b209288059aa3f">Ki</a>, double <a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html#acd3c1beab5e18d1e6a50bc3164a8bec1">Kd</a>)</td></tr>
+<tr class="memdesc:ab9aaa784943a2afcb07cf7b87cb8d5c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the <a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html" title="Class built to create a PID control loop in python Based off of the PID control algorithm: https://en...">PID</a> coefficients.  <a href="#ab9aaa784943a2afcb07cf7b87cb8d5c3">More...</a><br /></td></tr>
+<tr class="separator:ab9aaa784943a2afcb07cf7b87cb8d5c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeb32b13f82f1bce070b8b3447eb598ac"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html#aeb32b13f82f1bce070b8b3447eb598ac">Reset</a> ()</td></tr>
+<tr class="memdesc:aeb32b13f82f1bce070b8b3447eb598ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets <a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html" title="Class built to create a PID control loop in python Based off of the PID control algorithm: https://en...">PID</a> Controller.  <a href="#aeb32b13f82f1bce070b8b3447eb598ac">More...</a><br /></td></tr>
+<tr class="separator:aeb32b13f82f1bce070b8b3447eb598ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="properties"></a>
+Properties</h2></td></tr>
+<tr class="memitem:ad175e1d1ace320079e4a6861e6b8507f"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html#ad175e1d1ace320079e4a6861e6b8507f">Output</a><code> [get, private set]</code></td></tr>
+<tr class="separator:ad175e1d1ace320079e4a6861e6b8507f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
+Private Attributes</h2></td></tr>
+<tr class="memitem:ab02462db302470b8d9cd7a1fa4942a3b"><td class="memItemLeft" align="right" valign="top">Stopwatch&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html#ab02462db302470b8d9cd7a1fa4942a3b">StopWatch</a></td></tr>
+<tr class="separator:ab02462db302470b8d9cd7a1fa4942a3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4764d2e429482ed1f8391e99e41a7e88"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html#a4764d2e429482ed1f8391e99e41a7e88">Kp</a></td></tr>
+<tr class="separator:a4764d2e429482ed1f8391e99e41a7e88"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a11e36b7dec5f85a7a0b209288059aa3f"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html#a11e36b7dec5f85a7a0b209288059aa3f">Ki</a></td></tr>
+<tr class="separator:a11e36b7dec5f85a7a0b209288059aa3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acd3c1beab5e18d1e6a50bc3164a8bec1"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html#acd3c1beab5e18d1e6a50bc3164a8bec1">Kd</a></td></tr>
+<tr class="separator:acd3c1beab5e18d1e6a50bc3164a8bec1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af5293a3d22a040b5a88ff0240fe01870"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html#af5293a3d22a040b5a88ff0240fe01870">Target</a></td></tr>
+<tr class="separator:af5293a3d22a040b5a88ff0240fe01870"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a99e787972aaf50f5b782cd90ca75c068"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html#a99e787972aaf50f5b782cd90ca75c068">LastInput</a></td></tr>
+<tr class="separator:a99e787972aaf50f5b782cd90ca75c068"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a078bef8de8d74d96e92efc843848ef"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html#a9a078bef8de8d74d96e92efc843848ef">LastTime</a></td></tr>
+<tr class="separator:a9a078bef8de8d74d96e92efc843848ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2bfa38b888c2dbd356aa74ad4ceb8674"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html#a2bfa38b888c2dbd356aa74ad4ceb8674">LastError</a></td></tr>
+<tr class="separator:a2bfa38b888c2dbd356aa74ad4ceb8674"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aba6336d67bfd9401b9458fce455ce7cf"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html#aba6336d67bfd9401b9458fce455ce7cf">P</a></td></tr>
+<tr class="separator:aba6336d67bfd9401b9458fce455ce7cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3745482662e7162489cbed24ac316b40"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html#a3745482662e7162489cbed24ac316b40">I</a></td></tr>
+<tr class="separator:a3745482662e7162489cbed24ac316b40"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a35a8a9c4e87affebf4634c3a105a47c4"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html#a35a8a9c4e87affebf4634c3a105a47c4">D</a></td></tr>
+<tr class="separator:a35a8a9c4e87affebf4634c3a105a47c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a14aece719f5fecdc6c63f566d4d335aa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a14aece719f5fecdc6c63f566d4d335aa">&#9670;&nbsp;</a></span>PID()</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Class built to create a <a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html" title="Class built to create a PID control loop in python Based off of the PID control algorithm: https://en...">PID</a> control loop in python Based off of the <a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html" title="Class built to create a PID control loop in python Based off of the PID control algorithm: https://en...">PID</a> control algorithm: <a href="https://en.wikipedia.org/wiki/PID_controller">https://en.wikipedia.org/wiki/PID_controller</a> </p>
+<ul>
+<li>* Built for Real-Time Operation * * Basic Implementation as follows: 1) Choose P, I, and D constants in constructor 2) Set a target value using <code><a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html#aa4d528cb3b0adef1dfe42879319fcbb5" title="Sets the PID target to a new target. ">SetTarget()</a></code> (Units do not matter as long as they are used uniformly in the loop) 3) Use <code>Feed(...)</code> to run the <a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html" title="Class built to create a PID control loop in python Based off of the PID control algorithm: https://en...">PID</a> loop given a sensor reading (Should be called iteratively, since it depends on system time) 4) Use <code>YourPIDInstance.Output</code> to return the desired output (Output restrained to +/-1, tune <a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html" title="Class built to create a PID control loop in python Based off of the PID control algorithm: https://en...">PID</a> coefficients accordingly)</li>
+<li>NOTE: This output will be relative to the units given in the <a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html#a933cc736e6142b6ff531c33243c35549" title="Feeds the PID controller with given input value. The input is the desired controlled value...">Feed()</a> method. Map this output to a given range if necessary, for example, in using motors, consider a map to -1 to 1</li>
+<li>NOTE: Nothing has to be done to change the target value during operation, it is all handled in this class.</li>
+<li>* IMPORTANT * * A <a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html" title="Class built to create a PID control loop in python Based off of the PID control algorithm: https://en...">PID</a> Control loop needs to be tuned. That is, to be used correctly, the P, I, and D coefficients need to be precisely chosen. An algorithm for determining coefficients: <a href="https://en.wikipedia.org/wiki/PID_controller#Ziegler.E2.80.93Nichols_method">https://en.wikipedia.org/wiki/PID_controller#Ziegler.E2.80.93Nichols_method</a> </li>
+</ul>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a2b61da609180184fe7a40cba5d8d7cbf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2b61da609180184fe7a40cba5d8d7cbf">&#9670;&nbsp;</a></span>PID()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -103,16 +158,425 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">RoboticsLibrary.Controllers.PID.PID </td>
           <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>Kp</em> = <code>0.0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>Ki</em> = <code>0.0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>Kd</em> = <code>0.0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p></p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">Kp</td><td>Proportional Coefficient</td></tr>
+    <tr><td class="paramname">Ki</td><td>Integral Coefficient</td></tr>
+    <tr><td class="paramname">Kd</td><td>Derivative Coefficient</td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a933cc736e6142b6ff531c33243c35549"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a933cc736e6142b6ff531c33243c35549">&#9670;&nbsp;</a></span>Feed()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void RoboticsLibrary.Controllers.PID.Feed </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>Input</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Feeds the <a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html" title="Class built to create a PID control loop in python Based off of the PID control algorithm: https://en...">PID</a> controller with given input value. The input is the desired controlled value, the output is the relative control value to the control mechanism (e.g. a motor). Tune <a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html" title="Class built to create a PID control loop in python Based off of the PID control algorithm: https://en...">PID</a> coeficients accordingly and limit output to desired limits. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">Input</td><td>Input to feed the <a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html" title="Class built to create a PID control loop in python Based off of the PID control algorithm: https://en...">PID</a> controller.</td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aeb32b13f82f1bce070b8b3447eb598ac"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeb32b13f82f1bce070b8b3447eb598ac">&#9670;&nbsp;</a></span>Reset()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void RoboticsLibrary.Controllers.PID.Reset </td>
+          <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
+<p>Resets <a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html" title="Class built to create a PID control loop in python Based off of the PID control algorithm: https://en...">PID</a> Controller. </p>
+
+</div>
+</div>
+<a id="ab9aaa784943a2afcb07cf7b87cb8d5c3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab9aaa784943a2afcb07cf7b87cb8d5c3">&#9670;&nbsp;</a></span>SetCoefficients()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void RoboticsLibrary.Controllers.PID.SetCoefficients </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>Kp</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>Ki</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>Kd</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets the <a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html" title="Class built to create a PID control loop in python Based off of the PID control algorithm: https://en...">PID</a> coefficients. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">Kp</td><td>Proportional Coefficient</td></tr>
+    <tr><td class="paramname">Ki</td><td>Integral Coefficient</td></tr>
+    <tr><td class="paramname">Kd</td><td>Derivative Coefficient</td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aa4d528cb3b0adef1dfe42879319fcbb5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa4d528cb3b0adef1dfe42879319fcbb5">&#9670;&nbsp;</a></span>SetTarget()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void RoboticsLibrary.Controllers.PID.SetTarget </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>Target</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets the <a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html" title="Class built to create a PID control loop in python Based off of the PID control algorithm: https://en...">PID</a> target to a new target. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">Target</td><td>New <a class="el" href="../../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html" title="Class built to create a PID control loop in python Based off of the PID control algorithm: https://en...">PID</a> target.</td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="a35a8a9c4e87affebf4634c3a105a47c4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a35a8a9c4e87affebf4634c3a105a47c4">&#9670;&nbsp;</a></span>D</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double RoboticsLibrary.Controllers.PID.D</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a3745482662e7162489cbed24ac316b40"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3745482662e7162489cbed24ac316b40">&#9670;&nbsp;</a></span>I</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double RoboticsLibrary.Controllers.PID.I</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="acd3c1beab5e18d1e6a50bc3164a8bec1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acd3c1beab5e18d1e6a50bc3164a8bec1">&#9670;&nbsp;</a></span>Kd</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double RoboticsLibrary.Controllers.PID.Kd</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a11e36b7dec5f85a7a0b209288059aa3f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a11e36b7dec5f85a7a0b209288059aa3f">&#9670;&nbsp;</a></span>Ki</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double RoboticsLibrary.Controllers.PID.Ki</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a4764d2e429482ed1f8391e99e41a7e88"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4764d2e429482ed1f8391e99e41a7e88">&#9670;&nbsp;</a></span>Kp</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double RoboticsLibrary.Controllers.PID.Kp</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a2bfa38b888c2dbd356aa74ad4ceb8674"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2bfa38b888c2dbd356aa74ad4ceb8674">&#9670;&nbsp;</a></span>LastError</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double RoboticsLibrary.Controllers.PID.LastError</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a99e787972aaf50f5b782cd90ca75c068"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a99e787972aaf50f5b782cd90ca75c068">&#9670;&nbsp;</a></span>LastInput</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double RoboticsLibrary.Controllers.PID.LastInput</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a9a078bef8de8d74d96e92efc843848ef"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9a078bef8de8d74d96e92efc843848ef">&#9670;&nbsp;</a></span>LastTime</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double RoboticsLibrary.Controllers.PID.LastTime</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aba6336d67bfd9401b9458fce455ce7cf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aba6336d67bfd9401b9458fce455ce7cf">&#9670;&nbsp;</a></span>P</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double RoboticsLibrary.Controllers.PID.P</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ab02462db302470b8d9cd7a1fa4942a3b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab02462db302470b8d9cd7a1fa4942a3b">&#9670;&nbsp;</a></span>StopWatch</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Stopwatch RoboticsLibrary.Controllers.PID.StopWatch</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af5293a3d22a040b5a88ff0240fe01870"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af5293a3d22a040b5a88ff0240fe01870">&#9670;&nbsp;</a></span>Target</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double RoboticsLibrary.Controllers.PID.Target</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Property Documentation</h2>
+<a id="ad175e1d1ace320079e4a6861e6b8507f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad175e1d1ace320079e4a6861e6b8507f">&#9670;&nbsp;</a></span>Output</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double RoboticsLibrary.Controllers.PID.Output</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">get</span><span class="mlabel">private set</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>Controllers/<a class="el" href="../../d4/dfd/_p_i_d_8cs.html">PID.cs</a></li>
+<li>C:/Users/jaden/Documents/GitHub/2017-18/science/Science Library/Controllers/<a class="el" href="../../d4/dfd/_p_i_d_8cs.html">PID.cs</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
