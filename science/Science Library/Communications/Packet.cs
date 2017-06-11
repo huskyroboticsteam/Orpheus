@@ -4,6 +4,7 @@ using System.Text;
 using System.Net;
 using System.Net.Sockets;
 using RoboticsLibrary.Errors;
+using RoboticsLibrary.Utilities;
 
 namespace RoboticsLibrary.Communications
 {
@@ -16,7 +17,7 @@ namespace RoboticsLibrary.Communications
         // Default packet endpoint
         private static IPEndPoint DefaultEndpoint = new IPEndPoint(IPAddress.Parse("192.168.0.1"), 600);
 
-        private byte Id;                    // Packet ID
+        private byte ID;                    // Packet ID
         private byte[] Timestamp;           // Packet send timestamp
         private byte[] Data;                // Packet data
         private IPEndPoint PacketEndpoint;  // Packet endpoint
@@ -25,15 +26,23 @@ namespace RoboticsLibrary.Communications
         /// <summary>
         /// Constructs new packet of given ID.
         /// </summary>
-        /// <param name="Id"></param>
+        /// <param name="ID"></param>
         /// <param name="PacketEndpoint">
         /// Endpoint for the packet. If null, defaults to given
         /// <c>DefaultEndpoint</c></param>
-        public Packet(int Id, IPEndPoint PacketEndpoint = null)
+        public Packet(int ID, IPEndPoint PacketEndpoint = null)
         {
             this.PacketEndpoint = PacketEndpoint ?? DefaultEndpoint;
-            this.Client = new TcpClient(this.PacketEndpoint);
-            this.Id = (byte)Id;             // Setup ID
+            try
+            {
+                this.Client = new TcpClient(this.PacketEndpoint);
+            }
+            catch(SocketException Exception)
+            {
+                Log.Output(3, Log.Source.NETWORK, "Failed to connect to remote IP " + this.PacketEndpoint);
+                Log.Exception(Log.Source.NETWORK, Exception);
+            }
+            this.ID = (byte)ID;             // Setup ID
             this.Timestamp = new byte[4];   // Initialize timestamp
             this.Data = new byte[1];        // Temporary set to bytearray of length 1
                                             // to prevent null pointer exception.
@@ -59,13 +68,18 @@ namespace RoboticsLibrary.Communications
         /// </returns>
         public bool Send()
         {
+            this.SetTime();
+            return SendWithTimestamp(this.Timestamp);
+        }
+
+        public bool SendWithTimestamp(byte[] Timestamp)
+        {
             try
             {
-                this.SetTime();
                 // Pre-pend Timestamp and ID
                 List<byte> TempDataList = new List<byte>();
-                TempDataList.AddRange(this.Timestamp);
-                TempDataList.Add(this.Id);
+                TempDataList.AddRange(Timestamp);
+                TempDataList.Add(this.ID);
                 TempDataList.AddRange(this.Data);
                 byte[] SendData = TempDataList.ToArray();
                 // Send Data to Endpoint through TCP
@@ -108,6 +122,10 @@ namespace RoboticsLibrary.Communications
             Packet.DefaultEndpoint = Endpoint;
         }
 
+        public override string ToString()
+        {
+            return this.Timestamp + " [" + this.ID + "] " + this.Data;
+        }
 
     }
 

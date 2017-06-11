@@ -15,8 +15,10 @@ namespace Science_Onboard
 			Console.WriteLine("Hello. This is science on the rover. Check back later!");
             Log.OutputLevel = 2;
             Log.OutputType = Log.Source.ALL;
-            Log.Output(3, Log.Source.MOTORS, "EEK THINGS ARE BROKEN");
-            Thread.Sleep(1000);
+            RoboticsLibrary.Communications.Packet Pack = new RoboticsLibrary.Communications.Packet(0x00);
+            Pack.AppendData(new byte[] {0x00, 0x58, 0x6E, 0xFF});
+            Log.Output(0, Log.Source.OTHER, Pack.ToString());
+            Thread.Sleep(10000);
 		}
 	}
 }

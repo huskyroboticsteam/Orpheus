@@ -15,7 +15,7 @@ namespace RoboticsLibrary.Utilities
         /// <summary>
         /// 
         /// </summary>
-        public static void Output(byte Severity, Source Src, String Message)
+        public static void Output(byte Severity, Source Src, string Message)
         {
             if((Severity >= OutputLevel) && ((OutputType == Source.ALL) || (Src == OutputType)))
             {
@@ -30,6 +30,14 @@ namespace RoboticsLibrary.Utilities
                 Message = "[" + DateTime.Now.ToLongTimeString() + "] " + Message;
                 System.Console.WriteLine(Message);
             }
+        }
+
+        public static void Exception(Source Src, Exception Ex)
+        {
+            string Prefix = "[" + DateTime.Now.ToLongTimeString() + "] [EXC] ";
+            string[] Lines = Ex.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
+            Lines = Array.ConvertAll(Lines, Line => (Prefix + Line));
+            Lines.ToList().ForEach(Console.WriteLine);
         }
 
         public enum Source
