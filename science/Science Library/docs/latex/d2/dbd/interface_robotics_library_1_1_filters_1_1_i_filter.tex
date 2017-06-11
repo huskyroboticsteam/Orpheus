@@ -1,0 +1,65 @@
+\hypertarget{interface_robotics_library_1_1_filters_1_1_i_filter}{}\section{Robotics\+Library.\+Filters.\+I\+Filter$<$ T $>$ Interface Template Reference}
+\label{interface_robotics_library_1_1_filters_1_1_i_filter}\index{Robotics\+Library.\+Filters.\+I\+Filter$<$ T $>$@{Robotics\+Library.\+Filters.\+I\+Filter$<$ T $>$}}
+
+
+F\+I\+L\+T\+ER \hyperlink{_filter_8cs}{Filter.\+cs} Written by Jaden Bottemiller May 31, 2017  
+
+
+Inheritance diagram for Robotics\+Library.\+Filters.\+I\+Filter$<$ T $>$\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=1.602289cm]{d2/dbd/interface_robotics_library_1_1_filters_1_1_i_filter}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{interface_robotics_library_1_1_filters_1_1_i_filter_a24d363fb2957923a256448e04634d9ca}{Feed} (T Input, T Rate)
+\item 
+void \hyperlink{interface_robotics_library_1_1_filters_1_1_i_filter_a64855020add7b0354c2773696521c84e}{Feed} (T Input)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+F\+I\+L\+T\+ER \hyperlink{_filter_8cs}{Filter.\+cs} Written by Jaden Bottemiller May 31, 2017 
+
+Unit testing took place on\+: \mbox{[} N\+OT Y\+ET \mbox{]}
+
+This is an interface meant to wrap all filters in the \hyperlink{namespace_robotics_library_1_1_filters}{Filters} namespace.
+
+
+\begin{DoxyItemize}
+\item $\ast$ $\ast$ \hyperlink{namespace_robotics_library_1_1_filters}{Filters} requires the Robotics\+Library.\+Utility Namespace.
+\item $\ast$ $\ast$ Some \hyperlink{namespace_robotics_library_1_1_filters}{Filters} require use of just the \hyperlink{interface_robotics_library_1_1_filters_1_1_i_filter_a64855020add7b0354c2773696521c84e}{Feed(\+T Input)} method. Others require a given \hyperlink{interface_robotics_library_1_1_filters_1_1_i_filter_a24d363fb2957923a256448e04634d9ca}{Feed(\+T Input, T Rate)}. See the documentation for the given filter to determine necessary information. 
+\end{DoxyItemize}\begin{Desc}
+\item[Type Constraints]\begin{description}
+\item[{\em T} : {\em I\+Comparable}]\end{description}
+\end{Desc}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{interface_robotics_library_1_1_filters_1_1_i_filter_a24d363fb2957923a256448e04634d9ca}\label{interface_robotics_library_1_1_filters_1_1_i_filter_a24d363fb2957923a256448e04634d9ca}} 
+\index{Robotics\+Library\+::\+Filters\+::\+I\+Filter@{Robotics\+Library\+::\+Filters\+::\+I\+Filter}!Feed@{Feed}}
+\index{Feed@{Feed}!Robotics\+Library\+::\+Filters\+::\+I\+Filter@{Robotics\+Library\+::\+Filters\+::\+I\+Filter}}
+\subsubsection{\texorpdfstring{Feed()}{Feed()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void \hyperlink{interface_robotics_library_1_1_filters_1_1_i_filter}{Robotics\+Library.\+Filters.\+I\+Filter}$<$ T $>$.Feed (\begin{DoxyParamCaption}\item[{T}]{Input,  }\item[{T}]{Rate }\end{DoxyParamCaption})}
+
+
+
+Implemented in \hyperlink{class_robotics_library_1_1_filters_1_1_kalman_a5c2f27a6d48ede3369d4b9ac776954db}{Robotics\+Library.\+Filters.\+Kalman$<$ T $>$}, \hyperlink{class_robotics_library_1_1_filters_1_1_average_a009ada38087402e4c8f5c3f3390123c8}{Robotics\+Library.\+Filters.\+Average$<$ T $>$}, and \hyperlink{class_robotics_library_1_1_filters_1_1_low_pass_a9b8d610c0f54a17e84ea5e9252c9e215}{Robotics\+Library.\+Filters.\+Low\+Pass$<$ T $>$}.
+
+\mbox{\Hypertarget{interface_robotics_library_1_1_filters_1_1_i_filter_a64855020add7b0354c2773696521c84e}\label{interface_robotics_library_1_1_filters_1_1_i_filter_a64855020add7b0354c2773696521c84e}} 
+\index{Robotics\+Library\+::\+Filters\+::\+I\+Filter@{Robotics\+Library\+::\+Filters\+::\+I\+Filter}!Feed@{Feed}}
+\index{Feed@{Feed}!Robotics\+Library\+::\+Filters\+::\+I\+Filter@{Robotics\+Library\+::\+Filters\+::\+I\+Filter}}
+\subsubsection{\texorpdfstring{Feed()}{Feed()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void \hyperlink{interface_robotics_library_1_1_filters_1_1_i_filter}{Robotics\+Library.\+Filters.\+I\+Filter}$<$ T $>$.Feed (\begin{DoxyParamCaption}\item[{T}]{Input }\end{DoxyParamCaption})}
+
+
+
+Implemented in \hyperlink{class_robotics_library_1_1_filters_1_1_kalman_a92a029a73d197e692fc35b1f6e0ba238}{Robotics\+Library.\+Filters.\+Kalman$<$ T $>$}, \hyperlink{class_robotics_library_1_1_filters_1_1_average_a27479a3706425bb721a7694acd388cdd}{Robotics\+Library.\+Filters.\+Average$<$ T $>$}, and \hyperlink{class_robotics_library_1_1_filters_1_1_low_pass_adba4c542b4935845404729ebb2222b72}{Robotics\+Library.\+Filters.\+Low\+Pass$<$ T $>$}.
+
+
+
+The documentation for this interface was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/jaden/\+Documents/\+Git\+Hub/2017-\/18/science/\+Science Library/\+Filters/\hyperlink{_filter_8cs}{Filter.\+cs}\end{DoxyCompactItemize}

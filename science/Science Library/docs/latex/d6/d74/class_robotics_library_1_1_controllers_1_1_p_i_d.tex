@@ -1,0 +1,228 @@
+\hypertarget{class_robotics_library_1_1_controllers_1_1_p_i_d}{}\section{Robotics\+Library.\+Controllers.\+P\+ID Class Reference}
+\label{class_robotics_library_1_1_controllers_1_1_p_i_d}\index{Robotics\+Library.\+Controllers.\+P\+ID@{Robotics\+Library.\+Controllers.\+P\+ID}}
+
+
+Class built to create a \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d}{P\+ID} control loop in python Based off of the \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d}{P\+ID} control algorithm\+: \href{https://en.wikipedia.org/wiki/PID_controller}{\tt https\+://en.\+wikipedia.\+org/wiki/\+P\+I\+D\+\_\+controller}  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d_a2b61da609180184fe7a40cba5d8d7cbf}{P\+ID} (double \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d_a4764d2e429482ed1f8391e99e41a7e88}{Kp}=0.\+0, double \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d_a11e36b7dec5f85a7a0b209288059aa3f}{Ki}=0.\+0, double \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d_acd3c1beab5e18d1e6a50bc3164a8bec1}{Kd}=0.\+0)
+\item 
+void \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d_a933cc736e6142b6ff531c33243c35549}{Feed} (double Input)
+\begin{DoxyCompactList}\small\item\em Feeds the \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d}{P\+ID} controller with given input value. The input is the desired controlled value, the output is the relative control value to the control mechanism (e.\+g. a motor). Tune \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d}{P\+ID} coeficients accordingly and limit output to desired limits. \end{DoxyCompactList}\item 
+void \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d_aa4d528cb3b0adef1dfe42879319fcbb5}{Set\+Target} (double \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d_af5293a3d22a040b5a88ff0240fe01870}{Target})
+\begin{DoxyCompactList}\small\item\em Sets the \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d}{P\+ID} target to a new target. \end{DoxyCompactList}\item 
+void \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d_ab9aaa784943a2afcb07cf7b87cb8d5c3}{Set\+Coefficients} (double \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d_a4764d2e429482ed1f8391e99e41a7e88}{Kp}, double \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d_a11e36b7dec5f85a7a0b209288059aa3f}{Ki}, double \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d_acd3c1beab5e18d1e6a50bc3164a8bec1}{Kd})
+\begin{DoxyCompactList}\small\item\em Sets the \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d}{P\+ID} coefficients. \end{DoxyCompactList}\item 
+void \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d_aeb32b13f82f1bce070b8b3447eb598ac}{Reset} ()
+\begin{DoxyCompactList}\small\item\em Resets \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d}{P\+ID} Controller. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Properties}
+\begin{DoxyCompactItemize}
+\item 
+double \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d_ad175e1d1ace320079e4a6861e6b8507f}{Output}\hspace{0.3cm}{\ttfamily  \mbox{[}get, private set\mbox{]}}
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+Stopwatch \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d_ab02462db302470b8d9cd7a1fa4942a3b}{Stop\+Watch}
+\item 
+double \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d_a4764d2e429482ed1f8391e99e41a7e88}{Kp}
+\item 
+double \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d_a11e36b7dec5f85a7a0b209288059aa3f}{Ki}
+\item 
+double \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d_acd3c1beab5e18d1e6a50bc3164a8bec1}{Kd}
+\item 
+double \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d_af5293a3d22a040b5a88ff0240fe01870}{Target}
+\item 
+double \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d_a99e787972aaf50f5b782cd90ca75c068}{Last\+Input}
+\item 
+double \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d_a9a078bef8de8d74d96e92efc843848ef}{Last\+Time}
+\item 
+double \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d_a2bfa38b888c2dbd356aa74ad4ceb8674}{Last\+Error}
+\item 
+double \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d_aba6336d67bfd9401b9458fce455ce7cf}{P}
+\item 
+double \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d_a3745482662e7162489cbed24ac316b40}{I}
+\item 
+double \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d_a35a8a9c4e87affebf4634c3a105a47c4}{D}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Class built to create a \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d}{P\+ID} control loop in python Based off of the \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d}{P\+ID} control algorithm\+: \href{https://en.wikipedia.org/wiki/PID_controller}{\tt https\+://en.\+wikipedia.\+org/wiki/\+P\+I\+D\+\_\+controller} 
+
+
+\begin{DoxyItemize}
+\item $\ast$ Built for Real-\/\+Time Operation $\ast$ $\ast$ Basic Implementation as follows\+: 1) Choose P, I, and D constants in constructor 2) Set a target value using {\ttfamily \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d_aa4d528cb3b0adef1dfe42879319fcbb5}{Set\+Target()}} (Units do not matter as long as they are used uniformly in the loop) 3) Use {\ttfamily Feed(...)} to run the \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d}{P\+ID} loop given a sensor reading (Should be called iteratively, since it depends on system time) 4) Use {\ttfamily Your\+P\+I\+D\+Instance.\+Output} to return the desired output (Output restrained to +/-\/1, tune \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d}{P\+ID} coefficients accordingly)
+\item N\+O\+TE\+: This output will be relative to the units given in the \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d_a933cc736e6142b6ff531c33243c35549}{Feed()} method. Map this output to a given range if necessary, for example, in using motors, consider a map to -\/1 to 1
+\item N\+O\+TE\+: Nothing has to be done to change the target value during operation, it is all handled in this class.
+\item $\ast$ I\+M\+P\+O\+R\+T\+A\+NT $\ast$ $\ast$ A \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d}{P\+ID} Control loop needs to be tuned. That is, to be used correctly, the P, I, and D coefficients need to be precisely chosen. An algorithm for determining coefficients\+: \href{https://en.wikipedia.org/wiki/PID_controller#Ziegler.E2.80.93Nichols_method}{\tt https\+://en.\+wikipedia.\+org/wiki/\+P\+I\+D\+\_\+controller\#\+Ziegler.\+E2.\+80.\+93\+Nichols\+\_\+method} 
+\end{DoxyItemize}
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_robotics_library_1_1_controllers_1_1_p_i_d_a2b61da609180184fe7a40cba5d8d7cbf}\label{class_robotics_library_1_1_controllers_1_1_p_i_d_a2b61da609180184fe7a40cba5d8d7cbf}} 
+\index{Robotics\+Library\+::\+Controllers\+::\+P\+ID@{Robotics\+Library\+::\+Controllers\+::\+P\+ID}!P\+ID@{P\+ID}}
+\index{P\+ID@{P\+ID}!Robotics\+Library\+::\+Controllers\+::\+P\+ID@{Robotics\+Library\+::\+Controllers\+::\+P\+ID}}
+\subsubsection{\texorpdfstring{P\+I\+D()}{PID()}}
+{\footnotesize\ttfamily Robotics\+Library.\+Controllers.\+P\+I\+D.\+P\+ID (\begin{DoxyParamCaption}\item[{double}]{Kp = {\ttfamily 0.0},  }\item[{double}]{Ki = {\ttfamily 0.0},  }\item[{double}]{Kd = {\ttfamily 0.0} }\end{DoxyParamCaption})}
+
+
+
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em Kp} & Proportional Coefficient\\
+\hline
+{\em Ki} & Integral Coefficient\\
+\hline
+{\em Kd} & Derivative Coefficient\\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{class_robotics_library_1_1_controllers_1_1_p_i_d_a933cc736e6142b6ff531c33243c35549}\label{class_robotics_library_1_1_controllers_1_1_p_i_d_a933cc736e6142b6ff531c33243c35549}} 
+\index{Robotics\+Library\+::\+Controllers\+::\+P\+ID@{Robotics\+Library\+::\+Controllers\+::\+P\+ID}!Feed@{Feed}}
+\index{Feed@{Feed}!Robotics\+Library\+::\+Controllers\+::\+P\+ID@{Robotics\+Library\+::\+Controllers\+::\+P\+ID}}
+\subsubsection{\texorpdfstring{Feed()}{Feed()}}
+{\footnotesize\ttfamily void Robotics\+Library.\+Controllers.\+P\+I\+D.\+Feed (\begin{DoxyParamCaption}\item[{double}]{Input }\end{DoxyParamCaption})}
+
+
+
+Feeds the \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d}{P\+ID} controller with given input value. The input is the desired controlled value, the output is the relative control value to the control mechanism (e.\+g. a motor). Tune \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d}{P\+ID} coeficients accordingly and limit output to desired limits. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Input} & Input to feed the \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d}{P\+ID} controller.\\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_robotics_library_1_1_controllers_1_1_p_i_d_aeb32b13f82f1bce070b8b3447eb598ac}\label{class_robotics_library_1_1_controllers_1_1_p_i_d_aeb32b13f82f1bce070b8b3447eb598ac}} 
+\index{Robotics\+Library\+::\+Controllers\+::\+P\+ID@{Robotics\+Library\+::\+Controllers\+::\+P\+ID}!Reset@{Reset}}
+\index{Reset@{Reset}!Robotics\+Library\+::\+Controllers\+::\+P\+ID@{Robotics\+Library\+::\+Controllers\+::\+P\+ID}}
+\subsubsection{\texorpdfstring{Reset()}{Reset()}}
+{\footnotesize\ttfamily void Robotics\+Library.\+Controllers.\+P\+I\+D.\+Reset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Resets \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d}{P\+ID} Controller. 
+
+\mbox{\Hypertarget{class_robotics_library_1_1_controllers_1_1_p_i_d_ab9aaa784943a2afcb07cf7b87cb8d5c3}\label{class_robotics_library_1_1_controllers_1_1_p_i_d_ab9aaa784943a2afcb07cf7b87cb8d5c3}} 
+\index{Robotics\+Library\+::\+Controllers\+::\+P\+ID@{Robotics\+Library\+::\+Controllers\+::\+P\+ID}!Set\+Coefficients@{Set\+Coefficients}}
+\index{Set\+Coefficients@{Set\+Coefficients}!Robotics\+Library\+::\+Controllers\+::\+P\+ID@{Robotics\+Library\+::\+Controllers\+::\+P\+ID}}
+\subsubsection{\texorpdfstring{Set\+Coefficients()}{SetCoefficients()}}
+{\footnotesize\ttfamily void Robotics\+Library.\+Controllers.\+P\+I\+D.\+Set\+Coefficients (\begin{DoxyParamCaption}\item[{double}]{Kp,  }\item[{double}]{Ki,  }\item[{double}]{Kd }\end{DoxyParamCaption})}
+
+
+
+Sets the \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d}{P\+ID} coefficients. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Kp} & Proportional Coefficient\\
+\hline
+{\em Ki} & Integral Coefficient\\
+\hline
+{\em Kd} & Derivative Coefficient\\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_robotics_library_1_1_controllers_1_1_p_i_d_aa4d528cb3b0adef1dfe42879319fcbb5}\label{class_robotics_library_1_1_controllers_1_1_p_i_d_aa4d528cb3b0adef1dfe42879319fcbb5}} 
+\index{Robotics\+Library\+::\+Controllers\+::\+P\+ID@{Robotics\+Library\+::\+Controllers\+::\+P\+ID}!Set\+Target@{Set\+Target}}
+\index{Set\+Target@{Set\+Target}!Robotics\+Library\+::\+Controllers\+::\+P\+ID@{Robotics\+Library\+::\+Controllers\+::\+P\+ID}}
+\subsubsection{\texorpdfstring{Set\+Target()}{SetTarget()}}
+{\footnotesize\ttfamily void Robotics\+Library.\+Controllers.\+P\+I\+D.\+Set\+Target (\begin{DoxyParamCaption}\item[{double}]{Target }\end{DoxyParamCaption})}
+
+
+
+Sets the \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d}{P\+ID} target to a new target. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Target} & New \hyperlink{class_robotics_library_1_1_controllers_1_1_p_i_d}{P\+ID} target.\\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{class_robotics_library_1_1_controllers_1_1_p_i_d_a35a8a9c4e87affebf4634c3a105a47c4}\label{class_robotics_library_1_1_controllers_1_1_p_i_d_a35a8a9c4e87affebf4634c3a105a47c4}} 
+\index{Robotics\+Library\+::\+Controllers\+::\+P\+ID@{Robotics\+Library\+::\+Controllers\+::\+P\+ID}!D@{D}}
+\index{D@{D}!Robotics\+Library\+::\+Controllers\+::\+P\+ID@{Robotics\+Library\+::\+Controllers\+::\+P\+ID}}
+\subsubsection{\texorpdfstring{D}{D}}
+{\footnotesize\ttfamily double Robotics\+Library.\+Controllers.\+P\+I\+D.\+D\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_robotics_library_1_1_controllers_1_1_p_i_d_a3745482662e7162489cbed24ac316b40}\label{class_robotics_library_1_1_controllers_1_1_p_i_d_a3745482662e7162489cbed24ac316b40}} 
+\index{Robotics\+Library\+::\+Controllers\+::\+P\+ID@{Robotics\+Library\+::\+Controllers\+::\+P\+ID}!I@{I}}
+\index{I@{I}!Robotics\+Library\+::\+Controllers\+::\+P\+ID@{Robotics\+Library\+::\+Controllers\+::\+P\+ID}}
+\subsubsection{\texorpdfstring{I}{I}}
+{\footnotesize\ttfamily double Robotics\+Library.\+Controllers.\+P\+I\+D.\+I\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_robotics_library_1_1_controllers_1_1_p_i_d_acd3c1beab5e18d1e6a50bc3164a8bec1}\label{class_robotics_library_1_1_controllers_1_1_p_i_d_acd3c1beab5e18d1e6a50bc3164a8bec1}} 
+\index{Robotics\+Library\+::\+Controllers\+::\+P\+ID@{Robotics\+Library\+::\+Controllers\+::\+P\+ID}!Kd@{Kd}}
+\index{Kd@{Kd}!Robotics\+Library\+::\+Controllers\+::\+P\+ID@{Robotics\+Library\+::\+Controllers\+::\+P\+ID}}
+\subsubsection{\texorpdfstring{Kd}{Kd}}
+{\footnotesize\ttfamily double Robotics\+Library.\+Controllers.\+P\+I\+D.\+Kd\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_robotics_library_1_1_controllers_1_1_p_i_d_a11e36b7dec5f85a7a0b209288059aa3f}\label{class_robotics_library_1_1_controllers_1_1_p_i_d_a11e36b7dec5f85a7a0b209288059aa3f}} 
+\index{Robotics\+Library\+::\+Controllers\+::\+P\+ID@{Robotics\+Library\+::\+Controllers\+::\+P\+ID}!Ki@{Ki}}
+\index{Ki@{Ki}!Robotics\+Library\+::\+Controllers\+::\+P\+ID@{Robotics\+Library\+::\+Controllers\+::\+P\+ID}}
+\subsubsection{\texorpdfstring{Ki}{Ki}}
+{\footnotesize\ttfamily double Robotics\+Library.\+Controllers.\+P\+I\+D.\+Ki\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_robotics_library_1_1_controllers_1_1_p_i_d_a4764d2e429482ed1f8391e99e41a7e88}\label{class_robotics_library_1_1_controllers_1_1_p_i_d_a4764d2e429482ed1f8391e99e41a7e88}} 
+\index{Robotics\+Library\+::\+Controllers\+::\+P\+ID@{Robotics\+Library\+::\+Controllers\+::\+P\+ID}!Kp@{Kp}}
+\index{Kp@{Kp}!Robotics\+Library\+::\+Controllers\+::\+P\+ID@{Robotics\+Library\+::\+Controllers\+::\+P\+ID}}
+\subsubsection{\texorpdfstring{Kp}{Kp}}
+{\footnotesize\ttfamily double Robotics\+Library.\+Controllers.\+P\+I\+D.\+Kp\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_robotics_library_1_1_controllers_1_1_p_i_d_a2bfa38b888c2dbd356aa74ad4ceb8674}\label{class_robotics_library_1_1_controllers_1_1_p_i_d_a2bfa38b888c2dbd356aa74ad4ceb8674}} 
+\index{Robotics\+Library\+::\+Controllers\+::\+P\+ID@{Robotics\+Library\+::\+Controllers\+::\+P\+ID}!Last\+Error@{Last\+Error}}
+\index{Last\+Error@{Last\+Error}!Robotics\+Library\+::\+Controllers\+::\+P\+ID@{Robotics\+Library\+::\+Controllers\+::\+P\+ID}}
+\subsubsection{\texorpdfstring{Last\+Error}{LastError}}
+{\footnotesize\ttfamily double Robotics\+Library.\+Controllers.\+P\+I\+D.\+Last\+Error\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_robotics_library_1_1_controllers_1_1_p_i_d_a99e787972aaf50f5b782cd90ca75c068}\label{class_robotics_library_1_1_controllers_1_1_p_i_d_a99e787972aaf50f5b782cd90ca75c068}} 
+\index{Robotics\+Library\+::\+Controllers\+::\+P\+ID@{Robotics\+Library\+::\+Controllers\+::\+P\+ID}!Last\+Input@{Last\+Input}}
+\index{Last\+Input@{Last\+Input}!Robotics\+Library\+::\+Controllers\+::\+P\+ID@{Robotics\+Library\+::\+Controllers\+::\+P\+ID}}
+\subsubsection{\texorpdfstring{Last\+Input}{LastInput}}
+{\footnotesize\ttfamily double Robotics\+Library.\+Controllers.\+P\+I\+D.\+Last\+Input\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_robotics_library_1_1_controllers_1_1_p_i_d_a9a078bef8de8d74d96e92efc843848ef}\label{class_robotics_library_1_1_controllers_1_1_p_i_d_a9a078bef8de8d74d96e92efc843848ef}} 
+\index{Robotics\+Library\+::\+Controllers\+::\+P\+ID@{Robotics\+Library\+::\+Controllers\+::\+P\+ID}!Last\+Time@{Last\+Time}}
+\index{Last\+Time@{Last\+Time}!Robotics\+Library\+::\+Controllers\+::\+P\+ID@{Robotics\+Library\+::\+Controllers\+::\+P\+ID}}
+\subsubsection{\texorpdfstring{Last\+Time}{LastTime}}
+{\footnotesize\ttfamily double Robotics\+Library.\+Controllers.\+P\+I\+D.\+Last\+Time\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_robotics_library_1_1_controllers_1_1_p_i_d_aba6336d67bfd9401b9458fce455ce7cf}\label{class_robotics_library_1_1_controllers_1_1_p_i_d_aba6336d67bfd9401b9458fce455ce7cf}} 
+\index{Robotics\+Library\+::\+Controllers\+::\+P\+ID@{Robotics\+Library\+::\+Controllers\+::\+P\+ID}!P@{P}}
+\index{P@{P}!Robotics\+Library\+::\+Controllers\+::\+P\+ID@{Robotics\+Library\+::\+Controllers\+::\+P\+ID}}
+\subsubsection{\texorpdfstring{P}{P}}
+{\footnotesize\ttfamily double Robotics\+Library.\+Controllers.\+P\+I\+D.\+P\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_robotics_library_1_1_controllers_1_1_p_i_d_ab02462db302470b8d9cd7a1fa4942a3b}\label{class_robotics_library_1_1_controllers_1_1_p_i_d_ab02462db302470b8d9cd7a1fa4942a3b}} 
+\index{Robotics\+Library\+::\+Controllers\+::\+P\+ID@{Robotics\+Library\+::\+Controllers\+::\+P\+ID}!Stop\+Watch@{Stop\+Watch}}
+\index{Stop\+Watch@{Stop\+Watch}!Robotics\+Library\+::\+Controllers\+::\+P\+ID@{Robotics\+Library\+::\+Controllers\+::\+P\+ID}}
+\subsubsection{\texorpdfstring{Stop\+Watch}{StopWatch}}
+{\footnotesize\ttfamily Stopwatch Robotics\+Library.\+Controllers.\+P\+I\+D.\+Stop\+Watch\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_robotics_library_1_1_controllers_1_1_p_i_d_af5293a3d22a040b5a88ff0240fe01870}\label{class_robotics_library_1_1_controllers_1_1_p_i_d_af5293a3d22a040b5a88ff0240fe01870}} 
+\index{Robotics\+Library\+::\+Controllers\+::\+P\+ID@{Robotics\+Library\+::\+Controllers\+::\+P\+ID}!Target@{Target}}
+\index{Target@{Target}!Robotics\+Library\+::\+Controllers\+::\+P\+ID@{Robotics\+Library\+::\+Controllers\+::\+P\+ID}}
+\subsubsection{\texorpdfstring{Target}{Target}}
+{\footnotesize\ttfamily double Robotics\+Library.\+Controllers.\+P\+I\+D.\+Target\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+\subsection{Property Documentation}
+\mbox{\Hypertarget{class_robotics_library_1_1_controllers_1_1_p_i_d_ad175e1d1ace320079e4a6861e6b8507f}\label{class_robotics_library_1_1_controllers_1_1_p_i_d_ad175e1d1ace320079e4a6861e6b8507f}} 
+\index{Robotics\+Library\+::\+Controllers\+::\+P\+ID@{Robotics\+Library\+::\+Controllers\+::\+P\+ID}!Output@{Output}}
+\index{Output@{Output}!Robotics\+Library\+::\+Controllers\+::\+P\+ID@{Robotics\+Library\+::\+Controllers\+::\+P\+ID}}
+\subsubsection{\texorpdfstring{Output}{Output}}
+{\footnotesize\ttfamily double Robotics\+Library.\+Controllers.\+P\+I\+D.\+Output\hspace{0.3cm}{\ttfamily [get]}, {\ttfamily [private set]}}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/jaden/\+Documents/\+Git\+Hub/2017-\/18/science/\+Science Library/\+Controllers/\hyperlink{_p_i_d_8cs}{P\+I\+D.\+cs}\end{DoxyCompactItemize}
