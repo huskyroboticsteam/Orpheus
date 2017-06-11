@@ -65,7 +65,7 @@ namespace RoboticsLibrary.Communications
                 CommHandler.TcpListener = new TcpListener(CommHandler.Endpoint);
                 CommHandler.SendQueue = new Queue<Packet>();
                 CommHandler.SendThread = new Thread(new ThreadStart(CommHandler.Send));
-                CommHandler.ReceiveThread = new Thread(new ThreadStart(CommHandler.Send));
+                CommHandler.ReceiveThread = new Thread(new ThreadStart(CommHandler.Receive));
                 CommHandler.TcpListener.Start();
                 CommHandler.SendThread.Start();
                 CommHandler.ReceiveThread.Start();
