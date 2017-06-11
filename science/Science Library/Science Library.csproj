@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\Command.cs" />
+    <Compile Include="Commands\PIDCommand.cs" />
     <Compile Include="Communications\CommHandler.cs" />
     <Compile Include="Communications\Message.cs" />
     <Compile Include="Communications\Packet.cs" />
@@ -51,7 +52,11 @@
     <Compile Include="Filters\Filter.cs" />
     <Compile Include="Filters\Kalman.cs" />
     <Compile Include="Filters\LowPass.cs" />
+    <Compile Include="Motors\Servo.cs" />
+    <Compile Include="Motors\TalonMC.cs" />
+    <Compile Include="Motors\Motor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sensors\Encoder.cs" />
     <Compile Include="Sensors\Sensor.cs" />
     <Compile Include="Utilities\Log.cs" />
     <Compile Include="Utilities\UtilMain.cs" />
