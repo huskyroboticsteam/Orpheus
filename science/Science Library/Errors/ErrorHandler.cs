@@ -31,7 +31,7 @@ namespace RoboticsLibrary.Errors
         /// Throws an error given an integer value for the exception.
         /// </summary>
         /// <param name="Error">The integer value of the error to throw</param>
-        /// <param name="Send">true if Error to be send over comms.</param>
+        /// <param name="Send">true if Error to be sent over comms.</param>
         public static void Throw(int Error, bool Send = true)
         {
         }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace RoboticsLibrary.Controllers
 {
     /// <summary>
-    /// Class built to create a PID control loop in python
+    /// Class built to create a PID control loop in C#
     /// Based off of the PID control algorithm:
     /// https://en.wikipedia.org/wiki/PID_controller 
     /// * * Built for Real-Time Operation * * 
