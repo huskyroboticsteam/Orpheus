@@ -15,6 +15,7 @@ namespace RoboticsLibrary.Communications
 
         public int Timesamp, Id; // Stores message timestamp and id
         public byte[] Data;      // Stored message data (discluding timestamp and id)
+        public byte[] RawData;
         public IPEndPoint From;  // Endpoint that the message was received from.
 
         /// <summary>
@@ -31,6 +32,7 @@ namespace RoboticsLibrary.Communications
         /// Given from endpoint</param>
         public Message(byte[] IncomingData, IPEndPoint From)
         {
+            this.RawData = IncomingData;
             // Retrieve necessary data for instantiation
             byte[] TimeBytes = UtilMain.SubArray(IncomingData, 0, 4);
             byte IdByte = IncomingData[4];

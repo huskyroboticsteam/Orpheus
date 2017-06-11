@@ -15,7 +15,7 @@ namespace RoboticsLibrary.Communications
         // Delegate method type for parsing specific packet ids
         public delegate void ParseMethod(Message NewMessage);
         // Stored parsing Handlers for all possible message ids
-        private static ParseMethod[] ParsingHandlers = new ParseMethod[256];
+        private static Dictionary<int, Delegate> ParsingHandlers = new Dictionary<int, Delegate>();
 
         /// <summary>
         /// Sets the handler for parsing of the appropriate
@@ -26,8 +26,8 @@ namespace RoboticsLibrary.Communications
         /// <param name="ParseMethod">Method used when incoming packet
         /// of <c>MessageId</c> is received.</param>
         public static void SetParseHandler(byte MessageId, ParseMethod ParseMethod)
-        {
-            Parse.ParsingHandlers[MessageId] = ParseMethod;
+        { 
+            ParsingHandlers[MessageId] = ParseMethod;
         }
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace RoboticsLibrary.Communications
         {
             try
             {
-                Parse.ParsingHandlers[NewMessage.Id](NewMessage);
+                ParsingHandlers[NewMessage.Id].DynamicInvoke(NewMessage);
             }
             catch (Exception e)
             {
