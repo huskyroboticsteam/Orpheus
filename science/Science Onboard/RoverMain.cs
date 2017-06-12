@@ -33,9 +33,13 @@ namespace Science_Onboard
 
             LimitSwitch LimSw = new LimitSwitch(3, true);
             LimSw.SwitchToggle += LimitSwitchEvent;
+
+            RoboticsLibrary.Sensors.Encoder Enc = new RoboticsLibrary.Sensors.Encoder(0, 0, 360);
+            Enc.Turned += EncoderTurnedEvent;
             while (true)
             {
                 LimSw.UpdateState();
+                Enc.UpdateState();
                 Thread.Sleep(1000);
             }
         }
@@ -43,6 +47,11 @@ namespace Science_Onboard
         static void LimitSwitchEvent(object Sender, LimitSwitchToggle Event)
         {
             Log.Output(Log.Severity.DEBUG, Log.Source.SENSORS, "Limit switch toggle!");
+        }
+
+        static void EncoderTurnedEvent(object Sender, EncoderTurn Event)
+        {
+            Log.Output(Log.Severity.DEBUG, Log.Source.SENSORS, "Encoder turned by " + Event.TurnAmount);
         }
 	}
 }
