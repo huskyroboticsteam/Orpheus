@@ -17,7 +17,7 @@ namespace Science_Base
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void EmergencyStopClick(object sender, EventArgs e)
         {
 
         }

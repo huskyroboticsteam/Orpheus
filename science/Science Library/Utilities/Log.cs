@@ -25,34 +25,42 @@ namespace RoboticsLibrary.Utilities
         {
             if((Sev >= OutputLevel) && ((OutputType == Source.ALL) || (Src == OutputType)))
             {
-                switch (Sev)
-                {
-                    case Severity.DEBUG:
-                        Message = "[DBG] " + Message;
-                        Console.ForegroundColor = ConsoleColor.Gray;
-                        break;
-                    case Severity.INFO:
-                        Message = "[INF] " + Message;
-                        Console.ForegroundColor = ConsoleColor.White;
-                        break;
-                    case Severity.WARNING:
-                        Message = "[WRN] " + Message;
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        break;
-                    case Severity.ERROR:
-                        Message = "[ERR] " + Message;
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        break;
-                    case Severity.FATAL:
-                        Message = "[FAT] " + Message;
-                        Console.ForegroundColor = ConsoleColor.Black;
-                        Console.BackgroundColor = ConsoleColor.Red;
-                        break;
-                }
-                Message = "[" + DateTime.Now.ToLongTimeString() + "] " + Message;
-                System.Console.WriteLine(Message);
-                Console.ResetColor();
+                ForceOutput(Sev, Src, Message);
             }
+        }
+
+        /// <summary>
+        /// Same as Output, but ignores logging settings and always outputs.
+        /// </summary>
+        public static void ForceOutput(Severity Sev, Source Src, string Message)
+        {
+            switch (Sev)
+            {
+                case Severity.DEBUG:
+                    Message = "[DBG] " + Message;
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                    break;
+                case Severity.INFO:
+                    Message = "[INF] " + Message;
+                    Console.ForegroundColor = ConsoleColor.White;
+                    break;
+                case Severity.WARNING:
+                    Message = "[WRN] " + Message;
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    break;
+                case Severity.ERROR:
+                    Message = "[ERR] " + Message;
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    break;
+                case Severity.FATAL:
+                    Message = "[FAT] " + Message;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.BackgroundColor = ConsoleColor.Red;
+                    break;
+            }
+            Message = "[" + DateTime.Now.ToLongTimeString() + "] " + Message;
+            System.Console.WriteLine(Message);
+            Console.ResetColor();
         }
 
         /// <summary>

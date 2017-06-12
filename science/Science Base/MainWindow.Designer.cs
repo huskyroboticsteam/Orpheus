@@ -35,20 +35,20 @@
 			this.DebugList = new System.Windows.Forms.TableLayoutPanel();
 			this.PacketGenBox = new System.Windows.Forms.GroupBox();
 			this.PacketGenLayout = new System.Windows.Forms.TableLayoutPanel();
-			this.label1 = new System.Windows.Forms.Label();
-			this.label2 = new System.Windows.Forms.Label();
-			this.textBox2 = new System.Windows.Forms.TextBox();
-			this.textBox3 = new System.Windows.Forms.TextBox();
-			this.label3 = new System.Windows.Forms.Label();
-			this.button2 = new System.Windows.Forms.Button();
+			this.TimestampTitle = new System.Windows.Forms.Label();
+			this.IDTitle = new System.Windows.Forms.Label();
+			this.IDTextbox = new System.Windows.Forms.TextBox();
+			this.DataTextbox = new System.Windows.Forms.TextBox();
+			this.DataTitle = new System.Windows.Forms.Label();
+			this.SendPacketBtn = new System.Windows.Forms.Button();
 			this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-			this.checkBox1 = new System.Windows.Forms.CheckBox();
-			this.textBox1 = new System.Windows.Forms.TextBox();
-			this.label4 = new System.Windows.Forms.Label();
-			this.label5 = new System.Windows.Forms.Label();
-			this.label6 = new System.Windows.Forms.Label();
-			this.label7 = new System.Windows.Forms.Label();
-			this.button1 = new System.Windows.Forms.Button();
+			this.UseCurrentTime = new System.Windows.Forms.CheckBox();
+			this.TimestampTextbox = new System.Windows.Forms.TextBox();
+			this.InterpretationTimestamp = new System.Windows.Forms.Label();
+			this.InterpretationID = new System.Windows.Forms.Label();
+			this.InterpretationData = new System.Windows.Forms.Label();
+			this.PacketConstructStatus = new System.Windows.Forms.Label();
+			this.EmergencyStopBtn = new System.Windows.Forms.Button();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.tabControl1.SuspendLayout();
 			this.Debugging.SuspendLayout();
@@ -65,7 +65,7 @@
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
 			this.tableLayoutPanel1.Controls.Add(this.tabControl1, 0, 0);
-			this.tableLayoutPanel1.Controls.Add(this.button1, 0, 1);
+			this.tableLayoutPanel1.Controls.Add(this.EmergencyStopBtn, 0, 1);
 			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
 			this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
@@ -146,18 +146,18 @@
 			this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 23.52941F));
 			this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 23.52941F));
 			this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 52.94118F));
-			this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 92F));
-			this.PacketGenLayout.Controls.Add(this.label1, 0, 0);
-			this.PacketGenLayout.Controls.Add(this.label2, 1, 0);
-			this.PacketGenLayout.Controls.Add(this.textBox2, 1, 1);
-			this.PacketGenLayout.Controls.Add(this.textBox3, 2, 1);
-			this.PacketGenLayout.Controls.Add(this.label3, 2, 0);
-			this.PacketGenLayout.Controls.Add(this.button2, 3, 1);
+			this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 95F));
+			this.PacketGenLayout.Controls.Add(this.TimestampTitle, 0, 0);
+			this.PacketGenLayout.Controls.Add(this.IDTitle, 1, 0);
+			this.PacketGenLayout.Controls.Add(this.IDTextbox, 1, 1);
+			this.PacketGenLayout.Controls.Add(this.DataTextbox, 2, 1);
+			this.PacketGenLayout.Controls.Add(this.DataTitle, 2, 0);
+			this.PacketGenLayout.Controls.Add(this.SendPacketBtn, 3, 1);
 			this.PacketGenLayout.Controls.Add(this.tableLayoutPanel2, 0, 1);
-			this.PacketGenLayout.Controls.Add(this.label4, 0, 2);
-			this.PacketGenLayout.Controls.Add(this.label5, 1, 2);
-			this.PacketGenLayout.Controls.Add(this.label6, 2, 2);
-			this.PacketGenLayout.Controls.Add(this.label7, 3, 2);
+			this.PacketGenLayout.Controls.Add(this.InterpretationTimestamp, 0, 2);
+			this.PacketGenLayout.Controls.Add(this.InterpretationID, 1, 2);
+			this.PacketGenLayout.Controls.Add(this.InterpretationData, 2, 2);
+			this.PacketGenLayout.Controls.Add(this.PacketConstructStatus, 3, 2);
 			this.PacketGenLayout.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.PacketGenLayout.Location = new System.Drawing.Point(3, 16);
 			this.PacketGenLayout.Margin = new System.Windows.Forms.Padding(0);
@@ -169,75 +169,75 @@
 			this.PacketGenLayout.Size = new System.Drawing.Size(770, 106);
 			this.PacketGenLayout.TabIndex = 0;
 			// 
-			// label1
+			// TimestampTitle
 			// 
-			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(3, 0);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(58, 13);
-			this.label1.TabIndex = 0;
-			this.label1.Text = "Timestamp";
+			this.TimestampTitle.AutoSize = true;
+			this.TimestampTitle.Location = new System.Drawing.Point(3, 0);
+			this.TimestampTitle.Name = "TimestampTitle";
+			this.TimestampTitle.Size = new System.Drawing.Size(58, 13);
+			this.TimestampTitle.TabIndex = 0;
+			this.TimestampTitle.Text = "Timestamp";
 			// 
-			// label2
+			// IDTitle
 			// 
-			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(162, 0);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(18, 13);
-			this.label2.TabIndex = 2;
-			this.label2.Text = "ID";
+			this.IDTitle.AutoSize = true;
+			this.IDTitle.Location = new System.Drawing.Point(161, 0);
+			this.IDTitle.Name = "IDTitle";
+			this.IDTitle.Size = new System.Drawing.Size(18, 13);
+			this.IDTitle.TabIndex = 2;
+			this.IDTitle.Text = "ID";
 			// 
-			// textBox2
+			// IDTextbox
 			// 
-			this.textBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			this.IDTextbox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.textBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-			this.textBox2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-			this.textBox2.Location = new System.Drawing.Point(162, 23);
-			this.textBox2.Name = "textBox2";
-			this.textBox2.Size = new System.Drawing.Size(153, 20);
-			this.textBox2.TabIndex = 3;
+			this.IDTextbox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+			this.IDTextbox.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+			this.IDTextbox.Location = new System.Drawing.Point(161, 23);
+			this.IDTextbox.Name = "IDTextbox";
+			this.IDTextbox.Size = new System.Drawing.Size(152, 20);
+			this.IDTextbox.TabIndex = 3;
 			// 
-			// textBox3
+			// DataTextbox
 			// 
-			this.textBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			this.DataTextbox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.textBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-			this.textBox3.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-			this.textBox3.Location = new System.Drawing.Point(321, 23);
-			this.textBox3.Name = "textBox3";
-			this.textBox3.Size = new System.Drawing.Size(352, 20);
-			this.textBox3.TabIndex = 4;
+			this.DataTextbox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+			this.DataTextbox.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+			this.DataTextbox.Location = new System.Drawing.Point(319, 23);
+			this.DataTextbox.Name = "DataTextbox";
+			this.DataTextbox.Size = new System.Drawing.Size(351, 20);
+			this.DataTextbox.TabIndex = 4;
 			// 
-			// label3
+			// DataTitle
 			// 
-			this.label3.AutoSize = true;
-			this.label3.Location = new System.Drawing.Point(321, 0);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(30, 13);
-			this.label3.TabIndex = 5;
-			this.label3.Text = "Data";
+			this.DataTitle.AutoSize = true;
+			this.DataTitle.Location = new System.Drawing.Point(319, 0);
+			this.DataTitle.Name = "DataTitle";
+			this.DataTitle.Size = new System.Drawing.Size(30, 13);
+			this.DataTitle.TabIndex = 5;
+			this.DataTitle.Text = "Data";
 			// 
-			// button2
+			// SendPacketBtn
 			// 
-			this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			this.SendPacketBtn.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.button2.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-			this.button2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-			this.button2.Location = new System.Drawing.Point(679, 23);
-			this.button2.Name = "button2";
-			this.button2.Size = new System.Drawing.Size(88, 25);
-			this.button2.TabIndex = 6;
-			this.button2.Text = "Send";
-			this.button2.UseVisualStyleBackColor = false;
+			this.SendPacketBtn.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+			this.SendPacketBtn.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+			this.SendPacketBtn.Location = new System.Drawing.Point(676, 23);
+			this.SendPacketBtn.Name = "SendPacketBtn";
+			this.SendPacketBtn.Size = new System.Drawing.Size(91, 25);
+			this.SendPacketBtn.TabIndex = 5;
+			this.SendPacketBtn.Text = "Send";
+			this.SendPacketBtn.UseVisualStyleBackColor = false;
 			// 
 			// tableLayoutPanel2
 			// 
 			this.tableLayoutPanel2.ColumnCount = 1;
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this.tableLayoutPanel2.Controls.Add(this.checkBox1, 0, 1);
-			this.tableLayoutPanel2.Controls.Add(this.textBox1, 0, 0);
+			this.tableLayoutPanel2.Controls.Add(this.UseCurrentTime, 0, 1);
+			this.tableLayoutPanel2.Controls.Add(this.TimestampTextbox, 0, 0);
 			this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 20);
 			this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
@@ -245,80 +245,80 @@
 			this.tableLayoutPanel2.RowCount = 2;
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.tableLayoutPanel2.Size = new System.Drawing.Size(159, 66);
+			this.tableLayoutPanel2.Size = new System.Drawing.Size(158, 66);
 			this.tableLayoutPanel2.TabIndex = 7;
 			// 
-			// checkBox1
+			// UseCurrentTime
 			// 
-			this.checkBox1.AutoSize = true;
-			this.checkBox1.Location = new System.Drawing.Point(3, 36);
-			this.checkBox1.Name = "checkBox1";
-			this.checkBox1.Size = new System.Drawing.Size(86, 17);
-			this.checkBox1.TabIndex = 0;
-			this.checkBox1.Text = "Current Time";
-			this.checkBox1.UseVisualStyleBackColor = true;
+			this.UseCurrentTime.AutoSize = true;
+			this.UseCurrentTime.Location = new System.Drawing.Point(3, 36);
+			this.UseCurrentTime.Name = "UseCurrentTime";
+			this.UseCurrentTime.Size = new System.Drawing.Size(86, 17);
+			this.UseCurrentTime.TabIndex = 1;
+			this.UseCurrentTime.Text = "Current Time";
+			this.UseCurrentTime.UseVisualStyleBackColor = true;
 			// 
-			// textBox1
+			// TimestampTextbox
 			// 
-			this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			this.TimestampTextbox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.textBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-			this.textBox1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-			this.textBox1.Location = new System.Drawing.Point(3, 3);
-			this.textBox1.Name = "textBox1";
-			this.textBox1.Size = new System.Drawing.Size(153, 20);
-			this.textBox1.TabIndex = 1;
+			this.TimestampTextbox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+			this.TimestampTextbox.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+			this.TimestampTextbox.Location = new System.Drawing.Point(3, 3);
+			this.TimestampTextbox.Name = "TimestampTextbox";
+			this.TimestampTextbox.Size = new System.Drawing.Size(152, 20);
+			this.TimestampTextbox.TabIndex = 2;
 			// 
-			// label4
+			// InterpretationTimestamp
 			// 
-			this.label4.AutoSize = true;
-			this.label4.Location = new System.Drawing.Point(3, 86);
-			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(53, 13);
-			this.label4.TabIndex = 8;
-			this.label4.Text = "Unknown";
+			this.InterpretationTimestamp.AutoSize = true;
+			this.InterpretationTimestamp.Location = new System.Drawing.Point(3, 86);
+			this.InterpretationTimestamp.Name = "InterpretationTimestamp";
+			this.InterpretationTimestamp.Size = new System.Drawing.Size(53, 13);
+			this.InterpretationTimestamp.TabIndex = 8;
+			this.InterpretationTimestamp.Text = "Unknown";
 			// 
-			// label5
+			// InterpretationID
 			// 
-			this.label5.AutoSize = true;
-			this.label5.Location = new System.Drawing.Point(162, 86);
-			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(53, 13);
-			this.label5.TabIndex = 9;
-			this.label5.Text = "Unknown";
+			this.InterpretationID.AutoSize = true;
+			this.InterpretationID.Location = new System.Drawing.Point(161, 86);
+			this.InterpretationID.Name = "InterpretationID";
+			this.InterpretationID.Size = new System.Drawing.Size(53, 13);
+			this.InterpretationID.TabIndex = 9;
+			this.InterpretationID.Text = "Unknown";
 			// 
-			// label6
+			// InterpretationData
 			// 
-			this.label6.AutoSize = true;
-			this.label6.Location = new System.Drawing.Point(321, 86);
-			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(53, 13);
-			this.label6.TabIndex = 10;
-			this.label6.Text = "Unknown";
+			this.InterpretationData.AutoSize = true;
+			this.InterpretationData.Location = new System.Drawing.Point(319, 86);
+			this.InterpretationData.Name = "InterpretationData";
+			this.InterpretationData.Size = new System.Drawing.Size(53, 13);
+			this.InterpretationData.TabIndex = 10;
+			this.InterpretationData.Text = "Unknown";
 			// 
-			// label7
+			// PacketConstructStatus
 			// 
-			this.label7.AutoSize = true;
-			this.label7.Location = new System.Drawing.Point(679, 86);
-			this.label7.Name = "label7";
-			this.label7.Size = new System.Drawing.Size(53, 13);
-			this.label7.TabIndex = 11;
-			this.label7.Text = "Unknown";
+			this.PacketConstructStatus.AutoSize = true;
+			this.PacketConstructStatus.Location = new System.Drawing.Point(676, 86);
+			this.PacketConstructStatus.Name = "PacketConstructStatus";
+			this.PacketConstructStatus.Size = new System.Drawing.Size(53, 13);
+			this.PacketConstructStatus.TabIndex = 11;
+			this.PacketConstructStatus.Text = "Unknown";
 			// 
-			// button1
+			// EmergencyStopBtn
 			// 
-			this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
-			this.button1.BackColor = System.Drawing.SystemColors.Control;
-			this.button1.Enabled = false;
-			this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button1.ForeColor = System.Drawing.Color.Red;
-			this.button1.Location = new System.Drawing.Point(322, 529);
-			this.button1.Name = "button1";
-			this.button1.Size = new System.Drawing.Size(139, 29);
-			this.button1.TabIndex = 1;
-			this.button1.Text = "EMERGENCY STOP";
-			this.button1.UseVisualStyleBackColor = false;
-			this.button1.Click += new System.EventHandler(this.button1_Click);
+			this.EmergencyStopBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
+			this.EmergencyStopBtn.BackColor = System.Drawing.SystemColors.Control;
+			this.EmergencyStopBtn.Enabled = false;
+			this.EmergencyStopBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.EmergencyStopBtn.ForeColor = System.Drawing.Color.Red;
+			this.EmergencyStopBtn.Location = new System.Drawing.Point(322, 529);
+			this.EmergencyStopBtn.Name = "EmergencyStopBtn";
+			this.EmergencyStopBtn.Size = new System.Drawing.Size(139, 29);
+			this.EmergencyStopBtn.TabIndex = 999;
+			this.EmergencyStopBtn.Text = "EMERGENCY STOP";
+			this.EmergencyStopBtn.UseVisualStyleBackColor = false;
+			this.EmergencyStopBtn.Click += new System.EventHandler(this.EmergencyStopClick);
 			// 
 			// MainWindow
 			// 
@@ -349,22 +349,22 @@
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage Control;
         private System.Windows.Forms.TabPage Debugging;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button EmergencyStopBtn;
         private System.Windows.Forms.TableLayoutPanel DebugList;
         private System.Windows.Forms.GroupBox PacketGenBox;
         private System.Windows.Forms.TableLayoutPanel PacketGenLayout;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.CheckBox checkBox1;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.TextBox textBox3;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Label TimestampTitle;
+        private System.Windows.Forms.CheckBox UseCurrentTime;
+        private System.Windows.Forms.TextBox TimestampTextbox;
+        private System.Windows.Forms.Label IDTitle;
+        private System.Windows.Forms.TextBox IDTextbox;
+        private System.Windows.Forms.TextBox DataTextbox;
+        private System.Windows.Forms.Label DataTitle;
+        private System.Windows.Forms.Button SendPacketBtn;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label InterpretationTimestamp;
+        private System.Windows.Forms.Label InterpretationID;
+        private System.Windows.Forms.Label InterpretationData;
+        private System.Windows.Forms.Label PacketConstructStatus;
     }
 }
