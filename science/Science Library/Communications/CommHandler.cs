@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using RoboticsLibrary.Errors;
+using RoboticsLibrary.Utilities;
 
 namespace RoboticsLibrary.Communications
 {
@@ -70,9 +71,10 @@ namespace RoboticsLibrary.Communications
                 CommHandler.SendThread.Start();
                 CommHandler.ReceiveThread.Start();
             }
-            catch (Exception e)
+            catch (Exception Except)
             {
-                ErrorHandler.Throw(e);
+                Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Could not initialize CommHandler.");
+                Log.Exception(Log.Source.NETWORK, Except);
                 return false;
             }
             return true;
@@ -124,9 +126,10 @@ namespace RoboticsLibrary.Communications
             {
                 Packet.Send();
             }
-            catch (Exception e)
+            catch (Exception Except)
             {
-                ErrorHandler.Throw(e);
+                Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Failed to send packet.");
+                Log.Exception(Log.Source.NETWORK, Except);
                 return false;
             }
             return true;
@@ -147,9 +150,10 @@ namespace RoboticsLibrary.Communications
                     CommHandler.SendQueue.Dequeue().Send();
                 }
             }
-            catch (Exception e)
+            catch (Exception Except)
             {
-                ErrorHandler.Throw(e);
+                Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Failed to send next packet.");
+                Log.Exception(Log.Source.NETWORK, Except);
                 return false;
             }
             return true;
@@ -188,9 +192,10 @@ namespace RoboticsLibrary.Communications
                     Message Received = new Message(BytesReceived, (IPEndPoint)(Socket.RemoteEndPoint));
                     Parse.ParseMessage(Received);
                 }
-                catch (Exception e)
+                catch (Exception Except)
                 {
-                    ErrorHandler.Throw(e);
+                    Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Failed to receive packet.");
+                    Log.Exception(Log.Source.NETWORK, Except);
                 }
                 
             }

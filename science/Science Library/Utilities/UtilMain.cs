@@ -77,7 +77,8 @@ namespace RoboticsLibrary.Utilities
             {
                 return BitConverter.ToInt32(Array, StartIndex);
             }
-            throw new OverflowException();
+            Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Given byte array too long to fit into Int32.");
+            return 0;
         }
 
     }

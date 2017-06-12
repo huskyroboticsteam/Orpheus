@@ -84,6 +84,7 @@ namespace RoboticsLibrary.Filters
         {
             if (!UtilMain.IsNumericType(typeof(T))) // Can now assert that T is a numeric
             {
+                Log.Output(Log.Severity.ERROR, Log.Source.OTHER, "Kalman filter cannot be instantiated with non-numeric type.");
                 throw new ArgumentException("Cannot create filter of non-numeric type: " + typeof(T).ToString());
             } 
 
@@ -146,6 +147,7 @@ namespace RoboticsLibrary.Filters
         {
             if (!this.Initialized)
             {
+                Log.Output(Log.Severity.ERROR, Log.Source.OTHER, "Kalman filter must be initialized before use.");
                 throw new InvalidOperationException("Kalman Filter must be initialized before running, call .Initialize()...");
             }
 

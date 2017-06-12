@@ -13,43 +13,37 @@ namespace RoboticsLibrary.Utilities
         // OutputType determines which system you see output from.
         // OutputLevel determines the minimum severity required for a message to be output.
         public static Source OutputType = Source.SENSORS;
-        public static byte OutputLevel = 0;
+        public static Severity OutputLevel = Severity.DEBUG;
 
         /// <summary>
         /// Outputs a general log message if configured to output this type of message.
         /// </summary>
-        /// <param name="Severity">How severe this is.
-        /// 0 = Debug (Used for program flow debugging and light troubleshooting)
-        /// 1 = Information (Used for troubleshooting)
-        /// 2 = Warning (When an issue arises, but functionality sees little to no impact)
-        /// 3 = Error (When an issue arises that causes significant loss of functionality to one system)
-        /// 4 = Fatal (When an issue arises that causes loss of functionality to multiple systems or complete shutdown)
-        /// </param>
+        /// <param name="Severity">How severe this message is. This partially determines if it is output.</param>
         /// <param name="Src">The system where this log entry is originating.</param>
         /// <param name="Message">The actual log entry to output.</param>
-        public static void Output(byte Severity, Source Src, string Message)
+        public static void Output(Severity Sev, Source Src, string Message)
         {
-            if((Severity >= OutputLevel) && ((OutputType == Source.ALL) || (Src == OutputType)))
+            if((Sev >= OutputLevel) && ((OutputType == Source.ALL) || (Src == OutputType)))
             {
-                switch (Severity)
+                switch (Sev)
                 {
-                    case 0:
+                    case Severity.DEBUG:
                         Message = "[DBG] " + Message;
                         Console.ForegroundColor = ConsoleColor.Gray;
                         break;
-                    case 1:
+                    case Severity.INFO:
                         Message = "[INF] " + Message;
                         Console.ForegroundColor = ConsoleColor.White;
                         break;
-                    case 2:
+                    case Severity.WARNING:
                         Message = "[WRN] " + Message;
                         Console.ForegroundColor = ConsoleColor.Yellow;
                         break;
-                    case 3:
+                    case Severity.ERROR:
                         Message = "[ERR] " + Message;
                         Console.ForegroundColor = ConsoleColor.Red;
                         break;
-                    case 4:
+                    case Severity.FATAL:
                         Message = "[FAT] " + Message;
                         Console.ForegroundColor = ConsoleColor.Black;
                         Console.BackgroundColor = ConsoleColor.Red;
@@ -89,11 +83,44 @@ namespace RoboticsLibrary.Utilities
         }
 
         /// <summary>
+        /// Outputs a line to the console specifying the logging settings.
+        /// </summary>
+        public static void Begin()
+        {
+            StringBuilder Str = new StringBuilder();
+            Str.Append('[');
+            Str.Append(DateTime.Now.ToLongTimeString());
+            Str.Append("] [DBG] Logging started, with minimum level ");
+            Str.Append(OutputLevel.ToString());
+            Str.Append(" and system ");
+            Str.Append(OutputType.ToString());
+            Str.Append(". It is ");
+            Str.Append(DateTime.Now.ToLongDateString());
+            Str.Append(' ');
+            Str.Append(DateTime.Now.ToLongTimeString());
+            Str.Append('.');
+            Console.WriteLine(Str.ToString());
+        }
+
+        /// <summary>
         /// The subsystem where the error occured, for use in output filtering.
         /// </summary>
         public enum Source
         {
             ALL, MOTORS, NETWORK, GUI, SENSORS, CAMERAS, OTHER
+        }
+
+        /// <summary>
+        /// How serious the error is.
+        /// </summary>
+        /// Debug = Used for program flow debugging and light troubleshooting (e.g. "Starting distance sensor handler")
+        /// Information = Used for troubleshooting (e.g. "Distance sensor detected successfully")
+        /// Warning = When an issue arises, but functionality sees little to no impact (e.g. "Distance sensor took longer than expected to find value")
+        /// Error = When an issue arises that causes significant loss of functionality to one system (e.g. "Distance sensor unreachable")
+        /// Fatal = When an issue arises that causes loss of functionality to multiple systems or complete shutdown (e.g. Current limit reached, shutting down all motors)
+        public enum Severity
+        {
+            DEBUG, INFO, WARNING, ERROR, FATAL
         }
 
     }

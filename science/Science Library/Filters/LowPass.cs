@@ -41,6 +41,7 @@ namespace RoboticsLibrary.Filters
         {
             if (!UtilMain.IsNumericType(typeof(T)))
             {
+                Log.Output(Log.Severity.ERROR, Log.Source.OTHER, "Low-pass filter cannot be instantiated with non-numeric type.");
                 throw new ArgumentException("Cannot create filter of non-numeric type: " + typeof(T).ToString());
             } // We can now assert that T is a numeric
 

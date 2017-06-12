@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using RoboticsLibrary.Errors;
+using RoboticsLibrary.Utilities;
 
 namespace RoboticsLibrary.Communications
 {
@@ -40,9 +41,10 @@ namespace RoboticsLibrary.Communications
             {
                 ParsingHandlers[NewMessage.Id].DynamicInvoke(NewMessage);
             }
-            catch (Exception e)
+            catch (Exception Except)
             {
-                ErrorHandler.Throw(e);
+                Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Failed to invoke handler for incoming message.");
+                Log.Exception(Log.Source.NETWORK, Except);
             }
         }
 

@@ -39,7 +39,7 @@ namespace RoboticsLibrary.Communications
             }
             catch(SocketException Exception)
             {
-                Log.Output(3, Log.Source.NETWORK, "Failed to connect to remote IP " + this.PacketEndpoint);
+                Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Failed to connect to remote IP " + this.PacketEndpoint);
                 Log.Exception(Log.Source.NETWORK, Exception);
             }
             this.ID = (byte)ID;             // Setup ID
@@ -93,9 +93,10 @@ namespace RoboticsLibrary.Communications
                 Stream.Write(SendData, 0, SendData.Length);
                 this.Client.Close(); // Close TCP Connection
             }
-            catch (Exception e)
+            catch (Exception Except)
             {
-                ErrorHandler.Throw(e);
+                Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Failed to create packet.");
+                Log.Exception(Log.Source.NETWORK, Except);
                 return false;
             }
             return true;
@@ -111,7 +112,8 @@ namespace RoboticsLibrary.Communications
             byte[] TimeArray = BitConverter.GetBytes(UnixTime);
             if (TimeArray.Length != 4)
             {
-                ErrorHandler.Throw(0x00);  // TODO: Error: Timestamp of wrong length.
+                Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Timestamp was of incorrect length.");
+                TimeArray = new byte[] { 0x00, 0x00, 0x00, 0x00 };
             }
             this.Timestamp = TimeArray;
         }
