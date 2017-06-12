@@ -124,7 +124,20 @@ namespace RoboticsLibrary.Communications
 
         public override string ToString()
         {
-            return this.Timestamp + " [" + this.ID + "] " + this.Data;
+            StringBuilder Str = new StringBuilder();
+            Str.Append("Packet = Time:(0x");
+            Str.Append(BitConverter.ToInt32(this.Timestamp, 0).ToString("X8"));
+            Str.Append(") ID:(0x");
+            Str.Append(this.ID.ToString("X2"));
+            Str.Append(") Data:(0x");
+            foreach(byte DataElement in this.Data)
+            {
+                Str.Append(DataElement.ToString("X2"));
+                Str.Append(' ');
+            }
+            Str.Remove(Str.Length - 1, 1);
+            Str.Append(')');
+            return Str.ToString();
         }
 
     }

@@ -8,8 +8,20 @@ namespace RoboticsLibrary.Errors
 {
     public static class ErrorCodes
     {
+        public static readonly string[] Systems = new string[]
+        {
+            "General",
+            "Thermocouple",
+            "UV Sensor",
+            "Distance Sensor",
+            "Humidity Sensor",
+            "Communications",
+            "Motors", 
+            "Camera"
+        };
+
         public static readonly string[][] List = new string[][] { new string[]
-        { // Main System
+        { // General
             "Everything is OK",
             "Unknown error",
             "System Errors Found",
@@ -47,6 +59,10 @@ namespace RoboticsLibrary.Errors
             ""
         }, new string[]
         { // Motors (NOT YET IMPLEMENTED)
+            "",
+            ""
+        }, new string[]
+        { // Camera (NOT YET IMPLEMENTED)
             "",
             ""
         }};

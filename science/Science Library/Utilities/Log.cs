@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RoboticsLibrary.Errors;
 
 namespace RoboticsLibrary.Utilities
 {
@@ -21,14 +22,31 @@ namespace RoboticsLibrary.Utilities
             {
                 switch (Severity)
                 {
-                    case 0: Message = "[DBG] " + Message; break;
-                    case 1: Message = "[INF] " + Message; break;
-                    case 2: Message = "[WRN] " + Message; break;
-                    case 3: Message = "[ERR] " + Message; break;
-                    case 4: Message = "[FAT] " + Message; break;
+                    case 0:
+                        Message = "[DBG] " + Message;
+                        Console.ForegroundColor = ConsoleColor.Gray;
+                        break;
+                    case 1:
+                        Message = "[INF] " + Message;
+                        Console.ForegroundColor = ConsoleColor.White;
+                        break;
+                    case 2:
+                        Message = "[WRN] " + Message;
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        break;
+                    case 3:
+                        Message = "[ERR] " + Message;
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        break;
+                    case 4:
+                        Message = "[FAT] " + Message;
+                        Console.ForegroundColor = ConsoleColor.Black;
+                        Console.BackgroundColor = ConsoleColor.Red;
+                        break;
                 }
                 Message = "[" + DateTime.Now.ToLongTimeString() + "] " + Message;
                 System.Console.WriteLine(Message);
+                Console.ResetColor();
             }
         }
 
@@ -40,9 +58,18 @@ namespace RoboticsLibrary.Utilities
             Lines.ToList().ForEach(Console.WriteLine);
         }
 
+        public static void Error(short Error)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            byte System = (byte)(Error >> 8);
+            byte Code = (byte)(Error & 0x00FF);
+            Console.WriteLine("[" + DateTime.Now.ToLongTimeString() + "] [ERR] [0x" + Error.ToString("X4") + "] [" + ErrorCodes.Systems[System] + "] " + ErrorCodes.List[System][Code]);
+            Console.ResetColor();
+        }
+
         public enum Source
         {
-            ALL, MOTORS, NETWORK, GUI, SENSORS, OTHER
+            ALL, MOTORS, NETWORK, GUI, SENSORS, CAMERAS, OTHER
         }
 
     }
