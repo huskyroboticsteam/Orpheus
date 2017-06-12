@@ -3,7 +3,7 @@ using System.Threading;
 using RoboticsLibrary.Sensors;
 using RoboticsLibrary.Utilities;
 
-namespace Science_Onboard
+namespace Science
 {
 	class RoverMain
 	{

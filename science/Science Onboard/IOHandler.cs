@@ -3,7 +3,7 @@ using RoboticsLibrary.Motors;
 using RoboticsLibrary.Utilities;
 using Science.Motors;
 
-namespace Science_Onboard
+namespace Science
 {
     class IOHandler
     {

@@ -42,6 +42,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IOHandler.cs" />
+    <Compile Include="Motors\MotorTurntable.cs" />
     <Compile Include="RoverMain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

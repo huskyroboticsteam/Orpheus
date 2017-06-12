@@ -26,11 +26,13 @@ namespace Science.Motors
                 this.Speed = 0;
                 this.CurrentAngle = 0;
                 Log.Output(Log.Severity.DEBUG, Log.Source.MOTORS, "Turntable motor finished initializing.");
+                this.Initializing = false;
             }
             if(Event is ElapsedEventArgs && this.Initializing) // We timed out trying to initialize.
             {
                 this.Stop();
                 Log.Output(Log.Severity.ERROR, Log.Source.MOTORS, "Turntable motor timed out while attempting to initialize.");
+                this.Initializing = false;
             }
         }
 
