@@ -72,6 +72,11 @@ namespace RoboticsLibrary.Communications
             return SendWithTimestamp(this.Timestamp);
         }
 
+        /// <summary>
+        /// Sends packet, using a custom timestamp.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp to use</param>
+        /// <returns>Whether packet sending was successful.</returns>
         public bool SendWithTimestamp(byte[] Timestamp)
         {
             try
@@ -122,6 +127,9 @@ namespace RoboticsLibrary.Communications
             Packet.DefaultEndpoint = Endpoint;
         }
 
+        /// <summary>
+        /// Formats the Packet's contents to be human-readable.
+        /// </summary>
         public override string ToString()
         {
             StringBuilder Str = new StringBuilder();
