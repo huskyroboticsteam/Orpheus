@@ -7,7 +7,7 @@ using RoboticsLibrary.Utilities;
 
 namespace RoboticsLibrary.Sensors
 {
-    public class Encoder : ISensor
+    public class Encoder : Sensor
     {
         private int PinA, PinB;
         private int PulsesPerTurn;
@@ -22,14 +22,14 @@ namespace RoboticsLibrary.Sensors
 
         public event EventHandler<EncoderTurn> Turned;
 
-        public bool Test()
+        public override bool Test()
         {
             // TODO: Call a GPIO library to check functionality.
             Log.Output(Log.Severity.WARNING, Log.Source.SENSORS, "Encoder testing not implemented properly.");
             return true;
         }
 
-        public void UpdateState()
+        public override void UpdateState()
         {
             // TODO: Call a GPIO library to update the state.
             Log.Output(Log.Severity.WARNING, Log.Source.SENSORS, "Encoder updating not implemented properly.");

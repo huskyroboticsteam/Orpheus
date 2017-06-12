@@ -3,28 +3,27 @@ using RoboticsLibrary.Utilities;
 
 namespace RoboticsLibrary.Sensors
 {
-    public class LimitSwitch : ISensor
+    public class LimitSwitch : Sensor
     {
         private int Pin;
         private bool NormallyLow;
         private bool PrevToggled = false;
+        public event EventHandler<LimitSwitchToggle> SwitchToggle;
 
         public LimitSwitch(int Pin, bool NormallyLow)
         {
             this.Pin = Pin;
             this.NormallyLow = NormallyLow;
         }
-
-        public event EventHandler<LimitSwitchToggle> SwitchToggle;
-
-        public bool Test()
+        
+        public override bool Test()
         {
             // TODO: Call a GPIO library to check functionality.
             Log.Output(Log.Severity.WARNING, Log.Source.SENSORS, "Limit switch testing not implemented properly.");
             return true;
         }
 
-        public void UpdateState()
+        public override void UpdateState()
         {
             // TODO: Call a GPIO library to update the state.
             Log.Output(Log.Severity.WARNING, Log.Source.SENSORS, "Limit switch updating not implemented properly.");

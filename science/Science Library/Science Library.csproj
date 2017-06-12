@@ -61,6 +61,7 @@
     <Compile Include="Sensors\Encoder.cs" />
     <Compile Include="Sensors\LimitSwitch.cs" />
     <Compile Include="Sensors\ISensor.cs" />
+    <Compile Include="Sensors\Sensor.cs" />
     <Compile Include="Utilities\Log.cs" />
     <Compile Include="Utilities\UtilMain.cs" />
   </ItemGroup>

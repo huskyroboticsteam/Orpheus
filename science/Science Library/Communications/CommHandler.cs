@@ -60,6 +60,7 @@ namespace RoboticsLibrary.Communications
         /// </returns>
         private static bool Initialize()
         {
+            CommHandler.Initialized = true;
             try
             {
                 CommHandler.Endpoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), CommHandler.PortNumber);
@@ -75,9 +76,9 @@ namespace RoboticsLibrary.Communications
             {
                 Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Could not initialize CommHandler.");
                 Log.Exception(Log.Source.NETWORK, Except);
-                return false;
+                CommHandler.Initialized = false;
             }
-            return true;
+            return CommHandler.Initialized;
         }
 
         /// <summary>
