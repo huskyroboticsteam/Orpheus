@@ -6,20 +6,32 @@ using System.Threading.Tasks;
 
 namespace RoboticsLibrary.Motors
 {
-    public abstract class TalonMC : IMotor
+    public abstract class TalonMC : Motor
     {
 
-        public TalonMC(int Pin)
+        public TalonMC(int Pin) : base(Pin)
         {
 
         }
         
-        public abstract void EventTriggered(object Sender, EventArgs Event);
+        public override void EventTriggered(object Sender, EventArgs Event)
+        {
 
-        public abstract void Initialize();
+        }
 
-        public abstract void Stop();
+        public override void Initialize()
+        {
 
-        public abstract void UpdateState();
+        }
+
+        public override void Stop()
+        {
+
+        }
+
+        public override void UpdateState()
+        {
+
+        }
     }
 }
