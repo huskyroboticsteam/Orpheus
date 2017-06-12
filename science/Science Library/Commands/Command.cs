@@ -6,30 +6,55 @@ using System.Threading;
 
 namespace RoboticsLibrary.Commands
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class Command
     {
 
-        private Thread RunThread;
-
+        private Thread RunThread; // Run Thread
+        
+        /// <summary>
+        /// 
+        /// </summary>
         public Command()
         {
             this.RunThread = new Thread(new ThreadStart(this.Run));
         }
         
+        /// <summary>
+        /// 
+        /// </summary>
         public virtual void Initialize() { }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public virtual void Terminate() { }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public virtual void Run() { }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public virtual bool IsFinished() { return false; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void Start()
         {
             this.Initialize();
             this.RunThread.Start();
         }
         
+        /// <summary>
+        /// 
+        /// </summary>
         public void Stop()
         {
             this.Terminate();

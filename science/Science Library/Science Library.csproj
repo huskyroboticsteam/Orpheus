@@ -47,6 +47,7 @@
     <Compile Include="Communications\Packet.cs" />
     <Compile Include="Communications\Parse.cs" />
     <Compile Include="Controllers\PID.cs" />
+    <Compile Include="Errors\ErrorCodes.cs" />
     <Compile Include="Errors\ErrorHandler.cs" />
     <Compile Include="Filters\Average.cs" />
     <Compile Include="Filters\Filter.cs" />
