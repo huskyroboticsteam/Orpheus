@@ -58,9 +58,13 @@
     <Compile Include="Motors\Motor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sensors\Encoder.cs" />
-    <Compile Include="Sensors\Sensor.cs" />
+    <Compile Include="Sensors\LimitSwitch.cs" />
+    <Compile Include="Sensors\ISensor.cs" />
     <Compile Include="Utilities\Log.cs" />
     <Compile Include="Utilities\UtilMain.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="IO\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

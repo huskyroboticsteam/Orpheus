@@ -6,7 +6,16 @@ using System.Threading.Tasks;
 
 namespace RoboticsLibrary.Sensors
 {
-    class Encoder : Sensor
+    class Encoder : ISensor
     {
+        public bool Test()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateState()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
