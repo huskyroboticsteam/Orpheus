@@ -5,6 +5,7 @@ var searchData=
   ['controllers',['Controllers',['../d3/de6/namespace_robotics_library_1_1_controllers.html',1,'RoboticsLibrary']]],
   ['errors',['Errors',['../d8/dd0/namespace_robotics_library_1_1_errors.html',1,'RoboticsLibrary']]],
   ['filters',['Filters',['../df/d8a/namespace_robotics_library_1_1_filters.html',1,'RoboticsLibrary']]],
+  ['motors',['Motors',['../da/d8e/namespace_robotics_library_1_1_motors.html',1,'RoboticsLibrary']]],
   ['roboticslibrary',['RoboticsLibrary',['../df/db5/namespace_robotics_library.html',1,'']]],
   ['sensors',['Sensors',['../db/d64/namespace_robotics_library_1_1_sensors.html',1,'RoboticsLibrary']]],
   ['utilities',['Utilities',['../dc/d8c/namespace_robotics_library_1_1_utilities.html',1,'RoboticsLibrary']]]

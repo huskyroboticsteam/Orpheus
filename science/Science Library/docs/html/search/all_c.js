@@ -1,16 +1,7 @@
 var searchData=
 [
-  ['p',['P',['../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html#aba6336d67bfd9401b9458fce455ce7cf',1,'RoboticsLibrary.Controllers.PID.P()'],['../d8/d85/class_robotics_library_1_1_filters_1_1_kalman.html#aeebdcb0526a88f010d3f703b137da9b8',1,'RoboticsLibrary.Filters.Kalman.P()']]],
-  ['packet',['Packet',['../d3/d34/class_robotics_library_1_1_communications_1_1_packet.html',1,'RoboticsLibrary.Communications.Packet'],['../d3/d34/class_robotics_library_1_1_communications_1_1_packet.html#a959df60d7fb5b840f1ac17f2558287d9',1,'RoboticsLibrary.Communications.Packet.Packet()']]],
-  ['packet_2ecs',['Packet.cs',['../de/d29/_packet_8cs.html',1,'']]],
-  ['packetendpoint',['PacketEndpoint',['../d3/d34/class_robotics_library_1_1_communications_1_1_packet.html#a394c86b3647f472f3a24837bba067338',1,'RoboticsLibrary::Communications::Packet']]],
-  ['packetintervaltime',['PacketIntervalTime',['../dd/dca/class_robotics_library_1_1_communications_1_1_comm_handler.html#a8f90dd3c3703a0fad473842c2507a477',1,'RoboticsLibrary::Communications::CommHandler']]],
-  ['parse',['Parse',['../d1/da0/class_robotics_library_1_1_communications_1_1_parse.html',1,'RoboticsLibrary::Communications']]],
-  ['parse_2ecs',['Parse.cs',['../d1/dbe/_parse_8cs.html',1,'']]],
-  ['parsemessage',['ParseMessage',['../d1/da0/class_robotics_library_1_1_communications_1_1_parse.html#ad148efeadd6ab19f2fa53d4b90acf890',1,'RoboticsLibrary::Communications::Parse']]],
-  ['parsemethod',['ParseMethod',['../d1/da0/class_robotics_library_1_1_communications_1_1_parse.html#a592095b5638ced6eacabbce7acdb5e75',1,'RoboticsLibrary::Communications::Parse']]],
-  ['parsinghandlers',['ParsingHandlers',['../d1/da0/class_robotics_library_1_1_communications_1_1_parse.html#aa2e45508e6d9222047bfbec487628c87',1,'RoboticsLibrary::Communications::Parse']]],
-  ['pid',['PID',['../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html',1,'RoboticsLibrary.Controllers.PID'],['../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html#a2b61da609180184fe7a40cba5d8d7cbf',1,'RoboticsLibrary.Controllers.PID.PID()']]],
-  ['pid_2ecs',['PID.cs',['../d4/dfd/_p_i_d_8cs.html',1,'']]],
-  ['portnumber',['PortNumber',['../dd/dca/class_robotics_library_1_1_communications_1_1_comm_handler.html#a90a9510a5fb347278c41736032829323',1,'RoboticsLibrary::Communications::CommHandler']]]
+  ['other',['OTHER',['../df/dfb/class_robotics_library_1_1_utilities_1_1_log.html#ab14f07af7e368dc6097f4c6c29b059cca03570470bad94692ce93e32700d2e1cb',1,'RoboticsLibrary::Utilities::Log']]],
+  ['output',['Output',['../d6/d74/class_robotics_library_1_1_controllers_1_1_p_i_d.html#ad175e1d1ace320079e4a6861e6b8507f',1,'RoboticsLibrary.Controllers.PID.Output()'],['../d3/d9f/class_robotics_library_1_1_filters_1_1_average.html#aa59efec0916673c66b3507c4360c619e',1,'RoboticsLibrary.Filters.Average.Output()'],['../d8/d85/class_robotics_library_1_1_filters_1_1_kalman.html#af2e026fe76f5a30e8da58dcc654ec26d',1,'RoboticsLibrary.Filters.Kalman.Output()'],['../d4/d3a/class_robotics_library_1_1_filters_1_1_low_pass.html#a83f66e4bfd6737c56614f3bb9a73876f',1,'RoboticsLibrary.Filters.LowPass.Output()'],['../df/dfb/class_robotics_library_1_1_utilities_1_1_log.html#ac3c082c691873069a10417e52c643420',1,'RoboticsLibrary.Utilities.Log.Output()']]],
+  ['outputlevel',['OutputLevel',['../df/dfb/class_robotics_library_1_1_utilities_1_1_log.html#a69c71268aac48d1aafb07b0997efdac8',1,'RoboticsLibrary::Utilities::Log']]],
+  ['outputtype',['OutputType',['../df/dfb/class_robotics_library_1_1_utilities_1_1_log.html#a2a5c2a4023923bdc3ba7fe77a4e61cd0',1,'RoboticsLibrary::Utilities::Log']]]
 ];

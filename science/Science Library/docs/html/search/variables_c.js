@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['receivebuffersize',['ReceiveBufferSize',['../dd/dca/class_robotics_library_1_1_communications_1_1_comm_handler.html#a40a05621969ec969179a7f17eb2e64f3',1,'RoboticsLibrary::Communications::CommHandler']]],
-  ['receivethread',['ReceiveThread',['../dd/dca/class_robotics_library_1_1_communications_1_1_comm_handler.html#afe2da330fb8f338d43af853fcb2bdfc7',1,'RoboticsLibrary::Communications::CommHandler']]]
+  ['q',['Q',['../d8/d85/class_robotics_library_1_1_filters_1_1_kalman.html#a99ad42967bc86d34d72dfac39fa83a56',1,'RoboticsLibrary::Filters::Kalman']]],
+  ['qbias',['Qbias',['../d8/d85/class_robotics_library_1_1_filters_1_1_kalman.html#ac8d5e6103a05524967572e38492b6ea9',1,'RoboticsLibrary::Filters::Kalman']]]
 ];

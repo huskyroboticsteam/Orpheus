@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['utilmain',['UtilMain',['../d1/ddc/class_robotics_library_1_1_utilities_1_1_util_main.html',1,'RoboticsLibrary::Utilities']]]
+  ['talonmc',['TalonMC',['../db/de9/class_robotics_library_1_1_motors_1_1_talon_m_c.html',1,'RoboticsLibrary::Motors']]]
 ];

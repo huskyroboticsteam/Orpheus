@@ -5,6 +5,7 @@ var namespace_robotics_library =
     [ "Controllers", "d3/de6/namespace_robotics_library_1_1_controllers.html", "d3/de6/namespace_robotics_library_1_1_controllers" ],
     [ "Errors", "d8/dd0/namespace_robotics_library_1_1_errors.html", "d8/dd0/namespace_robotics_library_1_1_errors" ],
     [ "Filters", "df/d8a/namespace_robotics_library_1_1_filters.html", "df/d8a/namespace_robotics_library_1_1_filters" ],
+    [ "Motors", "da/d8e/namespace_robotics_library_1_1_motors.html", "da/d8e/namespace_robotics_library_1_1_motors" ],
     [ "Sensors", "db/d64/namespace_robotics_library_1_1_sensors.html", "db/d64/namespace_robotics_library_1_1_sensors" ],
     [ "Utilities", "dc/d8c/namespace_robotics_library_1_1_utilities.html", "dc/d8c/namespace_robotics_library_1_1_utilities" ]
 ];

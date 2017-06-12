@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['message',['Message',['../d6/db9/class_robotics_library_1_1_communications_1_1_message.html#a9e6e25188a64e3cc1c71282c2578cc4e',1,'RoboticsLibrary::Communications::Message']]]
+  ['lowpass',['LowPass',['../d4/d3a/class_robotics_library_1_1_filters_1_1_low_pass.html#ada79534600a7f4a4dab17c40976a2f74',1,'RoboticsLibrary::Filters::LowPass']]]
 ];
