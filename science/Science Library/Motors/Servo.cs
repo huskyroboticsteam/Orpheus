@@ -1,18 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RoboticsLibrary.Motors
 {
-    class Servo : Motor
+    public abstract class Servo : IMotor
     {
 
-        public Servo()
+        public Servo(int Pin)
         {
 
         }
 
+        public abstract void EventTriggered(object Sender, EventArgs Event);
+
+        public abstract void Initialize();
+
+        public abstract void Stop();
+
+        public abstract void UpdateState();
     }
 }

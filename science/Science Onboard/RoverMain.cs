@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using RoboticsLibrary.Sensors;
 using RoboticsLibrary.Utilities;
 
@@ -34,7 +30,7 @@ namespace Science_Onboard
             LimitSwitch LimSw = new LimitSwitch(3, true);
             LimSw.SwitchToggle += LimitSwitchEvent;
 
-            RoboticsLibrary.Sensors.Encoder Enc = new RoboticsLibrary.Sensors.Encoder(0, 0, 360);
+            Encoder Enc = new Encoder(0, 0, 360);
             Enc.Turned += EncoderTurnedEvent;
             while (true)
             {

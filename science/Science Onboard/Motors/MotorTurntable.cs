@@ -1,0 +1,61 @@
+﻿using System;
+using System.Timers;
+using RoboticsLibrary.Motors;
+using RoboticsLibrary.Sensors;
+using RoboticsLibrary.Utilities;
+
+namespace Science.Motors
+{
+    class MotorTurntable : Motor
+    {
+        private bool Initializing;
+        private int Speed, CurrentAngle;
+        public int TargetAngle { get; set; }
+        private const int MAX_SPEED = 30;
+        private const int INIT_TIMEOUT = 5000;
+
+        public MotorTurntable(int Pin) : base(Pin)
+        {
+
+        }
+
+        public override void EventTriggered(object Sender, EventArgs Event)
+        {
+            if(Event is LimitSwitchToggle && this.Initializing) // We hit the end.
+            {
+                this.Speed = 0;
+                this.CurrentAngle = 0;
+                Log.Output(Log.Severity.DEBUG, Log.Source.MOTORS, "Turntable motor finished initializing.");
+            }
+            if(Event is ElapsedEventArgs && this.Initializing) // We timed out trying to initialize.
+            {
+                this.Stop();
+                Log.Output(Log.Severity.ERROR, Log.Source.MOTORS, "Turntable motor timed out while attempting to initialize.");
+            }
+        }
+
+        public override void Initialize()
+        {
+            this.Initializing = true;
+            Timer TimeoutTrigger = new Timer() { Interval = INIT_TIMEOUT, AutoReset = false };
+            TimeoutTrigger.Elapsed += this.EventTriggered;
+            TimeoutTrigger.Enabled = true;
+            // Do init stuff.
+            this.TargetAngle = 360;
+        }
+
+        public override void Stop()
+        {
+            this.Speed = 0;
+            this.TargetAngle = this.CurrentAngle;
+            UpdateState();
+        }
+
+        public override void UpdateState()
+        {
+            // TODO: Determine speed from target and current pos.
+            if (this.Speed > MAX_SPEED) { this.Speed = MAX_SPEED; }
+            // TODO: Output the speed as a PWM signal.
+        }
+    }
+}
