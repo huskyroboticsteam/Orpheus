@@ -26,7 +26,7 @@ namespace Science
         public static void ParseStopPacket(Message StopPacket)
         {
             Log.Output(Log.Severity.FATAL, Log.Source.OTHER, "EMERGENCY STOP RECEIVED");
-            EmergencyStopListener.Stop = true;
+            EmergencyStopListener.STOP = true;
         }
     }
 }

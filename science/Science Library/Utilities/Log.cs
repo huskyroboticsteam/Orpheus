@@ -59,7 +59,7 @@ namespace RoboticsLibrary.Utilities
                     break;
             }
             Message = "[" + DateTime.Now.ToLongTimeString() + "] " + Message;
-            System.Console.WriteLine(Message);
+            Console.WriteLine(Message);
             Console.ResetColor();
         }
 
