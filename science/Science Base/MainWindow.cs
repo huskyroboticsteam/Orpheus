@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using RoboticsLibrary.Utilities;
 
 namespace Science_Base
 {
@@ -18,6 +19,31 @@ namespace Science_Base
         }
 
         private void EmergencyStopClick(object sender, EventArgs e)
+        {
+
+        }
+
+        private void SendPacketBtn_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void TimestampTextbox_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void IDTextbox_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void DataTextbox_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void UseCurrentTime_CheckedChanged(object sender, EventArgs e)
         {
 
         }

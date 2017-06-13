@@ -18,7 +18,7 @@ namespace RoboticsLibrary.Commands
     /// See Command.cs for more details for 
     /// command architecture.
     /// </summary>
-    class PIDCommand : Command
+    public class PIDCommand : Command
     {
 
         private PID PIDController;

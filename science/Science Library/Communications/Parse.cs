@@ -24,9 +24,9 @@ namespace RoboticsLibrary.Communications
         /// </summary>
         /// <param name="MessageId">
         /// Message ID for parsing.</param>
-        /// <param name="ParseMethod">Method used when incoming packet
+        /// <param name="ParseMethod">Method used when incoming packet.
         /// of <c>MessageId</c> is received.</param>
-        public static void SetParseHandler(byte MessageId, ParseMethod ParseMethod)
+        public static void SetParseHandler(int MessageId, ParseMethod ParseMethod)
         {
             if (ParsingHandlers.ContainsKey(MessageId))
             {

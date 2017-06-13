@@ -26,7 +26,8 @@ namespace RoboticsLibrary.Errors
             "Unknown error",
             "System Errors Found",
             "Could not setup Digital IO Pin",
-            "Could not read Digital IO Pin"
+            "Could not read Digital IO Pin",
+            "Emergency Stop Invoked"
         }, new string[]
         { // Thermocouple
             "Could not get reading",

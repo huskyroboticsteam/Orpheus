@@ -115,5 +115,12 @@ namespace RoboticsLibrary.Communications
         }
 
     }
+    
+    // TODO: Set Real Packet ID Values
+    public enum PacketType
+    {
+        Error,
+        StopPacket
+    }
 
 }

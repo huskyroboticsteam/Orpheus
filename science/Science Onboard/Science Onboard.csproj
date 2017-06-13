@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandHandler.cs" />
     <Compile Include="IOHandler.cs" />
     <Compile Include="Motors\MotorTurntable.cs" />
     <Compile Include="PacketHandler.cs" />
