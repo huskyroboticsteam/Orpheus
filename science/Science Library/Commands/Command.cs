@@ -7,7 +7,13 @@ using System.Threading;
 namespace RoboticsLibrary.Commands
 {
     /// <summary>
-    /// 
+    /// Command architecture used to control
+    /// mechanisms on a robot.
+    /// Override the Initialize, Terminate, 
+    /// Run, and IsFinished methods in your
+    /// command subclass; to use the command
+    /// start it by calling YourCommand.Start()
+    /// and stop it with YourCommand.Stop().
     /// </summary>
     public class Command
     {
@@ -15,36 +21,51 @@ namespace RoboticsLibrary.Commands
         private Thread RunThread; // Run Thread
         
         /// <summary>
-        /// 
+        /// Instantiates command.
         /// </summary>
         public Command()
         {
-            this.RunThread = new Thread(new ThreadStart(this.Run));
+            this.RunThread = new Thread(new ThreadStart(this.RunProcess));
         }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        public virtual void Initialize() { }
 
         /// <summary>
-        /// 
+        /// Override this method for command initialization
         /// </summary>
-        public virtual void Terminate() { }
+        protected virtual void Initialize() { }
 
         /// <summary>
-        /// 
+        /// Override this method for command termination
         /// </summary>
-        public virtual void Run() { }
+        protected virtual void Terminate() { }
 
         /// <summary>
-        /// 
+        /// Override this method for command loop
         /// </summary>
-        /// <returns></returns>
-        public virtual bool IsFinished() { return false; }
+        protected virtual void Run() { }
 
         /// <summary>
-        /// 
+        /// Override this method to determine when to stop.
+        /// </summary>
+        /// <returns>Whether or not to stop the command.</returns>
+        protected virtual bool IsFinished() { return false; }
+
+        /// <summary>
+        /// Internal use only
+        /// Threads the run as long as 
+        /// IsFinished returns false,
+        /// then stops the command.
+        /// </summary>
+        private void RunProcess()
+        {
+            while(!this.IsFinished())
+            {
+                this.Run();
+            }
+            this.Stop();
+        }
+
+        /// <summary>
+        /// Starts the command.
         /// </summary>
         public void Start()
         {
@@ -53,7 +74,7 @@ namespace RoboticsLibrary.Commands
         }
         
         /// <summary>
-        /// 
+        /// Stops the command.
         /// </summary>
         public void Stop()
         {
