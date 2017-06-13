@@ -27,7 +27,11 @@ namespace RoboticsLibrary.Communications
         /// <param name="ParseMethod">Method used when incoming packet
         /// of <c>MessageId</c> is received.</param>
         public static void SetParseHandler(byte MessageId, ParseMethod ParseMethod)
-        { 
+        {
+            if (ParsingHandlers.ContainsKey(MessageId))
+            {
+                Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Parse Method for Packet ID 0x" + MessageId.ToString("X4") + " overridden.");
+            }
             ParsingHandlers[MessageId] = ParseMethod;
         }
 
@@ -39,7 +43,7 @@ namespace RoboticsLibrary.Communications
         {
             try
             {
-                ParsingHandlers[NewMessage.Id].DynamicInvoke(NewMessage);
+                ParsingHandlers[NewMessage.ID].DynamicInvoke(NewMessage);
             }
             catch (Exception Except)
             {

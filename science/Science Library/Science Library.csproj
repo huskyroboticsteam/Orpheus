@@ -65,8 +65,6 @@
     <Compile Include="Utilities\Log.cs" />
     <Compile Include="Utilities\UtilMain.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="IO\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
