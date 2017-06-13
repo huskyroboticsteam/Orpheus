@@ -12,6 +12,7 @@ namespace RoboticsLibrary.Sensors
         private int PinA, PinB;
         private int PulsesPerTurn;
         public int Angle { get; private set; }
+        public event EventHandler<EncoderTurn> Turned;
 
         public Encoder(int PinA, int PinB, int PulsesPerTurn)
         {
@@ -19,8 +20,6 @@ namespace RoboticsLibrary.Sensors
             this.PinB = PinB;
             this.PulsesPerTurn = PulsesPerTurn;
         }
-
-        public event EventHandler<EncoderTurn> Turned;
 
         public override bool Test()
         {
