@@ -60,7 +60,7 @@ namespace RoboticsLibrary.Communications
         /// </returns>
         public bool Send()
         {
-            return SendWithTimestamp(this.GetTimestamp());
+            return SendWithTimestamp(GetTimestamp());
         }
 
         /// <summary>
@@ -94,9 +94,9 @@ namespace RoboticsLibrary.Communications
         /// Sets time for packet.
         /// Internal use only.
         /// </summary>
-        private byte[] GetTimestamp()
+        public static byte[] GetTimestamp()
         {
-            int UnixTime = (int)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+            int UnixTime = (int)DateTimeOffset.Now.ToUnixTimeSeconds();
             byte[] TimeArray = BitConverter.GetBytes(UnixTime);
             if (TimeArray.Length != 4)
             {
