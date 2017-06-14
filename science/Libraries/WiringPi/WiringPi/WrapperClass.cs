@@ -201,7 +201,7 @@ namespace WiringPi
         /// <param name="channel">Selects either Channel 0 or 1 for use</param>
         /// <param name="speed">Selects speed, 500,000 to 32,000,000</param>
         /// <returns>-1 for an error, or the linux file descriptor the channel uses</returns>
-        [DllImport("libwiringPi.so", EntryPoint = "wiringPiSPISetup")]
+        [DllImport("libwiringPiSPI.so", EntryPoint = "wiringPiSPISetup")]
         public static extern int wiringPiSPISetup(int channel, int speed);
 
         /// <summary>
@@ -211,7 +211,7 @@ namespace WiringPi
         /// <param name="data">signed byte array pointer which holds the data to send and will then hold the received data</param>
         /// <param name="len">How many bytes to write and read</param>
         /// <returns>-1 for an error, or the linux file descriptor the channel uses</returns>
-        [DllImport("libwiringPi.so", EntryPoint = "wiringPiSPIDataRW")]
+        [DllImport("libwiringPiSPI.so", EntryPoint = "wiringPiSPIDataRW")]
         public static unsafe extern int wiringPiSPIDataRW(int channel, byte* data, int len);  //char is a signed byte
     }
 
