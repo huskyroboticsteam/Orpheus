@@ -8,15 +8,18 @@ namespace Science.Motors
 {
     class MotorTurntable : Motor
     {
+        private readonly int Pin;
         private bool Initializing;
         private int Speed, CurrentAngle;
         public int TargetAngle { get; set; }
+        private readonly TalonMC MotorCtrl;
         private const int MAX_SPEED = 30;
         private const int INIT_TIMEOUT = 5000;
 
         public MotorTurntable(int Pin) : base(Pin)
         {
-
+            this.Pin = Pin;
+            this.MotorCtrl = new TalonMC(Pin);
         }
 
         public override void EventTriggered(object Sender, EventArgs Event)
@@ -39,6 +42,7 @@ namespace Science.Motors
         public override void Initialize()
         {
             this.Initializing = true;
+            
             Timer TimeoutTrigger = new Timer() { Interval = INIT_TIMEOUT, AutoReset = false };
             TimeoutTrigger.Elapsed += this.EventTriggered;
             TimeoutTrigger.Enabled = true;

@@ -1,17 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using WiringPi;
 
 namespace RoboticsLibrary.Motors
 {
-    public abstract class TalonMC : Motor
+    public class TalonMC : Motor
     {
+
+        private readonly int Pin;
 
         public TalonMC(int Pin) : base(Pin)
         {
-
+            this.Pin = Pin;
         }
         
         public override void EventTriggered(object Sender, EventArgs Event)
@@ -21,12 +20,13 @@ namespace RoboticsLibrary.Motors
 
         public override void Initialize()
         {
-
+            GPIO.pinMode(this.Pin, (int)GPIO.GPIOpinmode.PWMOutput);
+            GPIO.pwmSetClock(1000); // TODO: Set this to an actual value.
         }
 
         public override void Stop()
         {
-
+            GPIO.pwmWrite(this.Pin, 0);
         }
 
         public override void UpdateState()
