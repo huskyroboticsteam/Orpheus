@@ -110,12 +110,7 @@ namespace RoboticsLibrary.Communications
             Str.Append(") ID:(0x");
             Str.Append(this.ID.ToString("X2"));
             Str.Append(") Data:(0x");
-            foreach (byte DataElement in this.Data)
-            {
-                Str.Append(DataElement.ToString("X2"));
-                Str.Append(' ');
-            }
-            Str.Remove(Str.Length - 1, 1);
+            Str.Append(UtilMain.BytesToNiceString(this.Data, true));
             Str.Append(')');
             return Str.ToString();
         }

@@ -81,6 +81,24 @@ namespace RoboticsLibrary.Utilities
             return 0;
         }
 
+        /// <summary>
+        /// Gives a user-readable representation of a byte array.
+        /// </summary>
+        /// <param name="Data">The array to format.</param>
+        /// <param name="Spaces">Whether to add spaces between every byte in the output</param>
+        /// <returns>A string formatted as such: "4D 3A 20 8C", or "4D3A208C", depending on the Spaces parameter.</returns>
+        public static string BytesToNiceString(byte[] Data, bool Spaces)
+        {
+            StringBuilder Output = new StringBuilder();
+            for (int i = Data.Length - 1; i >= 0; i--)
+            {
+                Output.Append(Data[i].ToString("X2"));
+                if (Spaces) { Output.Append(' '); }
+            }
+            if (Spaces) { Output.Remove(Output.Length - 1, 1); }
+            return Output.ToString();
+        }
+
     }
 
 }
