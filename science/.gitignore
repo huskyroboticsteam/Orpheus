@@ -1,7 +1,8 @@
 **/.DS_Store
 
 # Science: Visual Studio
-*/obj
-*/bin
+**/obj
+**/bin
 *.suo
 */.vs
+*.pdb
