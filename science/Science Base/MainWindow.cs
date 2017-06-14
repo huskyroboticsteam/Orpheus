@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using RoboticsLibrary.Utilities;
+using RoboticsLibrary.Communications;
 
 namespace Science_Base
 {
@@ -20,7 +21,8 @@ namespace Science_Base
 
         private void EmergencyStopClick(object sender, EventArgs e)
         {
-
+            Packet EmergencyStopPacket = new Packet((int)PacketType.StopPacket);
+            CommHandler.SendAsyncPacket(EmergencyStopPacket);
         }
 
         private void SendPacketBtn_Click(object sender, EventArgs e)
