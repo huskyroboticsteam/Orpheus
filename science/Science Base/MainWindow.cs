@@ -37,7 +37,7 @@ namespace Science_Base
                 DateTimeOffset DT = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt32(this.TimestampTextbox.Text.Replace(" ", ""), 16));
                 this.InterpretationTimestamp.Text = DT.DateTime.ToLongDateString() + " " + DT.DateTime.ToLongTimeString() + " UTC";
             }
-            catch(Exception Exc)
+            catch
             {
                 this.InterpretationTimestamp.Text = "Unknown";
             }

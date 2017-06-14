@@ -57,5 +57,12 @@ namespace Science
             this.TurntableMotor.Initialize();
             this.ToolheadMotor.Initialize();
         }
+
+        public void StopAllMotors()
+        {
+            this.RailMotor.Stop();
+            this.TurntableMotor.Stop();
+            this.ToolheadMotor.Stop();
+        }
     }
 }
