@@ -1,7 +1,7 @@
 ﻿using RoboticsLibrary.Sensors;
 using RoboticsLibrary.Motors;
 using RoboticsLibrary.Utilities;
-using Science.Motors;
+using Science.Systems;
 
 namespace Science
 {
@@ -9,15 +9,15 @@ namespace Science
     {
         public LimitSwitch RailLimit { get; private set; }
         public Encoder RailEncoder { get; private set; }
-        public Motor RailMotor { get; private set; }
+        public Motor RailController { get; private set; }
 
         public LimitSwitch TurntableZero { get; private set; }
         public Encoder TurntableEncoder { get; private set; }
-        public Motor TurntableMotor { get; private set; }
+        public Motor TurntableController { get; private set; }
 
         public LimitSwitch ToolheadLimit { get; private set; }
         public Encoder ToolheadEncoder { get; private set; }
-        public Motor ToolheadMotor { get; private set; }
+        public Motor ToolheadController { get; private set; }
 
         public Servo SampleDoorServo { get; private set; }
 
@@ -30,39 +30,47 @@ namespace Science
             // TODO: Define these pins properly.
             this.RailLimit = new LimitSwitch(0, false);
             this.RailEncoder = new Encoder(0, 0, 80);
-            //this.RailMotor = new Motor(0); // TODO: Replace this with a application-specific class.
-            this.RailLimit.SwitchToggle += this.RailMotor.EventTriggered;
-            this.RailEncoder.Turned += this.RailMotor.EventTriggered;
+            this.RailController = new Rail(0);
+            this.RailLimit.SwitchToggle += this.RailController.EventTriggered;
+            this.RailEncoder.Turned += this.RailController.EventTriggered;
 
             this.TurntableZero = new LimitSwitch(1, false);
             this.TurntableEncoder = new Encoder(1, 1, 420);
-            this.TurntableMotor = new MotorTurntable(1);
-            this.TurntableZero.SwitchToggle += this.TurntableMotor.EventTriggered;
-            this.TurntableEncoder.Turned += this.TurntableMotor.EventTriggered;
+            this.TurntableController = new Turntable(1);
+            this.TurntableZero.SwitchToggle += this.TurntableController.EventTriggered;
+            this.TurntableEncoder.Turned += this.TurntableController.EventTriggered;
 
             this.ToolheadLimit = new LimitSwitch(2, false);
-            this.ToolheadEncoder = new Encoder(2, 2, 80);
-            //this.ToolheadMotor = new Motor(2); // TODO: Replace this with a application-specific class.
-            this.ToolheadLimit.SwitchToggle += this.ToolheadMotor.EventTriggered;
-            this.ToolheadEncoder.Turned += this.ToolheadMotor.EventTriggered;
+            this.ToolheadEncoder = new Encoder(2, 2, 80); // TODO: Replace this with a potentiometer.
+            //this.ToolheadController = new Motor(2); // TODO: Replace this with an application-specific class.
+            this.ToolheadLimit.SwitchToggle += this.ToolheadController.EventTriggered;
+            this.ToolheadEncoder.Turned += this.ToolheadController.EventTriggered;
 
             //this.SampleDoorServo = new Servo(); // TODO: Replace this with a application-specific class.
 
             //this.DrillMotor = new Motor(3); // TODO: Replace this with a application-specific class.
         }
 
+        /// <summary>
+        /// Prepares all motor-driven systems for use by zeroing them. This takes a while.
+        /// </summary>
         public void InitializeMotors()
         {
-            this.RailMotor.Initialize();
-            this.TurntableMotor.Initialize();
-            this.ToolheadMotor.Initialize();
+            this.RailController.Initialize();
+            this.TurntableController.Initialize();
+            this.ToolheadController.Initialize();
         }
 
+        /// <summary>
+        /// Immediately stops all motors.
+        /// </summary>
         public void StopAllMotors()
         {
-            this.RailMotor.Stop();
-            this.TurntableMotor.Stop();
-            this.ToolheadMotor.Stop();
+            this.RailController.Stop();
+            this.TurntableController.Stop();
+            this.ToolheadController.Stop();
+            this.SampleDoorServo.Stop();
+            this.DrillMotor.Stop();
         }
     }
 }

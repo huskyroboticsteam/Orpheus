@@ -33,13 +33,15 @@ namespace RoboticsLibrary.Sensors
         /// working.</returns>
         public virtual bool Test() { return false; }
 
+        public virtual bool GetsRegUpdates() { return false; }
 
         /// <summary>
         /// Updates the states for all sensors
         /// </summary>
         public static void UpdateAllStates()
         {
-            foreach (Sensor Sensor in Sensor.AllSensors)
+            
+            foreach (Sensor Sensor in Sensor.AllSensors.Where(Sens => Sens.GetsRegUpdates()))
             {
                 Sensor.UpdateState();
             }

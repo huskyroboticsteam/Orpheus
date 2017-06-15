@@ -28,6 +28,8 @@ namespace RoboticsLibrary.Sensors
             return true;
         }
 
+        public override bool GetsRegUpdates() { return true; }
+
         public override void UpdateState()
         {
             // TODO: Call a GPIO library to update the state.

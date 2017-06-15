@@ -4,9 +4,9 @@ using RoboticsLibrary.Motors;
 using RoboticsLibrary.Sensors;
 using RoboticsLibrary.Utilities;
 
-namespace Science.Motors
+namespace Science.Systems
 {
-    class MotorTurntable : Motor
+    class Turntable : Motor
     {
         private readonly int Pin;
         private bool Initializing, InitDone;
@@ -16,7 +16,7 @@ namespace Science.Motors
         private const int MAX_SPEED = 30;
         private const int INIT_TIMEOUT = 5000;
 
-        public MotorTurntable(int Pin) : base(Pin)
+        public Turntable(int Pin) : base(Pin)
         {
             this.Pin = Pin;
             this.MotorCtrl = new TalonMC(Pin);

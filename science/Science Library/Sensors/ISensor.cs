@@ -8,6 +8,9 @@ namespace RoboticsLibrary.Sensors
 {
     public interface ISensor
     {
+        // Whether this sensor should be updated every cycle.
+        bool GetsRegUpdates();
+
         // Get a new reading and call the relevant event handlers.
         void UpdateState();
 

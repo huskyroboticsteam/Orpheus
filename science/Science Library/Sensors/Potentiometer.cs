@@ -22,6 +22,8 @@ namespace Science_Library.Sensors
             return true;
         }
 
+        public override bool GetsRegUpdates() { return true; }
+
         public override void UpdateState()
         {
             // TODO: Actually check state.

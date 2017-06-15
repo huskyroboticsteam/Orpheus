@@ -49,6 +49,7 @@
     <Compile Include="Communications\Packet.cs" />
     <Compile Include="Communications\Parse.cs" />
     <Compile Include="Controllers\PID.cs" />
+    <Compile Include="Sensors\Camera.cs" />
     <Compile Include="Sensors\Potentiometer.cs" />
     <Compile Include="Utilities\ErrorCodes.cs" />
     <Compile Include="Filters\Average.cs" />
