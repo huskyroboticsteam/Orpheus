@@ -99,6 +99,21 @@ namespace RoboticsLibrary.Utilities
             return Output.ToString();
         }
 
+        public static byte[] StringToBytes(string Data)
+        {
+            List<byte> Output = new List<byte>();
+            Data = Data.Replace(" ", "");
+            for (int Chunk = 0; Chunk < Math.Ceiling(Data.Length / 2.000); Chunk++)
+            {
+                int Start = Data.Length - ((Chunk + 1) * 2);
+                string Section;
+                if (Start >= 0) { Section = Data.Substring(Start, 2); }
+                else { Section = Data.Substring(0, 1); }
+                Output.Add(Convert.ToByte(Section, 16));
+            }
+            return Output.ToArray();
+        }
+
     }
 
 }

@@ -9,7 +9,7 @@ namespace Science.Motors
     class MotorTurntable : Motor
     {
         private readonly int Pin;
-        private bool Initializing;
+        private bool Initializing, InitDone;
         private int Speed, CurrentAngle;
         public int TargetAngle { get; set; }
         private readonly TalonMC MotorCtrl;
@@ -26,10 +26,11 @@ namespace Science.Motors
         {
             if(Event is LimitSwitchToggle && this.Initializing) // We hit the end.
             {
-                this.Speed = 0;
+                this.Stop();
                 this.CurrentAngle = 0;
                 Log.Output(Log.Severity.DEBUG, Log.Source.MOTORS, "Turntable motor finished initializing.");
                 this.Initializing = false;
+                this.InitDone = true;
             }
             if(Event is ElapsedEventArgs && this.Initializing) // We timed out trying to initialize.
             {
@@ -59,9 +60,9 @@ namespace Science.Motors
 
         public override void UpdateState()
         {
-            // TODO: Determine speed from target and current pos.
             if (this.Speed > MAX_SPEED) { this.Speed = MAX_SPEED; }
-            // TODO: Output the speed as a PWM signal.
+            if (!this.InitDone) { return; }
+            // TODO: Come up with way to communicate speed and target to TalonMC.
         }
     }
 }

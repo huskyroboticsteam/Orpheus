@@ -55,7 +55,7 @@ namespace RoboticsLibrary.Communications
         {
             if (this.Data == null)
             { // Avoid null pointer exception
-                this.Data = new byte[1];
+                this.Data = new byte[0];
             }
             this.Endpoint = Endpoint;
             this.ID = ID;
