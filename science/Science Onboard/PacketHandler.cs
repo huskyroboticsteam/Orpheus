@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using RoboticsLibrary.Communications;
 using RoboticsLibrary.Utilities;
-using RoboticsLibrary.Commands;
 
 namespace Science
 {
@@ -26,7 +25,7 @@ namespace Science
         public static void ParseStopPacket(Message StopPacket)
         {
             Log.Output(Log.Severity.FATAL, Log.Source.OTHER, "EMERGENCY STOP RECEIVED");
-            EmergencyStopListener.STOP = true;
+            
         }
     }
 }

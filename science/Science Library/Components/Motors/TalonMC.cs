@@ -1,12 +1,24 @@
 ﻿using System;
 using WiringPi;
+using RoboticsLibrary.Filters;
 
 namespace RoboticsLibrary.Components.Motors
 {
     public class TalonMC : IMotor
     {
+        private LowPass<double> LPF = new LowPass<double>();
         private readonly int Pin;
         private readonly float MaxSpeed;
+        public float RampUp
+        {
+            get { return this.RampUp; }
+            set
+            {
+                this.RampUp = value;
+                if (value > 1) { this.RampUp = 1; }
+                if (value < 0) { this.RampUp = 0; }
+            }
+        } // Float from 0 to 1, higher the number the longer the ramp up time
         public float Speed
         {
             get { return this.Speed; }
@@ -44,7 +56,11 @@ namespace RoboticsLibrary.Components.Motors
 
         public void UpdateState()
         {
-            // TODO: Output the relevant PWM signal.
+            this.LPF.LPFk = this.RampUp;
+            this.LPF.Feed(this.Speed);
+            double SetSpeed = this.LPF.Output;
+            // TODO: Output the relevant PWM signal use SetSpeed as the actual value.
+            
         }
     }
 }

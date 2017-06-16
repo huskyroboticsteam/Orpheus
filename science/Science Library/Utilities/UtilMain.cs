@@ -10,16 +10,17 @@ namespace RoboticsLibrary.Utilities
 {
     public static class UtilMain
     {
-                 
-         /// <summary>
-         /// <c>IsNumericType(Type Type)</c>
-         /// Determines if the given type
-         /// is numeric. 
-         /// </summary>
-         /// <returns>
-         /// Returns <c>true</c> if 
-         /// param <param> Type </param> is a numeric, 
-         /// otherwise returns <c>false</c>.</returns>
+
+        /// <summary>
+        /// <c>IsNumericType(Type Type)</c>
+        /// Determines if the given type
+        /// is numeric. 
+        /// </summary>
+        /// <param name="Type">Type to determine whether or not it is a numeric</param>
+        /// <returns>
+        /// Returns <c>true</c> if 
+        /// param is a numeric; 
+        /// otherwise returns <c>false</c>.</returns>
         public static bool IsNumericType(Type Type)
         {
             switch (Type.GetTypeCode(Type))
@@ -98,7 +99,16 @@ namespace RoboticsLibrary.Utilities
             if (Spaces) { Output.Remove(Output.Length - 1, 1); }
             return Output.ToString();
         }
-
+        
+        /// <summary>
+        /// Takes in a string,
+        /// converts the string
+        /// into its byte representation.
+        /// </summary>
+        /// <param name="Data">
+        /// String to convert into bytes</param>
+        /// <returns>
+        /// Byte array that represents the given string.</returns>
         public static byte[] StringToBytes(string Data)
         {
             List<byte> Output = new List<byte>();
