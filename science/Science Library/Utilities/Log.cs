@@ -115,7 +115,7 @@ namespace RoboticsLibrary.Utilities
         /// </summary>
         public enum Source
         {
-            ALL, MOTORS, NETWORK, GUI, SENSORS, CAMERAS, OTHER
+            ALL, MOTORS, NETWORK, GUI, SENSORS, CAMERAS, SUBSYSTEM, OTHER
         }
 
         /// <summary>

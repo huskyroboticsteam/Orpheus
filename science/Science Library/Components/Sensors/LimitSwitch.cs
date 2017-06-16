@@ -1,9 +1,9 @@
 ﻿using System;
 using RoboticsLibrary.Utilities;
 
-namespace RoboticsLibrary.Sensors
+namespace RoboticsLibrary.Components.Sensors
 {
-    public class LimitSwitch : Sensor
+    public class LimitSwitch : ISensor
     {
         private int Pin;
         private bool NormallyLow;
@@ -16,16 +16,14 @@ namespace RoboticsLibrary.Sensors
             this.NormallyLow = NormallyLow;
         }
         
-        public override bool Test()
+        public bool Test()
         {
             // TODO: Call a GPIO library to check functionality.
             Log.Output(Log.Severity.WARNING, Log.Source.SENSORS, "Limit switch testing not implemented properly.");
             return true;
         }
 
-        public override bool GetsRegUpdates() { return true; }
-
-        public override void UpdateState()
+        public void UpdateState()
         {
             // TODO: Call a GPIO library to update the state.
             Log.Output(Log.Severity.WARNING, Log.Source.SENSORS, "Limit switch updating not implemented properly.");
@@ -44,6 +42,16 @@ namespace RoboticsLibrary.Sensors
         protected virtual void OnSwitchToggle(LimitSwitchToggle Event)
         {
             SwitchToggle?.Invoke(this, Event);
+        }
+
+        public void Initialize()
+        {
+            // TODO: Set up GPIO pins/interrupts.
+        }
+
+        public void EventTriggered(object Sender, EventArgs Event)
+        {
+            
         }
     }
 

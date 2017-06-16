@@ -1,32 +1,41 @@
 ﻿using System;
 using System.Timers;
-using RoboticsLibrary.Motors;
-using RoboticsLibrary.Sensors;
+using RoboticsLibrary.Components;
+using RoboticsLibrary.Components.Motors;
+using RoboticsLibrary.Components.Sensors;
 using RoboticsLibrary.Utilities;
 
 namespace Science.Systems
 {
-    class Turntable : Motor
+    class Turntable : ISubsystem
     {
-        private readonly int Pin;
-        private bool Initializing, InitDone;
-        private int Speed, CurrentAngle;
-        public int TargetAngle { get; set; }
-        private readonly TalonMC MotorCtrl;
-        private const int MAX_SPEED = 30;
+        private const float MOTOR_MAX_SPEED = 0.30F;
         private const int INIT_TIMEOUT = 5000;
 
-        public Turntable(int Pin) : base(Pin)
+        private bool Initializing, InitDone;
+        private int CurrentAngle;
+        public int TargetAngle { get; set; }
+
+        private readonly TalonMC MotorCtrl;
+        private readonly LimitSwitch Limit;
+        private readonly Encoder Encoder;
+
+        public Turntable()
         {
-            this.Pin = Pin;
-            this.MotorCtrl = new TalonMC(Pin);
+            // TODO: Set these to actual pins.
+            this.MotorCtrl = new TalonMC(4, MOTOR_MAX_SPEED);
+            this.Limit = new LimitSwitch(5, false);
+            this.Encoder = new Encoder(6, 7, 420);
+
+            this.Limit.SwitchToggle += this.EventTriggered;
+            this.Encoder.Turned += this.EventTriggered;
         }
 
-        public override void EventTriggered(object Sender, EventArgs Event)
+        public void EventTriggered(object Sender, EventArgs Event)
         {
             if(Event is LimitSwitchToggle && this.Initializing) // We hit the end.
             {
-                this.Stop();
+                this.MotorCtrl.Stop();
                 this.CurrentAngle = 0;
                 Log.Output(Log.Severity.DEBUG, Log.Source.MOTORS, "Turntable motor finished initializing.");
                 this.Initializing = false;
@@ -34,14 +43,26 @@ namespace Science.Systems
             }
             if(Event is ElapsedEventArgs && this.Initializing) // We timed out trying to initialize.
             {
-                this.Stop();
+                this.MotorCtrl.Stop();
                 Log.Output(Log.Severity.ERROR, Log.Source.MOTORS, "Turntable motor timed out while attempting to initialize.");
                 this.Initializing = false;
             }
+            if(Event is LimitSwitchToggle)
+            {
+                this.CurrentAngle = 0;
+            }
+            if(Event is EncoderTurn)
+            {
+                // TODO: Track this.
+            }
         }
 
-        public override void Initialize()
+        public void Initialize()
         {
+            this.MotorCtrl.Initialize();
+            this.Limit.Initialize();
+            this.Encoder.Initialize();
+
             this.Initializing = true;
             
             Timer TimeoutTrigger = new Timer() { Interval = INIT_TIMEOUT, AutoReset = false };
@@ -51,18 +72,24 @@ namespace Science.Systems
             this.TargetAngle = 360;
         }
 
-        public override void Stop()
+        public void EmergencyStop()
         {
-            this.Speed = 0;
             this.TargetAngle = this.CurrentAngle;
-            UpdateState();
+            this.MotorCtrl.Stop();
+            this.UpdateState();
         }
 
-        public override void UpdateState()
+        public void UpdateState()
         {
-            if (this.Speed > MAX_SPEED) { this.Speed = MAX_SPEED; }
-            if (!this.InitDone) { return; }
-            // TODO: Come up with way to communicate speed and target to TalonMC.
+            this.Limit.UpdateState();
+            this.Encoder.UpdateState();
+            this.MotorCtrl.UpdateState();
+            if (!this.InitDone)
+            {
+                Log.Output(Log.Severity.WARNING, Log.Source.SUBSYSTEM, "Turntable has not been initialized yet.");
+                return;
+            }
+            // TODO: Send commands to Talon.
         }
     }
 }

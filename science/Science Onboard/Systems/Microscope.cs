@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Diagnostics;
-using RoboticsLibrary.Sensors;
+using RoboticsLibrary.Components;
 
 namespace Science.Systems
 {
-    public class Microscope : Camera
+    public class Microscope : ICamera
     {
-        public Microscope() : base("/dev/video0")
+        public event EventHandler<PictureTaken> PictureNotify;
+
+        public Microscope()
         {
             
         }
@@ -15,30 +17,33 @@ namespace Science.Systems
         {
             PictureTaken CreatedEvent = new PictureTaken();
             CreatedEvent.Image = new System.IO.FileInfo(GetFilename(false));
-            base.OnPicture(CreatedEvent);
+            this.OnPicture(CreatedEvent);
         }
 
-        public override bool Test()
+        public void TakePicture()
+        {
+            Process ImgCap = new Process();
+            ImgCap.StartInfo.FileName = "fswebcam";
+            ImgCap.StartInfo.Arguments = "-r 1600x1200 " + GetFilename(true);
+            ImgCap.EnableRaisingEvents = true;
+            ImgCap.Start();
+            ImgCap.Exited += this.EventTriggered;
+        }
+
+        public bool Test()
         {
             // TODO: Test camera.
             return true;
         }
 
-        /// <summary>
-        /// Takes a pciture.
-        /// </summary>
-        public override void UpdateState()
-        {
-            Process ImgCap = new Process();
-            ImgCap.StartInfo.FileName = "fswebcam";
-            ImgCap.StartInfo.Arguments = "-r 1600x1200 " + GetFilename(true);
-            ImgCap.Start();
-            ImgCap.Exited += this.EventTriggered;
-        }
-
         private string GetFilename(bool Advance)
         { // TODO: Return a filename.
             return null;
+        }
+
+        protected virtual void OnPicture(PictureTaken Event)
+        {
+            PictureNotify?.Invoke(this, Event);
         }
     }
 }

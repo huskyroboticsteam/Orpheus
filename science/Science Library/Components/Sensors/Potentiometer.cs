@@ -1,10 +1,9 @@
 ﻿using System;
-using RoboticsLibrary.Sensors;
 using RoboticsLibrary.Utilities;
 
-namespace Science_Library.Sensors
+namespace RoboticsLibrary.Components.Sensors
 {
-    public class Potentiometer : Sensor
+    public class Potentiometer : ISensor
     {
         private int Pin;
         public int Angle { get; private set; }
@@ -15,16 +14,14 @@ namespace Science_Library.Sensors
             this.Pin = Pin;
         }
 
-        public override bool Test()
+        public bool Test()
         {
             // TODO: Replace this with an actual check.
             Log.Output(Log.Severity.WARNING, Log.Source.SENSORS, "Potentiometer testing not implemented properly.");
             return true;
         }
 
-        public override bool GetsRegUpdates() { return true; }
-
-        public override void UpdateState()
+        public void UpdateState()
         {
             // TODO: Actually check state.
             Log.Output(Log.Severity.WARNING, Log.Source.SENSORS, "Potentiometer updating not implemented properly.");
@@ -41,6 +38,16 @@ namespace Science_Library.Sensors
         protected virtual void OnTurn(PotentiometerTurn Event)
         {
             Turned?.Invoke(this, Event);
+        }
+
+        public void Initialize()
+        {
+            // TODO: Set up GPIO pins.
+        }
+
+        public void EventTriggered(object Sender, EventArgs Event)
+        {
+            
         }
     }
 

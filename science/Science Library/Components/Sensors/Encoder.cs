@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using RoboticsLibrary.Utilities;
 
-namespace RoboticsLibrary.Sensors
+namespace RoboticsLibrary.Components.Sensors
 {
-    public class Encoder : Sensor
+    public class Encoder : ISensor
     {
         private int PinA, PinB;
         private int PulsesPerTurn;
@@ -21,16 +17,14 @@ namespace RoboticsLibrary.Sensors
             this.PulsesPerTurn = PulsesPerTurn;
         }
 
-        public override bool Test()
+        public bool Test()
         {
             // TODO: Call a GPIO library to check functionality.
             Log.Output(Log.Severity.WARNING, Log.Source.SENSORS, "Encoder testing not implemented properly.");
             return true;
         }
 
-        public override bool GetsRegUpdates() { return true; }
-
-        public override void UpdateState()
+        public void UpdateState()
         {
             // TODO: Call a GPIO library to update the state.
             Log.Output(Log.Severity.WARNING, Log.Source.SENSORS, "Encoder updating not implemented properly.");
@@ -49,6 +43,16 @@ namespace RoboticsLibrary.Sensors
         protected virtual void OnTurn(EncoderTurn Event)
         {
             Turned?.Invoke(this, Event);
+        }
+
+        public void Initialize()
+        {
+            // TODO: Set up GPIO pins/interrupts
+        }
+
+        public void EventTriggered(object Sender, EventArgs Event)
+        {
+            
         }
     }
 

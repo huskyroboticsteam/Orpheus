@@ -48,23 +48,22 @@
     <Compile Include="Communications\Message.cs" />
     <Compile Include="Communications\Packet.cs" />
     <Compile Include="Communications\Parse.cs" />
+    <Compile Include="Components\ISubsystem.cs" />
     <Compile Include="Controllers\PID.cs" />
-    <Compile Include="Sensors\Camera.cs" />
-    <Compile Include="Sensors\Potentiometer.cs" />
+    <Compile Include="Components\ICamera.cs" />
+    <Compile Include="Components\Sensors\Potentiometer.cs" />
     <Compile Include="Utilities\ErrorCodes.cs" />
     <Compile Include="Filters\Average.cs" />
     <Compile Include="Filters\Filter.cs" />
     <Compile Include="Filters\Kalman.cs" />
     <Compile Include="Filters\LowPass.cs" />
-    <Compile Include="Motors\Motor.cs" />
-    <Compile Include="Motors\Servo.cs" />
-    <Compile Include="Motors\TalonMC.cs" />
-    <Compile Include="Motors\IMotor.cs" />
+    <Compile Include="Components\IMotor.cs" />
+    <Compile Include="Components\Motors\Servo.cs" />
+    <Compile Include="Components\Motors\TalonMC.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Sensors\Encoder.cs" />
-    <Compile Include="Sensors\LimitSwitch.cs" />
-    <Compile Include="Sensors\ISensor.cs" />
-    <Compile Include="Sensors\Sensor.cs" />
+    <Compile Include="Components\Sensors\Encoder.cs" />
+    <Compile Include="Components\Sensors\LimitSwitch.cs" />
+    <Compile Include="Components\ISensor.cs" />
     <Compile Include="Utilities\Log.cs" />
     <Compile Include="Utilities\UtilMain.cs" />
   </ItemGroup>
@@ -74,5 +73,6 @@
       <Name>WiringPi</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

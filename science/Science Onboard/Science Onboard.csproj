@@ -45,7 +45,9 @@
   <ItemGroup>
     <Compile Include="CommandHandler.cs" />
     <Compile Include="IOHandler.cs" />
+    <Compile Include="Systems\Drill.cs" />
     <Compile Include="Systems\Microscope.cs" />
+    <Compile Include="Systems\Toolhead.cs" />
     <Compile Include="Systems\Turntable.cs" />
     <Compile Include="Systems\Rail.cs" />
     <Compile Include="PacketHandler.cs" />

@@ -1,36 +1,44 @@
 ﻿using System;
 using System.Timers;
-using RoboticsLibrary.Motors;
-using RoboticsLibrary.Sensors;
+using RoboticsLibrary.Components;
+using RoboticsLibrary.Components.Motors;
+using RoboticsLibrary.Components.Sensors;
 using RoboticsLibrary.Utilities;
 
 namespace Science.Systems
 {
-    public class Rail : Motor
+    public class Rail : ISubsystem
     {
-        private readonly int Pin;
-        private bool Initializing, InitDone;
-        private int Speed, Height;
-        public int TargetHeight { get; set; }
-        private readonly TalonMC MotorCtrl;
-        private const int MAX_SPEED = 10;
+        private const float MOTOR_MAX_SPEED = 0.10F;
         private const int INIT_TIMEOUT = 5000;
+
+        private bool Initializing, InitDone;
+        private int Height;
+        public int TargetHeight { get; set; }
+
+        private readonly TalonMC MotorCtrl;
+        private readonly LimitSwitch Limit;
+        private readonly Encoder Encoder;
 
         /// <summary>
         /// Handles moving the linear rail up and down for the various experiments.
         /// </summary>
-        /// <param name="Pin">The ouptut pin to use for the PWM motor output</param>
-        public Rail(int Pin) : base(Pin)
+        public Rail()
         {
-            this.Pin = Pin;
-            this.MotorCtrl = new TalonMC(Pin);
+            // TODO: Set these to actual pins.
+            this.MotorCtrl = new TalonMC(0, MOTOR_MAX_SPEED);
+            this.Limit = new LimitSwitch(1, false);
+            this.Encoder = new Encoder(2, 3, 80);
+
+            this.Limit.SwitchToggle += this.EventTriggered;
+            this.Encoder.Turned += this.EventTriggered;
         }
 
-        public override void EventTriggered(object Sender, EventArgs Event)
+        public void EventTriggered(object Sender, EventArgs Event)
         {
             if(Event is LimitSwitchToggle && this.Initializing) // We hit the end.
             {
-                this.Stop();
+                this.MotorCtrl.Stop();
                 this.Height = 0;
                 Log.Output(Log.Severity.DEBUG, Log.Source.MOTORS, "Rail motor finished initializing.");
                 this.Initializing = false;
@@ -38,29 +46,36 @@ namespace Science.Systems
             }
             if(Event is ElapsedEventArgs && this.Initializing) // We timed out trying to initialize.
             {
-                this.Stop();
+                this.MotorCtrl.Stop();
                 Log.Output(Log.Severity.ERROR, Log.Source.MOTORS, "Rail motor timed out while trying to initialize.");
                 this.Initializing = false;
             }
             if(Event is LimitSwitchToggle && !this.Initializing) // We hit the end during operation.
             {
-                this.Stop();
+                this.MotorCtrl.Stop();
                 Log.Output(Log.Severity.WARNING, Log.Source.MOTORS, "Rail motor hit limit switch and was stopped for safety.");
+            }
+            if(Event is EncoderTurn)
+            {
+                // TODO: Track this.
             }
         }
 
         /// <summary>
         /// Prepares the rail for use by moving the motor all the way up to the top to find the zero position.
         /// </summary>
-        public override void Initialize()
+        public void Initialize()
         { // TODO: What happens when it is already at the top? This likely won't toggle the switch...
+            this.MotorCtrl.Initialize();
+            this.Limit.Initialize();
+            this.Encoder.Initialize();
+
             this.Initializing = true;
 
             Timer TimeoutTrigger = new Timer() { Interval = INIT_TIMEOUT, AutoReset = false };
             TimeoutTrigger.Elapsed += this.EventTriggered;
             TimeoutTrigger.Enabled = true;
-            // Do init stuff.
-            this.TargetHeight = 0;
+            this.GotoTop();
         }
 
         /// <summary>
@@ -68,7 +83,7 @@ namespace Science.Systems
         /// </summary>
         public void GotoTop()
         {
-
+            this.MotorCtrl.Speed = MOTOR_MAX_SPEED;
         }
 
         /// <summary>
@@ -98,20 +113,26 @@ namespace Science.Systems
         /// <summary>
         /// Immediately stops the rail motor.
         /// </summary>
-        public override void Stop()
+        public void EmergencyStop()
         {
-            this.Speed = 0;
             this.TargetHeight = this.Height;
-            UpdateState();
+            this.MotorCtrl.Stop();
+            this.UpdateState();
         }
 
         /// <summary>
         /// Updates the current position, target, intended motor speed. Communicates this to the Talon controller to drive the motor at the new desired rate.
         /// </summary>
-        public override void UpdateState()
+        public void UpdateState()
         {
-            if (this.Speed > MAX_SPEED) { this.Speed = MAX_SPEED; }
-            if (!this.InitDone) { return; }
+            this.Limit.UpdateState();
+            this.Encoder.UpdateState();
+            this.MotorCtrl.UpdateState();
+            if (!this.InitDone)
+            {
+                Log.Output(Log.Severity.WARNING, Log.Source.SUBSYSTEM, "Rail has not been initialized yet.");
+                return;
+            }
             // TODO: Send commands to Talon.
         }
     }
