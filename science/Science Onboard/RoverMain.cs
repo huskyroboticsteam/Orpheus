@@ -17,6 +17,7 @@ namespace Science
 
             Packet.DefaultEndpoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 610);
             CommHandler.Start(600);
+            PacketHandler PackHan = new PacketHandler();
 
             RunTests();
 
