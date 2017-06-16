@@ -25,7 +25,7 @@ namespace Science
         public static void ParseStopPacket(Message StopPacket)
         {
             Log.Output(Log.Severity.FATAL, Log.Source.OTHER, "EMERGENCY STOP RECEIVED");
-            
+            RoverMain.IOHandler.EmergencyStop();
         }
     }
 }

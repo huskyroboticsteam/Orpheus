@@ -43,7 +43,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommandHandler.cs" />
     <Compile Include="IOHandler.cs" />
     <Compile Include="Systems\Drill.cs" />
     <Compile Include="Systems\Microscope.cs" />

@@ -41,9 +41,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Commands\Command.cs" />
-    <Compile Include="Commands\EmergencyStopListener.cs" />
-    <Compile Include="Commands\PIDCommand.cs" />
     <Compile Include="Communications\CommHandler.cs" />
     <Compile Include="Communications\Message.cs" />
     <Compile Include="Communications\Packet.cs" />
