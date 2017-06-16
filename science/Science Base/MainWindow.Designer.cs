@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
 			this.components = new System.ComponentModel.Container();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.EmergencyStopBtn = new System.Windows.Forms.Button();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -165,7 +166,7 @@
 			this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
 			this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
 			this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40F));
-			this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 103F));
+			this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 104F));
 			this.PacketGenLayout.Controls.Add(this.TimestampTitle, 0, 0);
 			this.PacketGenLayout.Controls.Add(this.IDTitle, 1, 0);
 			this.PacketGenLayout.Controls.Add(this.IDTextbox, 1, 1);
@@ -195,7 +196,7 @@
 			this.TimestampTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
 			this.TimestampTitle.Location = new System.Drawing.Point(3, 0);
 			this.TimestampTitle.Name = "TimestampTitle";
-			this.TimestampTitle.Size = new System.Drawing.Size(191, 13);
+			this.TimestampTitle.Size = new System.Drawing.Size(190, 13);
 			this.TimestampTitle.TabIndex = 0;
 			this.TimestampTitle.Text = "Timestamp";
 			// 
@@ -204,9 +205,9 @@
 			this.IDTitle.AutoSize = true;
 			this.IDTitle.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.IDTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-			this.IDTitle.Location = new System.Drawing.Point(200, 0);
+			this.IDTitle.Location = new System.Drawing.Point(199, 0);
 			this.IDTitle.Name = "IDTitle";
-			this.IDTitle.Size = new System.Drawing.Size(191, 13);
+			this.IDTitle.Size = new System.Drawing.Size(190, 13);
 			this.IDTitle.TabIndex = 2;
 			this.IDTitle.Text = "ID";
 			// 
@@ -217,9 +218,9 @@
 			this.IDTextbox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
 			this.IDTextbox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.IDTextbox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-			this.IDTextbox.Location = new System.Drawing.Point(200, 16);
+			this.IDTextbox.Location = new System.Drawing.Point(199, 16);
 			this.IDTextbox.Name = "IDTextbox";
-			this.IDTextbox.Size = new System.Drawing.Size(191, 20);
+			this.IDTextbox.Size = new System.Drawing.Size(190, 20);
 			this.IDTextbox.TabIndex = 3;
 			this.IDTextbox.TextChanged += new System.EventHandler(this.IDTextbox_TextChanged);
 			// 
@@ -230,7 +231,7 @@
 			this.DataTextbox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
 			this.DataTextbox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.DataTextbox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-			this.DataTextbox.Location = new System.Drawing.Point(397, 16);
+			this.DataTextbox.Location = new System.Drawing.Point(395, 16);
 			this.DataTextbox.Name = "DataTextbox";
 			this.DataTextbox.Size = new System.Drawing.Size(256, 20);
 			this.DataTextbox.TabIndex = 4;
@@ -241,7 +242,7 @@
 			this.DataTitle.AutoSize = true;
 			this.DataTitle.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.DataTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-			this.DataTitle.Location = new System.Drawing.Point(397, 0);
+			this.DataTitle.Location = new System.Drawing.Point(395, 0);
 			this.DataTitle.Name = "DataTitle";
 			this.DataTitle.Size = new System.Drawing.Size(256, 13);
 			this.DataTitle.TabIndex = 5;
@@ -251,10 +252,10 @@
 			// 
 			this.SendPacketBtn.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.SendPacketBtn.Location = new System.Drawing.Point(659, 16);
+			this.SendPacketBtn.Location = new System.Drawing.Point(657, 16);
 			this.SendPacketBtn.Name = "SendPacketBtn";
 			this.SendPacketBtn.Padding = new System.Windows.Forms.Padding(5);
-			this.SendPacketBtn.Size = new System.Drawing.Size(98, 25);
+			this.SendPacketBtn.Size = new System.Drawing.Size(100, 25);
 			this.SendPacketBtn.TabIndex = 5;
 			this.SendPacketBtn.Text = "Send";
 			this.SendPacketBtn.Click += new System.EventHandler(this.SendPacketBtn_Click);
@@ -272,7 +273,7 @@
 			this.tableLayoutPanel2.RowCount = 2;
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel2.Size = new System.Drawing.Size(197, 69);
+			this.tableLayoutPanel2.Size = new System.Drawing.Size(196, 69);
 			this.tableLayoutPanel2.TabIndex = 7;
 			// 
 			// UseCurrentTime
@@ -294,7 +295,7 @@
 			this.TimestampTextbox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
 			this.TimestampTextbox.Location = new System.Drawing.Point(3, 3);
 			this.TimestampTextbox.Name = "TimestampTextbox";
-			this.TimestampTextbox.Size = new System.Drawing.Size(191, 20);
+			this.TimestampTextbox.Size = new System.Drawing.Size(190, 20);
 			this.TimestampTextbox.TabIndex = 2;
 			this.TimestampTextbox.TextChanged += new System.EventHandler(this.TimestampTextbox_TextChanged);
 			// 
@@ -305,7 +306,7 @@
 			this.InterpretationTimestamp.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
 			this.InterpretationTimestamp.Location = new System.Drawing.Point(3, 82);
 			this.InterpretationTimestamp.Name = "InterpretationTimestamp";
-			this.InterpretationTimestamp.Size = new System.Drawing.Size(191, 13);
+			this.InterpretationTimestamp.Size = new System.Drawing.Size(190, 13);
 			this.InterpretationTimestamp.TabIndex = 8;
 			this.InterpretationTimestamp.Text = "Unknown";
 			// 
@@ -314,9 +315,9 @@
 			this.InterpretationID.AutoSize = true;
 			this.InterpretationID.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.InterpretationID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-			this.InterpretationID.Location = new System.Drawing.Point(200, 82);
+			this.InterpretationID.Location = new System.Drawing.Point(199, 82);
 			this.InterpretationID.Name = "InterpretationID";
-			this.InterpretationID.Size = new System.Drawing.Size(191, 13);
+			this.InterpretationID.Size = new System.Drawing.Size(190, 13);
 			this.InterpretationID.TabIndex = 9;
 			this.InterpretationID.Text = "Unknown";
 			// 
@@ -325,7 +326,7 @@
 			this.InterpretationData.AutoSize = true;
 			this.InterpretationData.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.InterpretationData.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-			this.InterpretationData.Location = new System.Drawing.Point(397, 82);
+			this.InterpretationData.Location = new System.Drawing.Point(395, 82);
 			this.InterpretationData.Name = "InterpretationData";
 			this.InterpretationData.Size = new System.Drawing.Size(256, 13);
 			this.InterpretationData.TabIndex = 10;
@@ -336,9 +337,9 @@
 			this.PacketConstructStatus.AutoSize = true;
 			this.PacketConstructStatus.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.PacketConstructStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-			this.PacketConstructStatus.Location = new System.Drawing.Point(659, 82);
+			this.PacketConstructStatus.Location = new System.Drawing.Point(657, 82);
 			this.PacketConstructStatus.Name = "PacketConstructStatus";
-			this.PacketConstructStatus.Size = new System.Drawing.Size(98, 13);
+			this.PacketConstructStatus.Size = new System.Drawing.Size(100, 13);
 			this.PacketConstructStatus.TabIndex = 11;
 			this.PacketConstructStatus.Text = "Unknown";
 			// 
@@ -353,6 +354,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(784, 561);
 			this.Controls.Add(this.tableLayoutPanel1);
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MinimumSize = new System.Drawing.Size(540, 358);
 			this.Name = "MainWindow";
 			this.Text = "Science!";

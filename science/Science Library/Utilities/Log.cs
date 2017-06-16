@@ -23,7 +23,7 @@ namespace RoboticsLibrary.Utilities
         /// <param name="Message">The actual log entry to output.</param>
         public static void Output(Severity Sev, Source Src, string Message)
         {
-            if((Sev >= OutputLevel) && ((OutputType == Source.ALL) || (Src == OutputType)))
+            if(((Sev >= OutputLevel) || (Sev >= Severity.ERROR)) && ((OutputType == Source.ALL) || (Src == OutputType)))
             {
                 ForceOutput(Sev, Src, Message);
             }

@@ -14,13 +14,14 @@ namespace Science_Base
 	{
 		static void Main(string[] args)
 		{
-            // Set Packet default endpoint (IP Address and port to send to by default)
-            Packet.DefaultEndpoint = new IPEndPoint(IPAddress.Parse("10.1.10.140"), 600);
-            CommHandler.Start(600); // Start Comms on listening port
             Log.OutputLevel = Log.Severity.DEBUG;
             Log.OutputType = Log.Source.ALL;
             Log.Begin();
             Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Science Station - Base Side");
+
+            // Set Packet default endpoint (IP Address and port to send to by default)
+            Packet.DefaultEndpoint = new IPEndPoint(IPAddress.Parse("192.168.103"), 600);
+            CommHandler.Start(610); // Start Comms on listening port
 
             MainWindow Main = new MainWindow();
             Application.EnableVisualStyles();

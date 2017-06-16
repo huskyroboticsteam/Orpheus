@@ -32,7 +32,7 @@ namespace RoboticsLibrary.Communications
             IPEndPoint EndPoint = PacketEndpoint ?? DefaultEndpoint;
             try
             {
-                this.Client = new TcpClient(EndPoint);
+                this.Client = new TcpClient(new IPEndPoint(IPAddress.Parse("0.0.0.0"), 8000));
             }
             catch(SocketException Exception)
             {
@@ -117,6 +117,7 @@ namespace RoboticsLibrary.Communications
     }
     
     // TODO: Set Real Packet ID Values
+    // TODO: Evalue if we even want this in an enum. This, in a way, sets the packet types, which wouldn't work for other systems in the future.
     public enum PacketType
     {
         Error,

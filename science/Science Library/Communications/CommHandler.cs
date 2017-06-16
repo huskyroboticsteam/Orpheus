@@ -63,7 +63,8 @@ namespace RoboticsLibrary.Communications
             CommHandler.Initialized = true;
             try
             {
-                CommHandler.Endpoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), CommHandler.PortNumber);
+                Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Initializing CommHandler to listen on port " + CommHandler.PortNumber + ".");
+                CommHandler.Endpoint = new IPEndPoint(IPAddress.Parse("0.0.0.0"), CommHandler.PortNumber);
                 CommHandler.TcpListener = new TcpListener(CommHandler.Endpoint);
                 CommHandler.SendQueue = new Queue<Packet>();
                 CommHandler.SendThread = new Thread(new ThreadStart(CommHandler.Send));

@@ -20,6 +20,12 @@ namespace Science.Systems
         private readonly TalonMC MotorCtrl;
         private readonly Servo DoorServo;
 
+        public Drill()
+        {
+            this.MotorCtrl = new TalonMC(0, MOTOR_MAX_SPEED);
+            this.DoorServo = new Servo(1);
+        }
+
         public void EmergencyStop()
         {
             this.MotorCtrl.Stop();

@@ -43,6 +43,12 @@ namespace RoboticsLibrary.Communications
         {
             try
             {
+                Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Parsing packet: " + NewMessage.ToString());
+                if(!ParsingHandlers.ContainsKey(NewMessage.ID))
+                {
+                    Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "No handler is registered for parsing packet ID " + NewMessage.ID + "!");
+                    return;
+                }
                 ParsingHandlers[NewMessage.ID].DynamicInvoke(NewMessage);
             }
             catch (Exception Except)
