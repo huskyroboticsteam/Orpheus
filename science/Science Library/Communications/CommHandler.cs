@@ -203,5 +203,51 @@ namespace RoboticsLibrary.Communications
             }
         }
 
+        /// <summary>
+        /// Determines if socket is connected
+        /// </summary>
+        /// <param name="Client">
+        /// Client to test connection</param>
+        /// <returns>
+        /// Whether or not client is connected</returns>
+        public static bool IsConnected(Socket Client)
+        {
+            // This is how you can determine whether a socket is still connected.
+            bool blockingState = Client.Blocking;
+            try
+            {
+                byte[] tmp = new byte[1];
+
+                Client.Blocking = false;
+                Client.Send(tmp, 0, 0);
+                return true;
+            }
+            catch (SocketException e)
+            {
+                // 10035 == WSAEWOULDBLOCK
+                if (e.NativeErrorCode.Equals(10035))
+                    return true;
+                else
+                {
+                    return false;
+                }
+            }
+            finally
+            {
+                Client.Blocking = blockingState;
+            }
+        }
+
+        /// <summary>
+        /// Returns whether or not TCP
+        /// client is connected
+        /// </summary>
+        /// <returns>
+        /// TCP client connection status</returns>
+        public static bool IsConnected()
+        {
+            return IsConnected(new Socket(SocketType.Stream, ProtocolType.Tcp));
+        }
+
     }
 }
