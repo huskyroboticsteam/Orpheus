@@ -6,13 +6,14 @@ namespace Scarlet.Components.Motors
     public class Servo : IMotor
     {
         private readonly int Pin;
-        private int TargetPosition;
-        public int Position
+        public int Position { get; private set; }
+        private int P_TargetPosition;
+        public int TargetPosition
         {
-            get { return this.Position; }
+            get { return this.P_TargetPosition; }
             set
             {
-                this.TargetPosition = value % 360;
+                this.P_TargetPosition = value % 360;
                 this.UpdateState();
             }
         }

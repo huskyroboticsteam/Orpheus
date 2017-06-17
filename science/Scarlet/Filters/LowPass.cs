@@ -26,14 +26,15 @@ namespace Scarlet.Filters
     {
 
         public T Output { get; private set; } // Output for the Low Pass Filter
+        private double P_LPFk;
         public double LPFk
         {
-            get { return this.LPFk; }
+            get { return this.P_LPFk; }
             set
             {
-                this.LPFk = value;
-                if (value > 1) { this.LPFk = 1; }
-                if (value < 0) { this.LPFk = 0; }
+                this.P_LPFk = value;
+                if (value > 1) { this.P_LPFk = 1; }
+                if (value < 0) { this.P_LPFk = 0; }
             }
         } // Time constant for the Low Pass Filter from 0 to 1
 

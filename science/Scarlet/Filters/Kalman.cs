@@ -38,23 +38,9 @@ namespace Scarlet.Filters
     /// Quote from: http://robotsforroboticists.com/kalman-filtering/
     public class Kalman<T> : IFilter<T> where T : IComparable
     { 
-        public double Rmeasure // Measurement noise variance.
-        {
-            set { this.Rmeasure = value; }
-            get { return this.Rmeasure; }
-        } 
-
-        public T Output // Ouput of the filter system.
-        {
-            private set { this.Output = value; }
-            get { return this.Output; }
-        } 
-
-        public bool Initialized // Whether or not the system is initialized
-        {
-            private set { this.Initialized = value; }
-            get { return this.Initialized; }
-        }
+        public double Rmeasure { get; set; } // Measurement noise variance.
+        public T Output { get; private set; } // Ouput of the filter system.
+        public bool Initialized { get; private set; } // Whether or not the system is initialized
 
         private double CalcMeasure;  // The output calculated by the Kalman filter.
         private double Bias;         // The rate bias calculated by the Kalman filter.

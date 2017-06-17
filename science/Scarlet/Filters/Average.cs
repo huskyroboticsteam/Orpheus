@@ -25,11 +25,7 @@ namespace Scarlet.Filters
     public class Average<T> : IFilter<T> where T : IComparable
     {
 
-        public T Output
-        {
-            private set { this.Output = value; }
-            get { return this.Output; }
-        } // Filter output
+        public T Output { get; private set; } // Filter output
 
         private dynamic[] AverageArray; // Stored average array
         private dynamic CurSum;         // Current sum of the average array 

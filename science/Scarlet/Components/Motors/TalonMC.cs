@@ -9,24 +9,28 @@ namespace Scarlet.Components.Motors
         private LowPass<double> LPF = new LowPass<double>();
         private readonly int Pin;
         private readonly float MaxSpeed;
+        private float P_RampUp, P_Speed;
+
+        // Float from 0 to 1, higher the number the longer the ramp up time
         public float RampUp
         {
-            get { return this.RampUp; }
+            get { return this.P_RampUp; }
             set
             {
-                this.RampUp = value;
-                if (value > 1) { this.RampUp = 1; }
-                if (value < 0) { this.RampUp = 0; }
+                this.P_RampUp = value;
+                if (value > 1) { this.P_RampUp = 1; }
+                if (value < 0) { this.P_RampUp = 0; }
             }
-        } // Float from 0 to 1, higher the number the longer the ramp up time
+        }
+
         public float Speed
         {
-            get { return this.Speed; }
+            get { return this.P_Speed; }
             set
             {
-                this.Speed = value;
-                if (this.Speed > this.MaxSpeed) { this.Speed = this.MaxSpeed; }
-                if (this.Speed * -1 > this.MaxSpeed) { this.Speed = this.MaxSpeed * -1; }
+                this.P_Speed = value;
+                if (value > this.MaxSpeed) { this.P_Speed = this.MaxSpeed; }
+                if (value * -1 > this.MaxSpeed) { this.P_Speed = this.MaxSpeed * -1; }
                 this.UpdateState();
             }
         }
