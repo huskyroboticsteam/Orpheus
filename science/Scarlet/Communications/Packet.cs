@@ -112,5 +112,4 @@ namespace Scarlet.Communications
         }
 
     }
-
 }

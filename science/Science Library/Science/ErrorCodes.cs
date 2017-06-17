@@ -1,9 +1,9 @@
 ﻿namespace Scarlet.Science
 {
-    class ErrorCodes
+    public class ScienceErrors
     {
 
-        public static readonly string[] Systems = new string[]
+        public static readonly string[] SYSTEMS = new string[]
         {
             "General",
             "Thermocouple",
@@ -15,7 +15,7 @@
             "Camera"
         };
 
-        public static readonly string[][] List = new string[][] { new string[]
+        public static readonly string[][] ERROR_CODES = new string[][] { new string[]
         { // General
             "Everything is OK",
             "Unknown error",

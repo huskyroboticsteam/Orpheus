@@ -2,6 +2,7 @@
 using System.Net;
 using System.Threading;
 using Scarlet.Communications;
+using Scarlet.Science;
 using Scarlet.Utilities;
 
 namespace Science
@@ -14,6 +15,8 @@ namespace Science
 		{
             Log.OutputLevel = Log.Severity.DEBUG;
             Log.OutputType = Log.Source.ALL;
+            Log.ErrorCodes = ScienceErrors.ERROR_CODES;
+            Log.SystemNames = ScienceErrors.SYSTEMS;
             Log.Begin();
             Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Science Station - Rover Side");
 

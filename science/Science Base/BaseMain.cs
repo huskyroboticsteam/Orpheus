@@ -3,6 +3,7 @@ using System.Net;
 using System.Windows.Forms;
 using Scarlet.Utilities;
 using Scarlet.Communications;
+using Scarlet.Science;
 
 namespace Science_Base
 {
@@ -12,6 +13,8 @@ namespace Science_Base
 		{
             Log.OutputLevel = Log.Severity.DEBUG;
             Log.OutputType = Log.Source.ALL;
+            Log.ErrorCodes = ScienceErrors.ERROR_CODES;
+            Log.SystemNames = ScienceErrors.SYSTEMS;
             Log.Begin();
             Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Science Station - Base Side");
 

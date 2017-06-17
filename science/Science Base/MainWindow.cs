@@ -18,7 +18,7 @@ namespace Science_Base
 
         private void EmergencyStopClick(object sender, EventArgs e)
         {
-            Packet EmergencyStopPacket = new Packet((int)PacketType.StopPacket);
+            Packet EmergencyStopPacket = new Packet(PacketType.EMERGENCY_STOP);
             CommHandler.SendAsyncPacket(EmergencyStopPacket);
         }
 

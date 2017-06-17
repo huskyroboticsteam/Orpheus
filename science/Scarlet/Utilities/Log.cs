@@ -6,11 +6,17 @@ namespace Scarlet.Utilities
 {
     public static class Log
     {
-        // Override these in your program.
+        // Override these in your implementation.
         // OutputType determines which system you see output from.
         // OutputLevel determines the minimum severity required for a message to be output.
         public static Source OutputType = Source.SENSORS;
         public static Severity OutputLevel = Severity.DEBUG;
+
+        // Override these in your implementation.
+        // SystemNames determines what subcomponent an error originated from.
+        // ErrorCodes provides a human-readable, concise description for every possible error.
+        public static string[] SystemNames;
+        public static string[][] ErrorCodes;
 
         /// <summary>
         /// Outputs a general log message if configured to output this type of message.
@@ -83,7 +89,7 @@ namespace Scarlet.Utilities
             Console.ForegroundColor = ConsoleColor.Red;
             byte System = (byte)(Error >> 8);
             byte Code = (byte)(Error & 0x00FF);
-            Console.WriteLine("[" + DateTime.Now.ToLongTimeString() + "] [ERR] [0x" + Error.ToString("X4") + "] [" + ErrorCodes.Systems[System] + "] " + ErrorCodes.List[System][Code]);
+            Console.WriteLine("[" + DateTime.Now.ToLongTimeString() + "] [ERR] [0x" + Error.ToString("X4") + "] [" + SystemNames[System] + "] " + ErrorCodes[System][Code]);
             Console.ResetColor();
         }
 
