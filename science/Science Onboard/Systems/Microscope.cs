@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
-using RoboticsLibrary.Components;
+using Scarlet.Components;
 
 namespace Science.Systems
 {

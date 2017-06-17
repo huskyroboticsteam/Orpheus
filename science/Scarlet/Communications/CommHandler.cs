@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using RoboticsLibrary.Utilities;
+using Scarlet.Utilities;
 
-namespace RoboticsLibrary.Communications
+namespace Scarlet.Communications
 {
     /// <summary>
     /// CommsHandler

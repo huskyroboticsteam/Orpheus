@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace RoboticsLibrary.Controllers
+namespace Scarlet.Controllers
 {
     /// <summary>
     /// Class built to create a PID control loop in C#

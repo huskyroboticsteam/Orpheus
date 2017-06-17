@@ -1,6 +1,6 @@
 ﻿using System;
-using RoboticsLibrary.Components;
-using RoboticsLibrary.Components.Motors;
+using Scarlet.Components;
+using Scarlet.Components.Motors;
 
 namespace Science.Systems
 {

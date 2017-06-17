@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using RoboticsLibrary.Utilities;
+using Scarlet.Utilities;
 
-namespace RoboticsLibrary.Communications
+namespace Scarlet.Communications
 {
     /// <summary>
     /// Handles packet parsing,

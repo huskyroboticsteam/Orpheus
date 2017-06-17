@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Timers;
-using RoboticsLibrary.Components;
-using RoboticsLibrary.Components.Motors;
-using RoboticsLibrary.Components.Sensors;
-using RoboticsLibrary.Utilities;
+using Scarlet.Components;
+using Scarlet.Components.Motors;
+using Scarlet.Components.Sensors;
+using Scarlet.Utilities;
 
 namespace Science.Systems
 {

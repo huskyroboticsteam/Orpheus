@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RoboticsLibrary.Components
+namespace Scarlet.Components
 {
     public interface IMotor
     {

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using RoboticsLibrary.Communications;
-using RoboticsLibrary.Utilities;
+﻿using Scarlet.Communications;
+using Scarlet.Science;
+using Scarlet.Utilities;
 
 namespace Science
 {

@@ -1,7 +1,7 @@
 ﻿using System;
-using RoboticsLibrary.Utilities;
+using Scarlet.Utilities;
 
-namespace RoboticsLibrary.Components.Sensors
+namespace Scarlet.Components.Sensors
 {
     public class Encoder : ISensor
     {

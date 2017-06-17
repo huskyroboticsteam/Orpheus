@@ -41,34 +41,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Communications\CommHandler.cs" />
-    <Compile Include="Communications\Message.cs" />
-    <Compile Include="Communications\Packet.cs" />
-    <Compile Include="Communications\Parse.cs" />
-    <Compile Include="Components\ISubsystem.cs" />
-    <Compile Include="Controllers\PID.cs" />
-    <Compile Include="Components\ICamera.cs" />
-    <Compile Include="Components\Sensors\Potentiometer.cs" />
     <Compile Include="Science\ErrorCodes.cs" />
     <Compile Include="Science\PacketType.cs" />
-    <Compile Include="Filters\Average.cs" />
-    <Compile Include="Filters\Filter.cs" />
-    <Compile Include="Filters\Kalman.cs" />
-    <Compile Include="Filters\LowPass.cs" />
-    <Compile Include="Components\IMotor.cs" />
-    <Compile Include="Components\Motors\Servo.cs" />
-    <Compile Include="Components\Motors\TalonMC.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Components\Sensors\Encoder.cs" />
-    <Compile Include="Components\Sensors\LimitSwitch.cs" />
-    <Compile Include="Components\ISensor.cs" />
-    <Compile Include="Utilities\Log.cs" />
-    <Compile Include="Utilities\UtilMain.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Libraries\WiringPi\WiringPi\WiringPi.csproj">
       <Project>{44164C3F-B228-4488-B027-EA9717E7E6E1}</Project>
       <Name>WiringPi</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Scarlet\Scarlet.csproj">
+      <Project>{eb8d6fe6-e3dd-4049-89a2-f636c6d70477}</Project>
+      <Name>Scarlet</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

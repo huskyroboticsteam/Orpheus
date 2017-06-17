@@ -1,8 +1,8 @@
 ﻿using System;
 using WiringPi;
-using RoboticsLibrary.Filters;
+using Scarlet.Filters;
 
-namespace RoboticsLibrary.Components.Motors
+namespace Scarlet.Components.Motors
 {
     public class TalonMC : IMotor
     {

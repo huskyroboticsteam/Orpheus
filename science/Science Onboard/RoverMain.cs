@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Net;
 using System.Threading;
-using RoboticsLibrary.Communications;
-using RoboticsLibrary.Utilities;
+using Scarlet.Communications;
+using Scarlet.Utilities;
 
 namespace Science
 {

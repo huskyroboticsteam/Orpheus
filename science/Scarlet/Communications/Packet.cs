@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Net;
 using System.Net.Sockets;
-using RoboticsLibrary.Utilities;
+using Scarlet.Utilities;
 
-namespace RoboticsLibrary.Communications
+namespace Scarlet.Communications
 {
     /// <summary>
     /// Handles packet architecture.

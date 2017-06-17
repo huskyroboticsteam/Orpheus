@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
+﻿using DarkUI.Forms;
+using Scarlet.Communications;
+using Scarlet.Science;
+using Scarlet.Utilities;
+using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using RoboticsLibrary.Utilities;
-using RoboticsLibrary.Communications;
-using DarkUI.Forms;
-using DarkUI.Docking;
-using DarkUI.Controls;
 
 namespace Science_Base
 {

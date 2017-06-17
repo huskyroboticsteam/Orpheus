@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
-using RoboticsLibrary.Utilities;
+using Scarlet.Utilities;
 
-
-namespace RoboticsLibrary.Filters
+namespace Scarlet.Filters
 {
     /// <summary>
     /// This Kalman Filter class is intended to be used for the 

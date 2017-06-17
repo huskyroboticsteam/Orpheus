@@ -1,7 +1,7 @@
 ﻿using System;
 using WiringPi;
 
-namespace RoboticsLibrary.Components.Motors
+namespace Scarlet.Components.Motors
 {
     public class Servo : IMotor
     {

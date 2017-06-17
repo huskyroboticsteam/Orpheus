@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using RoboticsLibrary.Utilities;
+using Scarlet.Utilities;
 
-namespace RoboticsLibrary.Filters
+namespace Scarlet.Filters
 {
     /// <summary>
     /// The Average filter is intended

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace RoboticsLibrary.Components
+namespace Scarlet.Components
 {
     public interface ICamera
     {

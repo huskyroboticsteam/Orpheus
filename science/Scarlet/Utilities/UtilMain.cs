@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Net;
-using System.Net.Sockets;
-using System.Net.NetworkInformation;
 
-namespace RoboticsLibrary.Utilities
+namespace Scarlet.Utilities
 {
     public static class UtilMain
     {
