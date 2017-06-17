@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RoboticsLibrary.Errors
+namespace RoboticsLibrary.Science
 {
-    public static class ErrorCodes
+    class ErrorCodes
     {
+
         public static readonly string[] Systems = new string[]
         {
             "General",
@@ -16,7 +17,7 @@ namespace RoboticsLibrary.Errors
             "Distance Sensor",
             "Humidity Sensor",
             "Communications",
-            "Motors", 
+            "Motors",
             "Camera"
         };
 

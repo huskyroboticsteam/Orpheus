@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Net;
 using System.Net.Sockets;
-using RoboticsLibrary.Errors;
 using RoboticsLibrary.Utilities;
 
 namespace RoboticsLibrary.Communications
@@ -13,7 +12,7 @@ namespace RoboticsLibrary.Communications
     /// </summary>
     public class Packet
     {
-        
+
         // Default packet endpoint
         public static IPEndPoint DefaultEndpoint = new IPEndPoint(IPAddress.Parse("192.168.0.1"), 600);
 
@@ -34,7 +33,7 @@ namespace RoboticsLibrary.Communications
             {
                 this.Client = new TcpClient(new IPEndPoint(IPAddress.Parse("0.0.0.0"), 8000));
             }
-            catch(SocketException Exception)
+            catch (SocketException Exception)
             {
                 Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Failed to connect to remote IP " + EndPoint);
                 Log.Exception(Log.Source.NETWORK, Exception);
@@ -114,14 +113,6 @@ namespace RoboticsLibrary.Communications
             return this.PacketMessage.ToString();
         }
 
-    }
-    
-    // TODO: Set Real Packet ID Values
-    // TODO: Evalue if we even want this in an enum. This, in a way, sets the packet types, which wouldn't work for other systems in the future.
-    public enum PacketType
-    {
-        Error,
-        StopPacket
     }
 
 }

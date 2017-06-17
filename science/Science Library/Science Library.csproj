@@ -49,7 +49,8 @@
     <Compile Include="Controllers\PID.cs" />
     <Compile Include="Components\ICamera.cs" />
     <Compile Include="Components\Sensors\Potentiometer.cs" />
-    <Compile Include="Utilities\ErrorCodes.cs" />
+    <Compile Include="Science\ErrorCodes.cs" />
+    <Compile Include="Science\PacketType.cs" />
     <Compile Include="Filters\Average.cs" />
     <Compile Include="Filters\Filter.cs" />
     <Compile Include="Filters\Kalman.cs" />

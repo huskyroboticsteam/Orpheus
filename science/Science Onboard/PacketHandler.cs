@@ -13,6 +13,7 @@ namespace Science
 
         public PacketHandler()
         {
+            Parse.SetParseHandler((int)PacketType.Watchdog, ParseWatchdog);
             Parse.SetParseHandler((int)PacketType.Error, ParseErrorPacket);
             Parse.SetParseHandler((int)PacketType.StopPacket, ParseStopPacket);
         }
@@ -26,6 +27,11 @@ namespace Science
         {
             Log.Output(Log.Severity.FATAL, Log.Source.OTHER, "EMERGENCY STOP RECEIVED");
             RoverMain.IOHandler.EmergencyStop();
+        }
+
+        public static void ParseWatchdog(Message WatchdogPacket)
+        {
+            
         }
     }
 }

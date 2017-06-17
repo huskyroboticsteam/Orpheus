@@ -37,7 +37,14 @@ namespace RoboticsLibrary.Communications
             byte IdByte = Data[4];
             int DataLength = Data.Length - 4;
             // Set Instance Variables
-            this.Data = UtilMain.SubArray(Data, 5, DataLength - 1);
+            if (Data.Length > 5)
+            {
+                this.Data = UtilMain.SubArray(Data, 5, DataLength - 1);
+            }
+            else
+            {
+                this.Data = new byte[1];
+            }
             this.ID = IdByte;
             this.Timestamp = (uint)UtilMain.ByteArrayToInt(TimeBytes);
             this.Endpoint = Endpoint;

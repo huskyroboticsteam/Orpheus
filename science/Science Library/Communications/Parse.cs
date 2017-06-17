@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using RoboticsLibrary.Errors;
 using RoboticsLibrary.Utilities;
 
 namespace RoboticsLibrary.Communications

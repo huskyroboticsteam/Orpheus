@@ -4,7 +4,6 @@ using System.Text;
 using System.Net;
 using System.Net.Sockets;
 using System.Net.NetworkInformation;
-using RoboticsLibrary.Errors;
 
 namespace RoboticsLibrary.Utilities
 {
