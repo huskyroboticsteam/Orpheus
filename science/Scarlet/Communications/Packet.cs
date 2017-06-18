@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using Scarlet.Utilities;
@@ -16,6 +17,7 @@ namespace Scarlet.Communications
 
         private Message PacketMessage; // Stored Packet message
         private TcpClient Client;      // Packet Tcp client
+        private static Dictionary<IPEndPoint, TcpClient> ConnectedClients = new Dictionary<IPEndPoint, TcpClient>();
 
         /// <summary>
         /// Constructs new packet of given ID.
@@ -29,7 +31,15 @@ namespace Scarlet.Communications
             IPEndPoint EndPoint = PacketEndpoint ?? DefaultEndpoint;
             try
             {
-                this.Client = new TcpClient(new IPEndPoint(IPAddress.Parse("0.0.0.0"), 8000));
+                if (!ConnectedClients.ContainsKey(EndPoint))
+                {
+                    this.Client = new TcpClient(new IPEndPoint(IPAddress.Parse("0.0.0.0"), 8000));
+                    this.Client.Connect(EndPoint);
+                    ConnectedClients.Add(EndPoint, this.Client);
+                } else
+                {
+                    this.Client = ConnectedClients[EndPoint];
+                }
             }
             catch (SocketException Exception)
             {
@@ -72,11 +82,9 @@ namespace Scarlet.Communications
                 this.PacketMessage.SetTime(Timestamp);
                 // Pre-pend Timestamp and ID
                 byte[] SendData = this.PacketMessage.GetRawData();
-                // Send Data to Endpoint through TCP
-                this.Client.Connect(this.PacketMessage.Endpoint);
+                // Get Stream and Send Data
                 NetworkStream Stream = this.Client.GetStream();
                 Stream.Write(SendData, 0, SendData.Length);
-                this.Client.Close(); // Close TCP Connection
             }
             catch (Exception Except)
             {
