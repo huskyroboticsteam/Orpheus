@@ -19,9 +19,18 @@ namespace Science_Base
 
         private void EmergencyStopClick(object sender, EventArgs e)
         {
-            Packet EmergencyStopPacket = new Packet(PacketType.EMERGENCY_STOP);
-            EmergencyStopPacket.AppendData(UtilData.ToBytes("Homura"));
-            CommHandler.SendAsyncPacket(EmergencyStopPacket);
+            try
+            {
+                Packet EmergencyStopPacket = new Packet(PacketType.EMERGENCY_STOP);
+                EmergencyStopPacket.AppendData(UtilData.ToBytes("Homura"));
+                CommHandler.SendNow(EmergencyStopPacket);
+            }
+            catch(Exception Exc)
+            {
+                Log.Output(Log.Severity.FATAL, Log.Source.GUI, "FAILED TO SEND EMERGENCY STOP!");
+                Log.Exception(Log.Source.GUI, Exc);
+                DarkMessageBox.ShowError("Failed to send emergency stop!\n\n" + Exc.ToString(), "Science");
+            }
         }
 
         private void SendPacketBtn_Click(object sender, EventArgs e)
@@ -34,7 +43,7 @@ namespace Science_Base
                 Packet Pack = new Packet(ID);
                 Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Sending packet with data length: " + Data.Length);
                 Pack.AppendData(Data);
-                Pack.SendWithTimestamp(Timestamp);
+                CommHandler.Send(Pack);
                 Log.Output(Log.Severity.INFO, Log.Source.GUI, "Sending custom packet: " + Pack.ToString());
             }
             catch(Exception Exc)
@@ -92,7 +101,7 @@ namespace Science_Base
 
         private void UpdateTime()
         {
-            this.TimestampTextbox.Text = UtilMain.BytesToNiceString(Packet.GetTimestamp().Reverse().ToArray(), true);
+            this.TimestampTextbox.Text = UtilMain.BytesToNiceString(Packet.GetCurrentTime().Reverse().ToArray(), true);
         }
 
         private void SecTimer_Tick(object sender, EventArgs e)

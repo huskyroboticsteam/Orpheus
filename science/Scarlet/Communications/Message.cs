@@ -8,81 +8,63 @@ using Scarlet.Utilities;
 namespace Scarlet.Communications
 {
     /// <summary>
-    /// This class is intended
-    /// to encode incoming data.
+    /// This class is intended to contain packet data.
     /// </summary>
-    public class Message
+    public class Message : ICloneable
     {
-
-        public uint Timestamp;       // Stores message timestamp (unsigned to timestamp can use all 32-bits)
-        public byte ID;              // Stores message id
-        public byte[] Data;          // Stored message data (discluding timestamp and id)
-        public IPEndPoint Endpoint;  // Endpoint that the message was received from or going to.
+        public byte[] Timestamp;  // Stores message timestamp (Unix time format)
+        public byte ID;           // Stores message ID
+        public byte[] Payload;    // Stored message data (discluding timestamp and ID)
 
         /// <summary>
-        /// Constructs a message given
-        /// data and an IPEndPoint
-        /// Data encoded with:
-        /// Timestamp data[0] to data[3]
-        /// ID at data[4]
-        /// Data encoded after data[4], i.e. data[5:]
+        /// Constructs a message given raw data, liek when received via network.
+        /// Data encoded as such:
+        /// Timestamp: RawData[0] through RawData[3]
+        /// ID: RawData[4]
+        /// Payload: Remainder (RawData[5] though end)
         /// </summary>
-        /// <param name="Data">
-        /// Incoming data array</param>
-        /// <param name="Endpoint">
-        /// Given from endpoint</param>
-        public Message(byte[] Data, IPEndPoint Endpoint)
+        /// <param name="RawData"> Incoming data array</param>
+        public Message(byte[] RawData)
         {
-            // Retrieve necessary data for instantiation
-            byte[] TimeBytes = UtilMain.SubArray(Data, 0, 4);
-            byte IdByte = Data[4];
-            int DataLength = Data.Length - 4;
-            // Set Instance Variables
-            if (Data.Length > 5)
-            {
-                this.Data = UtilMain.SubArray(Data, 5, DataLength - 1);
-            }
-            else
-            {
-                this.Data = new byte[1];
-            }
-            this.ID = IdByte;
-            this.Timestamp = (uint)UtilData.ToInt(TimeBytes);
-            this.Endpoint = Endpoint;
+            if (RawData.Length < 5) { throw new ArgumentException("Raw data not sufficient for packet. Must be at least 5 bytes long."); }
+            this.Timestamp = UtilMain.SubArray(RawData, 0, 4);
+            this.ID = RawData[4];
+            if (RawData.Length > 5) { this.Payload = UtilMain.SubArray(RawData, 5, RawData.Length - 5); }
+            else { this.Payload = new byte[0]; }
         }
 
         /// <summary>
-        /// Constructs a message given
-        /// an ID, timestamp, Endpoint and other data.
+        /// Constructs a message given data that is already split.
         /// </summary>
         /// <param name="ID"></param>
-        /// <param name="Timestamp"></param>
         /// <param name="Endpoint"></param>
         /// <param name="data"></param>
-        public Message(byte ID, IPEndPoint Endpoint, byte[] Data = null)
+        public Message(byte ID, byte[] Payload = null, byte[] Timestamp = null)
         {
-            if (Data == null) { this.Data = new byte[0]; }
-            else { this.Data = Data; }
-            this.Endpoint = Endpoint;
+            this.Payload = Payload ?? new byte[0];
+            this.Timestamp = Timestamp;
             this.ID = ID;
         }
 
+        /// <summary>
+        /// Sets the timestamp. Must be 4 or more bytes (only first 4 used).
+        /// </summary>
+        /// <param name="Time">The new timestamp.</param>
         public void SetTime(byte[] Time)
         {
-            Time = UtilMain.SubArray(Time, 0, 4); // Ensures timestamp of length 4
-            this.Timestamp = (uint)UtilData.ToInt(Time); // Calculates timestamp from given 
+            if(Time.Length < 4) { throw new ArgumentException("Timestamp must be 4 bytes."); }
+            this.Timestamp = UtilMain.SubArray(Time, 0, 4);
         }
 
         /// <summary>
         /// Appends data to the end of message.
         /// </summary>
-        /// <param name="NewData">
-        /// New Data to append to current data.</param>
+        /// <param name="NewData">New Data to append to current data.</param>
         public void AppendData(byte[] NewData)
         {
-            List<byte> TempList = new List<byte>(this.Data);
+            List<byte> TempList = new List<byte>(this.Payload);
             TempList.AddRange(NewData);
-            this.Data = TempList.ToArray();
+            this.Payload = TempList.ToArray();
         }
 
         /// <summary>
@@ -92,16 +74,14 @@ namespace Scarlet.Communications
         /// ID at data[4]
         /// Data encoded after data[4], i.e. data[5:]
         /// </summary>
-        /// <returns>
-        /// Returns all data in message</returns>
+        /// <returns>Returns all data in message</returns>
         public byte[] GetRawData()
         {
-            List<byte> Temp = new List<byte>();
-            byte[] TimeBytes = UtilData.ToBytes(this.Timestamp);
-            Temp.AddRange(TimeBytes);
-            Temp.Add(this.ID);
-            Temp.AddRange(this.Data);
-            return Temp.ToArray();
+            List<byte> Output = new List<byte>();
+            Output.AddRange(this.Timestamp);
+            Output.Add(this.ID);
+            Output.AddRange(this.Payload);
+            return Output.ToArray();
         }
 
         /// <summary>
@@ -111,14 +91,21 @@ namespace Scarlet.Communications
         {
             StringBuilder Str = new StringBuilder();
             Str.Append("Packet = Time:(0x");
-            Str.Append(this.Timestamp.ToString("X8"));
+            Str.Append(UtilMain.BytesToNiceString(this.Timestamp, false));
             Str.Append(") ID:(0x");
             Str.Append(this.ID.ToString("X2"));
             Str.Append(") Data:(0x");
-            Str.Append(UtilMain.BytesToNiceString(this.Data, true));
+            Str.Append(UtilMain.BytesToNiceString(this.Payload, true));
             Str.Append(')');
             return Str.ToString();
         }
 
+        public object Clone()
+        {
+            Message Clone = (Message)this.MemberwiseClone();
+            Clone.Timestamp = (byte[])this.Timestamp.Clone();
+            Clone.Payload = (byte[])this.Payload.Clone();
+            return Clone;
+        }
     }
 }

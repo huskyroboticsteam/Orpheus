@@ -9,115 +9,71 @@ namespace Scarlet.Communications
     /// <summary>
     /// Handles packet architecture.
     /// </summary>
-    public class Packet
+    public class Packet : ICloneable
     {
-
-        // Default packet endpoint
-        public static IPEndPoint DefaultEndpoint = new IPEndPoint(IPAddress.Parse("192.168.0.1"), 600);
-
-        private Message PacketMessage; // Stored Packet message
-        private TcpClient Client;      // Packet Tcp client
-        private static Dictionary<IPEndPoint, TcpClient> ConnectedClients = new Dictionary<IPEndPoint, TcpClient>();
+        public Message Data { get; private set; }
+        public IPEndPoint Endpoint { get; private set; }
 
         /// <summary>
-        /// Constructs new packet of given ID.
+        /// Meant for received packets.
         /// </summary>
-        /// <param name="ID"></param>
-        /// <param name="PacketEndpoint">
-        /// Endpoint for the packet. If null, defaults to given
-        /// <c>DefaultEndpoint</c></param>
-        public Packet(int ID, IPEndPoint PacketEndpoint = null)
+        /// <param name="Message">The packet data</param>
+        /// <param name="Endpoint">The endpoint where this packet was received from</param>
+        public Packet(Message Message, IPEndPoint Endpoint)
         {
-            IPEndPoint EndPoint = PacketEndpoint ?? DefaultEndpoint;
-            try
-            {
-                if (!ConnectedClients.ContainsKey(EndPoint))
-                {
-                    this.Client = new TcpClient(new IPEndPoint(IPAddress.Parse("0.0.0.0"), 8000));
-                    this.Client.Connect(EndPoint);
-                    ConnectedClients.Add(EndPoint, this.Client);
-                } else
-                {
-                    this.Client = ConnectedClients[EndPoint];
-                }
-            }
-            catch (SocketException Exception)
-            {
-                Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Failed to connect to remote IP " + EndPoint);
-                Log.Exception(Log.Source.NETWORK, Exception);
-            }
-            this.PacketMessage = new Message((byte)ID, EndPoint);
+            this.Data = Message;
+            this.Endpoint = Endpoint;
+        }
+
+        /// <summary>
+        /// Meant for sent packets.
+        /// </summary>
+        /// <param name="ID">The packet ID, determining what action will be taken upon receipt</param>
+        /// <param name="Target">The destination where this packet will be sent</param>
+        public Packet(byte ID, IPEndPoint Target = null)
+        {
+            this.Endpoint = Target ?? CommHandler.DefaultTarget;
+            this.Data = new Message(ID);
         }
 
         /// <summary>
         /// Appends data to packet.
         /// </summary>
         /// <param name="Data">Data to append to packet.</param>
-        public void AppendData(byte[] Data)
-        {
-            this.PacketMessage.AppendData(Data);
-        }
+        public void AppendData(byte[] NewData) { this.Data.AppendData(NewData); }
 
         /// <summary>
-        /// Sends packet
+        /// Prepares the packet for sending, then returns the raw data.
         /// </summary>
-        /// <returns>
-        /// true if Send successful,
-        /// false is Send unsuccessful.
-        /// </returns>
-        public bool Send()
+        /// <returns>The raw data, ready to be sent.</returns>
+        public byte[] GetForSend(byte[] Timestamp = null)
         {
-            return SendWithTimestamp(GetTimestamp());
+            if (Timestamp == null || Timestamp.Length != 4) { this.Data.SetTime(GetCurrentTime()); } // Sets the timestamp to the current time.
+            else { this.Data.SetTime(Timestamp); } // Sets the timestamp to the one provided.
+            return this.Data.GetRawData();
         }
-
+        
         /// <summary>
-        /// Sends packet, using a custom timestamp.
+        /// Gets the current time as a byte array for use in packets.
         /// </summary>
-        /// <param name="Timestamp">The timestamp to use</param>
-        /// <returns>Whether packet sending was successful.</returns>
-        public bool SendWithTimestamp(byte[] Timestamp)
-        {
-            try
-            {
-                this.PacketMessage.SetTime(Timestamp);
-                // Pre-pend Timestamp and ID
-                byte[] SendData = this.PacketMessage.GetRawData();
-                // Get Stream and Send Data
-                NetworkStream Stream = this.Client.GetStream();
-                Stream.Write(SendData, 0, SendData.Length);
-            }
-            catch (Exception Except)
-            {
-                Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Failed to create packet.");
-                Log.Exception(Log.Source.NETWORK, Except);
-                return false;
-            }
-            return true;
-        }
-
-        /// <summary>
-        /// Sets time for packet.
-        /// Internal use only.
-        /// </summary>
-        public static byte[] GetTimestamp()
+        public static byte[] GetCurrentTime()
         {
             int UnixTime = (int)DateTimeOffset.Now.ToUnixTimeSeconds();
             byte[] TimeArray = UtilData.ToBytes(UnixTime);
-            if (TimeArray.Length != 4)
-            {
-                Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Timestamp was of incorrect length.");
-                TimeArray = new byte[] { 0x00, 0x00, 0x00, 0x00 };
-            }
             return TimeArray;
         }
 
         /// <summary>
         /// Formats the Packet's contents to be human-readable.
         /// </summary>
-        public override string ToString()
-        {
-            return this.PacketMessage.ToString();
-        }
+        public override string ToString() { return this.Data.ToString(); }
 
+        public object Clone()
+        {
+            Packet Clone = (Packet)this.MemberwiseClone(); // This leaves reference objects as references.
+            Clone.Data = (Message)this.Data.Clone();
+            Clone.Endpoint = new IPEndPoint(IPAddress.Parse(string.Copy(this.Endpoint.Address.ToString())), this.Endpoint.Port);
+            return Clone;
+        }
     }
 }

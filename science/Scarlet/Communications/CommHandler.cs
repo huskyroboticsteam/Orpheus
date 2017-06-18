@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -7,249 +9,218 @@ using Scarlet.Utilities;
 
 namespace Scarlet.Communications
 {
-    /// <summary>
-    /// CommsHandler
-    /// handles communications
-    /// send/receive
-    /// including parsing information
-    /// from source.
-    /// </summary>
     public static class CommHandler
     {
+        public static IPEndPoint DefaultTarget { get; private set; }
+        private static TcpListener Listener;
+        private static Queue<Packet> SendQueue, ReceiveQueue;
+        private static Thread SendThread, ReceiveThread, ProcessThread;
+        private static bool Initizalized = false;
+        private static bool Stopping;
+        private static int ReceiveBufferSize, OperationPeriod;
+        private const int TIMEOUT = 5000;
 
-        private static TcpListener TcpListener;  // TcpListener for comms activity
-        private static IPEndPoint Endpoint;      // Comms endpoint
-        private static Queue<Packet> SendQueue;  // Send queue for comms 
-        private static Thread SendThread, ReceiveThread;
-        private static float PacketIntervalTime; // Minimum time in between packet sending. (Is not accounted for in SendAsyncPacket)
-        private static int ReceiveBufferSize, PortNumber;
-        private static bool Continue;    // Whether or not the process continues
-        private static bool Initialized; // Whether or not the system is initialized
-
-        /// <summary>
-        /// Starts the CommHandler
-        /// </summary>
-        /// <param name="Port">
-        /// Port to listen on</param>
-        /// <param name="CycleTime">
-        /// Minimum cycle time in between packet send/receive</param>
-        /// <param name="ReceiveBufferSize">
-        /// Buffer receive size.</param>
-        /// <returns>
-        /// Returns true is initialization succeeded, false otherwise.
-        /// </returns>
-        public static bool Start(int Port = 2024, float CycleTime = 0.02f, int ReceiveBufferSize = 64)
+        public static void Start(int ReceivePort, int DefaultSendPort, string DefaultSendIP, int ReceiveBufferSize = 64, int OperationPeriod = 20)
         {
-            CommHandler.PacketIntervalTime = CycleTime;
+            DefaultTarget = new IPEndPoint(IPAddress.Parse(DefaultSendIP), DefaultSendPort);
+            IPEndPoint ListenerEndpoint = new IPEndPoint(IPAddress.Any, ReceivePort);
             CommHandler.ReceiveBufferSize = ReceiveBufferSize;
-            CommHandler.PortNumber = Port;
-            CommHandler.Continue = true;
-            if (!CommHandler.Initialized)
+            CommHandler.OperationPeriod = OperationPeriod;
+            if(!Initizalized)
             {
-                return CommHandler.Initialize();
+                Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Initializing CommHandler.");
+                Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Listening on port " + ListenerEndpoint.Port + ", and defaulting to sending to " + DefaultTarget.ToString() + ".");
+                Listener = new TcpListener(ListenerEndpoint);
+                SendQueue = new Queue<Packet>();
+                ReceiveQueue = new Queue<Packet>();
+                ReceiveThread = new Thread(new ThreadStart(WaitForClient));
+                ReceiveThread.Start();
+                SendThread = new Thread(new ThreadStart(SendPackets));
+                SendThread.Start();
+                ProcessThread = new Thread(new ThreadStart(ProcessPackets));
+                ProcessThread.Start();
+                Initizalized = true;
             }
-            return true;            
+            else { Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Attempted to initialize CommHandler twice."); }
+            Stopping = false;
         }
 
-        /// <summary>
-        /// Initializes CommHandler (internal use only)
-        /// </summary>
-        /// <returns>
-        /// Returns whether or not initialization succeeded
-        /// </returns>
-        private static bool Initialize()
-        {
-            CommHandler.Initialized = true;
-            try
-            {
-                Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Initializing CommHandler to listen on port " + CommHandler.PortNumber + ".");
-                CommHandler.Endpoint = new IPEndPoint(IPAddress.Parse("0.0.0.0"), CommHandler.PortNumber);
-                CommHandler.TcpListener = new TcpListener(CommHandler.Endpoint);
-                CommHandler.SendQueue = new Queue<Packet>();
-                CommHandler.SendThread = new Thread(new ThreadStart(CommHandler.Send));
-                CommHandler.ReceiveThread = new Thread(new ThreadStart(CommHandler.Receive));
-                CommHandler.TcpListener.Start();
-                CommHandler.SendThread.Start();
-                CommHandler.ReceiveThread.Start();
-            }
-            catch (Exception Except)
-            {
-                Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Could not initialize CommHandler.");
-                Log.Exception(Log.Source.NETWORK, Except);
-                CommHandler.Initialized = false;
-            }
-            return CommHandler.Initialized;
-        }
-
-        /// <summary>
-        /// Stops communications.
-        /// </summary>
         public static void Stop()
         {
-            CommHandler.Continue = false;
-            TcpListener.Stop();
+            Stopping = true;
         }
 
+        #region Receive
+
         /// <summary>
-        /// Use for restarting Comms.
-        /// * * * Important!!
+        /// Waits for, and establishes connection with all incoming clients.
+        /// This must be started on a thread, as it will block until CommHandler.Stop is true.
         /// </summary>
-        public static void Restart()
+        private static void WaitForClient()
         {
-            if (!CommHandler.Continue)
+            Listener.Start();
+            while(!CommHandler.Stopping)
             {
-                CommHandler.Continue = true;
-                CommHandler.Start(CommHandler.PortNumber, 
-                                  CommHandler.PacketIntervalTime, 
-                                  CommHandler.ReceiveBufferSize);
+                // Wait for a client.
+                TcpClient Client = Listener.AcceptTcpClient();
+                // Start sub-threads for every client.
+                Thread ClientThread = new Thread(new ParameterizedThreadStart(HandleClient));
+                ClientThread.Start(Client);
+                Thread.Sleep(OperationPeriod);
             }
         }
 
         /// <summary>
-        /// Adds packet to send buffer.
+        /// Waits for, and receives data from a connected client.
+        /// This must be started on a thread, as it will block until CommHandler.Stop is true, or the client disconnects.
         /// </summary>
-        /// <param name="Packet">Packet to add.</param>
-        public static void AddCyclePacket(Packet Packet)
+        /// <param name="ClientObj">The client to receive data from. Must be TcpClient.</param>
+        private static void HandleClient(object ClientObj)
         {
-            CommHandler.SendQueue.Enqueue(Packet);
-        }
-
-        /// <summary>
-        /// Sends a packet out of phase with
-        /// the send cycles.
-        /// </summary>
-        /// <param name="Packet">Packet to send asynchronously</param>
-        /// <returns>
-        /// Whether or not the send succeeded.
-        /// </returns>
-        public static bool SendAsyncPacket(Packet Packet)
-        {
-            try
+            TcpClient Client = (TcpClient)ClientObj;
+            NetworkStream Receive = Client.GetStream();
+            if(!Receive.CanRead)
             {
-                Packet.Send();
+                Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Client connection does not permit reading.");
+                throw new Exception("NetworkStream does not support reading");
             }
-            catch (Exception Except)
-            {
-                Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Failed to send packet.");
-                Log.Exception(Log.Source.NETWORK, Except);
-                return false;
-            }
-            return true;
-        }
-
-        /// <summary>
-        /// Internal use only.
-        /// Sends the next packet in the queue.
-        /// </summary>
-        /// <returns>
-        /// Whether or not the send succeeded.</returns>
-        private static bool SendNextPacket()
-        {
-            try
-            {
-                if (CommHandler.SendQueue.Count > 0)
-                {
-                    CommHandler.SendQueue.Dequeue().Send();
-                }
-            }
-            catch (Exception Except)
-            {
-                Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Failed to send next packet.");
-                Log.Exception(Log.Source.NETWORK, Except);
-                return false;
-            }
-            return true;
-        }
-
-        /// <summary>
-        /// Send loop start.
-        /// Internal use only.
-        /// Meant for threading.
-        /// </summary>
-        private static void Send()
-        {
-            while (CommHandler.Continue)
-            {
-                // Send the next packet
-                CommHandler.SendNextPacket();
-                // Sleep for specified time interval
-                // in-between packet sending
-                Thread.Sleep((int)(CommHandler.PacketIntervalTime * 1000));
-            }
-        }
-
-        /// <summary>
-        /// Receives messages and sends them
-        /// to be parsed.
-        /// </summary>
-        private static void Receive()
-        {
-            while (CommHandler.Continue)
+            byte[] DataBuffer = new byte[ReceiveBufferSize];
+            while (!Stopping)
             {
                 try
                 {
-                    Socket Socket = TcpListener.AcceptSocket(); // Blocking method waits for socket connection
-                    byte[] BytesReceived = new byte[CommHandler.ReceiveBufferSize];
-                    Socket.Receive(BytesReceived); // Stores received byes into byte buffer
-                    Message Received = new Message(BytesReceived, (IPEndPoint)(Socket.RemoteEndPoint));
-                    Parse.ParseMessage(Received);
-                    Log.ForceOutput(Log.Severity.INFO, Log.Source.NETWORK, Received.ToString());
-                    Socket.Close();
+                    int DataSize = Receive.Read(DataBuffer, 0, DataBuffer.Length);
+                    Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Received data from client.");
+                    if (DataSize == 0)
+                    {
+                        Log.Output(Log.Severity.INFO, Log.Source.NETWORK, "Client has disconnected.");
+                        break;
+                    }
+                    if(DataSize >= 5)
+                    {
+                        byte[] Data = DataBuffer.Skip(DataBuffer.Length - DataSize).ToArray();
+                        Packet ReceivedPack = new Packet(new Message(Data), (IPEndPoint)Client.Client.RemoteEndPoint);
+                        lock (ReceiveQueue)
+                        {
+                            ReceiveQueue.Enqueue(ReceivedPack);
+                        }
+                    }
+                    else { Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Data received from client was too short. Discarding."); }
                 }
-                catch (Exception Except)
+                catch(IOException IOExc)
                 {
-                    Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Failed to receive packet.");
-                    Log.Exception(Log.Source.NETWORK, Except);
+                    if(IOExc.InnerException is SocketException)
+                    {
+                        int Error = ((SocketException)IOExc.InnerException).ErrorCode;
+                        Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Failed to read data from connected client with SocketExcpetion code " + Error);
+                        Log.Exception(Log.Source.NETWORK, IOExc);
+                    }
+                    else
+                    {
+                        Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Failed to read data from connected client because of IO exception.");
+                        Log.Exception(Log.Source.NETWORK, IOExc);
+                    }
                 }
-                
+                catch(Exception OtherExc)
+                {
+                    Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Failed to read data from connected client.");
+                    Log.Exception(Log.Source.NETWORK, OtherExc);
+                }
+                Thread.Sleep(OperationPeriod);
+            }
+            Receive.Close();
+        }
+
+        /// <summary>
+        /// Pushes received packets through to Parse for processing.
+        /// This must be started on a thread, as it will block until CommHandler.Stop is true.
+        /// Assumes that packets will not be removed from ReceiveQueue anywhere but inside this method.
+        /// </summary>
+        private static void ProcessPackets()
+        {
+            while (!Stopping)
+            {
+                bool HasPacket;
+                lock (ReceiveQueue) { HasPacket = ReceiveQueue.Count > 0; }
+                if(HasPacket)
+                {
+                    Packet ToProcess;
+                    lock (ReceiveQueue) { ToProcess = (Packet)(ReceiveQueue.Dequeue().Clone()); }
+                    try
+                    {
+                        Parse.ParseMessage(ToProcess.Data);
+                    }
+                    catch(Exception Exc)
+                    {
+                        Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Failed to process packet. Discarding.");
+                        Log.Exception(Log.Source.NETWORK, Exc);
+                    }
+                }
+                Thread.Sleep(OperationPeriod);
+            }
+        }
+
+        #endregion
+
+        #region Send
+
+        /// <summary>
+        /// Adds a packet to the queue of packets to be sent.
+        /// </summary>
+        public static void Send(Packet Packet)
+        {
+            lock (SendQueue)
+            {
+                SendQueue.Enqueue(Packet);
             }
         }
 
         /// <summary>
-        /// Determines if socket is connected
+        /// Immediately sends a packet. Blocks until sending is complete.
         /// </summary>
-        /// <param name="Client">
-        /// Client to test connection</param>
-        /// <returns>
-        /// Whether or not client is connected</returns>
-        public static bool IsConnected(Socket Client)
+        /// <param name="Packet"></param
+        public static void SendNow(Packet ToSend)
         {
-            // This is how you can determine whether a socket is still connected.
-            bool blockingState = Client.Blocking;
-            try
+            TcpClient Client = new TcpClient(new IPEndPoint(IPAddress.Any, 8000)); // TODO: See if this port needs to be configurable.
+            if (Client.ConnectAsync(ToSend.Endpoint.Address, ToSend.Endpoint.Port).Wait(TIMEOUT))
             {
-                byte[] tmp = new byte[1];
-
-                Client.Blocking = false;
-                Client.Send(tmp, 0, 0);
-                return true;
+                byte[] Data = ToSend.GetForSend();
+                NetworkStream Stream = Client.GetStream();
+                Stream.Write(Data, 0, Data.Length);
             }
-            catch (SocketException e)
-            {
-                // 10035 == WSAEWOULDBLOCK
-                if (e.NativeErrorCode.Equals(10035))
-                    return true;
-                else
-                {
-                    return false;
-                }
-            }
-            finally
-            {
-                Client.Blocking = blockingState;
-            }
+            else { throw new TimeoutException("Connection timed out while trying to send packet."); }
         }
 
         /// <summary>
-        /// Returns whether or not TCP
-        /// client is connected
+        /// Sends packets from the queue.
+        /// This must be started on a thread, as it will block until CommHandler.Stop is true.
+        /// Assumes that packets will not be removed from SendQueue anywhere but inside this method.
         /// </summary>
-        /// <returns>
-        /// TCP client connection status</returns>
-        public static bool IsConnected()
+        private static void SendPackets()
         {
-            return IsConnected(new Socket(SocketType.Stream, ProtocolType.Tcp));
+            while (!Stopping)
+            {
+                bool HasPacket;
+                lock(SendQueue) { HasPacket = SendQueue.Count > 0; }
+                if (HasPacket)
+                {
+                    Packet ToSend;
+                    lock (SendQueue) { ToSend = (Packet)(SendQueue.Peek().Clone()); }
+                    try
+                    {
+                        SendNow(ToSend);
+                        lock (SendQueue) { SendQueue.Dequeue(); } // Remove the packet from the queue when it has been sent sucessfully.
+                    }
+                    catch (Exception Exc)
+                    {
+                        Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Failed to send packet.");
+                        Log.Exception(Log.Source.NETWORK, Exc);
+                    }
+                }
+                Thread.Sleep(OperationPeriod);
+            }
         }
 
+        #endregion
     }
 }
