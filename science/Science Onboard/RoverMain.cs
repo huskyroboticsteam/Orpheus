@@ -9,7 +9,7 @@ namespace Science
 {
 	class RoverMain
 	{
-        public static readonly IOHandler IOHandler = new IOHandler();
+        public static IOHandler IOHandler { get; private set; }
 
 		static void Main(string[] args)
 		{
@@ -20,6 +20,7 @@ namespace Science
             Log.Begin();
             Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Science Station - Rover Side");
 
+            IOHandler = new IOHandler();
             Packet.DefaultEndpoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 610);
             CommHandler.Start(600);
             PacketHandler PackHan = new PacketHandler();

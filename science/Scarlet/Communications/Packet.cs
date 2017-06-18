@@ -94,7 +94,7 @@ namespace Scarlet.Communications
         public static byte[] GetTimestamp()
         {
             int UnixTime = (int)DateTimeOffset.Now.ToUnixTimeSeconds();
-            byte[] TimeArray = BitConverter.GetBytes(UnixTime);
+            byte[] TimeArray = UtilData.ToBytes(UnixTime);
             if (TimeArray.Length != 4)
             {
                 Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Timestamp was of incorrect length.");

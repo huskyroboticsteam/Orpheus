@@ -58,27 +58,6 @@ namespace Scarlet.Utilities
         }
 
         /// <summary>
-        /// Converts a byte array into a 32 bit integer.
-        /// * * * Caution integer overflow.
-        /// </summary>
-        /// <param name="Array">Byte array given for int conversion.</param>
-        /// <param name="StartIndex">
-        /// Defaults to 0. The start index in the bytearray for integer conversion.</param>
-        /// <returns>
-        /// 32-bit int representation of the given byte array.
-        /// Throws <c>OverflowException</c> if integer overflow occurs.
-        /// </returns>
-        public static int ByteArrayToInt(byte[] Array, int StartIndex = 0)
-        {
-            if ((Array.Length * 8 - StartIndex) <= 32)
-            {
-                return BitConverter.ToInt32(Array, StartIndex);
-            }
-            Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Given byte array too long to fit into Int32.");
-            return 0;
-        }
-
-        /// <summary>
         /// Gives a user-readable representation of a byte array.
         /// </summary>
         /// <param name="Data">The array to format.</param>

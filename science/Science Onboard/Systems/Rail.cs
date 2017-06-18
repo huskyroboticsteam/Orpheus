@@ -14,7 +14,7 @@ namespace Science.Systems
 
         private bool Initializing, InitDone;
         private int Height;
-        public int TargetHeight { get; set; }
+        public int TargetHeight;
 
         private readonly TalonMC MotorCtrl;
         private readonly LimitSwitch Limit;

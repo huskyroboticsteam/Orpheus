@@ -19,7 +19,7 @@ namespace Science_Base
             Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Science Station - Base Side");
 
             // Set Packet default endpoint (IP Address and port to send to by default)
-            Packet.DefaultEndpoint = new IPEndPoint(IPAddress.Parse("192.168.1.52"), 600);
+            Packet.DefaultEndpoint = new IPEndPoint(IPAddress.Parse("192.168.0.103"), 600);
             CommHandler.Start(610); // Start Comms on listening port
 
             MainWindow Main = new MainWindow();

@@ -8,9 +8,10 @@ namespace Science.Systems
     {
         private const float MOTOR_MAX_SPEED = 1.0F;
 
+        private bool P_DoorOpen;
         public bool DoorOpen
         {
-            get { return this.DoorOpen; }
+            get { return this.P_DoorOpen; }
             set
             {
                 this.DoorServo.TargetPosition = value ? 300 : 0;

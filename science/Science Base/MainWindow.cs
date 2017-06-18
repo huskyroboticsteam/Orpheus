@@ -5,6 +5,7 @@ using Scarlet.Utilities;
 using System;
 using System.Linq;
 using System.Windows.Forms;
+using System.Collections.Generic;
 
 namespace Science_Base
 {
@@ -19,6 +20,7 @@ namespace Science_Base
         private void EmergencyStopClick(object sender, EventArgs e)
         {
             Packet EmergencyStopPacket = new Packet(PacketType.EMERGENCY_STOP);
+            EmergencyStopPacket.AppendData(UtilData.ToBytes("Homura"));
             CommHandler.SendAsyncPacket(EmergencyStopPacket);
         }
 
@@ -26,11 +28,11 @@ namespace Science_Base
         {
             try
             {
-                byte[] Timestamp = UtilMain.StringToBytes(this.TimestampTextbox.Text);
-                byte[] ID = UtilMain.StringToBytes(this.IDTextbox.Text);
-                byte[] Data = UtilMain.StringToBytes(this.DataTextbox.Text);
-                Packet Pack = new Packet(ID.Last());
-                Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Data len:" + Data.Length);
+                byte[] Timestamp = UtilMain.StringToBytes(this.TimestampTextbox.Text).Reverse().ToArray();
+                byte ID = UtilMain.StringToBytes(this.IDTextbox.Text)[0];
+                byte[] Data = UtilMain.StringToBytes(this.DataTextbox.Text).Reverse().ToArray();
+                Packet Pack = new Packet(ID);
+                Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Sending packet with data length: " + Data.Length);
                 Pack.AppendData(Data);
                 Pack.SendWithTimestamp(Timestamp);
                 Log.Output(Log.Severity.INFO, Log.Source.GUI, "Sending custom packet: " + Pack.ToString());
@@ -72,7 +74,7 @@ namespace Science_Base
         {
             try
             {
-                byte[] Data = UtilMain.StringToBytes(this.DataTextbox.Text);
+                byte[] Data = InterpretInput(this.DataTextbox.Text.ToCharArray()).Reverse().ToArray();//UtilMain.StringToBytes(this.DataTextbox.Text);
                 this.InterpretationData.Text = "0x" + UtilMain.BytesToNiceString(Data, true);
             }
             catch
@@ -90,7 +92,7 @@ namespace Science_Base
 
         private void UpdateTime()
         {
-            this.TimestampTextbox.Text = UtilMain.BytesToNiceString(Packet.GetTimestamp(), true);
+            this.TimestampTextbox.Text = UtilMain.BytesToNiceString(Packet.GetTimestamp().Reverse().ToArray(), true);
         }
 
         private void SecTimer_Tick(object sender, EventArgs e)
@@ -98,8 +100,23 @@ namespace Science_Base
             UpdateTime();
         }
 
+        private byte[] InterpretInput(char[] Input)
+        {
+            if(!Input.Contains('"')) { return UtilMain.StringToBytes(new string(Input)).Reverse().ToArray(); }
+            int LocOfStart = Array.IndexOf(Input, '"');
+            int StrLen = Array.IndexOf(Input.Skip(LocOfStart + 1).ToArray(), '"');
+            char[] BeforeChars = Input.Take(LocOfStart).ToArray();
+            List<byte> Output = new List<byte>();
+            Output.AddRange(UtilMain.StringToBytes(new string(BeforeChars)).Reverse().ToArray());
+            string Str = new string(Input.Skip(LocOfStart + 1).Take(StrLen).ToArray());
+            Output.AddRange(UtilData.ToBytes(Str));
+            Output.AddRange(InterpretInput(Input.Skip(LocOfStart + StrLen + 2).ToArray()));
+            return Output.ToArray();
+        }
+
         private void MainWindow_FormClosed(object sender, FormClosedEventArgs e)
         {
+            CommHandler.Stop();
             Environment.Exit(0);
         }
     }

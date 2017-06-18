@@ -14,7 +14,7 @@ namespace Science.Systems
 
         private bool Initializing, InitDone;
         private int CurrentAngle;
-        public int TargetAngle { get; set; }
+        public int TargetAngle;
 
         private readonly TalonMC MotorCtrl;
         private readonly LimitSwitch Limit;

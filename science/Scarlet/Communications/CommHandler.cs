@@ -87,6 +87,7 @@ namespace Scarlet.Communications
         public static void Stop()
         {
             CommHandler.Continue = false;
+            TcpListener.Stop();
         }
 
         /// <summary>
@@ -192,6 +193,7 @@ namespace Scarlet.Communications
                     Socket.Receive(BytesReceived); // Stores received byes into byte buffer
                     Message Received = new Message(BytesReceived, (IPEndPoint)(Socket.RemoteEndPoint));
                     Parse.ParseMessage(Received);
+                    Socket.Close();
                 }
                 catch (Exception Except)
                 {

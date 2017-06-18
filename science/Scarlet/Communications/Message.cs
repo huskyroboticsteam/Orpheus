@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Net;
+using System.Linq;
 using Scarlet.Utilities;
 
 namespace Scarlet.Communications
@@ -14,7 +15,7 @@ namespace Scarlet.Communications
     {
 
         public uint Timestamp;      // Stores message timestamp (unsigned to timestamp can use all 32-bits)
-        public int ID;              // Stores message id
+        public byte ID;              // Stores message id
         public byte[] Data;         // Stored message data (discluding timestamp and id)
         public IPEndPoint Endpoint; // Endpoint that the message was received from or going to.
 
@@ -46,7 +47,7 @@ namespace Scarlet.Communications
                 this.Data = new byte[1];
             }
             this.ID = IdByte;
-            this.Timestamp = (uint)UtilMain.ByteArrayToInt(TimeBytes);
+            this.Timestamp = (uint)UtilData.ToInt(TimeBytes);
             this.Endpoint = Endpoint;
         }
 
@@ -60,10 +61,8 @@ namespace Scarlet.Communications
         /// <param name="data"></param>
         public Message(byte ID, IPEndPoint Endpoint, byte[] Data = null)
         {
-            if (this.Data == null)
-            { // Avoid null pointer exception
-                this.Data = new byte[0];
-            }
+            if (Data == null) { this.Data = new byte[0]; }
+            else { this.Data = Data; }
             this.Endpoint = Endpoint;
             this.ID = ID;
         }
@@ -71,7 +70,7 @@ namespace Scarlet.Communications
         public void SetTime(byte[] Time)
         {
             Time = UtilMain.SubArray(Time, 0, 4); // Ensures timestamp of length 4
-            this.Timestamp = (uint)BitConverter.ToInt32(Time, 0); // Calculates timestamp from given 
+            this.Timestamp = (uint)UtilData.ToInt(Time); // Calculates timestamp from given 
         }
 
         /// <summary>
@@ -98,10 +97,9 @@ namespace Scarlet.Communications
         public byte[] GetRawData()
         {
             List<byte> Temp = new List<byte>();
-            byte[] TimeBytes = BitConverter.GetBytes(this.Timestamp);
-            byte[] ID = BitConverter.GetBytes(this.ID);
+            byte[] TimeBytes = UtilData.ToBytes(this.Timestamp);
             Temp.AddRange(TimeBytes);
-            Temp.AddRange(ID);
+            Temp.Add(this.ID);
             Temp.AddRange(this.Data);
             return Temp.ToArray();
         }
