@@ -15,6 +15,7 @@ namespace Science.Systems
             set
             {
                 this.DoorServo.TargetPosition = value ? 300 : 0;
+                this.P_DoorOpen = value;
             }
         }
 

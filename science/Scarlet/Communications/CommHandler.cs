@@ -193,6 +193,7 @@ namespace Scarlet.Communications
                     Socket.Receive(BytesReceived); // Stores received byes into byte buffer
                     Message Received = new Message(BytesReceived, (IPEndPoint)(Socket.RemoteEndPoint));
                     Parse.ParseMessage(Received);
+                    Log.ForceOutput(Log.Severity.INFO, Log.Source.NETWORK, Received.ToString());
                     Socket.Close();
                 }
                 catch (Exception Except)
