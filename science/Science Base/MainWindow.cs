@@ -30,7 +30,7 @@ namespace Science_Base
             {
                 byte[] Timestamp = UtilMain.StringToBytes(this.TimestampTextbox.Text).Reverse().ToArray();
                 byte ID = UtilMain.StringToBytes(this.IDTextbox.Text)[0];
-                byte[] Data = UtilMain.StringToBytes(this.DataTextbox.Text).Reverse().ToArray();
+                byte[] Data = InterpretInput(this.DataTextbox.Text.ToCharArray()).Reverse().ToArray();
                 Packet Pack = new Packet(ID);
                 Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Sending packet with data length: " + Data.Length);
                 Pack.AppendData(Data);
@@ -74,7 +74,7 @@ namespace Science_Base
         {
             try
             {
-                byte[] Data = InterpretInput(this.DataTextbox.Text.ToCharArray()).Reverse().ToArray();//UtilMain.StringToBytes(this.DataTextbox.Text);
+                byte[] Data = InterpretInput(this.DataTextbox.Text.ToCharArray()).Reverse().ToArray();
                 this.InterpretationData.Text = "0x" + UtilMain.BytesToNiceString(Data, true);
             }
             catch
