@@ -65,6 +65,7 @@ namespace Scarlet.Utilities
         /// <returns>A string formatted as such: "4D 3A 20 8C", or "4D3A208C", depending on the Spaces parameter.</returns>
         public static string BytesToNiceString(byte[] Data, bool Spaces)
         {
+            if(Data == null) { return string.Empty; }
             StringBuilder Output = new StringBuilder();
             for (int i = Data.Length - 1; i >= 0; i--)
             {

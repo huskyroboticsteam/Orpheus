@@ -39,7 +39,7 @@ namespace Science_Base
             {
                 byte[] Timestamp = UtilMain.StringToBytes(this.TimestampTextbox.Text).Reverse().ToArray();
                 byte ID = UtilMain.StringToBytes(this.IDTextbox.Text)[0];
-                byte[] Data = InterpretInput(this.DataTextbox.Text.ToCharArray()).Reverse().ToArray();
+                byte[] Data = InterpretInput(this.DataTextbox.Text.ToCharArray());
                 Packet Pack = new Packet(ID);
                 Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Sending packet with data length: " + Data.Length);
                 Pack.AppendData(Data);

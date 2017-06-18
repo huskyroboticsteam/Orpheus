@@ -103,8 +103,8 @@ namespace Scarlet.Communications
         public object Clone()
         {
             Message Clone = (Message)this.MemberwiseClone();
-            Clone.Timestamp = (byte[])this.Timestamp.Clone();
-            Clone.Payload = (byte[])this.Payload.Clone();
+            Clone.Timestamp = this.Timestamp != null ? (byte[])this.Timestamp.Clone() : null;
+            Clone.Payload = this.Payload != null ? (byte[])this.Payload.Clone() : null;
             return Clone;
         }
     }

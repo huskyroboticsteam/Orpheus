@@ -18,7 +18,7 @@ namespace Science_Base
             Log.Begin();
             Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Science Station - Base Side");
 
-            CommHandler.Start(600, 610, "192.168.1.26");
+            CommHandler.Start(600, 610, "127.0.0.1");
 
             MainWindow Main = new MainWindow();
             Application.EnableVisualStyles();

@@ -71,8 +71,8 @@ namespace Scarlet.Communications
         public object Clone()
         {
             Packet Clone = (Packet)this.MemberwiseClone(); // This leaves reference objects as references.
-            Clone.Data = (Message)this.Data.Clone();
-            Clone.Endpoint = new IPEndPoint(IPAddress.Parse(string.Copy(this.Endpoint.Address.ToString())), this.Endpoint.Port);
+            Clone.Data = this.Data != null ? (Message)this.Data.Clone() : null;
+            Clone.Endpoint = this.Endpoint != null ? new IPEndPoint(IPAddress.Parse(string.Copy(this.Endpoint.Address.ToString())), this.Endpoint.Port) : null;
             return Clone;
         }
     }

@@ -63,6 +63,7 @@ namespace Scarlet.Communications
             {
                 // Wait for a client.
                 TcpClient Client = Listener.AcceptTcpClient();
+                Log.Output(Log.Severity.INFO, Log.Source.NETWORK, "Client has connected.");
                 // Start sub-threads for every client.
                 Thread ClientThread = new Thread(new ParameterizedThreadStart(HandleClient));
                 ClientThread.Start(Client);
@@ -98,7 +99,7 @@ namespace Scarlet.Communications
                     }
                     if(DataSize >= 5)
                     {
-                        byte[] Data = DataBuffer.Skip(DataBuffer.Length - DataSize).ToArray();
+                        byte[] Data = DataBuffer.Take(DataSize).ToArray();
                         Packet ReceivedPack = new Packet(new Message(Data), (IPEndPoint)Client.Client.RemoteEndPoint);
                         lock (ReceiveQueue)
                         {
