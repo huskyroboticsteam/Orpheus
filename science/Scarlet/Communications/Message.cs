@@ -14,10 +14,10 @@ namespace Scarlet.Communications
     public class Message
     {
 
-        public uint Timestamp;      // Stores message timestamp (unsigned to timestamp can use all 32-bits)
+        public uint Timestamp;       // Stores message timestamp (unsigned to timestamp can use all 32-bits)
         public byte ID;              // Stores message id
-        public byte[] Data;         // Stored message data (discluding timestamp and id)
-        public IPEndPoint Endpoint; // Endpoint that the message was received from or going to.
+        public byte[] Data;          // Stored message data (discluding timestamp and id)
+        public IPEndPoint Endpoint;  // Endpoint that the message was received from or going to.
 
         /// <summary>
         /// Constructs a message given

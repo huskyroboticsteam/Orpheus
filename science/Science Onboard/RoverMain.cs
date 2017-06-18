@@ -21,7 +21,7 @@ namespace Science
             Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Science Station - Rover Side");
 
             IOHandler = new IOHandler();
-            Packet.DefaultEndpoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 610);
+            Packet.DefaultEndpoint = new IPEndPoint(IPAddress.Parse("0.0.0.0"), 610);
             CommHandler.Start(600);
             PacketHandler PackHan = new PacketHandler();
 
