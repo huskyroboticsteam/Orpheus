@@ -67,7 +67,7 @@ namespace Scarlet.Utilities
         {
             if(Data == null) { return string.Empty; }
             StringBuilder Output = new StringBuilder();
-            for (int i = Data.Length - 1; i >= 0; i--)
+            for (int i = 0; i < Data.Length; i++)
             {
                 Output.Append(Data[i].ToString("X2"));
                 if (Spaces) { Output.Append(' '); }

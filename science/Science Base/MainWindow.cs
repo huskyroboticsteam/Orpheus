@@ -83,7 +83,7 @@ namespace Science_Base
         {
             try
             {
-                byte[] Data = InterpretInput(this.DataTextbox.Text.ToCharArray()).Reverse().ToArray();
+                byte[] Data = InterpretInput(this.DataTextbox.Text.ToCharArray());
                 this.InterpretationData.Text = "0x" + UtilMain.BytesToNiceString(Data, true);
             }
             catch
@@ -101,7 +101,7 @@ namespace Science_Base
 
         private void UpdateTime()
         {
-            this.TimestampTextbox.Text = UtilMain.BytesToNiceString(Packet.GetCurrentTime().Reverse().ToArray(), true);
+            this.TimestampTextbox.Text = UtilMain.BytesToNiceString(Packet.GetCurrentTime(), true);
         }
 
         private void SecTimer_Tick(object sender, EventArgs e)
