@@ -188,6 +188,8 @@ namespace Scarlet.Communications
                 byte[] Data = ToSend.GetForSend();
                 NetworkStream Stream = Client.GetStream();
                 Stream.Write(Data, 0, Data.Length);
+                Stream.Close();
+                Client.Close();
             }
             else { throw new TimeoutException("Connection timed out while trying to send packet."); }
         }

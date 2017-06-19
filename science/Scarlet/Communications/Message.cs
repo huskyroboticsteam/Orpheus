@@ -36,13 +36,14 @@ namespace Scarlet.Communications
         /// <summary>
         /// Constructs a message given data that is already split.
         /// </summary>
-        /// <param name="ID"></param>
-        /// <param name="Endpoint"></param>
-        /// <param name="data"></param>
+        /// <param name="ID">The packet ID, used to determine how it is handled at the recipient.</param>
+        /// <param name="Payload">The packet's data content.</param>
+        /// <param name="Timestamp">The timestamp of the packet. If null or invalid, the current time gets set.</param>
         public Message(byte ID, byte[] Payload = null, byte[] Timestamp = null)
         {
             this.Payload = Payload ?? new byte[0];
-            this.Timestamp = Timestamp;
+            if (Timestamp == null || Timestamp.Length != 4) { this.Timestamp = Packet.GetCurrentTime(); }
+            else { this.Timestamp = Timestamp; }
             this.ID = ID;
         }
 
