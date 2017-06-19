@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{D33A5CED-F246-4423-B237-DBE217B208DB}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Science_Onboard</RootNamespace>
+    <RootNamespace>Science</RootNamespace>
     <AssemblyName>Science Onboard</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
