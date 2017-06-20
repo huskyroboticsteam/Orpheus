@@ -2,7 +2,7 @@
 {
     public class DigitalOutPi : IDigitalOut
     {
-        private int PinNumber;
+        public int PinNumber { get; private set; }
 
         public DigitalOutPi(int PinNumber)
         {

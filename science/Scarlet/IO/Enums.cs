@@ -5,4 +5,9 @@ namespace Scarlet.IO
     {
         PULL_UP, PULL_DOWN, NONE
     }
+
+    public enum InterruptType
+    {
+        FALLING_EDGE, RISING_EDGE, ANY_EDGE
+    }
 }

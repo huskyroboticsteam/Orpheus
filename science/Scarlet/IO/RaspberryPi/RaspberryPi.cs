@@ -79,5 +79,20 @@ namespace Scarlet.IO.RaspberryPi
         }
 
         #endregion
+
+        #region Interrupts
+
+        internal delegate void InterruptCallback();
+
+        [DllImport(MAIN_LIB, EntryPoint = "wiringPiISR")]
+        private static extern int Ext_AddInterrupt(int Pin, int InterruptType, InterruptCallback Delegate);
+
+        internal static void AddInterrupt(int Pin, int InterruptType, InterruptCallback Delegate)
+        {
+            if (!Initialized) { throw new InvalidOperationException("Cannot perform GPIO operations until the system is initialized. Call RasperryPi.SetupGPIO()."); }
+            Ext_AddInterrupt(Pin, InterruptType, Delegate);
+        }
+
+        #endregion
     }
 }
