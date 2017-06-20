@@ -60,6 +60,14 @@
     <Compile Include="Filters\Filter.cs" />
     <Compile Include="Filters\Kalman.cs" />
     <Compile Include="Filters\LowPass.cs" />
+    <Compile Include="IO\Enums.cs" />
+    <Compile Include="IO\Events.cs" />
+    <Compile Include="IO\IDigitalIn.cs" />
+    <Compile Include="IO\IDigitalOut.cs" />
+    <Compile Include="IO\IPWMOutput.cs" />
+    <Compile Include="IO\RaspberryPi\DigitalInPi.cs" />
+    <Compile Include="IO\RaspberryPi\DigitalOutPi.cs" />
+    <Compile Include="IO\RaspberryPi\RaspberryPi.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\Log.cs" />
     <Compile Include="Utilities\UtilData.cs" />
