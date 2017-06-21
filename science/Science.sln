@@ -4,16 +4,25 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.26430.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Science Onboard", "Science Onboard\Science Onboard.csproj", "{D33A5CED-F246-4423-B237-DBE217B208DB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EB8D6FE6-E3DD-4049-89A2-F636C6D70477} = {EB8D6FE6-E3DD-4049-89A2-F636C6D70477}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Science Base", "Science Base\Science Base.csproj", "{12D16A1D-C562-427C-B570-48EA44633728}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EB8D6FE6-E3DD-4049-89A2-F636C6D70477} = {EB8D6FE6-E3DD-4049-89A2-F636C6D70477}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Science Library", "Science Library\Science Library.csproj", "{A43E6103-949B-4EFD-9A17-662EA79DF9C7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EB8D6FE6-E3DD-4049-89A2-F636C6D70477} = {EB8D6FE6-E3DD-4049-89A2-F636C6D70477}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WiringPi", "Libraries\WiringPi\WiringPi\WiringPi.csproj", "{44164C3F-B228-4488-B027-EA9717E7E6E1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WiringPi-Test", "Libraries\WiringPi\ConsoleApplication1\WiringPi-Test.csproj", "{48C92185-31AE-4E72-A83F-A4F1E4E6D625}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scarlet", "Scarlet\Scarlet.csproj", "{EB8D6FE6-E3DD-4049-89A2-F636C6D70477}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scarlet", "..\shared\Scarlet\Scarlet.csproj", "{EB8D6FE6-E3DD-4049-89A2-F636C6D70477}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

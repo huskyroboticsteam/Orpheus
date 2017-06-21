@@ -74,7 +74,7 @@
     <Compile Include="Utilities\UtilMain.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Libraries\WiringPi\WiringPi\WiringPi.csproj">
+    <ProjectReference Include="..\..\science\Libraries\WiringPi\WiringPi\WiringPi.csproj">
       <Project>{44164c3f-b228-4488-b027-ea9717e7e6e1}</Project>
       <Name>WiringPi</Name>
     </ProjectReference>

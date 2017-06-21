@@ -1,0 +1,8 @@
+**/.DS_Store
+
+# Scarlet: Visual Studio
+**/obj
+**/bin
+*.suo
+*/.vs
+*.pdb
