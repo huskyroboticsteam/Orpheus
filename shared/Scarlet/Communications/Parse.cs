@@ -14,7 +14,7 @@ namespace Scarlet.Communications
         // Delegate method type for parsing specific packet ids
         public delegate void ParseMethod(Message NewMessage);
         // Stored parsing Handlers for all possible message ids
-        private static Dictionary<int, Delegate> ParsingHandlers = new Dictionary<int, Delegate>();
+        static readonly Dictionary<byte, Delegate> ParsingHandlers = new Dictionary<byte, Delegate>();
 
         /// <summary>
         /// Sets the handler for parsing of the appropriate
@@ -24,7 +24,7 @@ namespace Scarlet.Communications
         /// Message ID for parsing.</param>
         /// <param name="ParseMethod">Method used when incoming packet.
         /// of <c>MessageId</c> is received.</param>
-        public static void SetParseHandler(int MessageId, ParseMethod ParseMethod)
+        public static void SetParseHandler(byte MessageId, ParseMethod ParseMethod)
         {
             if (ParsingHandlers.ContainsKey(MessageId))
             {
@@ -42,7 +42,7 @@ namespace Scarlet.Communications
             try
             {
                 Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Parsing packet: " + NewMessage.ToString());
-                if(!ParsingHandlers.ContainsKey(NewMessage.ID))
+                if (!ParsingHandlers.ContainsKey(NewMessage.ID))
                 {
                     Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "No handler is registered for parsing packet ID " + NewMessage.ID + "!");
                     return;
