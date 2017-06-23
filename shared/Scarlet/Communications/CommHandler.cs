@@ -15,8 +15,10 @@ namespace Scarlet.Communications
         private static TcpListener Listener;
         private static Queue<Packet> SendQueue, ReceiveQueue;
         private static Thread SendThread, ReceiveThread, ProcessThread;
-        private static bool Initizalized = false;
+        private static bool Initialized = false;
         private static bool Stopping;
+		public static bool StorePackets { get; set; }
+		public static List<Packet> PacketsReceived, PacketsSent; // Packets will only be added to this if StorePackets is true.
         private static int ReceiveBufferSize, OperationPeriod;
         private const int TIMEOUT = 5000;
 
@@ -26,20 +28,22 @@ namespace Scarlet.Communications
             IPEndPoint ListenerEndpoint = new IPEndPoint(IPAddress.Any, ReceivePort);
             CommHandler.ReceiveBufferSize = ReceiveBufferSize;
             CommHandler.OperationPeriod = OperationPeriod;
-            if(!Initizalized)
+            if(!Initialized)
             {
                 Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Initializing CommHandler.");
                 Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Listening on port " + ListenerEndpoint.Port + ", and defaulting to sending to " + DefaultTarget.ToString() + ".");
                 Listener = new TcpListener(ListenerEndpoint);
                 SendQueue = new Queue<Packet>();
                 ReceiveQueue = new Queue<Packet>();
+				PacketsReceived = new List<Packet>();
+				PacketsSent = new List<Packet>();
                 ReceiveThread = new Thread(new ThreadStart(WaitForClient));
                 ReceiveThread.Start();
                 SendThread = new Thread(new ThreadStart(SendPackets));
                 SendThread.Start();
                 ProcessThread = new Thread(new ThreadStart(ProcessPackets));
                 ProcessThread.Start();
-                Initizalized = true;
+                Initialized = true;
             }
             else { Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Attempted to initialize CommHandler twice."); }
             Stopping = false;
@@ -47,18 +51,20 @@ namespace Scarlet.Communications
 
         public static void Stop()
         {
-            Stopping = true;
+			Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Stopping CommHandler.");
+			Stopping = true;
         }
 
         #region Receive
 
         /// <summary>
         /// Waits for, and establishes connection with all incoming clients.
-        /// This must be started on a thread, as it will block until CommHandler.Stop is true.
+        /// This must be started on a thread, as it will block until CommHandler.Stopping is true.
         /// </summary>
         private static void WaitForClient()
         {
-            Listener.Start();
+			if (!Initialized) { throw new InvalidOperationException("Cannot use CommHandler before initialization. Call CommHandler.Start()."); }
+			Listener.Start();
             while(!CommHandler.Stopping)
             {
                 // Wait for a client.
@@ -73,7 +79,7 @@ namespace Scarlet.Communications
 
         /// <summary>
         /// Waits for, and receives data from a connected client.
-        /// This must be started on a thread, as it will block until CommHandler.Stop is true, or the client disconnects.
+        /// This must be started on a thread, as it will block until CommHandler.Stopping is true, or the client disconnects.
         /// </summary>
         /// <param name="ClientObj">The client to receive data from. Must be TcpClient.</param>
         private static void HandleClient(object ClientObj)
@@ -105,6 +111,7 @@ namespace Scarlet.Communications
                         {
                             ReceiveQueue.Enqueue(ReceivedPack);
                         }
+						if(StorePackets) { PacketsReceived.Add(ReceivedPack); }
                     }
                     else { Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Data received from client was too short. Discarding."); }
                 }
@@ -134,12 +141,13 @@ namespace Scarlet.Communications
 
         /// <summary>
         /// Pushes received packets through to Parse for processing.
-        /// This must be started on a thread, as it will block until CommHandler.Stop is true.
+        /// This must be started on a thread, as it will block until CommHandler.Stopping is true.
         /// Assumes that packets will not be removed from ReceiveQueue anywhere but inside this method.
         /// </summary>
         private static void ProcessPackets()
         {
-            while (!Stopping)
+			if (!Initialized) { throw new InvalidOperationException("Cannot use CommHandler before initialization. Call CommHandler.Start()."); }
+			while (!Stopping)
             {
                 bool HasPacket;
                 lock (ReceiveQueue) { HasPacket = ReceiveQueue.Count > 0; }
@@ -170,7 +178,8 @@ namespace Scarlet.Communications
         /// </summary>
         public static void Send(Packet Packet)
         {
-            lock (SendQueue)
+			if (!Initialized) { throw new InvalidOperationException("Cannot use CommHandler before initialization. Call CommHandler.Start()."); }
+			lock (SendQueue)
             {
                 SendQueue.Enqueue(Packet);
             }
@@ -182,7 +191,8 @@ namespace Scarlet.Communications
         /// <param name="Packet"></param
         public static void SendNow(Packet ToSend)
         {
-            TcpClient Client = new TcpClient(new IPEndPoint(IPAddress.Any, 8000)); // TODO: See if this port needs to be configurable.
+			if (!Initialized) { throw new InvalidOperationException("Cannot use CommHandler before initialization. Call CommHandler.Start()."); }
+			TcpClient Client = new TcpClient(new IPEndPoint(IPAddress.Any, 8000)); // TODO: See if this port needs to be configurable.
             if (Client.ConnectAsync(ToSend.Endpoint.Address, ToSend.Endpoint.Port).Wait(TIMEOUT))
             {
                 byte[] Data = ToSend.GetForSend();
@@ -190,18 +200,20 @@ namespace Scarlet.Communications
                 Stream.Write(Data, 0, Data.Length);
                 Stream.Close();
                 Client.Close();
-            }
+				if (StorePackets) { PacketsSent.Add(ToSend); }
+			}
             else { throw new TimeoutException("Connection timed out while trying to send packet."); }
         }
 
         /// <summary>
         /// Sends packets from the queue.
-        /// This must be started on a thread, as it will block until CommHandler.Stop is true.
+        /// This must be started on a thread, as it will block until CommHandler.Stopping is true.
         /// Assumes that packets will not be removed from SendQueue anywhere but inside this method.
         /// </summary>
         private static void SendPackets()
         {
-            while (!Stopping)
+			if (!Initialized) { throw new InvalidOperationException("Cannot use CommHandler before initialization. Call CommHandler.Start()."); }
+			while (!Stopping)
             {
                 bool HasPacket;
                 lock(SendQueue) { HasPacket = SendQueue.Count > 0; }
