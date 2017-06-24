@@ -27,9 +27,9 @@ namespace Scarlet.Communications
         public Message(byte[] RawData)
         {
             if (RawData.Length < 5) { throw new ArgumentException("Raw data not sufficient for packet. Must be at least 5 bytes long."); }
-            this.Timestamp = RawData.SubArray(0, 4);
+            this.Timestamp = UtilMain.SubArray(RawData, 0, 4);
             this.ID = RawData[4];
-            if (RawData.Length > 5) { this.Payload = RawData.SubArray(5, RawData.Length - 5); }
+            if (RawData.Length > 5) { this.Payload = UtilMain.SubArray(RawData, 5, RawData.Length - 5); }
             else { this.Payload = new byte[0]; }
         }
 
@@ -54,7 +54,7 @@ namespace Scarlet.Communications
         public void SetTime(byte[] Time)
         {
             if (Time.Length < 4) { throw new ArgumentException("Timestamp must be 4 bytes."); }
-            this.Timestamp = Time.SubArray(0, 4);
+            this.Timestamp = UtilMain.SubArray(Time, 0, 4);
         }
 
         /// <summary>

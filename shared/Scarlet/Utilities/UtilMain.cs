@@ -50,7 +50,7 @@ namespace Scarlet.Utilities
         /// <returns>
         /// Sub array of data[index:index+length-1] (inclusive)
         /// </returns>
-        public static T[] SubArray<T>(this T[] data, int index, int length)
+        public static T[] SubArray<T>(T[] data, int index, int length)
         {
             T[] result = new T[length];
             Array.Copy(data, index, result, 0, length);
