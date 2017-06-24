@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Scarlet</RootNamespace>
     <AssemblyName>Scarlet</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -60,6 +60,7 @@
     <Compile Include="Filters\Filter.cs" />
     <Compile Include="Filters\Kalman.cs" />
     <Compile Include="Filters\LowPass.cs" />
+    <Compile Include="IO\BeagleBone\BeagleBone.cs" />
     <Compile Include="IO\Enums.cs" />
     <Compile Include="IO\Events.cs" />
     <Compile Include="IO\IDigitalIn.cs" />

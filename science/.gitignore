@@ -4,5 +4,5 @@
 **/obj
 **/bin
 *.suo
-*/.vs
+**/.vs
 *.pdb

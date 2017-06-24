@@ -58,8 +58,10 @@ namespace Scarlet.Communications
         /// </summary>
         public static byte[] GetCurrentTime()
         {
-            int UnixTime = (int)DateTimeOffset.Now.ToUnixTimeSeconds();
-            byte[] TimeArray = UtilData.ToBytes(UnixTime);
+			// We can't use this because it requires .NET 4.6, which isn't present on the version of Mono on the BeagleBone.
+			// int UnixTime = (int)DateTimeOffset.Now.ToUnixTimeSeconds();
+			int UnixTime = (int)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+			byte[] TimeArray = UtilData.ToBytes(UnixTime);
             return TimeArray;
         }
 

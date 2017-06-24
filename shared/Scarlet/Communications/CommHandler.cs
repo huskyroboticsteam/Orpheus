@@ -37,13 +37,13 @@ namespace Scarlet.Communications
                 ReceiveQueue = new Queue<Packet>();
 				PacketsReceived = new List<Packet>();
 				PacketsSent = new List<Packet>();
-                ReceiveThread = new Thread(new ThreadStart(WaitForClient));
+				Initialized = true;
+				ReceiveThread = new Thread(new ThreadStart(WaitForClient));
                 ReceiveThread.Start();
                 SendThread = new Thread(new ThreadStart(SendPackets));
                 SendThread.Start();
                 ProcessThread = new Thread(new ThreadStart(ProcessPackets));
                 ProcessThread.Start();
-                Initialized = true;
             }
             else { Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Attempted to initialize CommHandler twice."); }
             Stopping = false;

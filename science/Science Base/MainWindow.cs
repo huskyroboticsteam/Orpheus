@@ -57,8 +57,9 @@ namespace Science_Base
         {
             try
             {
-                DateTimeOffset DT = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt32(this.TimestampTextbox.Text.Replace(" ", ""), 16));
-                this.InterpretationTimestamp.Text = DT.DateTime.ToLongDateString() + " " + DT.DateTime.ToLongTimeString() + " UTC";
+                DateTime ParsedTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+                ParsedTime = ParsedTime.AddSeconds(Convert.ToInt32(this.TimestampTextbox.Text.Replace(" ", ""), 16)).ToLocalTime();
+                this.InterpretationTimestamp.Text = ParsedTime.ToLongDateString() + " " + ParsedTime.ToLongTimeString() + " UTC";
             }
             catch
             {
