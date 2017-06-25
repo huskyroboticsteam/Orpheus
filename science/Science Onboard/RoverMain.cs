@@ -21,7 +21,7 @@ namespace Science
             Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Science Station - Rover Side");
 
             IOHandler = new IOHandler();
-            CommHandler.Start(610, 600, "127.0.0.1");
+            CommHandler.Start(610, 600, "192.168.0.111");
             PacketHandler PackHan = new PacketHandler();
 
             RunTests();

@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using System.Windows.Forms;
 using System.Collections.Generic;
+using System.Net;
 
 namespace Science_Base
 {
@@ -15,6 +16,7 @@ namespace Science_Base
         {
             InitializeComponent();
             this.EmergencyStopBtn.NotifyDefault(false);
+            this.UIUpdate.Enabled = true;
         }
 
         private void EmergencyStopClick(object sender, EventArgs e)
@@ -128,6 +130,30 @@ namespace Science_Base
         {
             CommHandler.Stop();
             Environment.Exit(0);
+        }
+
+        private void ChangeIPBtn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (!IPAddress.TryParse(this.RoverIPInput.Text, out IPAddress NotUsed))
+                {
+                    throw new ArgumentException("Given rover IP address is invalid: " + this.RoverIPInput.Text);
+                }
+                CommHandler.Stop();
+                CommHandler.Start(600, 610, this.RoverIPInput.Text);
+            }
+            catch (Exception Exc)
+            {
+                Log.Exception(Log.Source.NETWORK, Exc);
+                DarkMessageBox.ShowError("Failed to change communications to new rover IP.\n\n" + Exc.ToString(), "Science");
+            }
+        }
+
+        private void UIUpdate_Tick(object sender, EventArgs e)
+        {
+            this.StatsPacketQueueOut.Text = "Packet Queue Out: " + CommHandler.GetSendQueueLength();
+            this.StatsPacketQueueIn.Text = "Packet Queue In: " + CommHandler.GetReceiveQueueLength();
         }
     }
 }

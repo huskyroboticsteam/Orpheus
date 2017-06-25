@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using Scarlet.Utilities;
+using System.Threading.Tasks;
 
 namespace Scarlet.Communications
 {
@@ -38,22 +39,31 @@ namespace Scarlet.Communications
 				PacketsReceived = new List<Packet>();
 				PacketsSent = new List<Packet>();
 				Initialized = true;
-				ReceiveThread = new Thread(new ThreadStart(WaitForClient));
-                ReceiveThread.Start();
-                SendThread = new Thread(new ThreadStart(SendPackets));
-                SendThread.Start();
-                ProcessThread = new Thread(new ThreadStart(ProcessPackets));
-                ProcessThread.Start();
+				new Thread(new ThreadStart(StartThreads)).Start();
             }
             else { Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Attempted to initialize CommHandler twice."); }
-            Stopping = false;
         }
 
         public static void Stop()
         {
 			Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Stopping CommHandler.");
 			Stopping = true;
+			while (Initialized) { Thread.Sleep(50); } // Wait for the threads to stop.
         }
+
+		private static void StartThreads()
+		{
+			ReceiveThread = new Thread(new ThreadStart(WaitForClient));
+			ReceiveThread.Start();
+			SendThread = new Thread(new ThreadStart(SendPackets));
+			SendThread.Start();
+			ProcessThread = new Thread(new ThreadStart(ProcessPackets));
+			ProcessThread.Start();
+			ReceiveThread.Join();
+			SendThread.Join();
+			ProcessThread.Join();
+			Initialized = false;
+		}
 
         #region Receive
 
@@ -67,13 +77,21 @@ namespace Scarlet.Communications
 			Listener.Start();
             while(!CommHandler.Stopping)
             {
-                // Wait for a client.
-                TcpClient Client = Listener.AcceptTcpClient();
-                Log.Output(Log.Severity.INFO, Log.Source.NETWORK, "Client has connected.");
-                // Start sub-threads for every client.
-                Thread ClientThread = new Thread(new ParameterizedThreadStart(HandleClient));
-                ClientThread.Start(Client);
-                Thread.Sleep(OperationPeriod);
+				// Wait for a client.
+				Task<TcpClient> ClientListener = Listener.AcceptTcpClientAsync();
+				if (ClientListener.Wait(5000))
+				{
+					TcpClient Client = ClientListener.Result;
+					Log.Output(Log.Severity.INFO, Log.Source.NETWORK, "Client has connected.");
+					// Start sub-threads for every client.
+					Thread ClientThread = new Thread(new ParameterizedThreadStart(HandleClient));
+					ClientThread.Start(Client);
+					Thread.Sleep(OperationPeriod);
+				}
+				else
+				{
+					Listener.Stop();
+				}
             }
         }
 
@@ -236,6 +254,11 @@ namespace Scarlet.Communications
             }
         }
 
-        #endregion
-    }
+		#endregion
+
+		#region Info
+		public static int GetReceiveQueueLength() { return ReceiveQueue.Count; }
+		public static int GetSendQueueLength() { return SendQueue.Count; }
+		#endregion
+	}
 }

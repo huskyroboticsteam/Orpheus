@@ -1,18 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Net.Sockets;
 using Scarlet.Utilities;
 
 namespace Scarlet.Communications
 {
-    /// <summary>
-    /// Handles packet architecture.
-    /// </summary>
-    public class Packet : ICloneable
-    {
-        public Message Data { get; private set; }
-        public IPEndPoint Endpoint { get; private set; }
+	/// <summary>
+	/// Handles packet architecture.
+	/// </summary>
+	public class Packet : ICloneable
+	{
+		public Message Data { get; private set; }
+		public IPEndPoint Endpoint { get; private set; }
 
         /// <summary>
         /// Meant for received packets.
@@ -34,7 +32,7 @@ namespace Scarlet.Communications
         {
             this.Endpoint = Target ?? CommHandler.DefaultTarget;
             this.Data = new Message(ID);
-        }
+		}
 
         /// <summary>
         /// Appends data to packet.
