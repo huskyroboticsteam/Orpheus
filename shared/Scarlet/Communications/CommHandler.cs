@@ -88,12 +88,9 @@ namespace Scarlet.Communications
 					ClientThread.Start(Client);
 					Thread.Sleep(OperationPeriod);
 				}
-				else
-				{
-					Listener.Stop();
-				}
             }
-        }
+			Listener.Stop();
+		}
 
         /// <summary>
         /// Waits for, and receives data from a connected client.
