@@ -203,7 +203,7 @@ namespace Scarlet.Communications
         /// <summary>
         /// Immediately sends a packet. Blocks until sending is complete.
         /// </summary>
-        /// <param name="Packet"></param
+        /// <param name="Packet">Packet to send</param>
         public static void SendNow(Packet ToSend)
         {
 			if (!Initialized) { throw new InvalidOperationException("Cannot use CommHandler before initialization. Call CommHandler.Start()."); }
