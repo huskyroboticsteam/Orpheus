@@ -15,7 +15,6 @@ namespace Scarlet.Communications
         public byte[] Timestamp;  // Stores message timestamp (Unix time format)
         public byte ID;           // Stores message ID
         public byte[] Payload;    // Stored message data (discluding timestamp and ID)
-        public Protocol ProtocolType; // Protocol for sending
 
         /// <summary>
         /// Constructs a message given raw data, likes when received via network.
@@ -25,8 +24,7 @@ namespace Scarlet.Communications
         /// Payload: Remainder (RawData[5] though end)
         /// </summary>
         /// <param name="RawData">Incoming data array</param>
-        /// <param name="ProtocolType">Protocol Type to used for message.</param>
-        public Message(byte[] RawData, Protocol ProtocolType=Protocol.UDP)
+        public Message(byte[] RawData)
         {
             if (RawData.Length < 5) { throw new ArgumentException("Raw data not sufficient for packet. Must be at least 5 bytes long."); }
             this.Timestamp = UtilMain.SubArray(RawData, 0, 4);
@@ -93,10 +91,7 @@ namespace Scarlet.Communications
         public override string ToString()
         {
             StringBuilder Str = new StringBuilder();
-            string ProtocolIdentifier = "NONE"; // Should be overridden to appropriate ID, but just in case it defaults to NONE
-            if (this.ProtocolType == Protocol.UDP) { ProtocolIdentifier = "UDP"; }
-            if (this.ProtocolType == Protocol.TCP) { ProtocolIdentifier = "TCP"; }
-            Str.Append("(" + ProtocolIdentifier + ") Packet = Time:(0x");
+            Str.Append("Packet = Time:(0x");
             Str.Append(UtilMain.BytesToNiceString(this.Timestamp, false));
             Str.Append(") ID:(0x");
             Str.Append(this.ID.ToString("X2"));
@@ -116,9 +111,4 @@ namespace Scarlet.Communications
 
     }
 
-    public enum Protocol
-    {
-        UDP,
-        TCP
-    }
 }

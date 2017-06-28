@@ -9,30 +9,31 @@ namespace Scarlet.Communications
 	/// </summary>
 	public class Packet : ICloneable
 	{
-		public Message Data { get; private set; }
-		public IPEndPoint Endpoint { get; private set; }
+		public Message Data { get; private set; }        // Data to send
+		public IPEndPoint Endpoint { get; private set; } // Endpoint to send or endpoint received on 
+        public Protocol ProtocolType; // Either protocol message received on or protocol for sending
 
         /// <summary>
         /// Meant for received packets.
         /// </summary>
         /// <param name="Message">The packet data</param>
+        /// <param name="ProtocolType">Protocol Type to used for message.</param>
         /// <param name="Endpoint">The endpoint where this packet was received from</param>
-        public Packet(Message Message, IPEndPoint Endpoint)
+        public Packet(Message Message, Protocol ProtocolType = Protocol.UDP, IPEndPoint Endpoint = null)
         {
+            this.ProtocolType = ProtocolType;
             this.Data = Message;
-            this.Endpoint = Endpoint;
+            this.Endpoint = Endpoint ?? CommHandler.DefaultTarget;
         }
 
         /// <summary>
         /// Meant for sent packets.
         /// </summary>
         /// <param name="ID">The packet ID, determining what action will be taken upon receipt</param>
+        /// <param name="ProtocolType">Protocol Type to used for message.</param>
         /// <param name="Target">The destination where this packet will be sent</param>
-        public Packet(byte ID, IPEndPoint Target = null)
-        {
-            this.Endpoint = Target ?? CommHandler.DefaultTarget;
-            this.Data = new Message(ID);
-		}
+        public Packet(byte ID, Protocol ProtocolType=Protocol.UDP, IPEndPoint Target = null)
+            : this(new Message(ID), ProtocolType, Target) { }
 
         /// <summary>
         /// Appends data to packet.
@@ -66,7 +67,9 @@ namespace Scarlet.Communications
         /// <summary>
         /// Formats the Packet's contents to be human-readable.
         /// </summary>
-        public override string ToString() { return this.Data.ToString(); }
+        public override string ToString() {
+            return this.Data.ToString();
+        }
 
         public object Clone()
         {

@@ -22,9 +22,9 @@ namespace Science
         }
 
         /// <summary>
-        /// Prepares all motor-driven systems for use by zeroing them. This takes a while.
+        /// Prepares all systems for use by zeroing them. This takes a while.
         /// </summary>
-        public void InitializeMotors()
+        public void InitializeSystems()
         {
             this.RailController.Initialize();
             this.TurntableController.Initialize();
@@ -33,7 +33,7 @@ namespace Science
         }
 
         /// <summary>
-        /// Immediately stops all motors.
+        /// Immediately stops all systems.
         /// </summary>
         public void EmergencyStop()
         {

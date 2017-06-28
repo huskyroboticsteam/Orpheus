@@ -55,6 +55,16 @@ namespace Scarlet.Communications
                 Log.Exception(Log.Source.NETWORK, Except);
             }
         }
+        
+        /// <summary>
+        /// Appropriately parses incoming packet.
+        /// Does the same thing as ParseMessage(Message NewMessage)
+        /// </summary>
+        /// <param name="NewMessage">Packet to parse.</param>
+        public static void ParseMessage(Packet NewMessage)
+        {
+            ParseMessage(NewMessage.Data);
+        }
 
     }
 }
