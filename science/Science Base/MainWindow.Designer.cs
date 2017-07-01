@@ -50,6 +50,10 @@
 			this.InterpretationID = new DarkUI.Controls.DarkLabel();
 			this.InterpretationData = new DarkUI.Controls.DarkLabel();
 			this.PacketConstructStatus = new DarkUI.Controls.DarkLabel();
+			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
+			this.StatsPacketQueueOut = new DarkUI.Controls.DarkLabel();
+			this.StatsPacketQueueIn = new DarkUI.Controls.DarkLabel();
 			this.EmergencyStopBtn = new System.Windows.Forms.Button();
 			this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
 			this.LabRoverIP = new DarkUI.Controls.DarkLabel();
@@ -57,10 +61,6 @@
 			this.RoverIPInput = new DarkUI.Controls.DarkTextBox();
 			this.SecTimer = new System.Windows.Forms.Timer(this.components);
 			this.UIUpdate = new System.Windows.Forms.Timer(this.components);
-			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
-			this.StatsPacketQueueOut = new DarkUI.Controls.DarkLabel();
-			this.StatsPacketQueueIn = new DarkUI.Controls.DarkLabel();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.tabControl1.SuspendLayout();
 			this.Debugging.SuspendLayout();
@@ -68,9 +68,9 @@
 			this.PacketGenBox.SuspendLayout();
 			this.PacketGenLayout.SuspendLayout();
 			this.tableLayoutPanel2.SuspendLayout();
-			this.tableLayoutPanel3.SuspendLayout();
 			this.groupBox1.SuspendLayout();
 			this.tableLayoutPanel4.SuspendLayout();
+			this.tableLayoutPanel3.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// tableLayoutPanel1
@@ -168,7 +168,7 @@
 			this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
 			this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
 			this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40F));
-			this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 109F));
+			this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 110F));
 			this.PacketGenLayout.Controls.Add(this.TimestampTitle, 0, 0);
 			this.PacketGenLayout.Controls.Add(this.IDTitle, 1, 0);
 			this.PacketGenLayout.Controls.Add(this.IDTextbox, 1, 1);
@@ -345,6 +345,63 @@
 			this.PacketConstructStatus.TabIndex = 11;
 			this.PacketConstructStatus.Text = "Unknown";
 			// 
+			// groupBox1
+			// 
+			this.groupBox1.Controls.Add(this.tableLayoutPanel4);
+			this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.groupBox1.ForeColor = System.Drawing.Color.Gainsboro;
+			this.groupBox1.Location = new System.Drawing.Point(5, 129);
+			this.groupBox1.Margin = new System.Windows.Forms.Padding(5);
+			this.groupBox1.Name = "groupBox1";
+			this.groupBox1.Size = new System.Drawing.Size(766, 114);
+			this.groupBox1.TabIndex = 2;
+			this.groupBox1.TabStop = false;
+			this.groupBox1.Text = "Base Status";
+			// 
+			// tableLayoutPanel4
+			// 
+			this.tableLayoutPanel4.ColumnCount = 4;
+			this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+			this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+			this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+			this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+			this.tableLayoutPanel4.Controls.Add(this.StatsPacketQueueOut, 0, 0);
+			this.tableLayoutPanel4.Controls.Add(this.StatsPacketQueueIn, 0, 1);
+			this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tableLayoutPanel4.Location = new System.Drawing.Point(3, 16);
+			this.tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(0);
+			this.tableLayoutPanel4.Name = "tableLayoutPanel4";
+			this.tableLayoutPanel4.RowCount = 3;
+			this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+			this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+			this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+			this.tableLayoutPanel4.Size = new System.Drawing.Size(760, 95);
+			this.tableLayoutPanel4.TabIndex = 0;
+			// 
+			// StatsPacketQueueOut
+			// 
+			this.StatsPacketQueueOut.AutoSize = true;
+			this.StatsPacketQueueOut.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.StatsPacketQueueOut.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+			this.StatsPacketQueueOut.Location = new System.Drawing.Point(3, 0);
+			this.StatsPacketQueueOut.Name = "StatsPacketQueueOut";
+			this.StatsPacketQueueOut.Size = new System.Drawing.Size(184, 31);
+			this.StatsPacketQueueOut.TabIndex = 0;
+			this.StatsPacketQueueOut.Text = "Packet Queue Out: N/A";
+			this.StatsPacketQueueOut.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			// 
+			// StatsPacketQueueIn
+			// 
+			this.StatsPacketQueueIn.AutoSize = true;
+			this.StatsPacketQueueIn.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.StatsPacketQueueIn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+			this.StatsPacketQueueIn.Location = new System.Drawing.Point(3, 31);
+			this.StatsPacketQueueIn.Name = "StatsPacketQueueIn";
+			this.StatsPacketQueueIn.Size = new System.Drawing.Size(184, 31);
+			this.StatsPacketQueueIn.TabIndex = 1;
+			this.StatsPacketQueueIn.Text = "Packet Queue In: N/A";
+			this.StatsPacketQueueIn.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			// 
 			// EmergencyStopBtn
 			// 
 			this.EmergencyStopBtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(129)))), ((int)(((byte)(20)))), ((int)(((byte)(38)))));
@@ -423,63 +480,6 @@
 			this.UIUpdate.Interval = 33;
 			this.UIUpdate.Tick += new System.EventHandler(this.UIUpdate_Tick);
 			// 
-			// groupBox1
-			// 
-			this.groupBox1.Controls.Add(this.tableLayoutPanel4);
-			this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.groupBox1.ForeColor = System.Drawing.Color.Gainsboro;
-			this.groupBox1.Location = new System.Drawing.Point(5, 129);
-			this.groupBox1.Margin = new System.Windows.Forms.Padding(5);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(766, 114);
-			this.groupBox1.TabIndex = 2;
-			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "Base Status";
-			// 
-			// tableLayoutPanel4
-			// 
-			this.tableLayoutPanel4.ColumnCount = 4;
-			this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-			this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-			this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-			this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-			this.tableLayoutPanel4.Controls.Add(this.StatsPacketQueueOut, 0, 0);
-			this.tableLayoutPanel4.Controls.Add(this.StatsPacketQueueIn, 0, 1);
-			this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.tableLayoutPanel4.Location = new System.Drawing.Point(3, 16);
-			this.tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(0);
-			this.tableLayoutPanel4.Name = "tableLayoutPanel4";
-			this.tableLayoutPanel4.RowCount = 3;
-			this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-			this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-			this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-			this.tableLayoutPanel4.Size = new System.Drawing.Size(760, 95);
-			this.tableLayoutPanel4.TabIndex = 0;
-			// 
-			// StatsPacketQueueOut
-			// 
-			this.StatsPacketQueueOut.AutoSize = true;
-			this.StatsPacketQueueOut.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.StatsPacketQueueOut.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-			this.StatsPacketQueueOut.Location = new System.Drawing.Point(3, 0);
-			this.StatsPacketQueueOut.Name = "StatsPacketQueueOut";
-			this.StatsPacketQueueOut.Size = new System.Drawing.Size(184, 31);
-			this.StatsPacketQueueOut.TabIndex = 0;
-			this.StatsPacketQueueOut.Text = "Packet Queue Out: N/A";
-			this.StatsPacketQueueOut.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			// 
-			// StatsPacketQueueIn
-			// 
-			this.StatsPacketQueueIn.AutoSize = true;
-			this.StatsPacketQueueIn.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.StatsPacketQueueIn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-			this.StatsPacketQueueIn.Location = new System.Drawing.Point(3, 31);
-			this.StatsPacketQueueIn.Name = "StatsPacketQueueIn";
-			this.StatsPacketQueueIn.Size = new System.Drawing.Size(184, 31);
-			this.StatsPacketQueueIn.TabIndex = 1;
-			this.StatsPacketQueueIn.Text = "Packet Queue In: N/A";
-			this.StatsPacketQueueIn.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			// 
 			// MainWindow
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -500,11 +500,11 @@
 			this.PacketGenLayout.PerformLayout();
 			this.tableLayoutPanel2.ResumeLayout(false);
 			this.tableLayoutPanel2.PerformLayout();
-			this.tableLayoutPanel3.ResumeLayout(false);
-			this.tableLayoutPanel3.PerformLayout();
 			this.groupBox1.ResumeLayout(false);
 			this.tableLayoutPanel4.ResumeLayout(false);
 			this.tableLayoutPanel4.PerformLayout();
+			this.tableLayoutPanel3.ResumeLayout(false);
+			this.tableLayoutPanel3.PerformLayout();
 			this.ResumeLayout(false);
 
         }

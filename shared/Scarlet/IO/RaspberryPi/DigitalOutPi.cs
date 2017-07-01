@@ -10,7 +10,7 @@
         }
 
         /// <summary>
-        /// Prepares the GPIO pin for output use. Make sure to call RaspberryPi.SetupGPIO() once in your program before this.
+        /// Prepares the GPIO pin for output use. Make sure to call RaspberryPi.Initialize() once in your program before this.
         /// </summary>
         public void Initialize()
         {

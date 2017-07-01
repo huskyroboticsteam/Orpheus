@@ -21,7 +21,7 @@ namespace Scarlet.IO.RaspberryPi
         /// <summary>
         /// Prepares the Raspberry Pi's GPIO system for use. You should do this before using any GPIO functions.
         /// </summary>
-        public static void SetupGPIO()
+        public static void Initialize()
         {
             Initialized = true;
             Ext_SetupGPIO();
@@ -43,7 +43,7 @@ namespace Scarlet.IO.RaspberryPi
 
         internal static void SetPinMode(int Pin, PinMode Mode)
         {
-            if (!Initialized) { throw new InvalidOperationException("Cannot perform GPIO operations until the system is initialized. Call RasperryPi.SetupGPIO()."); }
+            if (!Initialized) { throw new InvalidOperationException("Cannot perform GPIO operations until the system is initialized. Call RasperryPi.Initialize()."); }
             Ext_SetPinMode(Pin, (int)Mode);
         }
 
@@ -52,7 +52,7 @@ namespace Scarlet.IO.RaspberryPi
 
         internal static void SetResistor(int Pin, ResistorState ResMode)
         {
-            if (!Initialized) { throw new InvalidOperationException("Cannot perform GPIO operations until the system is initialized. Call RasperryPi.SetupGPIO()."); }
+            if (!Initialized) { throw new InvalidOperationException("Cannot perform GPIO operations until the system is initialized. Call RasperryPi.Initialize()."); }
             int ResistorVal = 0;
             if (ResMode == ResistorState.PULL_UP) { ResistorVal = 2; }
             else if (ResMode == ResistorState.PULL_DOWN) { ResistorVal = 1; }
@@ -64,7 +64,7 @@ namespace Scarlet.IO.RaspberryPi
 
         internal static bool DigitalRead(int Pin)
         {
-            if (!Initialized) { throw new InvalidOperationException("Cannot perform GPIO operations until the system is initialized. Call RasperryPi.SetupGPIO()."); }
+            if (!Initialized) { throw new InvalidOperationException("Cannot perform GPIO operations until the system is initialized. Call RasperryPi.Initialize()."); }
             return Ext_DigitalRead(Pin) != 0;
         }
 
@@ -74,7 +74,7 @@ namespace Scarlet.IO.RaspberryPi
 
         internal static void DigitalWrite(int Pin, bool OutputVal)
         {
-            if (!Initialized) { throw new InvalidOperationException("Cannot perform GPIO operations until the system is initialized. Call RasperryPi.SetupGPIO()."); }
+            if (!Initialized) { throw new InvalidOperationException("Cannot perform GPIO operations until the system is initialized. Call RasperryPi.Initialize()."); }
             Ext_DigitalWrite(Pin, OutputVal ? 0 : 1);
         }
 
@@ -89,7 +89,7 @@ namespace Scarlet.IO.RaspberryPi
 
         internal static void AddInterrupt(int Pin, int InterruptType, InterruptCallback Delegate)
         {
-            if (!Initialized) { throw new InvalidOperationException("Cannot perform GPIO operations until the system is initialized. Call RasperryPi.SetupGPIO()."); }
+            if (!Initialized) { throw new InvalidOperationException("Cannot perform GPIO operations until the system is initialized. Call RasperryPi.Initialize()."); }
             Ext_AddInterrupt(Pin, InterruptType, Delegate);
         }
 
