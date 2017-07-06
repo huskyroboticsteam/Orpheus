@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 namespace Scarlet.Utilities
 {
@@ -23,7 +24,7 @@ namespace Scarlet.Utilities
         public static string[][] ErrorCodes;
 
         // Location of the Log File. Set in Begin()
-        public static string FileLocation;
+        public static StreamWriter File;
 
         /// <summary>
         /// Outputs a general log message if configured to output this type of message.
@@ -118,7 +119,8 @@ namespace Scarlet.Utilities
             Str.Append(DateTime.Now.ToLongTimeString());
             Str.Append('.');
 
-            string FileName = DateTime.Now.ToString("ScarletLog-yy-MM-dd-hh-mm-ss-tt");
+            string FileName = DateTime.Now.ToString("yy-MM-dd-hh-mm-ss-tt");
+            FileName = "ScarletLog-" + FileName;
             string[] Files = System.IO.Directory.GetFiles(FileName, "*.log");
             int Iterations = 0;
             while (Files.Contains(FileName + ".log"))
@@ -126,9 +128,17 @@ namespace Scarlet.Utilities
                 FileName += "_" + Iterations.ToString().ToString();
                 Iterations++;
             }
-            FileLocation = LogFilesLocation + FileName + ".log";
-
+            string FileLocation = LogFilesLocation + FileName + ".log";
+            File = new StreamWriter(@FileLocation);
             WriteLine(Str.ToString());
+        }
+
+        /// <summary>
+        /// Stops the Logging process.
+        /// </summary>
+        public static void Stop() 
+        {
+            File.Close();
         }
 
         private static void Write(string Message)
@@ -139,7 +149,7 @@ namespace Scarlet.Utilities
             }
             if (Log.Destination == WriteDestination.ALL || Log.Destination == WriteDestination.FILE)
             {
-                using (System.IO.StreamWriter File = new System.IO.StreamWriter(@FileLocation)) { File.Write(Message); }
+                File.Write(Message);
             }
         }
 

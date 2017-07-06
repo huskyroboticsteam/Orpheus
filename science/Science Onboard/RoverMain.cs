@@ -31,6 +31,9 @@ namespace Science
                 Thread.Sleep(100);
             }
 
+
+			Log.Stop();
+
             while (Console.KeyAvailable) { Console.ReadKey(); }
             Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Press any key to exit.");
             Console.ReadKey();
