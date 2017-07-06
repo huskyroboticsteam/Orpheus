@@ -6,17 +6,24 @@ namespace Scarlet.Utilities
 {
     public static class Log
     {
+        // Folder to hold log files
+        private const string LogFilesLocation = "/Logs/";
+
         // Override these in your implementation.
         // OutputType determines which system you see output from.
         // OutputLevel determines the minimum severity required for a message to be output.
         public static Source OutputType = Source.SENSORS;
         public static Severity OutputLevel = Severity.DEBUG;
+        public static WriteDestination Destination = WriteDestination.CONSOLE;
 
         // Override these in your implementation.
         // SystemNames determines what subcomponent an error originated from.
         // ErrorCodes provides a human-readable, concise description for every possible error.
         public static string[] SystemNames;
         public static string[][] ErrorCodes;
+
+        // Location of the Log File. Set in Begin()
+        public static string FileLocation;
 
         /// <summary>
         /// Outputs a general log message if configured to output this type of message.
@@ -62,7 +69,7 @@ namespace Scarlet.Utilities
                     break;
             }
             Message = "[" + DateTime.Now.ToLongTimeString() + "] " + Message;
-            Console.WriteLine(Message);
+            WriteLine(Message);
             Console.ResetColor();
         }
 
@@ -89,7 +96,7 @@ namespace Scarlet.Utilities
             Console.ForegroundColor = ConsoleColor.Red;
             byte System = (byte)(Error >> 8);
             byte Code = (byte)(Error & 0x00FF);
-            Console.WriteLine("[" + DateTime.Now.ToLongTimeString() + "] [ERR] [0x" + Error.ToString("X4") + "] [" + SystemNames[System] + "] " + ErrorCodes[System][Code]);
+            WriteLine("[" + DateTime.Now.ToLongTimeString() + "] [ERR] [0x" + Error.ToString("X4") + "] [" + SystemNames[System] + "] " + ErrorCodes[System][Code]);
             Console.ResetColor();
         }
 
@@ -110,7 +117,45 @@ namespace Scarlet.Utilities
             Str.Append(' ');
             Str.Append(DateTime.Now.ToLongTimeString());
             Str.Append('.');
-            Console.WriteLine(Str.ToString());
+
+            string FileName = DateTime.Now.ToString("ScarletLog-yy-MM-dd-hh-mm-ss-tt");
+            string[] Files = System.IO.Directory.GetFiles(FileName, "*.log");
+            int Iterations = 0;
+            while (Files.Contains(FileName + ".log"))
+            {
+                FileName += "_" + Iterations.ToString().ToString();
+                Iterations++;
+            }
+            FileLocation = LogFilesLocation + FileName + ".log";
+
+            WriteLine(Str.ToString());
+        }
+
+        private static void Write(string Message)
+        {
+            if (Log.Destination == WriteDestination.ALL || Log.Destination == WriteDestination.CONSOLE) 
+            {
+                Console.Write(Message);
+            }
+            if (Log.Destination == WriteDestination.ALL || Log.Destination == WriteDestination.FILE)
+            {
+                using (System.IO.StreamWriter File = new System.IO.StreamWriter(@FileLocation)) { File.Write(Message); }
+            }
+        }
+
+        private static void WriteLine(string Message)
+        {
+            Write(Message + "\n");
+        }
+
+        /// <summary>
+        /// Write destination.
+        /// </summary>
+        public enum WriteDestination
+        {
+            CONSOLE,
+            FILE,
+            ALL
         }
 
         /// <summary>
