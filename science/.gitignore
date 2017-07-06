@@ -6,3 +6,6 @@
 *.suo
 **/.vs
 *.pdb
+
+# Scarlet: Logs
+**/Logs
