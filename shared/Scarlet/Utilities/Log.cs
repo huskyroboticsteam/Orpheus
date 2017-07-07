@@ -24,7 +24,7 @@ namespace Scarlet.Utilities
         public static string[][] ErrorCodes;
 
         // Location of the Log File. Set in Begin()
-        public static StreamWriter File;
+        public static StreamWriter LogFile;
 
         /// <summary>
         /// Outputs a general log message if configured to output this type of message.
@@ -125,11 +125,11 @@ namespace Scarlet.Utilities
             int Iterations = 0;
             while (Files.Contains(FileName + ".log"))
             {
-                FileName += "_" + Iterations.ToString().ToString();
+                FileName += "_" + Iterations.ToString();
                 Iterations++;
             }
             string FileLocation = LogFilesLocation + FileName + ".log";
-            File = new StreamWriter(@FileLocation);
+            LogFile = new StreamWriter(@FileLocation);
             WriteLine(Str.ToString());
         }
 
@@ -138,7 +138,7 @@ namespace Scarlet.Utilities
         /// </summary>
         public static void Stop() 
         {
-            File.Close();
+            LogFile.Close();
         }
 
         private static void Write(string Message)
@@ -149,7 +149,7 @@ namespace Scarlet.Utilities
             }
             if (Log.Destination == WriteDestination.ALL || Log.Destination == WriteDestination.FILE)
             {
-                File.Write(Message);
+                LogFile.Write(Message);
             }
         }
 
@@ -163,9 +163,7 @@ namespace Scarlet.Utilities
         /// </summary>
         public enum WriteDestination
         {
-            CONSOLE,
-            FILE,
-            ALL
+            CONSOLE, FILE, ALL
         }
 
         /// <summary>
