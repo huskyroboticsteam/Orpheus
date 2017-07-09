@@ -47,6 +47,7 @@
     <Compile Include="Communications\Message.cs" />
     <Compile Include="Communications\Packet.cs" />
     <Compile Include="Communications\Parse.cs" />
+    <Compile Include="Communications\Server.cs" />
     <Compile Include="Components\ICamera.cs" />
     <Compile Include="Components\IMotor.cs" />
     <Compile Include="Components\ISensor.cs" />
