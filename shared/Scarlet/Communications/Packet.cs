@@ -11,7 +11,7 @@ namespace Scarlet.Communications
 	{
 		public Message Data { get; private set; }        // Data to send
 		public IPEndPoint Endpoint { get; private set; } // Endpoint to send or endpoint received on 
-        public Protocol ProtocolType; // Either protocol message received on or protocol for sending
+        public bool IsUDP; // Either protocol message received on or protocol for sending
 
         /// <summary>
         /// Meant for received packets.
@@ -19,9 +19,9 @@ namespace Scarlet.Communications
         /// <param name="Message">The packet data</param>
         /// <param name="ProtocolType">Protocol Type to used for message.</param>
         /// <param name="Endpoint">The endpoint where this packet was received from</param>
-        public Packet(Message Message, Protocol ProtocolType = Protocol.UDP, IPEndPoint Endpoint = null)
+        public Packet(Message Message, bool IsUDP, IPEndPoint Endpoint = null)
         {
-            this.ProtocolType = ProtocolType;
+            this.IsUDP = IsUDP;
             this.Data = Message;
             this.Endpoint = Endpoint ?? CommHandler.DefaultTarget;
         }
@@ -32,8 +32,8 @@ namespace Scarlet.Communications
         /// <param name="ID">The packet ID, determining what action will be taken upon receipt</param>
         /// <param name="ProtocolType">Protocol Type to used for message.</param>
         /// <param name="Target">The destination where this packet will be sent</param>
-        public Packet(byte ID, Protocol ProtocolType=Protocol.UDP, IPEndPoint Target = null)
-            : this(new Message(ID), ProtocolType, Target) { }
+        public Packet(byte ID, bool IsUDP, IPEndPoint Target = null)
+            : this(new Message(ID), IsUDP, Target) { }
 
         /// <summary>
         /// Appends data to packet.
