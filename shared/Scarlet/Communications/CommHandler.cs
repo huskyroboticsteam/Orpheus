@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace Scarlet.Communications
 {
+    [Obsolete("Use Client/Server instead")]
     public static class CommHandler
     {
         public static IPEndPoint DefaultTarget { get; private set; }
