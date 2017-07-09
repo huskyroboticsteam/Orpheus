@@ -43,7 +43,8 @@ namespace Scarlet.Communications
         
         public static bool Send(Packet SendPacket)
         {
-            return true;
+            if (SendPacket.IsUDP) { return SendUDP(SendPacket); }
+            else { return SendTCP(SendPacket); }
         }
 
         public static bool SendNow(Packet SendPacket)

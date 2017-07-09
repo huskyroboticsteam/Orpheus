@@ -23,7 +23,7 @@ namespace Science_Base
         {
             try
             {
-                Packet EmergencyStopPacket = new Packet(PacketType.EMERGENCY_STOP);
+                Packet EmergencyStopPacket = new Packet(PacketType.EMERGENCY_STOP, false);
                 EmergencyStopPacket.AppendData(UtilData.ToBytes("Homura"));
                 CommHandler.SendNow(EmergencyStopPacket);
             }
@@ -42,7 +42,7 @@ namespace Science_Base
                 byte[] Timestamp = UtilMain.StringToBytes(this.TimestampTextbox.Text).Reverse().ToArray();
                 byte ID = UtilMain.StringToBytes(this.IDTextbox.Text)[0];
                 byte[] Data = InterpretInput(this.DataTextbox.Text.ToCharArray());
-                Packet Pack = new Packet(ID);
+                Packet Pack = new Packet(ID, false);
                 Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Sending packet with data length: " + Data.Length);
                 Pack.AppendData(Data);
                 CommHandler.Send(Pack);

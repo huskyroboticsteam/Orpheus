@@ -121,7 +121,7 @@ namespace Scarlet.Communications
                     if(DataSize >= 5)
                     {
                         byte[] Data = DataBuffer.Take(DataSize).ToArray();
-                        Packet ReceivedPack = new Packet(new Message(Data), Endpoint: (IPEndPoint)Client.Client.RemoteEndPoint);
+                        Packet ReceivedPack = new Packet(new Message(Data), false, (IPEndPoint)Client.Client.RemoteEndPoint);
                         lock (ReceiveQueue)
                         {
                             ReceiveQueue.Enqueue(ReceivedPack);
