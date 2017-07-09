@@ -114,6 +114,7 @@ namespace Scarlet.Communications
                 Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Client connection does not permit reading.");
                 throw new Exception("NetworkStream does not support reading");
             }
+            lock (ClientsTCP) { ClientsTCP.Add((IPEndPoint)Client.Client.RemoteEndPoint, Client); }
             byte[] DataBuffer = new byte[ReceiveBufferSize];
             while (!Stopping)
             {
@@ -130,15 +131,10 @@ namespace Scarlet.Communications
                     {
                         byte[] Data = DataBuffer.Take(DataSize).ToArray();
                         Packet ReceivedPack = new Packet(new Message(Data), false, (IPEndPoint)Client.Client.RemoteEndPoint);
-                        lock (ReceiveQueue)
-                        {
-                            ReceiveQueue.Enqueue(ReceivedPack);
-                        }
-                        if (StorePackets)
-                        { PacketsReceived.Add(ReceivedPack); }
+                        lock (ReceiveQueue) { ReceiveQueue.Enqueue(ReceivedPack); }
+                        if (StorePackets) { PacketsReceived.Add(ReceivedPack); }
                     }
-                    else
-                    { Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Data received from client was too short. Discarding."); }
+                    else { Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Data received from client was too short. Discarding."); }
                 }
                 catch (IOException IOExc)
                 {
@@ -161,8 +157,11 @@ namespace Scarlet.Communications
                 }
                 Thread.Sleep(OperationPeriod);
             }
+            ClientsTCP.Remove((IPEndPoint)Client.Client.RemoteEndPoint);
             Receive.Close();
         }
+
+        public static List<IPEndPoint> GetTCPClients() { return ClientsTCP.Keys.ToList(); }
 
         private static void WaitForClientsUDP(object ReceivePort)
         {
