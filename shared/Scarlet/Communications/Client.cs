@@ -1,4 +1,4 @@
-﻿using Scarlet.Utilities;
+﻿﻿using Scarlet.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -74,8 +74,10 @@ namespace Scarlet.Communications
         /// </summary>
         public static void Stop()
         {
+            Stopping = true; // Invokes thread joining in StartThreads() due to thread loops (Recommended on SO)
             TcpClient.GetStream().Close();
             TcpClient.Close();
+            Initialized = false; // Ensure initialized status is false when stopped
         }
 
         #region Receive
@@ -129,7 +131,7 @@ namespace Scarlet.Communications
         #region Send
 
         /// <summary>
-        /// Sends a packet.
+        /// Sends a packet. Handles both UDP and TCP.
         /// </summary>
         /// <param name="SendPacket">Packet to send</param>
         /// <returns>Success of packet sending</returns>
@@ -144,16 +146,17 @@ namespace Scarlet.Communications
             }
             else
             {
-                return SendTCP(SendPacket);
+                lock (SendQueue) { SendQueue.Enqueue(SendPacket); }
+                return true;
             }
         }
 
         /// <summary>
         /// Sends a packet asynchronously, 
-        /// handles both UDP and TCP Packets
+        /// handles both UDP and TCP Packets.
         /// </summary>
         /// <param name="SendPacket">Packet to send.</param>
-        /// <returns>Success of packet sending</returns>
+        /// <returns>Success of packet sending.</returns>
         public static bool SendNow(Packet SendPacket)
         {
             if (!Initialized) { throw new InvalidOperationException("Cannot use Client before initialization. Call Client.Start()."); }
@@ -181,18 +184,8 @@ namespace Scarlet.Communications
         }
 
         /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="SendPacket">Sends a TCP Packet</param>
-        /// <returns>Success of packet sending</returns>
-        private static bool SendTCP(Packet SendPacket)
-        {
-            lock (SendQueue) { SendQueue.Enqueue(SendPacket); }
-            return true;
-        }
-
-        /// <summary>
-        /// 
+        /// Iteratively sends packets that 
+        /// are in the send queue.
         /// </summary>
         private static void SendPackets()
         {
