@@ -14,7 +14,7 @@ namespace Scarlet.Communications
     {
         private static TcpClient TcpClient;
         private static UdpClient UdpClient;
-        private static Thread SendThread, ReceiveThread, ProcessThread;
+        private static Thread SendThread, TcpReceiveThread, UdpReceiveThread, ProcessThread;
         private static Queue<Packet> SendQueue, ReceiveQueue;
         private static bool Initialized = false;
         private static bool Stopping = false;
@@ -40,8 +40,9 @@ namespace Scarlet.Communications
                 SendQueue = new Queue<Packet>();
                 ReceiveQueue = new Queue<Packet>();
                 SendThread = new Thread(new ThreadStart(SendPackets));
-                ReceiveThread = new Thread(new ThreadStart(ReceivePackets));
                 ProcessThread = new Thread(new ThreadStart(ProcessPackets));
+				TcpReceiveThread = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
+				UdpReceiveThread = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
             }
             TcpClient = new TcpClient(new IPEndPoint(IPAddress.Parse(ServerIP), TCPTargetPort));
             UdpClient = new UdpClient(new IPEndPoint(IPAddress.Parse(ServerIP), UDPTargetPort));
@@ -58,10 +59,12 @@ namespace Scarlet.Communications
         private static void StartThreads()
         {
             SendThread.Start();
-            ReceiveThread.Start();
+            TcpReceiveThread.Start(TcpClient.Client);
+            UdpReceiveThread.Start(TcpClient.Client);
             ProcessThread.Start();
             SendThread.Join();
-            ReceiveThread.Join();
+            TcpReceiveThread.Join();
+            UdpReceiveThread.Join();
             ProcessThread.Join();
             Initialized = false;
         }
@@ -78,21 +81,6 @@ namespace Scarlet.Communications
         #region Receive
 
         /// <summary>
-        /// Starts all necessary threads for 
-        /// receiving form server. All on
-        /// the receive thread
-        /// </summary>
-        private static void ReceivePackets()
-        {
-            Thread TcpReceiveThread = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
-            Thread UdpReceiveThread = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
-            TcpReceiveThread.Start(TcpClient.Client);
-            UdpReceiveThread.Start(UdpClient.Client);
-            TcpReceiveThread.Join();
-            UdpReceiveThread.Join();
-        }
-
-        /// <summary>
         /// Continuously receives from socket, until 
         /// Client.Stopping is true. Automatically distributes
         /// incoming messages to approprate locations.
@@ -100,9 +88,9 @@ namespace Scarlet.Communications
         /// <param name="Socket">Socket to receive on.</param>
         private static void ReceiveFromSocket(object Socket)
         {
+			Socket ReceiveFrom = (Socket)Socket;
             while (!Stopping)
             {
-                Socket ReceiveFrom = (Socket)Socket;
                 if (ReceiveFrom.Available > 0)
                 {
                     byte[] ReceiveBuffer = new byte[Client.ReceiveBufferSize];
