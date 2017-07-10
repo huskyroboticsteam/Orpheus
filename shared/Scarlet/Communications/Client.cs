@@ -24,7 +24,6 @@ namespace Scarlet.Communications
         public static bool StorePackets;
         public static List<Packet> PacketsReceived { get; private set; }
         public static List<Packet> PacketsSent { get; private set; }
-        public static bool TCPConnected { get; private set; }
 
         /// <summary>
         /// Starts a Client process.
@@ -32,8 +31,8 @@ namespace Scarlet.Communications
         /// <param name="ServerIP">String representation of the IP Address of server.</param>
         /// <param name="TCPTargetPort">Target port for TCP Communications on the server.</param>
         /// <param name="UDPTargetPort">Target port for UDP Communications on the server.</param>
-        /// <param name="ReceiveBufferSize"></param>
-        /// <param name="OperationPeriod"></param>
+        /// <param name="ReceiveBufferSize">Size of buffer for incoming data.</param>
+        /// <param name="OperationPeriod">Time in between receiving and sending individual packets.</param>
         public static void Start(string ServerIP, int TCPTargetPort, int UDPTargetPort, int ReceiveBufferSize = 64, int OperationPeriod = 20)
         {
             if (!Initialized)
@@ -54,7 +53,7 @@ namespace Scarlet.Communications
         }
 
         /// <summary>
-        /// 
+        /// Starts all primary threads.
         /// </summary>
         private static void StartThreads()
         {
@@ -79,18 +78,48 @@ namespace Scarlet.Communications
         #region Receive
 
         /// <summary>
-        /// 
+        /// Starts all necessary threads for 
+        /// receiving form server. All on
+        /// the receive thread
         /// </summary>
         private static void ReceivePackets()
         {
+            Thread TcpReceiveThread = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
+            Thread UdpReceiveThread = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
+            TcpReceiveThread.Start(TcpClient.Client);
+            UdpReceiveThread.Start(UdpClient.Client);
+            TcpReceiveThread.Join();
+            UdpReceiveThread.Join();
+        }
+
+        /// <summary>
+        /// Continuously receives from socket, until 
+        /// Client.Stopping is true. Automatically distributes
+        /// incoming messages to approprate locations.
+        /// </summary>
+        /// <param name="Socket">Socket to receive on.</param>
+        private static void ReceiveFromSocket(object Socket)
+        {
             while (!Stopping)
             {
-                
+                Socket ReceiveFrom = (Socket)Socket;
+                if (ReceiveFrom.Available > 0)
+                {
+                    byte[] ReceiveBuffer = new byte[Client.ReceiveBufferSize];
+                    ReceiveFrom.Receive(ReceiveBuffer);
+                    Packet Received = new Packet(new Message(ReceiveBuffer),
+                                                 ReceiveFrom.ProtocolType == ProtocolType.Udp,
+                                                 (IPEndPoint)TcpClient.Client.RemoteEndPoint);
+                    if (StorePackets) { PacketsReceived.Add(Received); }
+                    lock (ReceiveQueue) { ReceiveQueue.Enqueue(Received); }
+                    Thread.Sleep(OperationPeriod);
+                }
             }
         }
 
         /// <summary>
-        /// 
+        /// Handles packets as they are received
+        /// from server.
         /// </summary>
         private static void ProcessPackets()
         {
@@ -132,7 +161,8 @@ namespace Scarlet.Communications
         }
 
         /// <summary>
-        /// Sends a packet asynchronously.
+        /// Sends a packet asynchronously, 
+        /// handles both UDP and TCP Packets
         /// </summary>
         /// <param name="SendPacket">Packet to send.</param>
         /// <returns>Success of packet sending</returns>
@@ -143,6 +173,7 @@ namespace Scarlet.Communications
             {
                 int BytesSent = UdpClient.Send(SendPacket.GetForSend(), SendPacket.GetForSend().Length);
                 Thread.Sleep(OperationPeriod);
+                if (BytesSent != 0 && StorePackets) { PacketsSent.Add(SendPacket); }
                 return BytesSent != 0;
             }
             else
@@ -154,6 +185,7 @@ namespace Scarlet.Communications
                 else
                 {
                     TcpClient.GetStream().Write(SendPacket.GetForSend(), 0, SendPacket.GetForSend().Length);
+                    if (StorePackets) { PacketsSent.Add(SendPacket); }
                     Thread.Sleep(OperationPeriod);
                 }
                 return true;
