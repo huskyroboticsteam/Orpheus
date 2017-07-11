@@ -12,8 +12,7 @@ namespace Scarlet.Communications
 {
     public static class Client
     {
-        private static TcpClient TcpClient;
-        private static UdpClient UdpClient;
+        private static Connection Connection;
         private static Thread SendThread, TcpReceiveThread, UdpReceiveThread, ProcessThread;
         private static Queue<Packet> SendQueue, ReceiveQueue;
         private static bool Initialized = false;
@@ -44,11 +43,10 @@ namespace Scarlet.Communications
 				TcpReceiveThread = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
 				UdpReceiveThread = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
             }
-            TcpClient = new TcpClient(new IPEndPoint(IPAddress.Parse(ServerIP), TCPTargetPort));
-            UdpClient = new UdpClient(new IPEndPoint(IPAddress.Parse(ServerIP), UDPTargetPort));
+            Connection = new Connection(ServerIP, TCPTargetPort, UDPTargetPort);
             Client.ReceiveBufferSize = ReceiveBufferSize;
             Client.OperationPeriod = OperationPeriod;
-            if (!TcpClient.Connected) { Log.Output(Log.Severity.INFO, Log.Source.NETWORK, "No TCP Server Found"); }
+            if (!Connection.TcpConnection.Connected) { Log.Output(Log.Severity.INFO, Log.Source.NETWORK, "No TCP Server Found"); }
             Initialized = true;
             StartThreads();
         }
@@ -59,8 +57,8 @@ namespace Scarlet.Communications
         private static void StartThreads()
         {
             SendThread.Start();
-            TcpReceiveThread.Start(TcpClient.Client);
-            UdpReceiveThread.Start(TcpClient.Client);
+            TcpReceiveThread.Start(Connection.TcpConnection.Client);
+            UdpReceiveThread.Start(Connection.UdpConnection.Client);
             ProcessThread.Start();
             SendThread.Join();
             TcpReceiveThread.Join();
@@ -75,8 +73,9 @@ namespace Scarlet.Communications
         public static void Stop()
         {
             Stopping = true; // Invokes thread joining in StartThreads() due to thread loops (Recommended on SO)
-            TcpClient.GetStream().Close();
-            TcpClient.Close();
+            Connection.TcpConnection.GetStream().Close();
+            Connection.TcpConnection.Close();
+            Connection.UdpConnection.Close();
             Initialized = false; // Ensure initialized status is false when stopped
         }
 
@@ -99,7 +98,7 @@ namespace Scarlet.Communications
                     ReceiveFrom.Receive(ReceiveBuffer);
                     Packet Received = new Packet(new Message(ReceiveBuffer),
                                                  ReceiveFrom.ProtocolType == ProtocolType.Udp,
-                                                 (IPEndPoint)TcpClient.Client.RemoteEndPoint);
+                                                 (IPEndPoint)Connection.TcpConnection.Client.RemoteEndPoint);
                     if (StorePackets) { PacketsReceived.Add(Received); }
                     lock (ReceiveQueue) { ReceiveQueue.Enqueue(Received); }
                     Thread.Sleep(OperationPeriod);
@@ -139,7 +138,7 @@ namespace Scarlet.Communications
         {
             if (!Initialized) { throw new InvalidOperationException("Cannot use Client before initialization. Call Client.Start()."); }
             if (SendPacket.IsUDP) { return SendNow(SendPacket); }
-            if (!TcpClient.Connected)
+            if (!Connection.TcpConnection.Connected)
             {
                 Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Attemping to send TCP packet without TCP server connection. Check connection status.");
                 return false;
@@ -162,20 +161,20 @@ namespace Scarlet.Communications
             if (!Initialized) { throw new InvalidOperationException("Cannot use Client before initialization. Call Client.Start()."); }
             if (SendPacket.IsUDP)
             {
-                int BytesSent = UdpClient.Send(SendPacket.GetForSend(), SendPacket.GetForSend().Length);
+                int BytesSent = Connection.UdpConnection.Send(SendPacket.GetForSend(), SendPacket.GetForSend().Length);
                 Thread.Sleep(OperationPeriod);
                 if (BytesSent != 0 && StorePackets) { PacketsSent.Add(SendPacket); }
                 return BytesSent != 0;
             }
             else
             { // Use TCP
-                if (!TcpClient.Connected)
+                if (!Connection.TcpConnection.Connected)
                 {
                     Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Attemping to send TCP packet without TCP server connection. Check connection status.");
                 }
                 else
                 {
-                    TcpClient.GetStream().Write(SendPacket.GetForSend(), 0, SendPacket.GetForSend().Length);
+                    Connection.TcpConnection.GetStream().Write(SendPacket.GetForSend(), 0, SendPacket.GetForSend().Length);
                     if (StorePackets) { PacketsSent.Add(SendPacket); }
                     Thread.Sleep(OperationPeriod);
                 }
@@ -219,5 +218,18 @@ namespace Scarlet.Communications
         public static int GetSendQueueLength() { return SendQueue.Count; }
         #endregion
 
+    }
+
+    class Connection
+    {
+        public UdpClient UdpConnection { get; private set; }
+        public TcpClient TcpConnection { get; private set; }
+
+        public Connection(string IP, int TcpPort, int UdpPort)
+        {
+            IPAddress IPAddr = IPAddress.Parse(IP);
+            UdpConnection = new UdpClient(new IPEndPoint(IPAddr, UdpPort));
+            TcpConnection = new TcpClient(new IPEndPoint(IPAddr, TcpPort));
+        }
     }
 }

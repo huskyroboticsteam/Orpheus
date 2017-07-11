@@ -37,6 +37,7 @@ namespace Scarlet.Communications
         /// Appropriately parses incoming message.
         /// </summary>
         /// <param name="NewMessage">Message to parse.</param>
+        /// <returns>Whether or not parsing was successful.</returns>
         public static bool ParseMessage(Message NewMessage)
         {
             try
