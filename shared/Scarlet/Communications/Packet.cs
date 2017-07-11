@@ -9,7 +9,7 @@ namespace Scarlet.Communications
 	/// </summary>
 	public class Packet : ICloneable
 	{
-        public static IPEndPoint DefaultEndpoint;          // Default endpoint for packets (particularly useful for clients)
+        public static IPEndPoint DefaultEndpoint;        // Default endpoint for packets (particularly useful for clients)
 		public Message Data { get; private set; }        // Data to send
 		public IPEndPoint Endpoint { get; private set; } // Endpoint to send or endpoint received on 
         public bool IsUDP; // Either protocol message received on or protocol for sending
