@@ -13,7 +13,7 @@ namespace Scarlet.Communications
     public static class Client
     {
         private static Connection Connection;
-        private static Thread SendThread, TcpReceiveThread, UdpReceiveThread, ProcessThread;
+        private static Thread SendThread, TCPReceiveThread, UDPReceiveThread, ProcessThread;
         private static Queue<Packet> SendQueue, ReceiveQueue;
         private static bool Initialized = false;
         private static bool Stopping = false;
@@ -40,8 +40,8 @@ namespace Scarlet.Communications
                 ReceiveQueue = new Queue<Packet>();
                 SendThread = new Thread(new ThreadStart(SendPackets));
                 ProcessThread = new Thread(new ThreadStart(ProcessPackets));
-				TcpReceiveThread = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
-				UdpReceiveThread = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
+				TCPReceiveThread = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
+				UDPReceiveThread = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
             }
             Connection = new Connection(ServerIP, TCPTargetPort, UDPTargetPort);
             Client.ReceiveBufferSize = ReceiveBufferSize;
@@ -57,12 +57,12 @@ namespace Scarlet.Communications
         private static void StartThreads()
         {
             SendThread.Start();
-            TcpReceiveThread.Start(Connection.TCPConnection.Client);
-            UdpReceiveThread.Start(Connection.UDPConnection.Client);
+            TCPReceiveThread.Start(Connection.TCPConnection.Client);
+            UDPReceiveThread.Start(Connection.UDPConnection.Client);
             ProcessThread.Start();
             SendThread.Join();
-            TcpReceiveThread.Join();
-            UdpReceiveThread.Join();
+            TCPReceiveThread.Join();
+            UDPReceiveThread.Join();
             ProcessThread.Join();
             Initialized = false;
         }
