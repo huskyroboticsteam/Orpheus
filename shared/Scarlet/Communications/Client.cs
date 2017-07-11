@@ -179,14 +179,20 @@ namespace Scarlet.Communications
                 {
                     Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "An error occurred when accessing the socket. Check connection status.");
                     Log.Exception(Log.Source.NETWORK, Exception);
+                    return false;
                 }
                 catch (ObjectDisposedException Exception)
 				{
 					Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Client UDP socket stream is closed. Attempting to reconnect... Consider restart, check connection status.");
 					Log.Exception(Log.Source.NETWORK, Exception);
-					// Attempt to reconnect
-					IPEndPoint RemoteEndpoint = (IPEndPoint)ClientUDP.Client.RemoteEndPoint;
-					ClientUDP.Connect(RemoteEndpoint.Address, RemoteEndpoint.Port);
+                    // Attempt to reconnect
+                    if (!ClientTCP.Connected)
+                    {
+						IPEndPoint RemoteEndpoint = (IPEndPoint)ClientUDP.Client.RemoteEndPoint;
+						ClientUDP.Connect(RemoteEndpoint.Address, RemoteEndpoint.Port);
+                        if (ClientTCP.Connected) { return SendNow(SendPacket); }
+                    }
+                    return false;
 				}
                 Thread.Sleep(OperationPeriod);
                 if (BytesSent != 0 && StorePackets) { PacketsSent.Add(SendPacket); }
@@ -208,14 +214,21 @@ namespace Scarlet.Communications
                     {
                         Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Failed to write to socket stream. Check connection status.");
                         Log.Exception(Log.Source.NETWORK, Exception);
+                        return false;
                     }
                     catch (ObjectDisposedException Exception)
                     {
                         Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Client TCP socket stream is closed. Attempting to reconnect... Consider restart, check connection status.");
                         Log.Exception(Log.Source.NETWORK, Exception);
                         // Attempt to reconnect
-                        IPEndPoint RemoteEndpoint = (IPEndPoint)ClientTCP.Client.RemoteEndPoint;
-                        ClientTCP.Connect(RemoteEndpoint.Address, RemoteEndpoint.Port);
+                        if (!ClientTCP.Connected)
+                        {
+                            IPEndPoint RemoteEndpoint = (IPEndPoint)ClientTCP.Client.RemoteEndPoint;
+                            ClientTCP.Connect(RemoteEndpoint.Address, RemoteEndpoint.Port);
+                            if (ClientTCP.Connected) { return SendNow(SendPacket); } // Tries to resend if connection established.
+                            return false;
+                        }
+
                     }
                     if (StorePackets) { PacketsSent.Add(SendPacket); }
                     Thread.Sleep(OperationPeriod);
