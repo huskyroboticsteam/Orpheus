@@ -190,7 +190,7 @@ namespace Scarlet.Communications
                     {
 						IPEndPoint RemoteEndpoint = (IPEndPoint)ClientUDP.Client.RemoteEndPoint;
 						ClientUDP.Connect(RemoteEndpoint.Address, RemoteEndpoint.Port);
-                        if (ClientTCP.Connected) { return SendNow(SendPacket); }
+                        if (ClientTCP.Connected) { return SendNow(SendPacket); } // Attempts to resend if connection established.
                     }
                     return false;
 				}
