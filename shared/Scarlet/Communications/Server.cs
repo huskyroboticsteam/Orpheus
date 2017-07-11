@@ -21,7 +21,7 @@ namespace Scarlet.Communications
         private static Thread ReceiveThreadTCP, ReceiveThreadUDP, ProcessThread;
         private static bool Initialized = false;
         private static bool Stopping = false;
-        public static bool StorePackets;
+        public static bool StorePackets = false;
         public static List<Packet> PacketsReceived, PacketsSent;
         private static int ReceiveBufferSize, OperationPeriod;
         private const int TIMEOUT = 5000;
@@ -37,15 +37,17 @@ namespace Scarlet.Communications
         {
             Server.ReceiveBufferSize = ReceiveBufferSize;
             Server.OperationPeriod = OperationPeriod;
+            Stopping = false;
             if (!Initialized)
             {
                 Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Initializing Server.");
                 Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Listening on ports " + PortTCP + " (TCP), and " + PortUDP + " (UDP).");
+
+                ClientsTCP = new Dictionary<IPEndPoint, TcpClient>();
+                ClientsUDP = new Dictionary<IPEndPoint, UdpClient>();
                 SendQueues = new Dictionary<IPEndPoint, Queue<Packet>>();
                 SendThreads = new Dictionary<IPEndPoint, Thread>();
-
                 ReceiveQueue = new Queue<Packet>();
-
                 PacketsSent = new List<Packet>();
                 PacketsReceived = new List<Packet>();
                 Initialized = true;
@@ -62,8 +64,8 @@ namespace Scarlet.Communications
             ReceiveThreadUDP = new Thread(new ParameterizedThreadStart(WaitForClientsUDP));
             ReceiveThreadUDP.Start(((Tuple<int, int>)Ports).Item2);
 
-            //ProcessThread = new Thread(new ThreadStart(ProcessPackets));
-            //ProcessThread.Start();
+            ProcessThread = new Thread(new ThreadStart(ProcessPackets));
+            ProcessThread.Start();
 
             ReceiveThreadTCP.Join();
             ReceiveThreadUDP.Join();
@@ -157,15 +159,119 @@ namespace Scarlet.Communications
                 }
                 Thread.Sleep(OperationPeriod);
             }
-            ClientsTCP.Remove((IPEndPoint)Client.Client.RemoteEndPoint);
+            lock (ClientsTCP) { ClientsTCP.Remove((IPEndPoint)Client.Client.RemoteEndPoint); }
             Receive.Close();
         }
 
         public static List<IPEndPoint> GetTCPClients() { return ClientsTCP.Keys.ToList(); }
+        public static List<IPEndPoint> GetUDPClients() { return ClientsUDP.Keys.ToList(); }
 
         private static void WaitForClientsUDP(object ReceivePort)
         {
 
+        }
+
+        private static void HandleUDPClient()
+        {
+
+        }
+
+        /// <summary>
+        /// Pushes received packets through to Parse for processing.
+        /// This must be started on a thread, as it will block until CommHandler.Stopping is true.
+        /// Assumes that packets will not be removed from ReceiveQueue anywhere but inside this method.
+        /// </summary>
+        private static void ProcessPackets()
+        {
+            if (!Initialized) { throw new InvalidOperationException("Cannot use Server before initialization. Call Server.Start()."); }
+            while (!Stopping)
+            {
+                bool HasPacket;
+                lock (ReceiveQueue) { HasPacket = ReceiveQueue.Count > 0; }
+                if (HasPacket)
+                {
+                    Packet ToProcess;
+                    lock (ReceiveQueue) { ToProcess = (Packet)(ReceiveQueue.Dequeue().Clone()); }
+                    ProcessOnePacket(ToProcess);
+                }
+                Thread.Sleep(OperationPeriod);
+            }
+        }
+
+        /// <summary>
+        /// Attempts to process a packet. Outputs to log and discards if processing fails.
+        /// </summary>
+        /// <returns>Whether processing was successful.</returns>
+        private static bool ProcessOnePacket(Packet Packet)
+        {
+            try
+            {
+                return Parse.ParseMessage(Packet);
+            }
+            catch (Exception Exc)
+            {
+                Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Failed to process packet. Discarding.");
+                Log.Exception(Log.Source.NETWORK, Exc);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Adds a packet to the queue of packets to be sent. Returns quickly.
+        /// </summary>
+        public static void Send(Packet Packet, IPEndPoint Target)
+        {
+            if (!Initialized) { throw new InvalidOperationException("Cannot use Server before initialization. Call Server.Start()."); }
+
+            if (Packet.IsUDP)
+            {
+                Thread PacketSender = new Thread(new ParameterizedThreadStart(SendNow));
+                PacketSender.Start(new Tuple<Packet, IPEndPoint>(Packet, Target));
+            }
+            else
+            {
+                lock (SendQueues[Target]) { SendQueues[Target].Enqueue(Packet); }
+            }
+        }
+
+        /// <summary>
+        /// Used for threaded applications.
+        /// </summary>
+        /// <param name="Info">A Tuple<Packet, IPEndPoint>, which will be passed to SendNow(Packet, IPEndPoint).</param>
+        private static void SendNow(object Info)
+        {
+            Tuple<Packet, IPEndPoint> Data = (Tuple<Packet, IPEndPoint>)Info;
+            SendNow(Data.Item1, Data.Item2);
+        }
+
+        /// <summary>
+        /// Immediately sends a packet. Blocks until sending is complete, regardless of protocol.
+        /// </summary>
+        public static void SendNow(Packet ToSend, IPEndPoint Target)
+        {
+            if (!Initialized) { throw new InvalidOperationException("Cannot use Server before initialization. Call Server.Start()."); }
+            if(ToSend.IsUDP)
+            {
+                if (!ClientsUDP.ContainsKey(Target)) { throw new InvalidOperationException("Cannot send packet to client that is not connected."); }
+                lock (ClientsUDP[Target])
+                {
+                    UdpClient Client = ClientsUDP[Target];
+                    byte[] Data = ToSend.GetForSend();
+                    Client.Send(Data, Data.Length);
+                    if (StorePackets) { PacketsSent.Add(ToSend); }
+                }
+            }
+            else
+            {
+                if (!ClientsTCP.ContainsKey(Target)) { throw new InvalidOperationException("Cannot send packet to client that is not connected."); }
+                lock (ClientsTCP[Target])
+                {
+                    TcpClient Client = ClientsTCP[Target];
+                    byte[] Data = ToSend.GetForSend();
+                    Client.GetStream().Write(Data, 0, Data.Length);
+                    if (StorePackets) { PacketsSent.Add(ToSend); }
+                }
+            }
         }
     }
 }

@@ -37,7 +37,7 @@ namespace Scarlet.Communications
         /// Appropriately parses incoming message.
         /// </summary>
         /// <param name="NewMessage">Message to parse.</param>
-        public static void ParseMessage(Message NewMessage)
+        public static bool ParseMessage(Message NewMessage)
         {
             try
             {
@@ -45,14 +45,16 @@ namespace Scarlet.Communications
                 if (!ParsingHandlers.ContainsKey(NewMessage.ID))
                 {
                     Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "No handler is registered for parsing packet ID " + NewMessage.ID + "!");
-                    return;
+                    return false;
                 }
                 ParsingHandlers[NewMessage.ID].DynamicInvoke(NewMessage);
+                return true;
             }
             catch (Exception Except)
             {
                 Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Failed to invoke handler for incoming message.");
                 Log.Exception(Log.Source.NETWORK, Except);
+                return false;
             }
         }
         
@@ -61,9 +63,9 @@ namespace Scarlet.Communications
         /// Does the same thing as ParseMessage(Message NewMessage)
         /// </summary>
         /// <param name="NewMessage">Packet to parse.</param>
-        public static void ParseMessage(Packet NewMessage)
+        public static bool ParseMessage(Packet NewMessage)
         {
-            ParseMessage(NewMessage.Data);
+            return ParseMessage(NewMessage.Data);
         }
 
     }
