@@ -185,7 +185,7 @@ namespace Scarlet.Communications
 					Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Client UDP socket stream is closed. Attempting to reconnect... Consider restart, check connection status.");
 					Log.Exception(Log.Source.NETWORK, Exception);
 					// Attempt to reconnect
-					IPEndPoint RemoteEndpoint = (IPEndPoint)ClientTCP.Client.RemoteEndPoint;
+					IPEndPoint RemoteEndpoint = (IPEndPoint)ClientUDP.Client.RemoteEndPoint;
 					ClientUDP.Connect(RemoteEndpoint.Address, RemoteEndpoint.Port);
 				}
                 Thread.Sleep(OperationPeriod);
