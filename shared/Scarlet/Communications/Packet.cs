@@ -18,7 +18,7 @@ namespace Scarlet.Communications
         /// Meant for received packets.
         /// </summary>
         /// <param name="Data">The packet data</param>
-        /// <param name="ProtocolType">Protocol Type to used for message.</param>
+        /// <param name="IsUDP">Defines whether or not packet is a UDP message.</param>
         /// <param name="Endpoint">The endpoint where this packet was received from</param>
         public Packet(Message Data, bool IsUDP, IPEndPoint Endpoint = null)
         {
@@ -27,13 +27,13 @@ namespace Scarlet.Communications
             this.Endpoint = Endpoint ?? DefaultEndpoint;
         }
 
-        /// <summary>
-        /// Meant for sent packets.
-        /// </summary>
-        /// <param name="ID">The packet ID, determining what action will be taken upon receipt</param>
-        /// <param name="ProtocolType">Protocol Type to used for message.</param>
-        /// <param name="Endpoint">The destination where this packet will be sent</param>
-        public Packet(byte ID, bool IsUDP, IPEndPoint Endpoint = null)
+		/// <summary>
+		/// Meant for sent packets.
+		/// </summary>
+		/// <param name="ID">The packet ID, determining what action will be taken upon receipt</param>
+		/// <param name="IsUDP">Defines whether or not packet is a UDP message.</param>
+		/// <param name="Endpoint">The destination where this packet will be sent</param>
+		public Packet(byte ID, bool IsUDP, IPEndPoint Endpoint = null)
             : this(new Message(ID), IsUDP, Endpoint) { }
 
         /// <summary>

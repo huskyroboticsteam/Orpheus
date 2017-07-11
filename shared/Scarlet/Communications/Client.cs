@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.IO;
 
 namespace Scarlet.Communications
 {
@@ -95,7 +96,15 @@ namespace Scarlet.Communications
                 if (ReceiveFrom.Available > 0)
                 {
                     byte[] ReceiveBuffer = new byte[Client.ReceiveBufferSize];
-                    ReceiveFrom.Receive(ReceiveBuffer);
+                    try
+                    {
+                        ReceiveFrom.Receive(ReceiveBuffer);
+                    }
+                    catch (SocketException Exception)
+                    {
+                        Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Failed to receive from socket. Check connection status.");
+                        Log.Exception(Log.Source.NETWORK, Exception);
+                    }
                     Packet Received = new Packet(new Message(ReceiveBuffer),
                                                  ReceiveFrom.ProtocolType == ProtocolType.Udp,
                                                  (IPEndPoint)ClientTCP.Client.RemoteEndPoint);
@@ -161,7 +170,24 @@ namespace Scarlet.Communications
             if (!Initialized) { throw new InvalidOperationException("Cannot use Client before initialization. Call Client.Start()."); }
             if (SendPacket.IsUDP)
             {
-                int BytesSent = ClientUDP.Send(SendPacket.GetForSend(), SendPacket.GetForSend().Length);
+                int BytesSent = 0;
+                try
+                {
+                    BytesSent = ClientUDP.Send(SendPacket.GetForSend(), SendPacket.GetForSend().Length);
+                }
+                catch (SocketException Exception)
+                {
+                    Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "An error occurred when accessing the socket. Check connection status.");
+                    Log.Exception(Log.Source.NETWORK, Exception);
+                }
+                catch (ObjectDisposedException Exception)
+				{
+					Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Client UDP socket stream is closed. Attempting to reconnect... Consider restart, check connection status.");
+					Log.Exception(Log.Source.NETWORK, Exception);
+					// Attempt to reconnect
+					IPEndPoint RemoteEndpoint = (IPEndPoint)ClientTCP.Client.RemoteEndPoint;
+					ClientUDP.Connect(RemoteEndpoint.Address, RemoteEndpoint.Port);
+				}
                 Thread.Sleep(OperationPeriod);
                 if (BytesSent != 0 && StorePackets) { PacketsSent.Add(SendPacket); }
                 return BytesSent != 0;
@@ -174,7 +200,23 @@ namespace Scarlet.Communications
                 }
                 else
                 {
-                    ClientTCP.GetStream().Write(SendPacket.GetForSend(), 0, SendPacket.GetForSend().Length);
+                    try
+                    {
+                        ClientTCP.GetStream().Write(SendPacket.GetForSend(), 0, SendPacket.GetForSend().Length);
+                    }
+                    catch (IOException Exception)
+                    {
+                        Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Failed to write to socket stream. Check connection status.");
+                        Log.Exception(Log.Source.NETWORK, Exception);
+                    }
+                    catch (ObjectDisposedException Exception)
+                    {
+                        Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Client TCP socket stream is closed. Attempting to reconnect... Consider restart, check connection status.");
+                        Log.Exception(Log.Source.NETWORK, Exception);
+                        // Attempt to reconnect
+                        IPEndPoint RemoteEndpoint = (IPEndPoint)ClientTCP.Client.RemoteEndPoint;
+                        ClientTCP.Connect(RemoteEndpoint.Address, RemoteEndpoint.Port);
+                    }
                     if (StorePackets) { PacketsSent.Add(SendPacket); }
                     Thread.Sleep(OperationPeriod);
                 }
