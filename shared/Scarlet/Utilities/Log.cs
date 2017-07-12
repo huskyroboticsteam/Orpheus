@@ -9,8 +9,6 @@ namespace Scarlet.Utilities
     {
         // Folder to hold log files
         private const string LogFilesLocation = "Logs";
-        private const string CompletedLogLocation = "Finished";
-        private static string LogFileName;
 
         // Override these in your implementation.
         // OutputType determines which system you see output from.
@@ -159,15 +157,10 @@ namespace Scarlet.Utilities
         /// <summary>
         /// Stops the Logging process.
         /// </summary>
-        public static void Stop() 
+        public static void StopFileLogging() 
         {
-            LogFile.Close();
-            // File is done, move to done directory.
-            string DoneFilePath = LogFilesLocation + "/" + CompletedLogLocation;
-            string DoneFile = Path.Combine(DoneFilePath, LogFileName);
-            string CurrentFile = Path.Combine(LogFilesLocation, LogFileName);
-            if (!Directory.Exists(DoneFilePath)) { Directory.CreateDirectory(DoneFilePath); }
-            File.Move(CurrentFile, DoneFile);
+            Destination = WriteDestination.CONSOLE; // If anything else left to print, write it to the console
+			LogFile.Close();
         }
 
         private static void Write(string Message)
