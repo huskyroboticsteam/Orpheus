@@ -121,7 +121,8 @@ namespace Scarlet.Utilities
 
             string FileName = DateTime.Now.ToString("yy-MM-dd-hh-mm-ss-tt");
             FileName = "ScarletLog-" + FileName;
-            string[] Files = System.IO.Directory.GetFiles(FileName, "*.log");
+            if (!Directory.Exists(LogFilesLocation)) { Directory.CreateDirectory(LogFilesLocation); }
+            string[] Files = Directory.GetFiles(LogFilesLocation, "*.log");
             int Iterations = 0;
             while (Files.Contains(FileName + ".log"))
             {
