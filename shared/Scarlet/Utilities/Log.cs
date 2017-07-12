@@ -8,7 +8,7 @@ namespace Scarlet.Utilities
     public static class Log
     {
         // Folder to hold log files
-        private const string LogFilesLocation = "/Logs/";
+        private const string LogFilesLocation = "\\Logs\\";
 
         // Override these in your implementation.
         // OutputType determines which system you see output from.
@@ -121,8 +121,8 @@ namespace Scarlet.Utilities
 
             string FileName = DateTime.Now.ToString("yy-MM-dd-hh-mm-ss-tt");
             FileName = "ScarletLog-" + FileName;
-            if (!Directory.Exists(LogFilesLocation)) { Directory.CreateDirectory(LogFilesLocation); }
-            string[] Files = Directory.GetFiles(LogFilesLocation, "*.log");
+            if (!Directory.Exists(@LogFilesLocation)) { Directory.CreateDirectory(@LogFilesLocation); }
+            string[] Files = Directory.GetFiles(@LogFilesLocation, "*.log");
             int Iterations = 0;
             while (Files.Contains(FileName + ".log"))
             {
