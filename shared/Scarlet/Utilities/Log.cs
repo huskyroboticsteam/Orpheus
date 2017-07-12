@@ -9,7 +9,7 @@ namespace Scarlet.Utilities
     {
         // Folder to hold log files
         private const string LogFilesLocation = "Logs";
-        private const string TerminatedFilesLocation = "Terminated";
+        private const string CompletedLogLocation = "Finished";
         private static string LogFileName;
 
         // Override these in your implementation.
@@ -163,7 +163,7 @@ namespace Scarlet.Utilities
         {
             LogFile.Close();
             // File is done, move to done directory.
-            string DoneFilePath = LogFilesLocation + "/" + TerminatedFilesLocation;
+            string DoneFilePath = LogFilesLocation + "/" + CompletedLogLocation;
             string DoneFile = Path.Combine(DoneFilePath, LogFileName);
             string CurrentFile = Path.Combine(LogFilesLocation, LogFileName);
             if (!Directory.Exists(DoneFilePath)) { Directory.CreateDirectory(DoneFilePath); }
