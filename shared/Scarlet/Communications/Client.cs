@@ -43,11 +43,28 @@ namespace Scarlet.Communications
 				ReceiveThreadUDP = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
             }
             IPAddress IP = IPAddress.Parse(ServerIP);
-            ClientTCP = new TcpClient(new IPEndPoint(IP, PortTCP));
-            ClientUDP = new UdpClient(new IPEndPoint(IP, PortUDP));
+            ClientTCP = new TcpClient();
+            ClientUDP = new UdpClient();
+            try
+            {
+                ClientTCP.Connect(new IPEndPoint(IP, PortTCP));
+            } 
+            catch (SocketException Exception)
+            {
+                Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Could not connect to TCP Server.");
+                Log.Exception(Log.Source.NETWORK, Exception);
+            }
+            try
+            {
+                ClientUDP.Connect(new IPEndPoint(IP, PortUDP));
+            }
+            catch (SocketException Exception)
+            {
+                Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Could not connect to UDP Server.");
+                Log.Exception(Log.Source.NETWORK, Exception);
+            }
             Client.ReceiveBufferSize = ReceiveBufferSize;
             Client.OperationPeriod = OperationPeriod;
-            if (!ClientTCP.Connected) { Log.Output(Log.Severity.INFO, Log.Source.NETWORK, "No TCP Server Found"); }
             Initialized = true;
             StartThreads();
         }
