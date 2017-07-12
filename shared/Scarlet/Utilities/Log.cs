@@ -8,14 +8,24 @@ namespace Scarlet.Utilities
     public static class Log
     {
         // Folder to hold log files
-        private const string LogFilesLocation = "/Logs/";
+        private const string LogFilesLocation = "Logs";
 
         // Override these in your implementation.
         // OutputType determines which system you see output from.
         // OutputLevel determines the minimum severity required for a message to be output.
+        private static WriteDestination P_Destination = WriteDestination.CONSOLE;
+        private static bool FileCreated;
         public static Source OutputType = Source.SENSORS;
         public static Severity OutputLevel = Severity.DEBUG;
-        public static WriteDestination Destination = WriteDestination.CONSOLE;
+        public static WriteDestination Destination 
+        {
+            get { return P_Destination; }
+            set 
+            { 
+                P_Destination = value;
+                if (value == WriteDestination.ALL || value == WriteDestination.FILE) { CreateLogFile(); }
+            }
+        }
 
         // Override these in your implementation.
         // SystemNames determines what subcomponent an error originated from.
@@ -85,7 +95,7 @@ namespace Scarlet.Utilities
             string Prefix = "[" + DateTime.Now.ToLongTimeString() + "] [EXC] ";
             string[] Lines = Ex.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
             Lines = Array.ConvertAll(Lines, Line => (Prefix + Line));
-            Lines.ToList().ForEach(Console.WriteLine);
+            Lines.ToList().ForEach(WriteLine);
         }
 
         /// <summary>
@@ -119,26 +129,38 @@ namespace Scarlet.Utilities
             Str.Append(DateTime.Now.ToLongTimeString());
             Str.Append('.');
 
-            string FileName = DateTime.Now.ToString("yy-MM-dd-hh-mm-ss-tt");
-            FileName = "ScarletLog-" + FileName;
-            string[] Files = System.IO.Directory.GetFiles(FileName, "*.log");
-            int Iterations = 0;
-            while (Files.Contains(FileName + ".log"))
-            {
-                FileName += "_" + Iterations.ToString();
-                Iterations++;
-            }
-            string FileLocation = LogFilesLocation + FileName + ".log";
-            LogFile = new StreamWriter(@FileLocation);
             WriteLine(Str.ToString());
+
+        }
+
+        private static void CreateLogFile()
+        {
+            if (!FileCreated)
+            {
+                string FileName = DateTime.Now.ToString("yy-MM-dd-hh-mm-ss-tt");
+                FileName = "ScarletLog-" + FileName;
+                if (!Directory.Exists(@LogFilesLocation)) { Directory.CreateDirectory(@LogFilesLocation); }
+                string[] Files = Directory.GetFiles(@LogFilesLocation, "*.log");
+                int Iterations = 0;
+                while (Files.Contains(FileName + ".log"))
+                {
+                    FileName += "_" + Iterations.ToString();
+                    Iterations++;
+                }
+                LogFileName = FileName + ".log";
+                string FileLocation = Path.Combine(LogFilesLocation, LogFileName);
+                LogFile = new StreamWriter(@FileLocation);
+                FileCreated = true;
+            }
         }
 
         /// <summary>
         /// Stops the Logging process.
         /// </summary>
-        public static void Stop() 
+        public static void StopFileLogging() 
         {
-            LogFile.Close();
+            Destination = WriteDestination.CONSOLE; // If anything else left to print, write it to the console
+			LogFile.Close();
         }
 
         private static void Write(string Message)
@@ -150,6 +172,7 @@ namespace Scarlet.Utilities
             if (Log.Destination == WriteDestination.ALL || Log.Destination == WriteDestination.FILE)
             {
                 LogFile.Write(Message);
+                LogFile.Flush();
             }
         }
 
