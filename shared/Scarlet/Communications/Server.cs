@@ -219,43 +219,42 @@ namespace Scarlet.Communications
         /// <summary>
         /// Adds a packet to the queue of packets to be sent. Returns quickly.
         /// </summary>
-        public static void Send(Packet Packet, IPEndPoint Target)
+        public static void Send(Packet Packet)
         {
             if (!Initialized) { throw new InvalidOperationException("Cannot use Server before initialization. Call Server.Start()."); }
 
             if (Packet.IsUDP)
             {
                 Thread PacketSender = new Thread(new ParameterizedThreadStart(SendNow));
-                PacketSender.Start(new Tuple<Packet, IPEndPoint>(Packet, Target));
+                PacketSender.Start(Packet);
             }
             else
             {
-                lock (SendQueues[Target]) { SendQueues[Target].Enqueue(Packet); }
+                lock (SendQueues[Packet.Endpoint]) { SendQueues[Packet.Endpoint].Enqueue(Packet); }
             }
         }
 
         /// <summary>
         /// Used for threaded applications.
         /// </summary>
-        /// <param name="Info">A Tuple<Packet, IPEndPoint>, which will be passed to SendNow(Packet, IPEndPoint).</param>
-        private static void SendNow(object Info)
+        /// <param name="Packet">A Packet, which will be passed to SendNow(Packet).</param>
+        private static void SendNow(object Packet)
         {
-            Tuple<Packet, IPEndPoint> Data = (Tuple<Packet, IPEndPoint>)Info;
-            SendNow(Data.Item1, Data.Item2);
+            SendNow(Packet);
         }
 
         /// <summary>
         /// Immediately sends a packet. Blocks until sending is complete, regardless of protocol.
         /// </summary>
-        public static void SendNow(Packet ToSend, IPEndPoint Target)
+        public static void SendNow(Packet ToSend)
         {
             if (!Initialized) { throw new InvalidOperationException("Cannot use Server before initialization. Call Server.Start()."); }
             if(ToSend.IsUDP)
             {
-                if (!ClientsUDP.ContainsKey(Target)) { throw new InvalidOperationException("Cannot send packet to client that is not connected."); }
-                lock (ClientsUDP[Target])
+                if (!ClientsUDP.ContainsKey(ToSend.Endpoint)) { throw new InvalidOperationException("Cannot send packet to client that is not connected."); }
+                lock (ClientsUDP[ToSend.Endpoint])
                 {
-                    UdpClient Client = ClientsUDP[Target];
+                    UdpClient Client = ClientsUDP[ToSend.Endpoint];
                     byte[] Data = ToSend.GetForSend();
                     Client.Send(Data, Data.Length);
                     if (StorePackets) { PacketsSent.Add(ToSend); }
@@ -263,14 +262,48 @@ namespace Scarlet.Communications
             }
             else
             {
-                if (!ClientsTCP.ContainsKey(Target)) { throw new InvalidOperationException("Cannot send packet to client that is not connected."); }
-                lock (ClientsTCP[Target])
+                if (!ClientsTCP.ContainsKey(ToSend.Endpoint)) { throw new InvalidOperationException("Cannot send packet to client that is not connected."); }
+                lock (ClientsTCP[ToSend.Endpoint])
                 {
-                    TcpClient Client = ClientsTCP[Target];
+                    TcpClient Client = ClientsTCP[ToSend.Endpoint];
                     byte[] Data = ToSend.GetForSend();
                     Client.GetStream().Write(Data, 0, Data.Length);
                     if (StorePackets) { PacketsSent.Add(ToSend); }
                 }
+            }
+        }
+
+        /// <summary>
+        /// Sends packets from the queue.
+        /// This must be started on a thread, as it will block until CommHandler.Stopping is true.
+        /// Assumes that packets will not be removed from SendQueue anywhere but inside this method.
+        /// </summary>
+        private static void SendPackets()
+        {
+            if (!Initialized) { throw new InvalidOperationException("Cannot use CommHandler before initialization. Call CommHandler.Start()."); }
+            while (!Stopping)
+            {
+                foreach(Queue<Packet> SendQueue in SendQueues.Values)
+                {
+                    bool HasPacket;
+                    lock (SendQueue) { HasPacket = SendQueue.Count > 0; }
+                    if (HasPacket)
+                    {
+                        Packet ToSend;
+                        lock (SendQueue) { ToSend = (Packet)(SendQueue.Peek().Clone()); }
+                        try
+                        {
+                            SendNow(ToSend);
+                            lock (SendQueue) { SendQueue.Dequeue(); } // Remove the packet from the queue when it has been sent sucessfully.
+                        }
+                        catch (Exception Exc)
+                        {
+                            Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Failed to send packet.");
+                            Log.Exception(Log.Source.NETWORK, Exc);
+                        }
+                    }
+                }
+                Thread.Sleep(OperationPeriod);
             }
         }
     }
