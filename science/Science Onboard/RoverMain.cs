@@ -22,7 +22,7 @@ namespace Science
 
             IOHandler = new IOHandler();
             //CommHandler.Start(610, 600, "192.168.0.111");
-            Client.Start("192.168.0.108", 600, 610);
+            Client.Start("192.168.0.108", 600, 610, "RoverScience");
             PacketHandler PackHan = new PacketHandler();
 
             RunTests();

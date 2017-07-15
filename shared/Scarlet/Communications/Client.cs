@@ -15,6 +15,7 @@ namespace Scarlet.Communications
         private static UdpClient ClientUDP;
         private static IPAddress DestinationIP;
         private static int PortUDP, PortTCP;
+        private static string Name;
         private static Thread SendThread, ReceiveThreadTCP, ReceiveThreadUDP, ProcessThread, ConnectThread;
         private static Queue<Packet> SendQueue, ReceiveQueue;
         private static bool Initialized;
@@ -36,7 +37,7 @@ namespace Scarlet.Communications
         /// <param name="PortUDP">Target port for UDP Communications on the server.</param>
         /// <param name="ReceiveBufferSize">Size of buffer for incoming data.</param>
         /// <param name="OperationPeriod">Time in between receiving and sending individual packets.</param>
-        public static void Start(string ServerIP, int PortTCP, int PortUDP, int ReceiveBufferSize = 64, int OperationPeriod = 20)
+        public static void Start(string ServerIP, int PortTCP, int PortUDP, string Name, int ReceiveBufferSize = 64, int OperationPeriod = 20)
         {
             Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Initializing Client.");
             if (!Initialized)
@@ -74,6 +75,7 @@ namespace Scarlet.Communications
                 Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Could not connect to TCP Server.");
                 Log.Exception(Log.Source.NETWORK, Exception);
                 Connected = false;
+                return;
             }
             try
             {
@@ -84,17 +86,26 @@ namespace Scarlet.Communications
                 Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Could not connect to UDP Server.");
                 Log.Exception(Log.Source.NETWORK, Exception);
                 Connected = false;
+                return;
             }
             Connected = true;
+            SendName();
         }
 
         private static void RetryConnections()
         {
             while (!Stopping)
             {
-                if (!Connected) { if (AttemptReconnect()) { Connected = true; } }
+                if (!Connected) { if (AttemptReconnect()) { Connected = true; SendName(); } }
                 Thread.Sleep(RECONNECT_DELAY_TIMEOUT);
             }
+        }
+
+        private static void SendName()
+        {
+            byte[] Bytes = UtilData.ToBytes(Name);
+            ClientTCP.Client.Send(Bytes);
+            ClientUDP.Client.Send(Bytes);
         }
 
         public static bool AttemptReconnect()
@@ -120,10 +131,12 @@ namespace Scarlet.Communications
             ReceiveThreadTCP.Start(ClientTCP.Client);
             ReceiveThreadUDP.Start(ClientUDP.Client);
             ProcessThread.Start();
+            ConnectThread.Start();
             SendThread.Join();
             ReceiveThreadTCP.Join();
             ReceiveThreadUDP.Join();
             ProcessThread.Join();
+            ConnectThread.Join();
             Initialized = false;
         }
 
