@@ -69,7 +69,7 @@ namespace Scarlet.Communications
             Client.ReceiveBufferSize = ReceiveBufferSize;
             Client.OperationPeriod = OperationPeriod;
             Initialized = true;
-            StartThreads();
+            new Thread(new ThreadStart(StartThreads)).Start();
 
         }
 
