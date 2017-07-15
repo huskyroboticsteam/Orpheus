@@ -25,7 +25,8 @@ namespace Science_Base
             {
                 Packet EmergencyStopPacket = new Packet(PacketType.EMERGENCY_STOP, false);
                 EmergencyStopPacket.AppendData(UtilData.ToBytes("Homura"));
-                CommHandler.SendNow(EmergencyStopPacket);
+                //CommHandler.SendNow(EmergencyStopPacket);
+                Server.SendNow(EmergencyStopPacket);
             }
             catch(Exception Exc)
             {
@@ -45,7 +46,8 @@ namespace Science_Base
                 Packet Pack = new Packet(ID, false);
                 Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Sending packet with data length: " + Data.Length);
                 Pack.AppendData(Data);
-                CommHandler.Send(Pack);
+                Server.Send(Pack);
+                //CommHandler.Send(Pack);
                 Log.Output(Log.Severity.INFO, Log.Source.GUI, "Sending custom packet: " + Pack.ToString());
             }
             catch(Exception Exc)
@@ -128,7 +130,8 @@ namespace Science_Base
 
         private void MainWindow_FormClosed(object sender, FormClosedEventArgs e)
         {
-            CommHandler.Stop();
+            //CommHandler.Stop();
+            Server.Stop();
             Environment.Exit(0);
         }
 
@@ -140,8 +143,9 @@ namespace Science_Base
                 {
                     throw new ArgumentException("Given rover IP address is invalid: " + this.RoverIPInput.Text);
                 }
-                CommHandler.Stop();
-                CommHandler.Start(600, 610, this.RoverIPInput.Text);
+                //CommHandler.Stop();
+                //CommHandler.Start(600, 610, this.RoverIPInput.Text);
+                // TODO: Completely remove all of this.
             }
             catch (Exception Exc)
             {
@@ -152,8 +156,8 @@ namespace Science_Base
 
         private void UIUpdate_Tick(object sender, EventArgs e)
         {
-            this.StatsPacketQueueOut.Text = "Packet Queue Out: " + CommHandler.GetSendQueueLength();
-            this.StatsPacketQueueIn.Text = "Packet Queue In: " + CommHandler.GetReceiveQueueLength();
+            //this.StatsPacketQueueOut.Text = "Packet Queue Out: " + CommHandler.GetSendQueueLength();
+            //this.StatsPacketQueueIn.Text = "Packet Queue In: " + CommHandler.GetReceiveQueueLength();
         }
     }
 }

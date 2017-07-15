@@ -230,7 +230,14 @@ namespace Scarlet.Communications
             }
             else
             {
-                lock (SendQueues[Packet.Endpoint]) { SendQueues[Packet.Endpoint].Enqueue(Packet); }
+                if (!SendQueues.ContainsKey(Packet.Endpoint))
+                {
+                    Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Cannot send packet to clien that is not connected.");
+                }
+                else
+                {
+                    lock (SendQueues[Packet.Endpoint]) { SendQueues[Packet.Endpoint].Enqueue(Packet); }
+                }
             }
         }
 
