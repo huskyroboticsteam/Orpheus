@@ -1,4 +1,4 @@
-﻿﻿using Scarlet.Utilities;
+﻿using Scarlet.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -13,14 +13,18 @@ namespace Scarlet.Communications
     {
         private static TcpClient ClientTCP;
         private static UdpClient ClientUDP;
-        private static Thread SendThread, ReceiveThreadTCP, ReceiveThreadUDP, ProcessThread;
+        private static IPAddress DestinationIP;
+        private static int PortUDP, PortTCP;
+        private static Thread SendThread, ReceiveThreadTCP, ReceiveThreadUDP, ProcessThread, ConnectThread;
         private static Queue<Packet> SendQueue, ReceiveQueue;
         private static bool Initialized;
         private static bool Stopping;
         private static int ReceiveBufferSize, OperationPeriod;
         private const int TIMEOUT = 5000;
+        private const int RECONNECT_DELAY_TIMEOUT = 500; // In ms
 
         public static bool StorePackets;
+        public static bool Connected { get; private set; }
         public static List<Packet> PacketsReceived { get; private set; }
         public static List<Packet> PacketsSent { get; private set; }
 
@@ -41,36 +45,70 @@ namespace Scarlet.Communications
                 ReceiveQueue = new Queue<Packet>();
                 SendThread = new Thread(new ThreadStart(SendPackets));
                 ProcessThread = new Thread(new ThreadStart(ProcessPackets));
-				ReceiveThreadTCP = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
-				ReceiveThreadUDP = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
+                ReceiveThreadTCP = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
+                ReceiveThreadUDP = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
+                ConnectThread = new Thread(new ThreadStart(RetryConnections));
             }
-            IPAddress IP = IPAddress.Parse(ServerIP);
+
+            DestinationIP = IPAddress.Parse(ServerIP);
+            Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Attempting to connect to Server on Ports " + PortTCP + " (TCP) and " + PortUDP + " (UDP).");
+            ClientTCP = new TcpClient();
+            ClientUDP = new UdpClient();
+            Connect();
+            Client.ReceiveBufferSize = ReceiveBufferSize;
+            Client.OperationPeriod = OperationPeriod;
+            Initialized = true;
+            new Thread(new ThreadStart(StartThreads)).Start();
+        }
+
+        private static void Connect()
+        {
             ClientTCP = new TcpClient();
             ClientUDP = new UdpClient();
             try
             {
-                Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Attempting to connect to Server on Ports " + PortTCP + " (TCP) and " +  PortUDP + " (UDP).");
-                ClientTCP.Connect(new IPEndPoint(IP, PortTCP));
-            } 
+                ClientTCP.Connect(new IPEndPoint(DestinationIP, PortTCP));
+            }
             catch (SocketException Exception)
             {
                 Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Could not connect to TCP Server.");
                 Log.Exception(Log.Source.NETWORK, Exception);
+                Connected = false;
             }
             try
             {
-                ClientUDP.Connect(new IPEndPoint(IP, PortUDP));
+                ClientUDP.Connect(new IPEndPoint(DestinationIP, PortUDP));
             }
             catch (SocketException Exception)
             {
                 Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Could not connect to UDP Server.");
                 Log.Exception(Log.Source.NETWORK, Exception);
+                Connected = false;
             }
-            Client.ReceiveBufferSize = ReceiveBufferSize;
-            Client.OperationPeriod = OperationPeriod;
-            Initialized = true;
-            new Thread(new ThreadStart(StartThreads)).Start();
+            Connected = true;
+        }
 
+        private static void RetryConnections()
+        {
+            while (!Stopping)
+            {
+                if (!Connected) { if (AttemptReconnect()) { Connected = true; } }
+                Thread.Sleep(RECONNECT_DELAY_TIMEOUT);
+            }
+        }
+
+        public static bool AttemptReconnect()
+        {
+            try
+            {
+                lock (ClientTCP) { ClientTCP.Connect(new IPEndPoint(DestinationIP, PortTCP)); }
+                lock (ClientUDP) { ClientUDP.Connect(new IPEndPoint(DestinationIP, PortUDP)); }
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
         }
 
         /// <summary>
@@ -111,7 +149,7 @@ namespace Scarlet.Communications
         /// <param name="Socket">Socket to receive on.</param>
         private static void ReceiveFromSocket(object Socket)
         {
-			Socket ReceiveFrom = (Socket)Socket;
+            Socket ReceiveFrom = (Socket)Socket;
             while (!Stopping)
             {
                 if (ReceiveFrom.Available > 0)
@@ -145,7 +183,7 @@ namespace Scarlet.Communications
             while (!Stopping)
             {
                 bool HasPackets = false;
-                lock(ReceiveQueue) { HasPackets = ReceiveQueue.Count != 0; }
+                lock (ReceiveQueue) { HasPackets = ReceiveQueue.Count != 0; }
                 if (HasPackets)
                 {
                     Packet Processing;
@@ -203,18 +241,18 @@ namespace Scarlet.Communications
                     return false;
                 }
                 catch (ObjectDisposedException Exception)
-				{
-					Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Client UDP socket stream is closed. Attempting to reconnect... Consider restart, check connection status.");
-					Log.Exception(Log.Source.NETWORK, Exception);
+                {
+                    Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Client UDP socket stream is closed. Attempting to reconnect... Consider restart, check connection status.");
+                    Log.Exception(Log.Source.NETWORK, Exception);
                     // Attempt to reconnect
                     if (!ClientTCP.Connected)
                     {
-						IPEndPoint RemoteEndpoint = (IPEndPoint)ClientUDP.Client.RemoteEndPoint;
-						ClientUDP.Connect(RemoteEndpoint.Address, RemoteEndpoint.Port);
+                        IPEndPoint RemoteEndpoint = (IPEndPoint)ClientUDP.Client.RemoteEndPoint;
+                        ClientUDP.Connect(RemoteEndpoint.Address, RemoteEndpoint.Port);
                         if (ClientTCP.Connected) { return SendNow(SendPacket); } // Attempts to resend if connection established.
                     }
                     return false;
-				}
+                }
                 Thread.Sleep(OperationPeriod);
                 if (BytesSent != 0 && StorePackets) { PacketsSent.Add(SendPacket); }
                 return BytesSent != 0;
