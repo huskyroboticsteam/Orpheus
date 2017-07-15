@@ -33,6 +33,7 @@ namespace Scarlet.Communications
         /// <param name="OperationPeriod">Time in between receiving and sending individual packets.</param>
         public static void Start(string ServerIP, int PortTCP, int PortUDP, int ReceiveBufferSize = 64, int OperationPeriod = 20)
         {
+            Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Initializing Client.");
             if (!Initialized)
             {
                 SendQueue = new Queue<Packet>();
@@ -47,6 +48,7 @@ namespace Scarlet.Communications
             ClientUDP = new UdpClient();
             try
             {
+                Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Attempting to connect to Server on Ports " + PortTCP + " (TCP) and " +  PortUDP + " (UDP).");
                 ClientTCP.Connect(new IPEndPoint(IP, PortTCP));
             } 
             catch (SocketException Exception)
@@ -67,6 +69,7 @@ namespace Scarlet.Communications
             Client.OperationPeriod = OperationPeriod;
             Initialized = true;
             StartThreads();
+
         }
 
         /// <summary>
