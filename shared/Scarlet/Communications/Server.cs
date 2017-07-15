@@ -17,7 +17,7 @@ namespace Scarlet.Communications
         private static Dictionary<IPEndPoint, UdpClient> ClientsUDP;
         private static Dictionary<IPEndPoint, Queue<Packet>> SendQueues;
         private static Queue<Packet> ReceiveQueue;
-        private static Dictionary<IPEndPoint, Thread> SendThreads;
+        private static Thread SendThread;
         private static Thread ReceiveThreadTCP, ReceiveThreadUDP, ProcessThread;
         private static bool Initialized = false;
         private static bool Stopping = false;
@@ -46,7 +46,6 @@ namespace Scarlet.Communications
                 ClientsTCP = new Dictionary<IPEndPoint, TcpClient>();
                 ClientsUDP = new Dictionary<IPEndPoint, UdpClient>();
                 SendQueues = new Dictionary<IPEndPoint, Queue<Packet>>();
-                SendThreads = new Dictionary<IPEndPoint, Thread>();
                 ReceiveQueue = new Queue<Packet>();
                 PacketsSent = new List<Packet>();
                 PacketsReceived = new List<Packet>();
@@ -67,9 +66,13 @@ namespace Scarlet.Communications
             ProcessThread = new Thread(new ThreadStart(ProcessPackets));
             ProcessThread.Start();
 
+            SendThread = new Thread(new ThreadStart(SendPackets));
+            SendThread.Start();
+
             ReceiveThreadTCP.Join();
             ReceiveThreadUDP.Join();
             ProcessThread.Join();
+            SendThread.Join();
             Initialized = false;
         }
 
@@ -93,6 +96,7 @@ namespace Scarlet.Communications
                 {
                     TcpClient Client = ClientListener.Result;
                     Log.Output(Log.Severity.INFO, Log.Source.NETWORK, "Client has connected.");
+                    Packet.DefaultEndpoint = (IPEndPoint)Client.Client.RemoteEndPoint; // TODO: Remove this!
                     // Start sub-threads for every client.
                     Thread ClientThread = new Thread(new ParameterizedThreadStart(HandleTCPClient));
                     ClientThread.Start(Client);
@@ -117,6 +121,7 @@ namespace Scarlet.Communications
                 throw new Exception("NetworkStream does not support reading");
             }
             lock (ClientsTCP) { ClientsTCP.Add((IPEndPoint)Client.Client.RemoteEndPoint, Client); }
+            lock (SendQueues) { SendQueues.Add((IPEndPoint)Client.Client.RemoteEndPoint, new Queue<Packet>()); }
             byte[] DataBuffer = new byte[ReceiveBufferSize];
             while (!Stopping)
             {
@@ -127,6 +132,7 @@ namespace Scarlet.Communications
                     if (DataSize == 0)
                     {
                         Log.Output(Log.Severity.INFO, Log.Source.NETWORK, "Client has disconnected.");
+                        // TODO: Handle disconnects.
                         break;
                     }
                     if (DataSize >= 5)
@@ -230,13 +236,14 @@ namespace Scarlet.Communications
             }
             else
             {
-                if (!SendQueues.ContainsKey(Packet.Endpoint))
+                IPEndPoint QueueKey = SendQueues.Where(Pair => Pair.Key.Equals(Packet.Endpoint)).Single().Key;
+                if (QueueKey == null)
                 {
-                    Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Cannot send packet to clien that is not connected.");
+                    Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Cannot send packet to client that is not connected.");
                 }
                 else
                 {
-                    lock (SendQueues[Packet.Endpoint]) { SendQueues[Packet.Endpoint].Enqueue(Packet); }
+                    lock (SendQueues[QueueKey]) { SendQueues[QueueKey].Enqueue(Packet); }
                 }
             }
         }
