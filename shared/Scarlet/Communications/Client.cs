@@ -118,6 +118,7 @@ namespace Scarlet.Communications
                     byte[] ReceiveBuffer = new byte[Client.ReceiveBufferSize];
                     try
                     {
+                        Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Receiving from socket...");
                         ReceiveFrom.Receive(ReceiveBuffer);
                     }
                     catch (SocketException Exception)
@@ -128,6 +129,7 @@ namespace Scarlet.Communications
                     Packet Received = new Packet(new Message(ReceiveBuffer),
                                                  ReceiveFrom.ProtocolType == ProtocolType.Udp,
                                                  (IPEndPoint)ClientTCP.Client.RemoteEndPoint);
+                    Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Received: " + Received.ToString());
                     if (StorePackets) { PacketsReceived.Add(Received); }
                     lock (ReceiveQueue) { ReceiveQueue.Enqueue(Received); }
                     Thread.Sleep(OperationPeriod);
