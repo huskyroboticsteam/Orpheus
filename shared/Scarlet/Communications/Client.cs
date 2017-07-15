@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
 using System.IO;
@@ -119,20 +120,18 @@ namespace Scarlet.Communications
                     try
                     {
                         Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Receiving from socket...");
-                        ReceiveFrom.Receive(ReceiveBuffer);
+                        int Size = ReceiveFrom.Receive(ReceiveBuffer);
+                        Packet Received = new Packet(new Message(ReceiveBuffer.Take(Size).ToArray()), ReceiveFrom.ProtocolType == ProtocolType.Udp, (IPEndPoint)ClientTCP.Client.RemoteEndPoint);
+                        Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Received: " + Received.ToString());
+                        if (StorePackets) { PacketsReceived.Add(Received); }
+                        lock (ReceiveQueue) { ReceiveQueue.Enqueue(Received); }
+                        Thread.Sleep(OperationPeriod);
                     }
                     catch (SocketException Exception)
                     {
                         Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Failed to receive from socket. Check connection status.");
                         Log.Exception(Log.Source.NETWORK, Exception);
                     }
-                    Packet Received = new Packet(new Message(ReceiveBuffer),
-                                                 ReceiveFrom.ProtocolType == ProtocolType.Udp,
-                                                 (IPEndPoint)ClientTCP.Client.RemoteEndPoint);
-                    Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Received: " + Received.ToString());
-                    if (StorePackets) { PacketsReceived.Add(Received); }
-                    lock (ReceiveQueue) { ReceiveQueue.Enqueue(Received); }
-                    Thread.Sleep(OperationPeriod);
                 }
             }
         }
