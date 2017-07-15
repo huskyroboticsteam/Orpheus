@@ -9,9 +9,8 @@ namespace Scarlet.Communications
 	/// </summary>
 	public class Packet : ICloneable
 	{
-        public static IPEndPoint DefaultEndpoint;        // Default endpoint for packets (particularly useful for clients)
 		public Message Data { get; private set; }        // Data to send
-		public IPEndPoint Endpoint { get; private set; } // Endpoint to send or endpoint received on 
+		public string Endpoint { get; private set; } // Endpoint to send or endpoint received on 
         public bool IsUDP; // Either protocol message received on or protocol for sending
 
         /// <summary>
@@ -20,11 +19,11 @@ namespace Scarlet.Communications
         /// <param name="Data">The packet data</param>
         /// <param name="IsUDP">Defines whether or not packet is a UDP message.</param>
         /// <param name="Endpoint">The endpoint where this packet was received from</param>
-        public Packet(Message Data, bool IsUDP, IPEndPoint Endpoint = null)
+        public Packet(Message Data, bool IsUDP, string Endpoint = null)
         {
             this.IsUDP = IsUDP;
             this.Data = Data;
-            this.Endpoint = Endpoint ?? DefaultEndpoint;
+            this.Endpoint = Endpoint;
         }
 
 		/// <summary>
@@ -33,7 +32,7 @@ namespace Scarlet.Communications
 		/// <param name="ID">The packet ID, determining what action will be taken upon receipt</param>
 		/// <param name="IsUDP">Defines whether or not packet is a UDP message.</param>
 		/// <param name="Endpoint">The destination where this packet will be sent</param>
-		public Packet(byte ID, bool IsUDP, IPEndPoint Endpoint = null)
+		public Packet(byte ID, bool IsUDP, string Endpoint = null)
             : this(new Message(ID), IsUDP, Endpoint) { }
 
         /// <summary>

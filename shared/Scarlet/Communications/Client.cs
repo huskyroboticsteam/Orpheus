@@ -172,7 +172,7 @@ namespace Scarlet.Communications
                     {
                         Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Receiving from socket...");
                         int Size = ReceiveFrom.Receive(ReceiveBuffer);
-                        Packet Received = new Packet(new Message(ReceiveBuffer.Take(Size).ToArray()), ReceiveFrom.ProtocolType == ProtocolType.Udp, (IPEndPoint)ClientTCP.Client.RemoteEndPoint);
+                        Packet Received = new Packet(new Message(ReceiveBuffer.Take(Size).ToArray()), ReceiveFrom.ProtocolType == ProtocolType.Udp);
                         Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Received: " + Received.ToString());
                         if (StorePackets) { PacketsReceived.Add(Received); }
                         lock (ReceiveQueue) { ReceiveQueue.Enqueue(Received); }
