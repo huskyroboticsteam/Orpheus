@@ -13,9 +13,9 @@ namespace Scarlet.Communications
 {
     public static class Server
     {
-        private static Dictionary<IPEndPoint, TcpClient> ClientsTCP;
-        private static Dictionary<IPEndPoint, UdpClient> ClientsUDP;
-        private static Dictionary<IPEndPoint, Queue<Packet>> SendQueues;
+        private static Dictionary<string, TcpClient> ClientsTCP;
+        private static Dictionary<string, UdpClient> ClientsUDP;
+        private static Dictionary<string, Queue<Packet>> SendQueues;
         private static Queue<Packet> ReceiveQueue;
         private static Thread SendThread;
         private static Thread ReceiveThreadTCP, ReceiveThreadUDP, ProcessThread;
@@ -43,9 +43,9 @@ namespace Scarlet.Communications
                 Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Initializing Server.");
                 Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Listening on ports " + PortTCP + " (TCP), and " + PortUDP + " (UDP).");
 
-                ClientsTCP = new Dictionary<IPEndPoint, TcpClient>();
-                ClientsUDP = new Dictionary<IPEndPoint, UdpClient>();
-                SendQueues = new Dictionary<IPEndPoint, Queue<Packet>>();
+                ClientsTCP = new Dictionary<string, TcpClient>();
+                ClientsUDP = new Dictionary<string, UdpClient>();
+                SendQueues = new Dictionary<string, Queue<Packet>>();
                 ReceiveQueue = new Queue<Packet>();
                 PacketsSent = new List<Packet>();
                 PacketsReceived = new List<Packet>();
@@ -95,8 +95,7 @@ namespace Scarlet.Communications
                 if (ClientListener.Wait(5000))
                 {
                     TcpClient Client = ClientListener.Result;
-                    Log.Output(Log.Severity.INFO, Log.Source.NETWORK, "Client has connected.");
-                    Packet.DefaultEndpoint = (IPEndPoint)Client.Client.RemoteEndPoint; // TODO: Remove this!
+                    Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Client is connecting.");
                     // Start sub-threads for every client.
                     Thread ClientThread = new Thread(new ParameterizedThreadStart(HandleTCPClient));
                     ClientThread.Start(Client);
@@ -120,9 +119,38 @@ namespace Scarlet.Communications
                 Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Client connection does not permit reading.");
                 throw new Exception("NetworkStream does not support reading");
             }
-            lock (ClientsTCP) { ClientsTCP.Add((IPEndPoint)Client.Client.RemoteEndPoint, Client); }
-            lock (SendQueues) { SendQueues.Add((IPEndPoint)Client.Client.RemoteEndPoint, new Queue<Packet>()); }
-            byte[] DataBuffer = new byte[ReceiveBufferSize];
+            // Receive client name.
+            byte[] DataBuffer = new byte[Math.Max(ReceiveBufferSize, 64)];
+            try
+            {
+                int DataSize = Receive.Read(DataBuffer, 0, DataBuffer.Length);
+                if(DataSize == 0)
+                {
+                    Receive?.Close();
+                    Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Client disconnected before sending name.");
+                    return;
+                }
+                else
+                {
+                    String ClientName = UtilData.ToString(DataBuffer.Take(DataSize).ToArray());
+                    if (ClientName != null && ClientName.Length > 0)
+                    {
+                        Log.Output(Log.Severity.INFO, Log.Source.NETWORK, "Client connected with name \"" + ClientName + "\".");
+                        lock (ClientsTCP) { ClientsTCP.Add(ClientName, Client); }
+                        lock (SendQueues) { SendQueues.Add(ClientName, new Queue<Packet>()); }
+                    }
+                    else { Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Invalid client name received. Dropping connection."); }
+                }
+            }
+            catch(Exception Exc)
+            {
+                Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Failed to read name from incoming client. Dropping connection.");
+                Log.Exception(Log.Source.NETWORK, Exc);
+                Receive?.Close();
+                return;
+            }
+            // Receive data from client.
+            DataBuffer = new byte[ReceiveBufferSize];
             while (!Stopping)
             {
                 try
@@ -138,7 +166,9 @@ namespace Scarlet.Communications
                     if (DataSize >= 5)
                     {
                         byte[] Data = DataBuffer.Take(DataSize).ToArray();
-                        Packet ReceivedPack = new Packet(new Message(Data), false, (IPEndPoint)Client.Client.RemoteEndPoint);
+                        IPEndPoint ClientEndpoint = (IPEndPoint)Client.Client.RemoteEndPoint;
+                        string ClientName = ClientsTCP.Where(Pair => ((IPEndPoint)(Pair.Value.Client.RemoteEndPoint)).Equals(ClientEndpoint)).Single().Key;
+                        Packet ReceivedPack = new Packet(new Message(Data), false, ClientName);
                         lock (ReceiveQueue) { ReceiveQueue.Enqueue(ReceivedPack); }
                         if (StorePackets) { PacketsReceived.Add(ReceivedPack); }
                     }
@@ -165,12 +195,12 @@ namespace Scarlet.Communications
                 }
                 Thread.Sleep(OperationPeriod);
             }
-            lock (ClientsTCP) { ClientsTCP.Remove((IPEndPoint)Client.Client.RemoteEndPoint); }
+            lock (ClientsTCP) { ClientsTCP.Remove(FindClient((IPEndPoint)Client.Client.RemoteEndPoint, false)); }
             Receive.Close();
         }
 
-        public static List<IPEndPoint> GetTCPClients() { return ClientsTCP.Keys.ToList(); }
-        public static List<IPEndPoint> GetUDPClients() { return ClientsUDP.Keys.ToList(); }
+        public static List<string> GetTCPClients() { return ClientsTCP.Keys.ToList(); }
+        public static List<string> GetUDPClients() { return ClientsUDP.Keys.ToList(); }
 
         private static void WaitForClientsUDP(object ReceivePort)
         {
@@ -236,15 +266,7 @@ namespace Scarlet.Communications
             }
             else
             {
-                IPEndPoint QueueKey = SendQueues.Where(Pair => Pair.Key.Equals(Packet.Endpoint)).Single().Key;
-                if (QueueKey == null)
-                {
-                    Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Cannot send packet to client that is not connected.");
-                }
-                else
-                {
-                    lock (SendQueues[QueueKey]) { SendQueues[QueueKey].Enqueue(Packet); }
-                }
+                lock (SendQueues[Packet.Endpoint]) { SendQueues[Packet.Endpoint].Enqueue(Packet); }
             }
         }
 
@@ -319,6 +341,16 @@ namespace Scarlet.Communications
                 }
                 Thread.Sleep(OperationPeriod);
             }
+        }
+
+        public static string FindClient(IPEndPoint Endpoint, bool IsUDP)
+        {
+            try
+            {
+                if (IsUDP) { return ClientsUDP.Where(Pair => ((IPEndPoint)(Pair.Value.Client.RemoteEndPoint)).Equals(Endpoint)).Single().Key; }
+                else { return ClientsTCP.Where(Pair => ((IPEndPoint)(Pair.Value.Client.RemoteEndPoint)).Equals(Endpoint)).Single().Key; }
+            }
+            catch { return ""; }
         }
     }
 }

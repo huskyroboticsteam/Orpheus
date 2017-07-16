@@ -99,7 +99,7 @@ namespace Scarlet.Utilities
         {
             if (Input.Length == 0 || Input.Length % 2 == 1) { throw new FormatException("Given byte[] does not convert to string."); }
             StringBuilder Output = new StringBuilder(Input.Length / 2);
-            for(int i = 0; i < Input.Length / 2; i += 2)
+            for(int i = 0; i < Input.Length; i += 2)
             {
                 Output.Append((char)(Input[i] << 8 | Input[i + 1]));
             }

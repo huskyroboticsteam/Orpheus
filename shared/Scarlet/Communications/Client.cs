@@ -50,7 +50,9 @@ namespace Scarlet.Communications
                 ReceiveThreadUDP = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
                 ConnectThread = new Thread(new ThreadStart(RetryConnections));
             }
-
+            Client.PortTCP = PortTCP;
+            Client.PortUDP = PortUDP;
+            Client.Name = Name;
             DestinationIP = IPAddress.Parse(ServerIP);
             Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Attempting to connect to Server on Ports " + PortTCP + " (TCP) and " + PortUDP + " (UDP).");
             ClientTCP = new TcpClient();
