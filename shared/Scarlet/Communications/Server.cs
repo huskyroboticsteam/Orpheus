@@ -20,11 +20,12 @@ namespace Scarlet.Communications
         private static Thread SendThread;
         private static Thread ReceiveThreadTCP, ReceiveThreadUDP, ProcessThread;
         private static bool Initialized = false;
-        private static bool Stopping = false;
+        private static volatile bool Stopping = false;
         public static bool StorePackets = false;
         public static List<Packet> PacketsReceived, PacketsSent;
         private static int ReceiveBufferSize, OperationPeriod;
         private const int TIMEOUT = 5000;
+        public static event EventHandler<EventArgs> ClientConnectionChange;
 
         /// <summary>
         /// Prepares the server for use, and starts listening for clients.
@@ -149,6 +150,7 @@ namespace Scarlet.Communications
                 Receive?.Close();
                 return;
             }
+            ClientConnChange(new EventArgs());
             // Receive data from client.
             DataBuffer = new byte[ReceiveBufferSize];
             while (!Stopping)
@@ -197,6 +199,7 @@ namespace Scarlet.Communications
             }
             lock (ClientsTCP) { ClientsTCP.Remove(FindClient((IPEndPoint)Client.Client.RemoteEndPoint, false)); }
             Receive.Close();
+            ClientConnChange(new EventArgs());
         }
 
         public static List<string> GetTCPClients() { return ClientsTCP.Keys.ToList(); }
@@ -351,6 +354,11 @@ namespace Scarlet.Communications
                 else { return ClientsTCP.Where(Pair => ((IPEndPoint)(Pair.Value.Client.RemoteEndPoint)).Equals(Endpoint)).Single().Key; }
             }
             catch { return ""; }
+        }
+
+        private static void ClientConnChange(EventArgs Event)
+        {
+            ClientConnectionChange?.Invoke("Server", Event);
         }
     }
 }

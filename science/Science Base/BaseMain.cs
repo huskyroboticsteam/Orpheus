@@ -22,6 +22,7 @@ namespace Science_Base
 
             MainWindow Main = new MainWindow();
             Application.EnableVisualStyles();
+            Server.ClientConnectionChange += Main.UpdateClientList;
             Application.Run(Main);
 		}
 	}

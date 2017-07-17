@@ -23,9 +23,8 @@ namespace Science_Base
         {
             try
             {
-                Packet EmergencyStopPacket = new Packet(PacketType.EMERGENCY_STOP, false);
+                Packet EmergencyStopPacket = new Packet(PacketType.EMERGENCY_STOP, false, Constants.CLIENT_NAME);
                 EmergencyStopPacket.AppendData(UtilData.ToBytes("Homura"));
-                //CommHandler.SendNow(EmergencyStopPacket);
                 Server.SendNow(EmergencyStopPacket);
             }
             catch(Exception Exc)
@@ -43,11 +42,10 @@ namespace Science_Base
                 byte[] Timestamp = UtilMain.StringToBytes(this.TimestampTextbox.Text).Reverse().ToArray();
                 byte ID = UtilMain.StringToBytes(this.IDTextbox.Text)[0];
                 byte[] Data = InterpretInput(this.DataTextbox.Text.ToCharArray());
-                Packet Pack = new Packet(ID, false);
+                Packet Pack = new Packet(ID, false, ClientSelector.Items[0].ToString());
                 Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Sending packet with data length: " + Data.Length);
                 Pack.AppendData(Data);
                 Server.Send(Pack);
-                //CommHandler.Send(Pack);
                 Log.Output(Log.Severity.INFO, Log.Source.GUI, "Sending custom packet: " + Pack.ToString());
             }
             catch(Exception Exc)
@@ -130,34 +128,20 @@ namespace Science_Base
 
         private void MainWindow_FormClosed(object sender, FormClosedEventArgs e)
         {
-            //CommHandler.Stop();
             Server.Stop();
             Environment.Exit(0);
-        }
-
-        private void ChangeIPBtn_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                if (!IPAddress.TryParse(this.RoverIPInput.Text, out IPAddress NotUsed))
-                {
-                    throw new ArgumentException("Given rover IP address is invalid: " + this.RoverIPInput.Text);
-                }
-                //CommHandler.Stop();
-                //CommHandler.Start(600, 610, this.RoverIPInput.Text);
-                // TODO: Completely remove all of this.
-            }
-            catch (Exception Exc)
-            {
-                Log.Exception(Log.Source.NETWORK, Exc);
-                DarkMessageBox.ShowError("Failed to change communications to new rover IP.\n\n" + Exc.ToString(), "Science");
-            }
         }
 
         private void UIUpdate_Tick(object sender, EventArgs e)
         {
             //this.StatsPacketQueueOut.Text = "Packet Queue Out: " + CommHandler.GetSendQueueLength();
             //this.StatsPacketQueueIn.Text = "Packet Queue In: " + CommHandler.GetReceiveQueueLength();
+        }
+
+        public void UpdateClientList(object Sender, EventArgs Event)
+        {
+            this.ClientSelector.Items.Clear();
+            this.ClientSelector.Items.AddRange(Server.GetTCPClients().ToArray());
         }
     }
 }
