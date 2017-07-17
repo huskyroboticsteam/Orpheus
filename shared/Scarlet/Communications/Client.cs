@@ -28,6 +28,7 @@ namespace Scarlet.Communications
         public static bool Connected { get; private set; }
         public static List<Packet> PacketsReceived { get; private set; }
         public static List<Packet> PacketsSent { get; private set; }
+        public static event EventHandler<EventArgs> ServerConnectionChange;
 
         /// <summary>
         /// Starts a Client process.
@@ -64,6 +65,10 @@ namespace Scarlet.Communications
             new Thread(new ThreadStart(StartThreads)).Start();
         }
 
+        /// <summary>
+        /// Connects TCP and UDP clients to 
+        /// server. Logs errors if they occur.
+        /// </summary>
         private static void Connect()
         {
             ClientTCP = new TcpClient();
@@ -94,6 +99,11 @@ namespace Scarlet.Communications
             SendName();
         }
 
+        /// <summary>
+        /// Retries iteratively (blocks until Stopping = true)
+        /// to connect to the server. Can be called even if
+        /// server is connected to ensure connection.
+        /// </summary>
         private static void RetryConnections()
         {
             while (!Stopping)
@@ -103,6 +113,10 @@ namespace Scarlet.Communications
             }
         }
 
+        /// <summary>
+        /// Sends the name of the client to the 
+        /// server.
+        /// </summary>
         private static void SendName()
         {
             byte[] Bytes = UtilData.ToBytes(Name);
@@ -110,6 +124,13 @@ namespace Scarlet.Communications
             ClientUDP.Client.Send(Bytes);
         }
 
+        /// <summary>
+        /// Attempts to reconnect to the TCP and UDP server.
+        /// Does not log any outputs by design, returns whether or
+        /// not the connection was successful. Handles connection change
+        /// events
+        /// </summary>
+        /// <returns>False if Reconnect fails, true otherwise.</returns>
         public static bool AttemptReconnect()
         {
             try
@@ -119,8 +140,12 @@ namespace Scarlet.Communications
             }
             catch
             {
+                if (Connected) { ConnectionChange(new EventArgs()); }
+                Connected = false;
                 return false;
             }
+            if (!Connected) { ConnectionChange(new EventArgs()); }
+            Connected = true;
             return true;
         }
 
@@ -224,10 +249,12 @@ namespace Scarlet.Communications
             if (!ClientTCP.Connected)
             {
                 Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Attemping to send TCP packet without TCP server connection. Check connection status.");
-                return false;
+                if (Connected) { ConnectionChange(new EventArgs()); Connected = false; }
+                return false;                
             }
             else
             {
+                if (!Connected) { ConnectionChange(new EventArgs()); Connected = true; }
                 lock (SendQueue) { SendQueue.Enqueue(SendPacket); }
                 return true;
             }
@@ -248,11 +275,13 @@ namespace Scarlet.Communications
                 try
                 {
                     BytesSent = ClientUDP.Send(SendPacket.GetForSend(), SendPacket.GetForSend().Length);
+                    Connected = true;
                 }
                 catch (SocketException Exception)
                 {
                     Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "An error occurred when accessing the socket. Check connection status.");
                     Log.Exception(Log.Source.NETWORK, Exception);
+                    AttemptReconnect();
                     return false;
                 }
                 catch (ObjectDisposedException Exception)
@@ -260,34 +289,33 @@ namespace Scarlet.Communications
                     Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Client UDP socket stream is closed. Attempting to reconnect... Consider restart, check connection status.");
                     Log.Exception(Log.Source.NETWORK, Exception);
                     // Attempt to reconnect
-                    if (!ClientTCP.Connected)
-                    {
-                        IPEndPoint RemoteEndpoint = (IPEndPoint)ClientUDP.Client.RemoteEndPoint;
-                        ClientUDP.Connect(RemoteEndpoint.Address, RemoteEndpoint.Port);
-                        if (ClientTCP.Connected) { return SendNow(SendPacket); } // Attempts to resend if connection established.
-                    }
+                    if (AttemptReconnect()) { return SendNow(SendPacket); }
                     return false;
                 }
                 Thread.Sleep(OperationPeriod);
                 if (BytesSent != 0 && StorePackets) { PacketsSent.Add(SendPacket); }
-                return BytesSent != 0;
+                return Connected;
             }
             else
             { // Use TCP
                 if (!ClientTCP.Connected)
                 {
                     Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Attemping to send TCP packet without TCP server connection. Check connection status.");
+                    AttemptReconnect();
+                    return false;
                 }
                 else
                 {
                     try
                     {
                         ClientTCP.GetStream().Write(SendPacket.GetForSend(), 0, SendPacket.GetForSend().Length);
+                        Connected = true;
                     }
                     catch (IOException Exception)
                     {
                         Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Failed to write to socket stream. Check connection status.");
                         Log.Exception(Log.Source.NETWORK, Exception);
+                        AttemptReconnect();
                         return false;
                     }
                     catch (ObjectDisposedException Exception)
@@ -297,9 +325,7 @@ namespace Scarlet.Communications
                         // Attempt to reconnect
                         if (!ClientTCP.Connected)
                         {
-                            IPEndPoint RemoteEndpoint = (IPEndPoint)ClientTCP.Client.RemoteEndPoint;
-                            ClientTCP.Connect(RemoteEndpoint.Address, RemoteEndpoint.Port);
-                            if (ClientTCP.Connected) { return SendNow(SendPacket); } // Tries to resend if connection established.
+                            if (AttemptReconnect()) { return SendNow(SendPacket); } // Tries to resend if connection established.
                             return false;
                         }
 
@@ -347,5 +373,9 @@ namespace Scarlet.Communications
         public static int GetSendQueueLength() { return SendQueue.Count; }
         #endregion
 
+        private static void ConnectionChange(EventArgs Event)
+        {
+            ServerConnectionChange?.Invoke("Client", Event);
+        }
     }
 }
