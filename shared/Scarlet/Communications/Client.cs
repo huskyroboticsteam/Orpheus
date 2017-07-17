@@ -16,7 +16,11 @@ namespace Scarlet.Communications
         private static IPAddress DestinationIP;
         private static int PortUDP, PortTCP;
         private static string Name;
-        private static Thread SendThread, ReceiveThreadTCP, ReceiveThreadUDP, ProcessThread, ConnectThread;
+        private static Thread SendThread;
+        private static Thread ReceiveThreadTCP;
+        private static Thread ReceiveThreadUDP;
+        private static Thread ProcessThread;
+        private static Thread WatchdogThread;
         private static Queue<Packet> SendQueue, ReceiveQueue;
         private static bool Initialized;
         private static bool Stopping;
@@ -49,7 +53,7 @@ namespace Scarlet.Communications
                 ProcessThread = new Thread(new ThreadStart(ProcessPackets));
                 ReceiveThreadTCP = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
                 ReceiveThreadUDP = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
-                ConnectThread = new Thread(new ThreadStart(RetryConnections));
+                WatchdogThread = new Thread(new ThreadStart(CheckConnection));
             }
             Client.PortTCP = PortTCP;
             Client.PortUDP = PortUDP;
@@ -81,7 +85,6 @@ namespace Scarlet.Communications
             {
                 Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Could not connect to TCP Server.");
                 Log.Exception(Log.Source.NETWORK, Exception);
-                Connected = false;
                 return;
             }
             try
@@ -92,25 +95,9 @@ namespace Scarlet.Communications
             {
                 Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Could not connect to UDP Server.");
                 Log.Exception(Log.Source.NETWORK, Exception);
-                Connected = false;
                 return;
             }
-            Connected = true;
             SendName();
-        }
-
-        /// <summary>
-        /// Retries iteratively (blocks until Stopping = true)
-        /// to connect to the server. Can be called even if
-        /// server is connected to ensure connection.
-        /// </summary>
-        private static void RetryConnections()
-        {
-            while (!Stopping)
-            {
-                if (!Connected) { if (AttemptReconnect()) { Connected = true; SendName(); } }
-                Thread.Sleep(RECONNECT_DELAY_TIMEOUT);
-            }
         }
 
         /// <summary>
@@ -140,13 +127,40 @@ namespace Scarlet.Communications
             }
             catch
             {
-                if (Connected) { ConnectionChange(new EventArgs()); }
-                Connected = false;
                 return false;
             }
-            if (!Connected) { ConnectionChange(new EventArgs()); }
-            Connected = true;
             return true;
+        }
+
+        /// <summary>
+        /// Checks the connection iteratively
+        /// by sending a watchdog timer.
+        /// (blocks while Stopping is false.)
+        /// </summary>
+        private static void CheckConnection()
+        {
+            Packet WatchdogPack = new Packet(Data.WATCHDOG_PING, false);
+            int DefaultDelay = ClientTCP.Client.SendTimeout;
+            while (!Stopping)
+            {
+                bool Success = false;
+                lock (ClientTCP)
+                {
+                    ClientTCP.Client.SendTimeout = Data.WATCHDOG_DELAY;
+                    Success = SendNow(WatchdogPack);
+                }
+                if (Success)
+                {
+                    if (!Connected) { ConnectionChange(new EventArgs()); }
+                    Connected = true;
+                }
+                else
+                {
+                    if (Connected) { ConnectionChange(new EventArgs()); }
+                    Connected = false;
+                }
+                ClientTCP.Client.SendTimeout = DefaultDelay;
+            }
         }
 
         /// <summary>
@@ -158,12 +172,12 @@ namespace Scarlet.Communications
             ReceiveThreadTCP.Start(ClientTCP.Client);
             ReceiveThreadUDP.Start(ClientUDP.Client);
             ProcessThread.Start();
-            ConnectThread.Start();
+            WatchdogThread.Start();
             SendThread.Join();
             ReceiveThreadTCP.Join();
             ReceiveThreadUDP.Join();
             ProcessThread.Join();
-            ConnectThread.Join();
+            WatchdogThread.Join();
             Initialized = false;
         }
 
@@ -249,12 +263,10 @@ namespace Scarlet.Communications
             if (!ClientTCP.Connected)
             {
                 Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Attemping to send TCP packet without TCP server connection. Check connection status.");
-                if (Connected) { ConnectionChange(new EventArgs()); Connected = false; }
-                return false;                
+                return false;
             }
             else
             {
-                if (!Connected) { ConnectionChange(new EventArgs()); Connected = true; }
                 lock (SendQueue) { SendQueue.Enqueue(SendPacket); }
                 return true;
             }
@@ -275,7 +287,6 @@ namespace Scarlet.Communications
                 try
                 {
                     BytesSent = ClientUDP.Send(SendPacket.GetForSend(), SendPacket.GetForSend().Length);
-                    Connected = true;
                 }
                 catch (SocketException Exception)
                 {
@@ -298,7 +309,7 @@ namespace Scarlet.Communications
             }
             else
             { // Use TCP
-                if (!ClientTCP.Connected)
+                if (!Connected)
                 {
                     Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Attemping to send TCP packet without TCP server connection. Check connection status.");
                     AttemptReconnect();
@@ -309,7 +320,6 @@ namespace Scarlet.Communications
                     try
                     {
                         ClientTCP.GetStream().Write(SendPacket.GetForSend(), 0, SendPacket.GetForSend().Length);
-                        Connected = true;
                     }
                     catch (IOException Exception)
                     {
