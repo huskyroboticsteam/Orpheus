@@ -7,25 +7,19 @@ using System.Threading.Tasks;
 namespace Scarlet.Communications
 {
     
-    /// <summary>
-    /// Singleton Pattern.
-    /// Call GetInstance() instead of constructor
-    /// </summary>
-    class PacketHandler
+    static class PacketHandler
     {
-        private PacketHandler Instance = null;
+        private static bool Started;
 
-        private PacketHandler()
+        public static void Start()
         {
-            // Setup PacketHandler
-            // Setup Watchdog
-            Parse.SetParseHandler(Constants.WATCHDOG_PING, ParseWatchdogPacket);
-        }
-
-        public PacketHandler GetInstance()
-        {
-            if (Instance == null) { return new PacketHandler(); }
-            return Instance;
+            if (!Started)
+            {
+                Started = true;
+                // Setup PacketHandler
+                // Setup Watchdog
+                Parse.SetParseHandler(Constants.WATCHDOG_PING, ParseWatchdogPacket);
+            }
         }
 
         public static void ParseWatchdogPacket(Message WatchdogPacket) { ConnectionStatusManager.FoundWatchdog(); }
