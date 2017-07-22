@@ -15,14 +15,14 @@ namespace Scarlet.Communications
         private static TcpClient ClientTCP;
         private static UdpClient ClientUDP;
         private static IPAddress DestinationIP;
-        private static int PortUDP, PortTCP;
-        private static string Name;
         private static Thread SendThread;
         private static Thread ReceiveThreadTCP;
         private static Thread ReceiveThreadUDP;
         private static Thread ProcessThread;
         private static Thread WatchdogThread;
         private static Queue<Packet> SendQueue, ReceiveQueue;
+        private static int PortUDP, PortTCP;
+        private static string Name;
         private static bool Initialized;
         private static bool Stopping;
         private static int ReceiveBufferSize, OperationPeriod;
@@ -157,7 +157,7 @@ namespace Scarlet.Communications
                 Watch.Reset();
             }
         }
-        
+
         /// <summary>
         /// Starts all primary threads.
         /// </summary>
@@ -377,6 +377,6 @@ namespace Scarlet.Communications
         public static int GetReceiveQueueLength() { return ReceiveQueue.Count; }
         public static int GetSendQueueLength() { return SendQueue.Count; }
         #endregion
-        
+
     }
 }

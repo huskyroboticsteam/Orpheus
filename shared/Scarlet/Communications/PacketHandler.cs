@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Scarlet.Communications
 {
-    
+
     static class PacketHandler
     {
         private static bool Started;

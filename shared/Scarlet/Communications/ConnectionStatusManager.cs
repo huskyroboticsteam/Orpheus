@@ -7,18 +7,6 @@ using System.Threading;
 
 namespace Scarlet.Communications
 {
-    static class Constants
-    {
-        #region Communication Defaults
-        public const int WATCHDOG_DELAY = 400;  // ms
-        #endregion
-
-        #region Reserved Packet IDs
-        public const int WATCHDOG_PING = 0xF0;
-        #endregion
-
-    }
-
     static class ConnectionStatusManager
     {
         public static bool Connected;
@@ -47,9 +35,9 @@ namespace Scarlet.Communications
             while (ContinueListening)
             {
                 Timer.Start();
-                while(Timer.ElapsedMilliseconds < Constants.WATCHDOG_DELAY)
+                while (Timer.ElapsedMilliseconds < Constants.WATCHDOG_DELAY)
                 {
-                    if (WatchdogCycleFound && !Connected) { ConnectionChange(new EventArgs());  }
+                    if (WatchdogCycleFound && !Connected) { ConnectionChange(new EventArgs()); }
                 }
                 if (!WatchdogCycleFound && Connected) { ConnectionChange(new EventArgs()); }
                 Timer.Reset();

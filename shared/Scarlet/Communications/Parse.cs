@@ -58,7 +58,7 @@ namespace Scarlet.Communications
                 return false;
             }
         }
-        
+
         /// <summary>
         /// Appropriately parses incoming packet.
         /// Does the same thing as ParseMessage(Message NewMessage)
