@@ -23,7 +23,7 @@ namespace Science_Base
         {
             try
             {
-                Packet EmergencyStopPacket = new Packet(PacketType.EMERGENCY_STOP, false, Constants.CLIENT_NAME);
+                Packet EmergencyStopPacket = new Packet(PacketType.EMERGENCY_STOP, false, Scarlet.Science.Constants.CLIENT_NAME);
                 EmergencyStopPacket.AppendData(UtilData.ToBytes("Homura"));
                 Server.SendNow(EmergencyStopPacket);
             }

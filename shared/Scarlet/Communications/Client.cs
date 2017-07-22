@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
 using System.IO;
+using System.Diagnostics;
 
 namespace Scarlet.Communications
 {
@@ -32,7 +33,6 @@ namespace Scarlet.Communications
         public static bool Connected { get; private set; }
         public static List<Packet> PacketsReceived { get; private set; }
         public static List<Packet> PacketsSent { get; private set; }
-        public static event EventHandler<EventArgs> ServerConnectionChange;
 
         /// <summary>
         /// Starts a Client process.
@@ -53,7 +53,8 @@ namespace Scarlet.Communications
                 ProcessThread = new Thread(new ThreadStart(ProcessPackets));
                 ReceiveThreadTCP = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
                 ReceiveThreadUDP = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
-                WatchdogThread = new Thread(new ThreadStart(CheckConnection));
+                WatchdogThread = new Thread(new ThreadStart(SendWatchdog));
+                ConnectionStatusManager.ConnectionChangeEvent += ConnectionChange;
             }
             Client.PortTCP = PortTCP;
             Client.PortUDP = PortUDP;
@@ -137,32 +138,26 @@ namespace Scarlet.Communications
         /// by sending a watchdog timer.
         /// (blocks while Stopping is false.)
         /// </summary>
-        private static void CheckConnection()
+        private static void SendWatchdog()
         {
-            Packet WatchdogPack = new Packet(Data.WATCHDOG_PING, false);
-            int DefaultDelay = ClientTCP.Client.SendTimeout;
+            Packet WatchdogPack = new Packet(Constants.WATCHDOG_PING, false);
+            Stopwatch Watch = new Stopwatch();
+            int DefaultDelay = ClientUDP.Client.SendTimeout;
             while (!Stopping)
             {
+                Watch.Start();
                 bool Success = false;
-                lock (ClientTCP)
+                lock (ClientUDP)
                 {
-                    ClientTCP.Client.SendTimeout = Data.WATCHDOG_DELAY;
+                    ClientUDP.Client.SendTimeout = Constants.WATCHDOG_DELAY;
                     Success = SendNow(WatchdogPack);
                 }
-                if (Success)
-                {
-                    if (!Connected) { ConnectionChange(new EventArgs()); }
-                    Connected = true;
-                }
-                else
-                {
-                    if (Connected) { ConnectionChange(new EventArgs()); }
-                    Connected = false;
-                }
                 ClientTCP.Client.SendTimeout = DefaultDelay;
+                while (Watch.ElapsedMilliseconds < Constants.WATCHDOG_DELAY) { }
+                Watch.Reset();
             }
         }
-
+        
         /// <summary>
         /// Starts all primary threads.
         /// </summary>
@@ -382,10 +377,6 @@ namespace Scarlet.Communications
         public static int GetReceiveQueueLength() { return ReceiveQueue.Count; }
         public static int GetSendQueueLength() { return SendQueue.Count; }
         #endregion
-
-        private static void ConnectionChange(EventArgs Event)
-        {
-            ServerConnectionChange?.Invoke("Client", Event);
-        }
+        
     }
 }
