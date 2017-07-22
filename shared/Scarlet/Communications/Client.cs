@@ -54,7 +54,6 @@ namespace Scarlet.Communications
                 ReceiveThreadTCP = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
                 ReceiveThreadUDP = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
                 WatchdogThread = new Thread(new ThreadStart(SendWatchdog));
-                ConnectionStatusManager.ConnectionChangeEvent += ConnectionChange;
             }
             Client.PortTCP = PortTCP;
             Client.PortUDP = PortUDP;
