@@ -43,14 +43,14 @@ namespace Scarlet.Communications
         {
             Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Initializing Client.");
             if (!Initialized)
-            {
+            { 
+                PacketHandler.Start();
                 SendQueue = new Queue<Packet>();
                 ReceiveQueue = new Queue<Packet>();
                 SendThread = new Thread(new ThreadStart(SendPackets));
                 ProcessThread = new Thread(new ThreadStart(ProcessPackets));
                 ReceiveThreadTCP = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
                 ReceiveThreadUDP = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
-                PacketHandler.Start();
             }
             Client.PortTCP = PortTCP;
             Client.PortUDP = PortUDP;
