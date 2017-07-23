@@ -101,6 +101,7 @@ namespace Scarlet.Communications
                 new Thread(new ThreadStart(ListenForReconnect)).Start();
                 return;
             }
+            Log.Output(Log.Severity.INFO, Log.Source.NETWORK, "TCP and UDP Clients Connected to Server. Using ports " + PortTCP.ToString() + " and " + PortUDP + " respectively.");
             SendName();
         }
 
@@ -232,8 +233,11 @@ namespace Scarlet.Communications
         public static bool Send(Packet SendPacket)
         {
             if (!Initialized) { throw new InvalidOperationException("Cannot use Client before initialization. Call Client.Start()."); }
-            if (SendPacket.IsUDP) { return SendNow(SendPacket); }
-            lock (SendQueue) { SendQueue.Enqueue(SendPacket); }
+            if (!Stopping)
+            {
+                if (SendPacket.IsUDP) { return SendNow(SendPacket); }
+                lock (SendQueue) { SendQueue.Enqueue(SendPacket); }
+            }
             return true;
         }
 
@@ -245,60 +249,64 @@ namespace Scarlet.Communications
         /// <returns>Success of packet sending.</returns>
         public static bool SendNow(Packet SendPacket)
         {
-            if (!Initialized) { throw new InvalidOperationException("Cannot use Client before initialization. Call Client.Start()."); }
-            if (SendPacket.IsUDP)
+            if (!Stopping)
             {
-                int BytesSent = 0;
-                try
+                if (!Initialized) { throw new InvalidOperationException("Cannot use Client before initialization. Call Client.Start()."); }
+                if (SendPacket.IsUDP)
                 {
-                    BytesSent = ClientUDP.Send(SendPacket.GetForSend(), SendPacket.GetForSend().Length);
-                }
-                catch (SocketException Exception)
-                {
-                    Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "An error occurred when accessing the socket. Check connection status.");
-                    Log.Exception(Log.Source.NETWORK, Exception);
-                    return false;
-                }
-                catch (ObjectDisposedException Exception)
-                {
-                    Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Client UDP socket stream is closed. Consider restart, check connection status.");
-                    Log.Exception(Log.Source.NETWORK, Exception);
-                    return false;
-                }
-                Thread.Sleep(OperationPeriod);
-                if (BytesSent != 0 && StorePackets) { PacketsSent.Add(SendPacket); }
-                return true;
-            }
-            else
-            { // Use TCP
-                if (!ClientTCP.Connected)
-                {
-                    Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Attemping to send TCP packet without TCP server connection. Check connection status.");
-                    return false;
-                }
-                else
-                {
+                    int BytesSent = 0;
                     try
                     {
-                        ClientTCP.GetStream().Write(SendPacket.GetForSend(), 0, SendPacket.GetForSend().Length);
+                        BytesSent = ClientUDP.Send(SendPacket.GetForSend(), SendPacket.GetForSend().Length);
                     }
-                    catch (IOException Exception)
+                    catch (SocketException Exception)
                     {
-                        Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Failed to write to socket stream. Check connection status.");
+                        Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "An error occurred when accessing the socket. Check connection status.");
                         Log.Exception(Log.Source.NETWORK, Exception);
                         return false;
                     }
                     catch (ObjectDisposedException Exception)
                     {
-                        Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Client TCP socket stream is closed. Consider restart, check connection status.");
+                        Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Client UDP socket stream is closed. Consider restart, check connection status.");
                         Log.Exception(Log.Source.NETWORK, Exception);
                         return false;
                     }
-                    if (StorePackets) { PacketsSent.Add(SendPacket); }
                     Thread.Sleep(OperationPeriod);
+                    if (BytesSent != 0 && StorePackets) { PacketsSent.Add(SendPacket); }
+                    return true;
                 }
-                return true;
+                else
+                { // Use TCP
+                    if (!ClientTCP.Connected)
+                    {
+                        Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Attemping to send TCP packet without TCP server connection. Check connection status.");
+                        return false;
+                    }
+                    else
+                    {
+                        try
+                        {
+                            ClientTCP.GetStream().Write(SendPacket.GetForSend(), 0, SendPacket.GetForSend().Length);
+                        }
+                        catch (IOException Exception)
+                        {
+                            Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Failed to write to socket stream. Check connection status.");
+                            Log.Exception(Log.Source.NETWORK, Exception);
+                            return false;
+                        }
+                        catch (ObjectDisposedException Exception)
+                        {
+                            Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Client TCP socket stream is closed. Consider restart, check connection status.");
+                            Log.Exception(Log.Source.NETWORK, Exception);
+                            return false;
+                        }
+                        if (StorePackets) { PacketsSent.Add(SendPacket); }
+                        Thread.Sleep(OperationPeriod);
+                    }
+                    return true;
+                }
             }
+            return false;
         }
 
         /// <summary>
