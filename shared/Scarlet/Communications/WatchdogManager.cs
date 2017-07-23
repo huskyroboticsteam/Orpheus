@@ -67,9 +67,22 @@ namespace Scarlet.Communications
 
         private class Watchdog
         {
-            public bool IsConnected { get; private set; }
+            private bool P_IsConnected;
+            public bool IsConnected
+            {
+                get { return P_IsConnected; }
+                private set
+                {
+                    if(value != P_IsConnected) // Status is changing
+                    {
+                        ConnectionStatusChanged Event = new ConnectionStatusChanged() { StatusEndpoint = Endpoint, StatusConnected = value };
+                        OnConnectionChange(Event);
+                    }
+                    P_IsConnected = value;
+                }
+            }
 
-            private bool FoundWatchdogThisCycle;
+            private volatile bool FoundWatchdogThisCycle;
             private bool UseClient;
             private string Endpoint;
 
@@ -86,24 +99,7 @@ namespace Scarlet.Communications
                 while (Continue)
                 {
                     Thread.Sleep(Constants.WATCHDOG_WAIT);
-                    if (FoundWatchdogThisCycle)
-                    {
-                        if (!IsConnected)
-                        {
-                            ConnectionStatusChanged Event = new ConnectionStatusChanged() { StatusEndpoint = Endpoint, StatusConnected = true };
-                            OnConnectionChange(Event);
-                        }
-                        IsConnected = true;
-                    }
-                    else
-                    {
-                        if (IsConnected)
-                        {
-                            ConnectionStatusChanged Event = new ConnectionStatusChanged() { StatusEndpoint = Endpoint, StatusConnected = false };
-                            OnConnectionChange(Event);
-                        }
-                        IsConnected = false;
-                    }
+                    IsConnected = FoundWatchdogThisCycle;
                     FoundWatchdogThisCycle = false;
                 }
             }
