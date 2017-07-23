@@ -7,7 +7,8 @@ namespace Scarlet.Communications
 { 
     static class WatchdogManager
     {
-        private static bool IsClient, Started, Continue;
+        private static bool IsClient, Started;
+        private static bool Continue = true;
         private static Dictionary<string, Watchdog> Watchdogs;
         public static event EventHandler<ConnectionStatusChanged> ConnectionChanged;
 
