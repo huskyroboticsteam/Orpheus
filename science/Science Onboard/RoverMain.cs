@@ -14,14 +14,14 @@ namespace Science
 		static void Main(string[] args)
 		{
             Log.OutputLevel = Log.Severity.DEBUG;
-            Log.OutputType = Log.Source.ALL;
+            Log.OutputType = Log.Source.NETWORK;
             Log.ErrorCodes = ScienceErrors.ERROR_CODES;
             Log.SystemNames = ScienceErrors.SYSTEMS;
             Log.Begin();
             Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Science Station - Rover Side");
 
             IOHandler = new IOHandler();
-            Client.Start("192.168.0.108", 10765, 11765, Scarlet.Science.Constants.CLIENT_NAME);
+            Client.Start("10.0.0.4", 10765, 11765, Constants.CLIENT_NAME);
             PacketHandler PackHan = new PacketHandler();
 
             while(true)
