@@ -141,7 +141,7 @@ namespace Science_Base
         public void UpdateClientList(object Sender, EventArgs Event)
         {
             this.ClientSelector.Items.Clear();
-            this.ClientSelector.Items.AddRange(Server.GetTCPClients().ToArray());
+            this.ClientSelector.Items.AddRange(Server.GetClients().ToArray());
         }
     }
 }

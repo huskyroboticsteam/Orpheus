@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,8 +12,9 @@ namespace Scarlet.Communications
 {
     public static class Server
     {
-        private static Dictionary<string, TcpClient> ClientsTCP;
-        private static Dictionary<string, UdpClient> ClientsUDP;
+        private static Dictionary<string, ScarletClient> Clients;
+        //private static Dictionary<string, TcpClient> ClientsTCP;
+        //private static Dictionary<string, UdpClient> ClientsUDP;
         private static Dictionary<string, Queue<Packet>> SendQueues;
         private static Queue<Packet> ReceiveQueue;
         private static Thread SendThread;
@@ -44,16 +44,18 @@ namespace Scarlet.Communications
                 Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Initializing Server.");
                 Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Listening on ports " + PortTCP + " (TCP), and " + PortUDP + " (UDP).");
 
-                ClientsTCP = new Dictionary<string, TcpClient>();
-                ClientsUDP = new Dictionary<string, UdpClient>();
+                Clients = new Dictionary<string, ScarletClient>();
+                //ClientsTCP = new Dictionary<string, TcpClient>();
+                //ClientsUDP = new Dictionary<string, UdpClient>();
                 SendQueues = new Dictionary<string, Queue<Packet>>();
                 ReceiveQueue = new Queue<Packet>();
                 PacketsSent = new List<Packet>();
                 PacketsReceived = new List<Packet>();
                 Initialized = true;
+                PacketHandler.Start();
                 new Thread(new ParameterizedThreadStart(StartThreads)).Start(new Tuple<int, int>(PortTCP, PortUDP));
                 WatchdogManager.Start(false);
-                PacketHandler.Start();
+                WatchdogManager.ConnectionChanged += WatchdogStatusUpdate;
             }
             else { Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Attempted to start Server when already started."); }
         }
@@ -93,6 +95,7 @@ namespace Scarlet.Communications
             while (Initialized) { Thread.Sleep(50); } // Wait for all threads to stop.
         }
 
+        #region Client Handling
         /// <summary>
         /// Waits for incoming TCP clients, then creates a HandleTCPClient thread to interface with each client.
         /// </summary>
@@ -151,7 +154,14 @@ namespace Scarlet.Communications
                     if (ClientName != null && ClientName.Length > 0)
                     {
                         Log.Output(Log.Severity.INFO, Log.Source.NETWORK, "Client connected with name \"" + ClientName + "\".");
-                        lock (ClientsTCP) { ClientsTCP.Add(ClientName, Client); }
+                        ScarletClient NewClient = new ScarletClient()
+                        {
+                            TCP = Client,
+                            Name = ClientName,
+                            Connected = true
+                        };
+                        lock (Clients) { Clients.Add(ClientName, NewClient); }
+                        //lock (ClientsTCP) { ClientsTCP.Add(ClientName, Client); }
                         lock (SendQueues) { SendQueues.Add(ClientName, new Queue<Packet>()); }
                     }
                     else { Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Invalid client name received. Dropping connection."); }
@@ -166,6 +176,7 @@ namespace Scarlet.Communications
             }
             ClientConnChange(new EventArgs());
             WatchdogManager.AddWatchdog(ClientName);
+
             // Receive data from client.
             DataBuffer = new byte[ReceiveBufferSize];
             while (!Stopping)
@@ -211,13 +222,11 @@ namespace Scarlet.Communications
                 }
                 Thread.Sleep(OperationPeriod);
             }
-            lock (ClientsTCP) { ClientsTCP.Remove(ClientName); }
+            lock (Clients) { Clients.Remove(ClientName); }
+            //lock (ClientsTCP) { ClientsTCP.Remove(ClientName); }
             Receive.Close();
             ClientConnChange(new EventArgs());
         }
-
-        public static List<string> GetTCPClients() { return ClientsTCP.Keys.ToList(); }
-        public static List<string> GetUDPClients() { return ClientsUDP.Keys.ToList(); }
 
         private static void WaitForClientsUDP(object ReceivePort)
         {
@@ -229,6 +238,33 @@ namespace Scarlet.Communications
 
         }
 
+        public static string FindClient(IPEndPoint Endpoint, bool IsUDP)
+        {
+            try
+            {
+                if (IsUDP) { return Clients.Where(Pair => Pair.Value.EndpointUDP.Equals(Endpoint)).Single().Key; }
+                else { return Clients.Where(Pair => Pair.Value.EndpointTCP.Equals(Endpoint)).Single().Key; }
+                //if (IsUDP) { return ClientsUDP.Where(Pair => ((IPEndPoint)(Pair.Value.Client.RemoteEndPoint)).Equals(Endpoint)).Single().Key; }
+                //else { return ClientsTCP.Where(Pair => ((IPEndPoint)(Pair.Value.Client.RemoteEndPoint)).Equals(Endpoint)).Single().Key; }
+            }
+            catch { return ""; }
+        }
+
+        private static void ClientConnChange(EventArgs Event) { ClientConnectionChange?.Invoke("Server", Event); }
+
+        /// <summary>
+        /// Receives watchdog events for clients disconnecting/reconnecting.
+        /// </summary>
+        public static void WatchdogStatusUpdate(object Sender, EventArgs Event)
+        {
+            ConnectionStatusChanged WatchdogEvent = (ConnectionStatusChanged)Event;
+
+        }
+
+        public static List<string> GetClients() { return Clients.Keys.ToList(); }
+        #endregion
+
+        #region Processing
         /// <summary>
         /// Pushes received packets through to Parse for processing.
         /// This must be started on a thread, as it will block until CommHandler.Stopping is true.
@@ -268,7 +304,9 @@ namespace Scarlet.Communications
                 return false;
             }
         }
+        #endregion
 
+        #region Sending
         /// <summary>
         /// Adds a packet to the queue of packets to be sent. Returns quickly.
         /// </summary>
@@ -305,24 +343,21 @@ namespace Scarlet.Communications
             Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Sending packet: " + ToSend);
             if(ToSend.IsUDP)
             {
-                return; // TODO Remove this!
-                if (!ClientsUDP.ContainsKey(ToSend.Endpoint)) { throw new InvalidOperationException("Cannot send packet to client that is not connected."); }
-                lock (ClientsUDP[ToSend.Endpoint])
+                if (!Clients.ContainsKey(ToSend.Endpoint)) { throw new InvalidOperationException("Cannot send packet to client that is not connected."); }
+                lock (Clients[ToSend.Endpoint])
                 {
-                    UdpClient Client = ClientsUDP[ToSend.Endpoint];
                     byte[] Data = ToSend.GetForSend();
-                    Client.Send(Data, Data.Length);
+                    Clients[ToSend.Endpoint].UDP.Send(Data, Data.Length);
                     if (StorePackets) { PacketsSent.Add(ToSend); }
                 }
             }
             else
             {
-                if (!ClientsTCP.ContainsKey(ToSend.Endpoint)) { throw new InvalidOperationException("Cannot send packet to client that is not connected."); }
-                lock (ClientsTCP[ToSend.Endpoint])
+                if (!Clients.ContainsKey(ToSend.Endpoint)) { throw new InvalidOperationException("Cannot send packet to client that is not connected."); }
+                lock (Clients[ToSend.Endpoint])
                 {
-                    TcpClient Client = ClientsTCP[ToSend.Endpoint];
                     byte[] Data = ToSend.GetForSend();
-                    Client.GetStream().Write(Data, 0, Data.Length);
+                    Clients[ToSend.Endpoint].TCP.GetStream().Write(Data, 0, Data.Length);
                     if (StorePackets) { PacketsSent.Add(ToSend); }
                 }
             }
@@ -361,20 +396,16 @@ namespace Scarlet.Communications
                 Thread.Sleep(OperationPeriod);
             }
         }
+        #endregion
 
-        public static string FindClient(IPEndPoint Endpoint, bool IsUDP)
+        private class ScarletClient
         {
-            try
-            {
-                if (IsUDP) { return ClientsUDP.Where(Pair => ((IPEndPoint)(Pair.Value.Client.RemoteEndPoint)).Equals(Endpoint)).Single().Key; }
-                else { return ClientsTCP.Where(Pair => ((IPEndPoint)(Pair.Value.Client.RemoteEndPoint)).Equals(Endpoint)).Single().Key; }
-            }
-            catch { return ""; }
-        }
-
-        private static void ClientConnChange(EventArgs Event)
-        {
-            ClientConnectionChange?.Invoke("Server", Event);
+            public TcpClient TCP;
+            public UdpClient UDP;
+            public IPEndPoint EndpointTCP { get { return (IPEndPoint)TCP.Client.RemoteEndPoint; } }
+            public IPEndPoint EndpointUDP { get { return (IPEndPoint)UDP.Client.RemoteEndPoint; } }
+            public string Name;
+            public bool Connected;
         }
     }
 }
