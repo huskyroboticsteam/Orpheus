@@ -189,7 +189,7 @@ namespace Scarlet.Communications
 
             // Receive data from client.
             DataBuffer = new byte[ReceiveBufferSize];
-            while (!Stopping)
+            while (!Stopping && Clients[ClientName].Connected)
             {
                 try
                 {
@@ -218,6 +218,7 @@ namespace Scarlet.Communications
                         int Error = ((SocketException)IOExc.InnerException).ErrorCode;
                         Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Failed to read data from connected client with SocketExcpetion code " + Error);
                         Log.Exception(Log.Source.NETWORK, IOExc);
+                        if(Error == 10054) { Clients[ClientName].Connected = false; }
                     }
                     else
                     {
@@ -245,11 +246,24 @@ namespace Scarlet.Communications
 
         private static void HandleUDPData(IAsyncResult Result)
         {
-            UdpClient Listener = (UdpClient)Result.AsyncState;
-            IPEndPoint ReceivedEndpoint = new IPEndPoint(IPAddress.Any, 0);
-            byte[] Data = Listener.EndReceive(Result, ref ReceivedEndpoint);
-            Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Received data from client (UDP).");
-            string ClientName = FindClient(ReceivedEndpoint, true);
+            UdpClient Listener;
+            IPEndPoint ReceivedEndpoint;
+            byte[] Data;
+            string ClientName;
+            try
+            {
+                Listener = (UdpClient)Result.AsyncState;
+                ReceivedEndpoint = new IPEndPoint(IPAddress.Any, 0);
+                Data = Listener.EndReceive(Result, ref ReceivedEndpoint);
+                Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Received data from client (UDP).");
+                ClientName = FindClient(ReceivedEndpoint, true);
+            }
+            catch(Exception Exc)
+            {
+                Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Failed to receive UDP data.");
+                Log.Exception(Log.Source.NETWORK, Exc);
+                return;
+            }
             if (Data.Length == 0) // TODO: Can this happen?
             {
                 Log.Output(Log.Severity.INFO, Log.Source.NETWORK, "Client has disconnected.");
@@ -405,6 +419,16 @@ namespace Scarlet.Communications
         {
             if (!Initialized) { throw new InvalidOperationException("Cannot use Server before initialization. Call Server.Start()."); }
             Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Sending packet: " + ToSend);
+            if (!Clients.ContainsKey(ToSend.Endpoint))
+            {
+                Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Tried to send packet to unknown client. Dropping.");
+                return;
+            }
+            if(!Clients[ToSend.Endpoint].Connected)
+            {
+                Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Cannot send packet to client that is not connected.");
+                return;
+            }
             try
             {
                 if (ToSend.IsUDP)
