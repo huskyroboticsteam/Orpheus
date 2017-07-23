@@ -57,7 +57,7 @@ namespace Scarlet.Communications
 
         public static void FoundWatchdog(string Endpoint)
         {
-            if (!Started) { Start(true); }
+            if (!Started) { Start(true, Client.Name); }
             Watchdogs[Endpoint].FoundWatchdog();
         }
 

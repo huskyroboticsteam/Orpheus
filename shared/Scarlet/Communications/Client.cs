@@ -10,7 +10,7 @@ using System.IO;
 namespace Scarlet.Communications
 {
     public static class Client
-    {
+    { 
         private static TcpClient ClientTCP;
         private static UdpClient ClientUDP;
         private static IPAddress DestinationIP;
@@ -20,7 +20,6 @@ namespace Scarlet.Communications
         private static Thread ProcessThread;
         private static Queue<Packet> SendQueue, ReceiveQueue;
         private static int PortUDP, PortTCP;
-        private static string Name;
         private static bool Initialized;
         private static bool Stopping;
         private static int ReceiveBufferSize, OperationPeriod;
@@ -30,6 +29,7 @@ namespace Scarlet.Communications
         public static bool StorePackets;
         public static List<Packet> PacketsReceived { get; private set; }
         public static List<Packet> PacketsSent { get; private set; }
+        public static string Name { get; private set; }
 
         /// <summary>
         /// Starts a Client process.
