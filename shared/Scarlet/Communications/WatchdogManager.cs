@@ -63,7 +63,7 @@ namespace Scarlet.Communications
             {
                 while(Continue)
                 {
-                    Thread.Sleep(Constants.WATCHDOG_DELAY);
+                    Thread.Sleep(Constants.WATCHDOG_INTERVAL);
                     if (UseClient) { Client.SendNow(WatchdogPacket); }
                     else { Server.SendNow(WatchdogPacket); }
                 }
@@ -73,7 +73,7 @@ namespace Scarlet.Communications
             {
                 while(Continue)
                 { 
-                    Thread.Sleep(Constants.WATCHDOG_DELAY);
+                    Thread.Sleep(Constants.WATCHDOG_WAIT);
                     if (FoundWatchdogThisCycle)
                     {
                         if (!IsConnected)
