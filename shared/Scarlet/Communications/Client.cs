@@ -85,6 +85,8 @@ namespace Scarlet.Communications
             {
                 Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Could not connect to TCP Server.");
                 Log.Exception(Log.Source.NETWORK, Exception);
+                Stop();
+                new Thread(new ThreadStart(ListenForReconnect)).Start();
                 return;
             }
             try
@@ -95,6 +97,8 @@ namespace Scarlet.Communications
             {
                 Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Could not connect to UDP Server.");
                 Log.Exception(Log.Source.NETWORK, Exception);
+                Stop();
+                new Thread(new ThreadStart(ListenForReconnect)).Start();
                 return;
             }
             SendName();
@@ -109,6 +113,23 @@ namespace Scarlet.Communications
             byte[] Bytes = UtilData.ToBytes(Name);
             ClientTCP.Client.Send(Bytes);
             ClientUDP.Client.Send(Bytes);
+        }
+
+        private static void ListenForReconnect()
+        {
+            while (!ClientTCP.Connected)
+            {
+                try
+                {
+                    lock (ClientTCP) { ClientTCP.Connect(new IPEndPoint(DestinationIP, PortTCP)); }
+                    lock (ClientUDP) { ClientUDP.Connect(new IPEndPoint(DestinationIP, PortUDP)); }
+                }
+                catch
+                {
+                    Thread.Sleep(OperationPeriod);
+                }
+            }
+            if (Stopping) { Restart(); }
         }
 
         /// <summary>
@@ -212,16 +233,8 @@ namespace Scarlet.Communications
         {
             if (!Initialized) { throw new InvalidOperationException("Cannot use Client before initialization. Call Client.Start()."); }
             if (SendPacket.IsUDP) { return SendNow(SendPacket); }
-            if (!ClientTCP.Connected)
-            {
-                Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Attemping to send TCP packet without TCP server connection. Check connection status.");
-                return false;
-            }
-            else
-            {
-                lock (SendQueue) { SendQueue.Enqueue(SendPacket); }
-                return true;
-            }
+            lock (SendQueue) { SendQueue.Enqueue(SendPacket); }
+            return true;
         }
 
         /// <summary>
@@ -331,17 +344,7 @@ namespace Scarlet.Communications
             {
                 Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Server was disconnected or interuppted, stopping all transmissions and attempting to reconnect...");
                 Stop();
-                ClientTCP.Connect((IPEndPoint)ClientTCP.Client.RemoteEndPoint);
-                ClientUDP.Connect((IPEndPoint)ClientUDP.Client.RemoteEndPoint);
-                if (ClientTCP.Connected)
-                {
-                    Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Reconnect Successful.");
-                    Restart();
-                }
-                else
-                {
-                    Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Reconnect Failed...");
-                }
+                ListenForReconnect();
             }
             else
             {
