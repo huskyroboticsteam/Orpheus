@@ -234,7 +234,9 @@ namespace Scarlet.Communications
                 Thread.Sleep(OperationPeriod);
             }
             lock (Clients) { Clients.Remove(ClientName); }
+            Client.Client.Disconnect(true);
             Receive.Close();
+            Client.Close();
             ClientConnChange(new EventArgs());
         }
 
