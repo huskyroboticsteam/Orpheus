@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading;
 
 namespace Scarlet.Communications
@@ -16,12 +13,19 @@ namespace Scarlet.Communications
         private static bool ContinueListening = true;
         private static event EventHandler<EventArgs> ConnectionChangeEvent;
 
+        /// <summary>
+        /// Call this method every time a watchdog packet is
+        /// found on the network.
+        /// </summary>
         public static void FoundWatchdog()
         {
             if (!Started) { Start(); }
             WatchdogCycleFound = true;
         }
 
+        /// <summary>
+        /// Starts the ConnectionStatusManager
+        /// </summary>
         private static void Start()
         {
             ConnectionChangeEvent += ConnectionChange;
@@ -29,6 +33,10 @@ namespace Scarlet.Communications
             Started = true;
         }
 
+        /// <summary>
+        /// Listens for FoundWatchdog(),
+        /// sets Connection status
+        /// </summary>
         private static void Listen()
         {
             Stopwatch Timer = new Stopwatch();
@@ -37,18 +45,29 @@ namespace Scarlet.Communications
                 Timer.Start();
                 while (Timer.ElapsedMilliseconds < Constants.WATCHDOG_DELAY)
                 {
-                    if (WatchdogCycleFound && !Connected) { ConnectionChange(new EventArgs()); }
+                    if (WatchdogCycleFound && !Connected) { ConnectionChange("Watchdog", new EventArgs()); }
                 }
-                if (!WatchdogCycleFound && Connected) { ConnectionChange(new EventArgs()); }
+                if (!WatchdogCycleFound && Connected) { ConnectionChange("Watchdog", new EventArgs()); }
                 Timer.Reset();
                 WatchdogCycleFound = false;
             }
         }
 
-        private static void ConnectionChange(EventArgs Event) { ConnectionChangeEvent?.Invoke("Watchdog", Event); }
+        /// <summary>
+        /// Event handler for connection changes.
+        /// </summary>
+        /// <param name="Sender">Event sender</param>
+        /// <param name="Args">Event arguments</param>
         private static void ConnectionChange(object Sender, EventArgs Args) { Connected = !Connected; }
 
+        /// <summary>
+        /// Stops the connection status manager
+        /// </summary>
         public static void Stop() { ContinueListening = false; Started = false; }
+
+        /// <summary>
+        /// Restarts the connection status manager
+        /// </summary>
         public static void Continue() { ContinueListening = true; }
 
     }

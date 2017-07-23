@@ -11,6 +11,13 @@ namespace Scarlet.Communications
     {
         private static bool Started;
 
+        /// <summary>
+        /// Starts the PacketHandler.
+        /// PacketHandler ensures Start procedure
+        /// is only ran once, so multiple calls
+        /// to Start() will not interfere with each
+        /// other.
+        /// </summary>
         public static void Start()
         {
             if (!Started)
@@ -22,6 +29,10 @@ namespace Scarlet.Communications
             }
         }
 
+        /// <summary>
+        /// Watchdog parse handler
+        /// </summary>
+        /// <param name="WatchdogPacket">Packet to parse</param>
         public static void ParseWatchdogPacket(Message WatchdogPacket) { ConnectionStatusManager.FoundWatchdog(); }
 
     }
