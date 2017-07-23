@@ -15,6 +15,7 @@ namespace Scarlet.Communications
         private static Dictionary<string, ScarletClient> Clients;
         private static Dictionary<string, Queue<Packet>> SendQueues;
         private static Queue<Packet> ReceiveQueue;
+        private static UdpClient UDPListener;
         private static Thread SendThread;
         private static Thread ReceiveThreadTCP, ReceiveThreadUDP, ProcessThread;
         private static bool Initialized = false;
@@ -168,9 +169,9 @@ namespace Scarlet.Communications
                                 Clients.Add(ClientName, NewClient);
                             }
                         }
-                        if (!SendQueues.ContainsKey(ClientName))
+                        lock (SendQueues)
                         {
-                            lock (SendQueues) { SendQueues.Add(ClientName, new Queue<Packet>()); }
+                            if (!SendQueues.ContainsKey(ClientName)) { SendQueues.Add(ClientName, new Queue<Packet>()); }
                         }
                     }
                     else { Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Invalid TCP client name received. Dropping connection."); }
@@ -238,8 +239,8 @@ namespace Scarlet.Communications
 
         private static void WaitForClientsUDP(object ReceivePort)
         {
-            UdpClient Listener = new UdpClient(new IPEndPoint(IPAddress.Any, (int)ReceivePort));
-            Listener.BeginReceive(HandleUDPData, Listener);
+            UDPListener = new UdpClient(new IPEndPoint(IPAddress.Any, (int)ReceivePort));
+            UDPListener.BeginReceive(HandleUDPData, UDPListener);
         }
 
         private static void HandleUDPData(IAsyncResult Result)
@@ -265,29 +266,27 @@ namespace Scarlet.Communications
                     if (ClientName != null && ClientName.Length > 0)
                     {
                         Log.Output(Log.Severity.INFO, Log.Source.NETWORK, "UDP Client connected with name \"" + ClientName + "\".");
-                        UdpClient Client = new UdpClient(ReceivedEndpoint);
-                        if (Clients.ContainsKey(ClientName))
+                        lock (Clients)
                         {
-                            lock (Clients[ClientName])
+                            if (Clients.ContainsKey(ClientName))
                             {
-                                Clients[ClientName].UDP = Client;
+                                Clients[ClientName].EndpointUDP = ReceivedEndpoint;
                                 Clients[ClientName].Connected = true;
                             }
-                        }
-                        else
-                        {
-                            ScarletClient NewClient = new ScarletClient()
+                            else
                             {
-                                UDP = Client,
-                                Name = ClientName,
-                                Connected = true
-                            };
-                            lock (Clients) { Clients.Add(ClientName, NewClient); }
+                                ScarletClient NewClient = new ScarletClient()
+                                {
+                                    EndpointUDP = ReceivedEndpoint,
+                                    Name = ClientName,
+                                    Connected = true
+                                };
+                                Clients.Add(ClientName, NewClient);
+                            }
                         }
-
-                        if (!SendQueues.ContainsKey(ClientName))
+                        lock (SendQueues)
                         {
-                            lock (SendQueues) { SendQueues.Add(ClientName, new Queue<Packet>()); }
+                            if (!SendQueues.ContainsKey(ClientName)) { SendQueues.Add(ClientName, new Queue<Packet>()); }
                         }
                     }
                     else { Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "UDP Client sent invalid name upon connecting."); }
@@ -406,25 +405,33 @@ namespace Scarlet.Communications
         {
             if (!Initialized) { throw new InvalidOperationException("Cannot use Server before initialization. Call Server.Start()."); }
             Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Sending packet: " + ToSend);
-            if(ToSend.IsUDP)
+            try
             {
-                if (!Clients.ContainsKey(ToSend.Endpoint)) { throw new InvalidOperationException("Cannot send packet to client that is not connected."); }
-                lock (Clients[ToSend.Endpoint])
+                if (ToSend.IsUDP)
                 {
-                    byte[] Data = ToSend.GetForSend();
-                    Clients[ToSend.Endpoint].UDP.Send(Data, Data.Length);
-                    if (StorePackets) { PacketsSent.Add(ToSend); }
+                    if (!Clients.ContainsKey(ToSend.Endpoint)) { throw new InvalidOperationException("Cannot send packet to client that is not connected."); }
+                    lock (Clients[ToSend.Endpoint])
+                    {
+                        byte[] Data = ToSend.GetForSend();
+                        UDPListener.Send(Data, Data.Length, Clients[ToSend.Endpoint].EndpointUDP);
+                        if (StorePackets) { PacketsSent.Add(ToSend); }
+                    }
+                }
+                else
+                {
+                    if (!Clients.ContainsKey(ToSend.Endpoint)) { throw new InvalidOperationException("Cannot send packet to client that is not connected."); }
+                    lock (Clients[ToSend.Endpoint])
+                    {
+                        byte[] Data = ToSend.GetForSend();
+                        Clients[ToSend.Endpoint].TCP.GetStream().Write(Data, 0, Data.Length);
+                        if (StorePackets) { PacketsSent.Add(ToSend); }
+                    }
                 }
             }
-            else
+            catch(Exception Exc)
             {
-                if (!Clients.ContainsKey(ToSend.Endpoint)) { throw new InvalidOperationException("Cannot send packet to client that is not connected."); }
-                lock (Clients[ToSend.Endpoint])
-                {
-                    byte[] Data = ToSend.GetForSend();
-                    Clients[ToSend.Endpoint].TCP.GetStream().Write(Data, 0, Data.Length);
-                    if (StorePackets) { PacketsSent.Add(ToSend); }
-                }
+                Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Failed to send packet.");
+                Log.Exception(Log.Source.NETWORK, Exc);
             }
         }
 
@@ -466,9 +473,8 @@ namespace Scarlet.Communications
         private class ScarletClient
         {
             public TcpClient TCP;
-            public UdpClient UDP;
             public IPEndPoint EndpointTCP { get { return (IPEndPoint)TCP.Client.RemoteEndPoint; } }
-            public IPEndPoint EndpointUDP { get { return (IPEndPoint)UDP.Client.RemoteEndPoint; } }
+            public IPEndPoint EndpointUDP;
             public string Name;
             public bool Connected;
         }

@@ -21,7 +21,7 @@ namespace Scarlet.Communications
                 WatchdogManager.MyName = MyName;
                 WatchdogManager.IsClient = IsClient;
                 WatchdogManager.Watchdogs = new Dictionary<string, Watchdog>();
-                WatchdogManager.WatchdogPacket = new Packet(Constants.WATCHDOG_PING, false);
+                WatchdogManager.WatchdogPacket = new Packet(Constants.WATCHDOG_PING, true);
                 WatchdogManager.WatchdogPacket.AppendData(Utilities.UtilData.ToBytes(MyName));
                 if (IsClient) { Watchdogs.Add("Server", new Watchdog("Server", true)); }
                 new Thread(new ThreadStart(Send)).Start();
@@ -50,7 +50,7 @@ namespace Scarlet.Communications
         public static void AddWatchdog(string Endpoint)
         {
             if (IsClient) { throw new InvalidOperationException("Clients cannot add watchdogs"); }
-            Packet WatchdogPacket = new Packet(Constants.WATCHDOG_PING, false, Endpoint);
+            Packet WatchdogPacket = new Packet(Constants.WATCHDOG_PING, true, Endpoint);
             WatchdogPacket.AppendData(Utilities.UtilData.ToBytes(Endpoint));
             Watchdogs.Add(Endpoint, new Watchdog(Endpoint, false));
         }

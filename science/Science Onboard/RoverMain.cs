@@ -24,8 +24,6 @@ namespace Science
             Client.Start("192.168.0.108", 10765, 11765, Scarlet.Science.Constants.CLIENT_NAME);
             PacketHandler PackHan = new PacketHandler();
 
-            RunTests();
-
             while(true)
             {
                 Thread.Sleep(100);
@@ -39,12 +37,5 @@ namespace Science
             Console.ReadKey();
             Environment.Exit(0);
 		}
-
-        static void RunTests()
-        {
-            Packet Pack = new Packet(0x00, false);
-            Pack.AppendData(new byte[] { 0x00, 0x58, 0x6E, 0xFF, 0xEE, 0xCC, 0xBB, 0xAA, 0x99, 0x88, 0x77, 0x66, 0x55, 0x44, 0x33, 0x22, 0x11, 0x00, 0x00, 0x00 });
-            Log.Output(Log.Severity.DEBUG, Log.Source.OTHER, Pack.ToString());
-        }
 	}
 }
