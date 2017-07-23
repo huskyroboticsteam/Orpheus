@@ -97,7 +97,7 @@ namespace Scarlet.Utilities
 
         public static string ToString(byte[] Input)
         {
-            if (Input.Length == 0 || Input.Length % 2 == 1) { throw new FormatException("Given byte[] does not convert to string."); }
+            if (Input == null || Input.Length == 0 || Input.Length % 2 == 1) { throw new FormatException("Given byte[] does not convert to string."); }
             StringBuilder Output = new StringBuilder(Input.Length / 2);
             for(int i = 0; i < Input.Length; i += 2)
             {

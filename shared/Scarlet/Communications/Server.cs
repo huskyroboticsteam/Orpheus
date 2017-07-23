@@ -302,6 +302,7 @@ namespace Scarlet.Communications
         public static void SendNow(Packet ToSend)
         {
             if (!Initialized) { throw new InvalidOperationException("Cannot use Server before initialization. Call Server.Start()."); }
+            Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Sending packet: " + ToSend);
             if(ToSend.IsUDP)
             {
                 return; // TODO Remove this!

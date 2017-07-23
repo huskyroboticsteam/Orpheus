@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Collections.Generic;
 using System.Text;
+using Scarlet.Utilities;
 
 namespace Scarlet.Communications
 { 
@@ -18,7 +19,7 @@ namespace Scarlet.Communications
             {
                 WatchdogManager.IsClient = IsClient;
                 WatchdogManager.Watchdogs = new Dictionary<string, Watchdog>();
-                if (IsClient) { Watchdogs.Add("Server", new Watchdog(new Packet(Constants.WATCHDOG_PING, true), "Server", true)); }
+                if (IsClient) { Watchdogs.Add("Server", new Watchdog(new Packet(Constants.WATCHDOG_PING, false), "Server", true)); }
                 Started = true;
             }
         }
@@ -26,8 +27,8 @@ namespace Scarlet.Communications
         public static void AddWatchdog(string Endpoint)
         {
             if (IsClient) { throw new InvalidOperationException("Clients cannot add watchdogs"); }
-            Packet WatchdogPacket = new Packet(Constants.WATCHDOG_PING, true, Endpoint);
-            WatchdogPacket.AppendData(Encoding.Unicode.GetBytes(Endpoint));
+            Packet WatchdogPacket = new Packet(Constants.WATCHDOG_PING, false, Endpoint);
+            WatchdogPacket.AppendData(UtilData.ToBytes(Endpoint));
             Watchdogs.Add(Endpoint, new Watchdog(WatchdogPacket, Endpoint, false));
         }
         
@@ -66,6 +67,7 @@ namespace Scarlet.Communications
                 while(Continue)
                 {
                     Thread.Sleep(Constants.WATCHDOG_INTERVAL);
+                    WatchdogPacket.UpdateTimestamp();
                     if (UseClient) { Client.SendNow(WatchdogPacket); }
                     else { Server.SendNow(WatchdogPacket); }
                 }

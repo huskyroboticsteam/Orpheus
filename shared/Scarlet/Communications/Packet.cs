@@ -75,8 +75,9 @@ namespace Scarlet.Communications
         /// <summary>
         /// Formats the Packet's contents to be human-readable.
         /// </summary>
-        public override string ToString() {
-            return this.Data.ToString();
+        public override string ToString()
+        {
+            return (this.IsUDP ? "UDP " : "TCP ") + this.Data.ToString();
         }
 
         public object Clone()
