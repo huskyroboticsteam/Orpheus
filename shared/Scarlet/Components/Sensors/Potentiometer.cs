@@ -53,7 +53,7 @@ namespace Scarlet.Components.Sensors
 
     public class PotentiometerTurn : EventArgs
     {
-        public int TurnAmount { get; set; }
-        public int Angle { get; set; }
+        public int TurnAmount;
+        public int Angle;
     }
 }

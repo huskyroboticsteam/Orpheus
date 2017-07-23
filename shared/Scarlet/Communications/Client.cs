@@ -65,8 +65,7 @@ namespace Scarlet.Communications
             Initialized = true;
             new Thread(new ThreadStart(StartThreads)).Start();
         }
-        public static void Start(int PortTCP, int PortUDP, int ReceiveBufferSize = 64, int OperationPeriod = 20) { Start("192.168.0.1", PortTCP, PortUDP, "Unnamed Client", ReceiveBufferSize, OperationPeriod); }
-
+        
         /// <summary>
         /// Connects TCP and UDP clients to 
         /// server. Logs errors if they occur.

@@ -1,106 +1,94 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Threading;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Scarlet.Communications
-{
+{ 
     static class WatchdogManager
     {
-        public static bool Connected;
-        public static List<string> WatchdogTargets { get; private set; }
+        private static bool IsClient, Started, Continue;
+        private static Dictionary<string, Watchdog> Watchdogs;
+        public static event EventHandler<ConnectionStatusChanged> ConnectionChanged;
 
-        private static bool WatchdogCycleFound;
-        private static bool Started;
-        private static bool Continue = true;
-        private static bool IsClient;
-        private static event EventHandler<EventArgs> ConnectionChangeEvent;
-        private static List<Packet> WatchdogPackets;
-
-        /// <summary>
-        /// Adds a new Endpoint to send watchdogs to.
-        /// Not necessary for Clients
-        /// </summary>
-        /// <param name="NewEndpoint">Endpoint to add</param>
-        public static void AddWatchdogEndpoint(string NewEndpoint)
+        public static void Start(bool IsClient=false)
         {
-            WatchdogTargets.Add(NewEndpoint);
-            WatchdogPackets.Add(new Packet(Constants.WATCHDOG_PING, true, NewEndpoint));
-        }
-
-        /// <summary>
-        /// Call this method every time a watchdog packet is
-        /// found on the network.
-        /// </summary>
-        public static void FoundWatchdog()
-        {
-            if (!Started) { Start(true); } // Server must start the watchdogs
-            WatchdogCycleFound = true;
-        }
-
-        /// <summary>
-        /// Starts the ConnectionStatusManager
-        /// </summary>
-        private static void Start(bool IsClient)
-        {
-            WatchdogManager.IsClient = IsClient;
-            WatchdogTargets = new List<string>();
-            WatchdogPackets = new List<Packet>();
-            if (IsClient) { WatchdogPackets.Add(new Packet(Constants.WATCHDOG_PING, true)); }
-            ConnectionChangeEvent += ConnectionChange;
-            new Thread(new ThreadStart(Listen)).Start();
-            new Thread(new ThreadStart(SendWatchdogs)).Start();
-            Started = true;
-        }
-
-        /// <summary>
-        /// Starts sending the watchdogs
-        /// </summary>
-        private static void SendWatchdogs()
-        {
-            while (Continue)
+            if (!Started)
             {
-                if (IsClient) { Client.SendNow(WatchdogPackets[0]); }
-                else { foreach (Packet Watchdog in WatchdogPackets) { Server.SendNow(Watchdog); } }
+                WatchdogManager.IsClient = IsClient;
+                if (IsClient) { Watchdogs.Add("Server", new Watchdog(new Packet(Constants.WATCHDOG_PING, true), "Server", true)); }
+                Started = true;
             }
         }
 
-        /// <summary>
-        /// Listens for FoundWatchdog(),
-        /// sets Connection status
-        /// </summary>
-        private static void Listen()
+        public static void AddWatchdog(string Endpoint)
         {
-            Stopwatch Timer = new Stopwatch();
-            while (Continue)
+            if (IsClient) { throw new InvalidOperationException("Clients cannot add watchdogs"); }
+            Packet WatchdogPacket = new Packet(Constants.WATCHDOG_PING, true, Endpoint);
+            WatchdogPacket.AppendData(Encoding.Unicode.GetBytes(Endpoint));
+            Watchdogs.Add(Endpoint, new Watchdog(WatchdogPacket, Endpoint, false));
+        }
+        
+        public static void FoundWatchdog(string Endpoint) { if (!Started) { Start(true); } Watchdogs[Endpoint].FoundWatchdog(); }
+        public static bool IsConnected() { return Watchdogs["Server"].IsConnected; } // Only for Client
+        public static bool IsConnected(string Endpoint) { return Watchdogs[Endpoint].IsConnected; } // Only for Server
+        public static void OnConnectionChange(ConnectionStatusChanged Event) { ConnectionChanged?.Invoke("Watchdog Timer", Event); }
+
+        private class Watchdog
+        {
+            public bool IsConnected { get; private set; }
+
+            private bool FoundWatchdogThisCycle;
+            private bool UseClient;
+            private string Endpoint;
+            private Packet WatchdogPacket;
+
+            public Watchdog(Packet WatchdogPacket, string Endpoint, bool UseClient)
             {
-                Timer.Start();
-                while (Timer.ElapsedMilliseconds < Constants.WATCHDOG_DELAY)
+                this.WatchdogPacket = WatchdogPacket;
+                this.UseClient = UseClient;
+                this.Endpoint = Endpoint;
+                new Thread(new ThreadStart(Send)).Start();
+                new Thread(new ThreadStart(Listen)).Start();
+            }
+
+            public void FoundWatchdog() { FoundWatchdogThisCycle = true; }
+
+            public void Send()
+            {
+                while(Continue)
                 {
-                    if (WatchdogCycleFound && !Connected) { ConnectionChange("Watchdog", new EventArgs()); }
+                    Thread.Sleep(Constants.WATCHDOG_DELAY);
+                    if (UseClient) { Client.SendNow(WatchdogPacket); }
+                    else { Server.SendNow(WatchdogPacket); }
                 }
-                if (!WatchdogCycleFound && Connected) { ConnectionChange("Watchdog", new EventArgs()); }
-                Timer.Reset();
-                WatchdogCycleFound = false;
             }
+
+            public void Listen()
+            {
+                while(Continue)
+                { 
+                    Thread.Sleep(Constants.WATCHDOG_DELAY);
+                    if (FoundWatchdogThisCycle)
+                    {
+                        if (!IsConnected) { new ConnectionStatusChanged() { StatusEndpoint = Endpoint, StatusConnected = true }; }
+                        IsConnected = true;
+                    }
+                    else
+                    {
+                        if(IsConnected) { new ConnectionStatusChanged() { StatusEndpoint = Endpoint, StatusConnected = false }; }
+                        IsConnected = false; }
+                    FoundWatchdogThisCycle = false;
+                }
+            }
+
         }
-
-        /// <summary>
-        /// Event handler for connection changes.
-        /// </summary>
-        /// <param name="Sender">Event sender</param>
-        /// <param name="Args">Event arguments</param>
-        private static void ConnectionChange(object Sender, EventArgs Args) { Connected = !Connected; }
-
-        /// <summary>
-        /// Stops the connection status manager
-        /// </summary>
-        public static void Stop() { Continue = false; Started = false; }
-
-        /// <summary>
-        /// Restarts the connection status manager
-        /// </summary>
-        public static void Restart() { Continue = true; }
-
     }
+
+    public class ConnectionStatusChanged : EventArgs
+    {
+        public string StatusEndpoint;
+        public bool StatusConnected;
+    }
+
 }
