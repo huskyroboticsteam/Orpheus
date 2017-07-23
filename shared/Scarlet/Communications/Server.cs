@@ -16,6 +16,7 @@ namespace Scarlet.Communications
         private static Dictionary<string, Queue<Packet>> SendQueues;
         private static Queue<Packet> ReceiveQueue;
         private static UdpClient UDPListener;
+        private static TcpListener TCPListener;
         private static Thread SendThread;
         private static Thread ReceiveThreadTCP, ReceiveThreadUDP, ProcessThread;
         private static bool Initialized = false;
@@ -89,6 +90,12 @@ namespace Scarlet.Communications
         {
             Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Stopping Server.");
             Stopping = true;
+
+            // This is a meh solution to the WaitForClientsTCP thread not ending until the next client connects.
+            TcpClient Dummy = new TcpClient();
+            Dummy.Connect(new IPEndPoint(IPAddress.Loopback, ((IPEndPoint)TCPListener.LocalEndpoint).Port));
+            Dummy.Close();
+
             while (Initialized) { Thread.Sleep(50); } // Wait for all threads to stop.
         }
 
@@ -100,23 +107,17 @@ namespace Scarlet.Communications
         private static void WaitForClientsTCP(object ReceivePort)
         {
             if (!Initialized) { throw new InvalidOperationException("Cannot use Server before initialization. Call Server.Start()."); }
-            TcpListener Listener = new TcpListener(new IPEndPoint(IPAddress.Any, (int)ReceivePort));
-            Listener.Start();
+            TCPListener = new TcpListener(new IPEndPoint(IPAddress.Any, (int)ReceivePort));
+            TCPListener.Start();
             while (!Stopping)
             {
-                // Wait for a client.
-                Task<TcpClient> ClientListener = Listener.AcceptTcpClientAsync();
-                if (ClientListener.Wait(5000)) // TODO: Change this, it is currently delaying shutdowns.
-                {
-                    TcpClient Client = ClientListener.Result;
-                    Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Client is connecting.");
-                    // Start sub-threads for every client.
-                    Thread ClientThread = new Thread(new ParameterizedThreadStart(HandleTCPClient));
-                    ClientThread.Start(Client);
-                    Thread.Sleep(OperationPeriod);
-                }
+                TcpClient Client = TCPListener.AcceptTcpClient();
+                Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Client is connecting.");
+                // Start sub-threads for every client.
+                Thread ClientThread = new Thread(new ParameterizedThreadStart(HandleTCPClient));
+                ClientThread.Start(Client);
             }
-            Listener.Stop();
+            TCPListener.Stop();
         }
 
         /// <summary>
