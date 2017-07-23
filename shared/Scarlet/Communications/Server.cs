@@ -24,7 +24,6 @@ namespace Scarlet.Communications
         public static bool StorePackets = false;
         public static List<Packet> PacketsReceived, PacketsSent;
         private static int ReceiveBufferSize, OperationPeriod;
-        private const int TIMEOUT = 5000;
         public static event EventHandler<EventArgs> ClientConnectionChange;
 
         /// <summary>
@@ -239,12 +238,19 @@ namespace Scarlet.Communications
             ClientConnChange(new EventArgs());
         }
 
+        /// <summary>
+        /// Initially starts the UDP receiver.
+        /// </summary>
+        /// <param name="ReceivePort">Port to listen for UDP packets on. Must be int.</param>
         private static void WaitForClientsUDP(object ReceivePort)
         {
             UDPListener = new UdpClient(new IPEndPoint(IPAddress.Any, (int)ReceivePort));
             UDPListener.BeginReceive(HandleUDPData, UDPListener);
         }
 
+        /// <summary>
+        /// Processes incoming UDP packet, then starts the listener again.
+        /// </summary>
         private static void HandleUDPData(IAsyncResult Result)
         {
             UdpClient Listener;
@@ -317,6 +323,9 @@ namespace Scarlet.Communications
             Listener.BeginReceive(HandleUDPData, Listener);
         }
 
+        /// <summary>
+        /// Tries to find the client name that matches the given IPEndPoint.
+        /// </summary>
         public static string FindClient(IPEndPoint Endpoint, bool IsUDP)
         {
             try
@@ -340,6 +349,9 @@ namespace Scarlet.Communications
             if(Clients.ContainsKey(WatchdogEvent.StatusEndpoint)) { Clients[WatchdogEvent.StatusEndpoint].Connected = WatchdogEvent.StatusConnected; }
         }
 
+        /// <summary>
+        /// Gets a list of clients. Clients may not be connected, or partially connected.
+        /// </summary>
         public static List<string> GetClients() { return Clients.Keys.ToList(); }
         #endregion
 
