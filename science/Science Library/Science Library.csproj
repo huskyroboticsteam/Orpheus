@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Science\Constants.cs" />
     <Compile Include="Science\ErrorCodes.cs" />
     <Compile Include="Science\PacketType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

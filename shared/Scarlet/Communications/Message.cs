@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Net;
-using System.Linq;
 using Scarlet.Utilities;
 
 namespace Scarlet.Communications

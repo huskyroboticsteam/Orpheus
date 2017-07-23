@@ -137,8 +137,7 @@ namespace Scarlet.Utilities
         {
             if (!FileCreated)
             {
-                string FileName = DateTime.Now.ToString("yy-MM-dd-hh-mm-ss-tt");
-                FileName = "ScarletLog-" + FileName;
+                string FileName = "ScarletLog-" + DateTime.Now.ToString("yy-MM-dd-hh-mm-ss-tt");
                 if (!Directory.Exists(@LogFilesLocation)) { Directory.CreateDirectory(@LogFilesLocation); }
                 string[] Files = Directory.GetFiles(@LogFilesLocation, "*.log");
                 int Iterations = 0;
@@ -147,8 +146,8 @@ namespace Scarlet.Utilities
                     FileName += "_" + Iterations.ToString();
                     Iterations++;
                 }
-                LogFileName = FileName + ".log";
-                string FileLocation = Path.Combine(LogFilesLocation, LogFileName);
+                FileName += ".log";
+                string FileLocation = Path.Combine(LogFilesLocation, FileName);
                 LogFile = new StreamWriter(@FileLocation);
                 FileCreated = true;
             }

@@ -42,11 +42,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Communications\Protocol.cs" />
-    <Compile Include="Communications\CommHandler.cs" />
+    <Compile Include="Communications\WatchdogManager.cs" />
+    <Compile Include="Communications\PacketHandler.cs" />
+    <Compile Include="Communications\Client.cs" />
+    <Compile Include="Communications\Constants.cs" />
     <Compile Include="Communications\Message.cs" />
     <Compile Include="Communications\Packet.cs" />
     <Compile Include="Communications\Parse.cs" />
+    <Compile Include="Communications\Server.cs" />
     <Compile Include="Components\ICamera.cs" />
     <Compile Include="Components\IMotor.cs" />
     <Compile Include="Components\ISensor.cs" />
