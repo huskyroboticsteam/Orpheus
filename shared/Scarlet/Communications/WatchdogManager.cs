@@ -83,7 +83,6 @@ namespace Scarlet.Communications
             }
 
             private volatile bool FoundWatchdogThisCycle;
-            private bool UseClient;
             private string Endpoint;
 
             public Watchdog(string ListenFor, bool UseClient)
