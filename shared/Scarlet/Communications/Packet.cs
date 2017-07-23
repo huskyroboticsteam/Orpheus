@@ -53,6 +53,14 @@ namespace Scarlet.Communications
         }
         
         /// <summary>
+        /// Updates the packet timestamp to the current time
+        /// </summary>
+        public void UpdateTimestamp()
+        {
+            Data.SetTime(GetCurrentTime());
+        }
+
+        /// <summary>
         /// Gets the current time as a byte array for use in packets.
         /// </summary>
         public static byte[] GetCurrentTime()
