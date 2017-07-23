@@ -56,6 +56,10 @@ namespace Scarlet.Communications
             else { Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Attempted to start Server when already started."); }
         }
 
+        /// <summary>
+        /// Starts all Server threads, then waits for them to terminate.
+        /// </summary>
+        /// <param name="Ports">Tuple<int, int> of ports</param>
         private static void StartThreads(object Ports)
         {
             ReceiveThreadTCP = new Thread(new ParameterizedThreadStart(WaitForClientsTCP));
@@ -77,6 +81,9 @@ namespace Scarlet.Communications
             Initialized = false;
         }
 
+        /// <summary>
+        /// Sends signal to all components of Server to stop, then waits for everything to shut down.
+        /// </summary>
         public static void Stop()
         {
             Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Stopping Server.");
@@ -84,6 +91,10 @@ namespace Scarlet.Communications
             while (Initialized) { Thread.Sleep(50); } // Wait for all threads to stop.
         }
 
+        /// <summary>
+        /// Waits for incoming TCP clients, then creates a HandleTCPClient thread to interface with each client.
+        /// </summary>
+        /// <param name="ReceivePort">The port to listen for TCP clients on. Must be int.</param>
         private static void WaitForClientsTCP(object ReceivePort)
         {
             if (!Initialized) { throw new InvalidOperationException("Cannot use Server before initialization. Call Server.Start()."); }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Scarlet.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -35,7 +36,7 @@ namespace Scarlet.Communications
         /// <param name="WatchdogPacket">Packet to parse</param>
         public static void ParseWatchdogPacket(Message WatchdogPacket)
         {
-            WatchdogManager.FoundWatchdog(Encoding.Unicode.GetString(WatchdogPacket.Payload));
+            WatchdogManager.FoundWatchdog(UtilData.ToString(WatchdogPacket.Payload));
         }
 
     }

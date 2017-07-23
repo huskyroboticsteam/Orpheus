@@ -29,7 +29,12 @@ namespace Scarlet.Communications
             Watchdogs.Add(Endpoint, new Watchdog(WatchdogPacket, Endpoint, false));
         }
         
-        public static void FoundWatchdog(string Endpoint) { if (!Started) { Start(true); } Watchdogs[Endpoint].FoundWatchdog(); }
+        public static void FoundWatchdog(string Endpoint)
+        {
+            if (!Started) { Start(true); }
+            Watchdogs[Endpoint].FoundWatchdog();
+        }
+
         public static bool IsConnected() { return Watchdogs["Server"].IsConnected; } // Only for Client
         public static bool IsConnected(string Endpoint) { return Watchdogs[Endpoint].IsConnected; } // Only for Server
         public static void OnConnectionChange(ConnectionStatusChanged Event) { ConnectionChanged?.Invoke("Watchdog Timer", Event); }
@@ -71,13 +76,20 @@ namespace Scarlet.Communications
                     Thread.Sleep(Constants.WATCHDOG_DELAY);
                     if (FoundWatchdogThisCycle)
                     {
-                        if (!IsConnected) { new ConnectionStatusChanged() { StatusEndpoint = Endpoint, StatusConnected = true }; }
+                        if (!IsConnected)
+                        {
+                            new ConnectionStatusChanged() { StatusEndpoint = Endpoint, StatusConnected = true };
+                        }
                         IsConnected = true;
                     }
                     else
                     {
-                        if(IsConnected) { new ConnectionStatusChanged() { StatusEndpoint = Endpoint, StatusConnected = false }; }
-                        IsConnected = false; }
+                        if(IsConnected)
+                        {
+                            new ConnectionStatusChanged() { StatusEndpoint = Endpoint, StatusConnected = false };
+                        }
+                        IsConnected = false;
+                    }
                     FoundWatchdogThisCycle = false;
                 }
             }
