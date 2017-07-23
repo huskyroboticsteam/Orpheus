@@ -33,7 +33,7 @@ namespace Scarlet.Communications
         /// Watchdog parse handler
         /// </summary>
         /// <param name="WatchdogPacket">Packet to parse</param>
-        public static void ParseWatchdogPacket(Message WatchdogPacket) { ConnectionStatusManager.FoundWatchdog(); }
+        public static void ParseWatchdogPacket(Message WatchdogPacket) { WatchdogManager.FoundWatchdog(); }
 
     }
 }

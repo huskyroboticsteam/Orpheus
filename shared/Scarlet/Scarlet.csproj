@@ -42,7 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Communications\ConnectionStatusManager.cs" />
+    <Compile Include="Communications\WatchdogManager.cs" />
     <Compile Include="Communications\PacketHandler.cs" />
     <Compile Include="Communications\Client.cs" />
     <Compile Include="Communications\Constants.cs" />

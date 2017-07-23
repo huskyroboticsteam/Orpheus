@@ -1,17 +1,32 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
+using System.Collections.Generic;
 
 namespace Scarlet.Communications
 {
-    static class ConnectionStatusManager
+    static class WatchdogManager
     {
         public static bool Connected;
+        public static List<string> WatchdogTargets { get; private set; }
 
         private static bool WatchdogCycleFound;
         private static bool Started;
-        private static bool ContinueListening = true;
+        private static bool Continue = true;
+        private static bool IsClient;
         private static event EventHandler<EventArgs> ConnectionChangeEvent;
+        private static List<Packet> WatchdogPackets;
+
+        /// <summary>
+        /// Adds a new Endpoint to send watchdogs to.
+        /// Not necessary for Clients
+        /// </summary>
+        /// <param name="NewEndpoint">Endpoint to add</param>
+        public static void AddWatchdogEndpoint(string NewEndpoint)
+        {
+            WatchdogTargets.Add(NewEndpoint);
+            WatchdogPackets.Add(new Packet(Constants.WATCHDOG_PING, true, NewEndpoint));
+        }
 
         /// <summary>
         /// Call this method every time a watchdog packet is
@@ -19,18 +34,35 @@ namespace Scarlet.Communications
         /// </summary>
         public static void FoundWatchdog()
         {
-            if (!Started) { Start(); }
+            if (!Started) { Start(true); } // Server must start the watchdogs
             WatchdogCycleFound = true;
         }
 
         /// <summary>
         /// Starts the ConnectionStatusManager
         /// </summary>
-        private static void Start()
+        private static void Start(bool IsClient)
         {
+            WatchdogManager.IsClient = IsClient;
+            WatchdogTargets = new List<string>();
+            WatchdogPackets = new List<Packet>();
+            if (IsClient) { WatchdogPackets.Add(new Packet(Constants.WATCHDOG_PING, true)); }
             ConnectionChangeEvent += ConnectionChange;
             new Thread(new ThreadStart(Listen)).Start();
+            new Thread(new ThreadStart(SendWatchdogs)).Start();
             Started = true;
+        }
+
+        /// <summary>
+        /// Starts sending the watchdogs
+        /// </summary>
+        private static void SendWatchdogs()
+        {
+            while (Continue)
+            {
+                if (IsClient) { Client.SendNow(WatchdogPackets[0]); }
+                else { foreach (Packet Watchdog in WatchdogPackets) { Server.SendNow(Watchdog); } }
+            }
         }
 
         /// <summary>
@@ -40,7 +72,7 @@ namespace Scarlet.Communications
         private static void Listen()
         {
             Stopwatch Timer = new Stopwatch();
-            while (ContinueListening)
+            while (Continue)
             {
                 Timer.Start();
                 while (Timer.ElapsedMilliseconds < Constants.WATCHDOG_DELAY)
@@ -63,12 +95,12 @@ namespace Scarlet.Communications
         /// <summary>
         /// Stops the connection status manager
         /// </summary>
-        public static void Stop() { ContinueListening = false; Started = false; }
+        public static void Stop() { Continue = false; Started = false; }
 
         /// <summary>
         /// Restarts the connection status manager
         /// </summary>
-        public static void Continue() { ContinueListening = true; }
+        public static void Restart() { Continue = true; }
 
     }
 }

@@ -6,7 +6,6 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
 using System.IO;
-using System.Diagnostics;
 
 namespace Scarlet.Communications
 {
@@ -19,7 +18,6 @@ namespace Scarlet.Communications
         private static Thread ReceiveThreadTCP;
         private static Thread ReceiveThreadUDP;
         private static Thread ProcessThread;
-        private static Thread WatchdogThread;
         private static Queue<Packet> SendQueue, ReceiveQueue;
         private static int PortUDP, PortTCP;
         private static string Name;
@@ -30,7 +28,6 @@ namespace Scarlet.Communications
         private const int RECONNECT_DELAY_TIMEOUT = 500; // In ms
 
         public static bool StorePackets;
-        public static bool Connected { get; private set; }
         public static List<Packet> PacketsReceived { get; private set; }
         public static List<Packet> PacketsSent { get; private set; }
 
@@ -53,7 +50,6 @@ namespace Scarlet.Communications
                 ProcessThread = new Thread(new ThreadStart(ProcessPackets));
                 ReceiveThreadTCP = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
                 ReceiveThreadUDP = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
-                WatchdogThread = new Thread(new ThreadStart(SendWatchdog));
                 PacketHandler.Start();
             }
             Client.PortTCP = PortTCP;
@@ -69,6 +65,7 @@ namespace Scarlet.Communications
             Initialized = true;
             new Thread(new ThreadStart(StartThreads)).Start();
         }
+        public static void Start(int PortTCP, int PortUDP, int ReceiveBufferSize = 64, int OperationPeriod = 20) { Start("192.168.0.1", PortTCP, PortUDP, "Unnamed Client", ReceiveBufferSize, OperationPeriod); }
 
         /// <summary>
         /// Connects TCP and UDP clients to 
@@ -134,31 +131,6 @@ namespace Scarlet.Communications
         }
 
         /// <summary>
-        /// Checks the connection iteratively
-        /// by sending a watchdog timer.
-        /// (blocks while Stopping is false.)
-        /// </summary>
-        private static void SendWatchdog()
-        {
-            Packet WatchdogPack = new Packet(Constants.WATCHDOG_PING, false);
-            Stopwatch Watch = new Stopwatch();
-            int DefaultDelay = ClientUDP.Client.SendTimeout;
-            while (!Stopping)
-            {
-                Watch.Start();
-                bool Success = false;
-                lock (ClientUDP)
-                {
-                    ClientUDP.Client.SendTimeout = Constants.WATCHDOG_DELAY;
-                    Success = SendNow(WatchdogPack);
-                }
-                ClientTCP.Client.SendTimeout = DefaultDelay;
-                while (Watch.ElapsedMilliseconds < Constants.WATCHDOG_DELAY) { }
-                Watch.Reset();
-            }
-        }
-
-        /// <summary>
         /// Starts all primary threads.
         /// </summary>
         private static void StartThreads()
@@ -167,12 +139,10 @@ namespace Scarlet.Communications
             ReceiveThreadTCP.Start(ClientTCP.Client);
             ReceiveThreadUDP.Start(ClientUDP.Client);
             ProcessThread.Start();
-            WatchdogThread.Start();
             SendThread.Join();
             ReceiveThreadTCP.Join();
             ReceiveThreadUDP.Join();
             ProcessThread.Join();
-            WatchdogThread.Join();
             Initialized = false;
         }
 
@@ -300,11 +270,11 @@ namespace Scarlet.Communications
                 }
                 Thread.Sleep(OperationPeriod);
                 if (BytesSent != 0 && StorePackets) { PacketsSent.Add(SendPacket); }
-                return Connected;
+                return true;
             }
             else
             { // Use TCP
-                if (!Connected)
+                if (!ClientTCP.Connected)
                 {
                     Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Attemping to send TCP packet without TCP server connection. Check connection status.");
                     AttemptReconnect();
