@@ -13,8 +13,6 @@ namespace Scarlet.Communications
     public static class Server
     {
         private static Dictionary<string, ScarletClient> Clients;
-        //private static Dictionary<string, TcpClient> ClientsTCP;
-        //private static Dictionary<string, UdpClient> ClientsUDP;
         private static Dictionary<string, Queue<Packet>> SendQueues;
         private static Queue<Packet> ReceiveQueue;
         private static Thread SendThread;
@@ -45,8 +43,6 @@ namespace Scarlet.Communications
                 Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Listening on ports " + PortTCP + " (TCP), and " + PortUDP + " (UDP).");
 
                 Clients = new Dictionary<string, ScarletClient>();
-                //ClientsTCP = new Dictionary<string, TcpClient>();
-                //ClientsUDP = new Dictionary<string, UdpClient>();
                 SendQueues = new Dictionary<string, Queue<Packet>>();
                 ReceiveQueue = new Queue<Packet>();
                 PacketsSent = new List<Packet>();
@@ -109,7 +105,7 @@ namespace Scarlet.Communications
             {
                 // Wait for a client.
                 Task<TcpClient> ClientListener = Listener.AcceptTcpClientAsync();
-                if (ClientListener.Wait(5000))
+                if (ClientListener.Wait(5000)) // TODO: Change this, it is currently delaying shutdowns.
                 {
                     TcpClient Client = ClientListener.Result;
                     Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Client is connecting.");
@@ -154,15 +150,29 @@ namespace Scarlet.Communications
                     if (ClientName != null && ClientName.Length > 0)
                     {
                         Log.Output(Log.Severity.INFO, Log.Source.NETWORK, "Client connected with name \"" + ClientName + "\".");
-                        ScarletClient NewClient = new ScarletClient()
+                        if (Clients.ContainsKey(ClientName))
                         {
-                            TCP = Client,
-                            Name = ClientName,
-                            Connected = true
-                        };
-                        lock (Clients) { Clients.Add(ClientName, NewClient); }
-                        //lock (ClientsTCP) { ClientsTCP.Add(ClientName, Client); }
-                        lock (SendQueues) { SendQueues.Add(ClientName, new Queue<Packet>()); }
+                            lock (Clients[ClientName])
+                            {
+                                Clients[ClientName].TCP = Client;
+                                Clients[ClientName].Connected = true;
+                            }
+                        }
+                        else
+                        {
+                            ScarletClient NewClient = new ScarletClient()
+                            {
+                                TCP = Client,
+                                Name = ClientName,
+                                Connected = true
+                            };
+                            lock (Clients) { Clients.Add(ClientName, NewClient); }
+                        }
+
+                        if (!SendQueues.ContainsKey(ClientName))
+                        {
+                            lock (SendQueues) { SendQueues.Add(ClientName, new Queue<Packet>()); }
+                        }
                     }
                     else { Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Invalid client name received. Dropping connection."); }
                 }
@@ -188,7 +198,7 @@ namespace Scarlet.Communications
                     if (DataSize == 0)
                     {
                         Log.Output(Log.Severity.INFO, Log.Source.NETWORK, "Client has disconnected.");
-                        // TODO: Handle disconnects.
+                        lock (Clients[ClientName]) { Clients[ClientName].Connected = false; }
                         break;
                     }
                     if (DataSize >= 5)
@@ -223,17 +233,20 @@ namespace Scarlet.Communications
                 Thread.Sleep(OperationPeriod);
             }
             lock (Clients) { Clients.Remove(ClientName); }
-            //lock (ClientsTCP) { ClientsTCP.Remove(ClientName); }
             Receive.Close();
             ClientConnChange(new EventArgs());
         }
 
         private static void WaitForClientsUDP(object ReceivePort)
         {
-
+            UdpClient Listener = new UdpClient(new IPEndPoint(IPAddress.Any, (int)ReceivePort));
+            while (!Stopping)
+            {
+                //TODO: Actaully do something.
+            }
         }
 
-        private static void HandleUDPClient()
+        private static void HandleUDPData (IAsyncResult Result)
         {
 
         }
@@ -242,12 +255,12 @@ namespace Scarlet.Communications
         {
             try
             {
-                if (IsUDP) { return Clients.Where(Pair => Pair.Value.EndpointUDP.Equals(Endpoint)).Single().Key; }
-                else { return Clients.Where(Pair => Pair.Value.EndpointTCP.Equals(Endpoint)).Single().Key; }
-                //if (IsUDP) { return ClientsUDP.Where(Pair => ((IPEndPoint)(Pair.Value.Client.RemoteEndPoint)).Equals(Endpoint)).Single().Key; }
-                //else { return ClientsTCP.Where(Pair => ((IPEndPoint)(Pair.Value.Client.RemoteEndPoint)).Equals(Endpoint)).Single().Key; }
+                string Result;
+                if (IsUDP) { Result = Clients.Where(Pair => Pair.Value.EndpointUDP.Equals(Endpoint)).Single().Key; }
+                else { Result = Clients.Where(Pair => Pair.Value.EndpointTCP.Equals(Endpoint)).Single().Key; }
+                return Clients[Result].Connected ? Result : null;
             }
-            catch { return ""; }
+            catch { return null; }
         }
 
         private static void ClientConnChange(EventArgs Event) { ClientConnectionChange?.Invoke("Server", Event); }
@@ -258,7 +271,7 @@ namespace Scarlet.Communications
         public static void WatchdogStatusUpdate(object Sender, EventArgs Event)
         {
             ConnectionStatusChanged WatchdogEvent = (ConnectionStatusChanged)Event;
-
+            if(Clients.ContainsKey(WatchdogEvent.StatusEndpoint)) { Clients[WatchdogEvent.StatusEndpoint].Connected = WatchdogEvent.StatusConnected; }
         }
 
         public static List<string> GetClients() { return Clients.Keys.ToList(); }
