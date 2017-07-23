@@ -63,7 +63,7 @@ namespace Scarlet.Communications
 
         public static bool IsConnected() { return Watchdogs["Server"].IsConnected; } // Only for Client
         public static bool IsConnected(string Endpoint) { return Watchdogs[Endpoint].IsConnected; } // Only for Server
-        public static void OnConnectionChange(ConnectionStatusChanged Event) { ConnectionChanged?.Invoke("Watchdog Timer", Event); }
+        private static void OnConnectionChange(ConnectionStatusChanged Event) { ConnectionChanged?.Invoke("Watchdog Timer", Event); }
 
         private class Watchdog
         {
@@ -90,7 +90,8 @@ namespace Scarlet.Communications
                     {
                         if (!IsConnected)
                         {
-                            new ConnectionStatusChanged() { StatusEndpoint = Endpoint, StatusConnected = true };
+                            ConnectionStatusChanged Event = new ConnectionStatusChanged() { StatusEndpoint = Endpoint, StatusConnected = true };
+                            OnConnectionChange(Event);
                         }
                         IsConnected = true;
                     }
@@ -98,7 +99,8 @@ namespace Scarlet.Communications
                     {
                         if (IsConnected)
                         {
-                            new ConnectionStatusChanged() { StatusEndpoint = Endpoint, StatusConnected = false };
+                            ConnectionStatusChanged Event = new ConnectionStatusChanged() { StatusEndpoint = Endpoint, StatusConnected = false };
+                            OnConnectionChange(Event);
                         }
                         IsConnected = false;
                     }
