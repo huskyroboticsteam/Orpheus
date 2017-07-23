@@ -17,6 +17,7 @@ namespace Scarlet.Communications
             if (!Started)
             {
                 WatchdogManager.IsClient = IsClient;
+                WatchdogManager.Watchdogs = new Dictionary<string, Watchdog>();
                 if (IsClient) { Watchdogs.Add("Server", new Watchdog(new Packet(Constants.WATCHDOG_PING, true), "Server", true)); }
                 Started = true;
             }

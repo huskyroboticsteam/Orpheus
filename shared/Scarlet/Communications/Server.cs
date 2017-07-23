@@ -52,6 +52,8 @@ namespace Scarlet.Communications
                 PacketsReceived = new List<Packet>();
                 Initialized = true;
                 new Thread(new ParameterizedThreadStart(StartThreads)).Start(new Tuple<int, int>(PortTCP, PortUDP));
+                WatchdogManager.Start(false);
+                PacketHandler.Start();
             }
             else { Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Attempted to start Server when already started."); }
         }
@@ -132,6 +134,7 @@ namespace Scarlet.Communications
                 throw new Exception("NetworkStream does not support reading");
             }
             // Receive client name.
+            String ClientName;
             byte[] DataBuffer = new byte[Math.Max(ReceiveBufferSize, 64)];
             try
             {
@@ -144,7 +147,7 @@ namespace Scarlet.Communications
                 }
                 else
                 {
-                    String ClientName = UtilData.ToString(DataBuffer.Take(DataSize).ToArray());
+                    ClientName = UtilData.ToString(DataBuffer.Take(DataSize).ToArray());
                     if (ClientName != null && ClientName.Length > 0)
                     {
                         Log.Output(Log.Severity.INFO, Log.Source.NETWORK, "Client connected with name \"" + ClientName + "\".");
@@ -162,6 +165,7 @@ namespace Scarlet.Communications
                 return;
             }
             ClientConnChange(new EventArgs());
+            WatchdogManager.AddWatchdog(ClientName);
             // Receive data from client.
             DataBuffer = new byte[ReceiveBufferSize];
             while (!Stopping)
@@ -180,7 +184,6 @@ namespace Scarlet.Communications
                     {
                         byte[] Data = DataBuffer.Take(DataSize).ToArray();
                         IPEndPoint ClientEndpoint = (IPEndPoint)Client.Client.RemoteEndPoint;
-                        string ClientName = ClientsTCP.Where(Pair => ((IPEndPoint)(Pair.Value.Client.RemoteEndPoint)).Equals(ClientEndpoint)).Single().Key;
                         Packet ReceivedPack = new Packet(new Message(Data), false, ClientName);
                         lock (ReceiveQueue) { ReceiveQueue.Enqueue(ReceivedPack); }
                         if (StorePackets) { PacketsReceived.Add(ReceivedPack); }
@@ -208,7 +211,7 @@ namespace Scarlet.Communications
                 }
                 Thread.Sleep(OperationPeriod);
             }
-            lock (ClientsTCP) { ClientsTCP.Remove(FindClient((IPEndPoint)Client.Client.RemoteEndPoint, false)); }
+            lock (ClientsTCP) { ClientsTCP.Remove(ClientName); }
             Receive.Close();
             ClientConnChange(new EventArgs());
         }
@@ -301,6 +304,7 @@ namespace Scarlet.Communications
             if (!Initialized) { throw new InvalidOperationException("Cannot use Server before initialization. Call Server.Start()."); }
             if(ToSend.IsUDP)
             {
+                return; // TODO Remove this!
                 if (!ClientsUDP.ContainsKey(ToSend.Endpoint)) { throw new InvalidOperationException("Cannot send packet to client that is not connected."); }
                 lock (ClientsUDP[ToSend.Endpoint])
                 {
