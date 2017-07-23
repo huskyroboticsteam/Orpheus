@@ -23,7 +23,7 @@ namespace Scarlet.Communications
                 WatchdogManager.Watchdogs = new Dictionary<string, Watchdog>();
                 WatchdogManager.WatchdogPacket = new Packet(Constants.WATCHDOG_PING, false);
                 WatchdogManager.WatchdogPacket.AppendData(Utilities.UtilData.ToBytes(MyName));
-                if (IsClient) { Watchdogs.Add(MyName, new Watchdog(MyName, true)); }
+                if (IsClient) { Watchdogs.Add("Server", new Watchdog("Server", true)); }
                 new Thread(new ThreadStart(Send)).Start();
                 Started = true;
             }
