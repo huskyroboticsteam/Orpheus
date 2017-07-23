@@ -51,7 +51,7 @@ namespace Scarlet.Communications
         {
             if (IsClient) { throw new InvalidOperationException("Clients cannot add watchdogs"); }
             Packet WatchdogPacket = new Packet(Constants.WATCHDOG_PING, false, Endpoint);
-            WatchdogPacket.AppendData(Encoding.Unicode.GetBytes(Endpoint));
+            WatchdogPacket.AppendData(Utilities.UtilData.ToBytes(Endpoint));
             Watchdogs.Add(Endpoint, new Watchdog(Endpoint, false));
         }
 
