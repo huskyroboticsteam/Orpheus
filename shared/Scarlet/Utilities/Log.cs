@@ -133,11 +133,6 @@ namespace Scarlet.Utilities
 
         }
 
-        public static void Stop()
-        {
-
-        }
-
         private static void CreateLogFile()
         {
             if (!FileCreated)
