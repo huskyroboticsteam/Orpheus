@@ -149,32 +149,31 @@ namespace Scarlet.Communications
                     ClientName = UtilData.ToString(DataBuffer.Take(DataSize).ToArray());
                     if (ClientName != null && ClientName.Length > 0)
                     {
-                        Log.Output(Log.Severity.INFO, Log.Source.NETWORK, "Client connected with name \"" + ClientName + "\".");
-                        if (Clients.ContainsKey(ClientName))
+                        Log.Output(Log.Severity.INFO, Log.Source.NETWORK, "TCP Client connected with name \"" + ClientName + "\".");
+                        lock (Clients)
                         {
-                            lock (Clients[ClientName])
+                            if (Clients.ContainsKey(ClientName))
                             {
                                 Clients[ClientName].TCP = Client;
                                 Clients[ClientName].Connected = true;
                             }
-                        }
-                        else
-                        {
-                            ScarletClient NewClient = new ScarletClient()
+                            else
                             {
-                                TCP = Client,
-                                Name = ClientName,
-                                Connected = true
-                            };
-                            lock (Clients) { Clients.Add(ClientName, NewClient); }
+                                ScarletClient NewClient = new ScarletClient()
+                                {
+                                    TCP = Client,
+                                    Name = ClientName,
+                                    Connected = true
+                                };
+                                Clients.Add(ClientName, NewClient);
+                            }
                         }
-
                         if (!SendQueues.ContainsKey(ClientName))
                         {
                             lock (SendQueues) { SendQueues.Add(ClientName, new Queue<Packet>()); }
                         }
                     }
-                    else { Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Invalid client name received. Dropping connection."); }
+                    else { Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Invalid TCP client name received. Dropping connection."); }
                 }
             }
             catch(Exception Exc)
@@ -194,7 +193,7 @@ namespace Scarlet.Communications
                 try
                 {
                     int DataSize = Receive.Read(DataBuffer, 0, DataBuffer.Length);
-                    Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Received data from client.");
+                    Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Received data from client (TCP).");
                     if (DataSize == 0)
                     {
                         Log.Output(Log.Severity.INFO, Log.Source.NETWORK, "Client has disconnected.");
@@ -240,15 +239,68 @@ namespace Scarlet.Communications
         private static void WaitForClientsUDP(object ReceivePort)
         {
             UdpClient Listener = new UdpClient(new IPEndPoint(IPAddress.Any, (int)ReceivePort));
-            while (!Stopping)
-            {
-                //TODO: Actaully do something.
-            }
+            Listener.BeginReceive(HandleUDPData, Listener);
         }
 
-        private static void HandleUDPData (IAsyncResult Result)
+        private static void HandleUDPData(IAsyncResult Result)
         {
+            UdpClient Listener = (UdpClient)Result.AsyncState;
+            IPEndPoint ReceivedEndpoint = new IPEndPoint(IPAddress.Any, 0);
+            byte[] Data = Listener.EndReceive(Result, ref ReceivedEndpoint);
+            Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Received data from client (UDP).");
+            string ClientName = FindClient(ReceivedEndpoint, true);
+            if (Data.Length == 0) // TODO: Can this happen?
+            {
+                Log.Output(Log.Severity.INFO, Log.Source.NETWORK, "Client has disconnected.");
+                if (ClientName != null)
+                {
+                    lock (Clients[ClientName]) { Clients[ClientName].Connected = false; }
+                }
+            }
+            else
+            {
+                if (ClientName == null) // New client
+                {
+                    ClientName = UtilData.ToString(Data);
+                    if (ClientName != null && ClientName.Length > 0)
+                    {
+                        Log.Output(Log.Severity.INFO, Log.Source.NETWORK, "UDP Client connected with name \"" + ClientName + "\".");
+                        UdpClient Client = new UdpClient(ReceivedEndpoint);
+                        if (Clients.ContainsKey(ClientName))
+                        {
+                            lock (Clients[ClientName])
+                            {
+                                Clients[ClientName].UDP = Client;
+                                Clients[ClientName].Connected = true;
+                            }
+                        }
+                        else
+                        {
+                            ScarletClient NewClient = new ScarletClient()
+                            {
+                                UDP = Client,
+                                Name = ClientName,
+                                Connected = true
+                            };
+                            lock (Clients) { Clients.Add(ClientName, NewClient); }
+                        }
 
+                        if (!SendQueues.ContainsKey(ClientName))
+                        {
+                            lock (SendQueues) { SendQueues.Add(ClientName, new Queue<Packet>()); }
+                        }
+                    }
+                    else { Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "UDP Client sent invalid name upon connecting."); }
+                }
+                else // Existing client
+                {
+                    Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Received data from client (UDP).");
+                    Packet ReceivedPack = new Packet(new Message(Data), false, ClientName);
+                    lock (ReceiveQueue) { ReceiveQueue.Enqueue(ReceivedPack); }
+                    if (StorePackets) { PacketsReceived.Add(ReceivedPack); }
+                }
+            }
+            Listener.BeginReceive(HandleUDPData, Listener);
         }
 
         public static string FindClient(IPEndPoint Endpoint, bool IsUDP)
