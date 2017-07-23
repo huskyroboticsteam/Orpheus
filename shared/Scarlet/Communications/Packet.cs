@@ -4,13 +4,13 @@ using Scarlet.Utilities;
 
 namespace Scarlet.Communications
 {
-	/// <summary>
-	/// Handles packet architecture.
-	/// </summary>
-	public class Packet : ICloneable
-	{
-		public Message Data { get; private set; }        // Data to send
-		public string Endpoint { get; private set; } // Endpoint to send or endpoint received on 
+    /// <summary>
+    /// Handles packet architecture.
+    /// </summary>
+    public class Packet : ICloneable
+    {
+        public Message Data { get; private set; }        // Data to send
+        public string Endpoint;  // Endpoint to send or endpoint received on 
         public bool IsUDP; // Either protocol message received on or protocol for sending
 
         /// <summary>
@@ -26,13 +26,13 @@ namespace Scarlet.Communications
             this.Endpoint = Endpoint;
         }
 
-		/// <summary>
-		/// Meant for sent packets.
-		/// </summary>
-		/// <param name="ID">The packet ID, determining what action will be taken upon receipt</param>
-		/// <param name="IsUDP">Defines whether or not packet is a UDP message.</param>
-		/// <param name="Endpoint">The destination where this packet will be sent</param>
-		public Packet(byte ID, bool IsUDP, string Endpoint = null)
+        /// <summary>
+        /// Meant for sent packets.
+        /// </summary>
+        /// <param name="ID">The packet ID, determining what action will be taken upon receipt</param>
+        /// <param name="IsUDP">Defines whether or not packet is a UDP message.</param>
+        /// <param name="Endpoint">The destination where this packet will be sent</param>
+        public Packet(byte ID, bool IsUDP, string Endpoint = null)
             : this(new Message(ID), IsUDP, Endpoint) { }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace Scarlet.Communications
             else { this.Data.SetTime(Timestamp); } // Sets the timestamp to the one provided.
             return this.Data.GetRawData();
         }
-        
+
         /// <summary>
         /// Updates the packet timestamp to the current time
         /// </summary>
@@ -65,10 +65,10 @@ namespace Scarlet.Communications
         /// </summary>
         public static byte[] GetCurrentTime()
         {
-			// We can't use this because it requires .NET 4.6, which isn't present on the version of Mono on the BeagleBone.
-			// int UnixTime = (int)DateTimeOffset.Now.ToUnixTimeSeconds();
-			int UnixTime = (int)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
-			byte[] TimeArray = UtilData.ToBytes(UnixTime);
+            // We can't use this because it requires .NET 4.6, which isn't present on the version of Mono on the BeagleBone.
+            // int UnixTime = (int)DateTimeOffset.Now.ToUnixTimeSeconds();
+            int UnixTime = (int)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+            byte[] TimeArray = UtilData.ToBytes(UnixTime);
             return TimeArray;
         }
 
@@ -89,3 +89,4 @@ namespace Scarlet.Communications
         }
     }
 }
+

@@ -2,36 +2,58 @@
 using System.Threading;
 using System.Collections.Generic;
 using System.Text;
-using Scarlet.Utilities;
 
 namespace Scarlet.Communications
-{ 
+{
     static class WatchdogManager
     {
         private static bool IsClient, Started;
         private static bool Continue = true;
+        private static string MyName;
+        private static Packet WatchdogPacket;
         private static Dictionary<string, Watchdog> Watchdogs;
         public static event EventHandler<ConnectionStatusChanged> ConnectionChanged;
 
-        public static void Start(bool IsClient=false)
+        public static void Start(bool IsClient=false, string MyName="Server")
         {
             if (!Started)
             {
+                WatchdogManager.MyName = MyName;
                 WatchdogManager.IsClient = IsClient;
                 WatchdogManager.Watchdogs = new Dictionary<string, Watchdog>();
-                if (IsClient) { Watchdogs.Add("Server", new Watchdog(new Packet(Constants.WATCHDOG_PING, false), "Server", true)); }
+                WatchdogManager.WatchdogPacket = new Packet(Constants.WATCHDOG_PING, true);
+                if (IsClient) { Watchdogs.Add(MyName, new Watchdog(MyName, true)); }
+                new Thread(new ThreadStart(Send));
                 Started = true;
+            }
+        }
+
+        public static void Send()
+        {
+            while (Continue)
+            {
+                WatchdogPacket.UpdateTimestamp();
+                Thread.Sleep(Constants.WATCHDOG_INTERVAL);
+                if (IsClient) { Client.SendNow(WatchdogPacket); }
+                else
+                {
+                    foreach (string EP in Watchdogs.Keys)
+                    {
+                        WatchdogPacket.Endpoint = EP;
+                        Server.SendNow(WatchdogPacket);
+                    }
+                }
             }
         }
 
         public static void AddWatchdog(string Endpoint)
         {
             if (IsClient) { throw new InvalidOperationException("Clients cannot add watchdogs"); }
-            Packet WatchdogPacket = new Packet(Constants.WATCHDOG_PING, false, Endpoint);
-            WatchdogPacket.AppendData(UtilData.ToBytes(Endpoint));
-            Watchdogs.Add(Endpoint, new Watchdog(WatchdogPacket, Endpoint, false));
+            Packet WatchdogPacket = new Packet(Constants.WATCHDOG_PING, true, Endpoint);
+            WatchdogPacket.AppendData(Encoding.Unicode.GetBytes(Endpoint));
+            Watchdogs.Add(Endpoint, new Watchdog(Endpoint, false));
         }
-        
+
         public static void FoundWatchdog(string Endpoint)
         {
             if (!Started) { Start(true); }
@@ -49,34 +71,19 @@ namespace Scarlet.Communications
             private bool FoundWatchdogThisCycle;
             private bool UseClient;
             private string Endpoint;
-            private Packet WatchdogPacket;
 
-            public Watchdog(Packet WatchdogPacket, string Endpoint, bool UseClient)
+            public Watchdog(string ListenFor, bool UseClient)
             {
-                this.WatchdogPacket = WatchdogPacket;
-                this.UseClient = UseClient;
-                this.Endpoint = Endpoint;
-                new Thread(new ThreadStart(Send)).Start();
+                this.Endpoint = ListenFor;
                 new Thread(new ThreadStart(Listen)).Start();
             }
 
             public void FoundWatchdog() { FoundWatchdogThisCycle = true; }
 
-            public void Send()
-            {
-                while(Continue)
-                {
-                    Thread.Sleep(Constants.WATCHDOG_INTERVAL);
-                    WatchdogPacket.UpdateTimestamp();
-                    if (UseClient) { Client.SendNow(WatchdogPacket); }
-                    else { Server.SendNow(WatchdogPacket); }
-                }
-            }
-
             public void Listen()
             {
-                while(Continue)
-                { 
+                while (Continue)
+                {
                     Thread.Sleep(Constants.WATCHDOG_WAIT);
                     if (FoundWatchdogThisCycle)
                     {
@@ -88,7 +95,7 @@ namespace Scarlet.Communications
                     }
                     else
                     {
-                        if(IsConnected)
+                        if (IsConnected)
                         {
                             new ConnectionStatusChanged() { StatusEndpoint = Endpoint, StatusConnected = false };
                         }
