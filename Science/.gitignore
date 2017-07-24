@@ -6,6 +6,7 @@
 *.suo
 **/.vs
 *.pdb
+*.csproj.user
 
 # Scarlet: Logs
 **/Logs
