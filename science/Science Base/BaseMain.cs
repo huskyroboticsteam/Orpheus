@@ -11,8 +11,8 @@ namespace Science_Base
 	{
 		static void Main(string[] args)
 		{
-            Log.OutputLevel = Log.Severity.DEBUG;
-            Log.OutputType = Log.Source.ALL;
+            Log.SetGlobalOutputLevel(Log.Severity.INFO);
+            Log.SetSingleOutputLevel(Log.Source.NETWORK, Log.Severity.DEBUG);
             Log.ErrorCodes = ScienceErrors.ERROR_CODES;
             Log.SystemNames = ScienceErrors.SYSTEMS;
             Log.Begin();

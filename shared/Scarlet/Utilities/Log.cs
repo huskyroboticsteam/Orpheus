@@ -7,16 +7,9 @@ namespace Scarlet.Utilities
 {
     public static class Log
     {
-        // Folder to hold log files
-        private const string LogFilesLocation = "Logs";
-
         // Override these in your implementation.
         // OutputType determines which system you see output from.
         // OutputLevel determines the minimum severity required for a message to be output.
-        private static WriteDestination P_Destination = WriteDestination.CONSOLE;
-        private static bool FileCreated;
-        public static Source OutputType = Source.SENSORS;
-        public static Severity OutputLevel = Severity.DEBUG;
         public static WriteDestination Destination 
         {
             get { return P_Destination; }
@@ -33,8 +26,36 @@ namespace Scarlet.Utilities
         public static string[] SystemNames;
         public static string[][] ErrorCodes;
 
-        // Location of the Log File. Set in Begin()
-        public static StreamWriter LogFile;
+        /// <summary>
+        /// Sets all sources to have this minimum severity for output.
+        /// </summary>
+        public static void SetGlobalOutputLevel(Severity OutputLevel)
+        {
+            for (int i = 0; i < Log.OutputLevels.Length; i++) { Log.OutputLevels[i] = OutputLevel; }
+        }
+
+        /// <summary>
+        /// Sets <param name="Source" /> to have minimum output level <param name="OutputLevel" />.
+        /// </summary>
+        public static void SetSingleOutputLevel(Source Source, Severity OutputLevel) { Log.OutputLevels[(int)Source] = OutputLevel; }
+
+        /// <summary>
+        /// Replaces output levels with the given array.
+        /// </summary>
+        public static void SetAllOutputLevels(Severity[] OutputLevels)
+        {
+            if (OutputLevels.Length == Log.OutputLevels.Length) { Log.OutputLevels = OutputLevels; }
+        }
+
+        private static Severity[] OutputLevels = new Severity[Enum.GetNames(typeof(Source)).Length];
+
+        private static StreamWriter LogFile; // Location of the Log File. Set in Begin()
+        private const string LogFilesLocation = "Logs"; // Folder to hold log files
+        private static WriteDestination P_Destination = WriteDestination.CONSOLE;
+        private static bool FileCreated;
+
+        private static object ConsoleLock = new object();
+        private static object FileLock = new object();
 
         /// <summary>
         /// Outputs a general log message if configured to output this type of message.
@@ -44,7 +65,7 @@ namespace Scarlet.Utilities
         /// <param name="Message">The actual log entry to output.</param>
         public static void Output(Severity Sev, Source Src, string Message)
         {
-            if(((Sev >= OutputLevel) || (Sev >= Severity.ERROR)) && ((OutputType == Source.ALL) || (Src == OutputType)))
+            if(OutputLevels[(int)Src] <= Sev)
             {
                 ForceOutput(Sev, Src, Message);
             }
@@ -119,10 +140,7 @@ namespace Scarlet.Utilities
             StringBuilder Str = new StringBuilder();
             Str.Append('[');
             Str.Append(DateTime.Now.ToLongTimeString());
-            Str.Append("] [DBG] Logging started, with minimum level ");
-            Str.Append(OutputLevel.ToString());
-            Str.Append(" and system ");
-            Str.Append(OutputType.ToString());
+            Str.Append("] [DBG] Logging started.");
             Str.Append(". It is ");
             Str.Append(DateTime.Now.ToLongDateString());
             Str.Append(' ');
@@ -130,7 +148,6 @@ namespace Scarlet.Utilities
             Str.Append('.');
 
             WriteLine(Str.ToString());
-
         }
 
         private static void CreateLogFile()
@@ -154,24 +171,24 @@ namespace Scarlet.Utilities
         }
 
         /// <summary>
-        /// Stops the Logging process.
+        /// Stops logging to file (future output directed to console), then saves and closes the log file.
         /// </summary>
         public static void StopFileLogging() 
         {
             Destination = WriteDestination.CONSOLE; // If anything else left to print, write it to the console
-			LogFile.Close();
+            LogFile.Flush();
+            LogFile.Close();
         }
 
         private static void Write(string Message)
         {
             if (Log.Destination == WriteDestination.ALL || Log.Destination == WriteDestination.CONSOLE) 
             {
-                Console.Write(Message);
+                lock (ConsoleLock) { Console.Write(Message); }
             }
             if (Log.Destination == WriteDestination.ALL || Log.Destination == WriteDestination.FILE)
             {
-                LogFile.Write(Message);
-                LogFile.Flush();
+                lock (FileLock) { LogFile.Write(Message); }
             }
         }
 

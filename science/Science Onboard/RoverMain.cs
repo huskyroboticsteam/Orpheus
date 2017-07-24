@@ -17,8 +17,8 @@ namespace Science
         static void Main(string[] Args)
 		{
             ParseArgs(Args);
-            Log.OutputLevel = Log.Severity.DEBUG;
-            Log.OutputType = Log.Source.NETWORK;
+            Log.SetGlobalOutputLevel(Log.Severity.INFO);
+            Log.SetSingleOutputLevel(Log.Source.NETWORK, Log.Severity.DEBUG);
             Log.ErrorCodes = ScienceErrors.ERROR_CODES;
             Log.SystemNames = ScienceErrors.SYSTEMS;
             Log.Begin();
