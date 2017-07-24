@@ -339,7 +339,7 @@ namespace Scarlet.Communications
                     lock (SendQueue) { ToSend = (Packet)(SendQueue.Peek().Clone()); }
                     try
                     {
-                        while (!Sending) { }
+                        while (Sending) { }
                         SendNow(ToSend);
                         lock (SendQueue) { SendQueue.Dequeue(); } // Remove the packet from the queue when it has been sent sucessfully.
                     }
