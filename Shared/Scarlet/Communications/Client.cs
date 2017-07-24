@@ -9,23 +9,20 @@ using System.IO;
 
 namespace Scarlet.Communications
 {
-    // TODO: Write better comments
+
     public static class Client
     {
         private static TcpClient ClientTCP;
         private static UdpClient ClientUDP;
-        private static IPAddress DestinationIP;
         private static Thread SendThread;
         private static Thread ReceiveThreadTCP;
         private static Thread ReceiveThreadUDP;
         private static Thread ProcessThread;
         private static Queue<Packet> SendQueue, ReceiveQueue;
         private static IPEndPoint EndpointUDP, EndpointTCP;
-        private static bool Initialized;
-        private static bool HasConnected;
-        private static bool Stopping;
+        private static bool Initialized, HasConnected, Stopping;
         private static int ReceiveBufferSize, OperationPeriod;
-        private const int TIMEOUT = 5000;
+        private const int TIMEOUT = 5000; // In ms
         private const int RECONNECT_DELAY_TIMEOUT = 500; // In ms
 
         public static bool StorePackets;
@@ -48,7 +45,7 @@ namespace Scarlet.Communications
             Client.Name = Name;
             Client.ReceiveBufferSize = ReceiveBufferSize;
             Client.OperationPeriod = OperationPeriod;
-            Client.DestinationIP = IPAddress.Parse(ServerIP);
+            IPAddress DestinationIP = IPAddress.Parse(ServerIP);
             Client.EndpointTCP = new IPEndPoint(DestinationIP, PortTCP);
             Client.EndpointUDP = new IPEndPoint(DestinationIP, PortUDP);
             Client.Stopping = false;
@@ -69,6 +66,8 @@ namespace Scarlet.Communications
             Connect();
             Initialized = true;
         }
+
+        #region Internal
 
         /// <summary>
         /// Connects TCP and UDP clients to 
@@ -96,6 +95,7 @@ namespace Scarlet.Communications
             Log.Output(Log.Severity.INFO, Log.Source.NETWORK, "TCP and UDP Clients Connected to Server. UDP Port " + EndpointUDP.Port.ToString() + " and TCP Port " + EndpointTCP.Port.ToString());
             Reconnect();
             IsConnected = true;
+            ClientTCP.Client.SendTimeout = TIMEOUT; // Set send timeout for TCP Client
         }
 
         /// <summary>
@@ -125,14 +125,16 @@ namespace Scarlet.Communications
                     Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Connection found...");
                     ConnectionFound = true;
                 }
-                catch { Thread.Sleep(Constants.WATCHDOG_WAIT); }
+                catch { Thread.Sleep(RECONNECT_DELAY_TIMEOUT); }
             }
             Stopping = false;
             HasConnected = true;
             Restart();
         }
 
+        /// <summary>Starts a thread to reconnect the Server and Client</summary>
         private static void Reconnect() { new Thread(new ThreadStart(ListenForReconnect)).Start(); }
+        /// <summary>Starts all primary threads.</summary>
         private static void Restart() { new Thread(new ThreadStart(StartThreads)).Start(); }
 
         /// <summary>
@@ -151,6 +153,24 @@ namespace Scarlet.Communications
             Initialized = false;
         }
 
+        /// <summary>
+        /// Happens when watchdog timer sees a connection change.
+        /// </summary>
+        /// <param name="Sender">Event sender parameter, usually "Watchdog Timer" in this case.</param>
+        /// <param name="Event">The event passed to the handler.</param>
+        private static void ChangeConnectionStatus(object Sender, ConnectionStatusChanged Event)
+        {
+            IsConnected = Event.StatusConnected;
+            if (!Event.StatusConnected)
+            {
+                Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Server was disconnected or interuppted, stopping all transmissions and attempting to reconnect...");
+                Reconnect();
+            }
+            else { Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Server (re)connected..."); }
+        }
+
+        #endregion
+
         #region Receive
 
         /// <summary>
@@ -158,7 +178,7 @@ namespace Scarlet.Communications
         /// Client.Stopping is true. Automatically distributes
         /// incoming messages to approprate locations.
         /// </summary>
-        /// <param name="Socket">Socket to receive on.</param>
+        /// <param name="Socket">Socket to receive on. Must be of type Socket</param>
         private static void ReceiveFromSocket(object Socket)
         {
             Socket ReceiveFrom = (Socket)Socket;
@@ -295,7 +315,8 @@ namespace Scarlet.Communications
 
         /// <summary>
         /// Iteratively sends packets that 
-        /// are in the send queue.
+        /// are in the send queue. Blocks
+        /// while Client is running.
         /// </summary>
         private static void SendPackets()
         {
@@ -328,17 +349,6 @@ namespace Scarlet.Communications
         public static int GetReceiveQueueLength() { return ReceiveQueue.Count; }
         public static int GetSendQueueLength() { return SendQueue.Count; }
         #endregion
-
-        private static void ChangeConnectionStatus(object Sender, ConnectionStatusChanged Event)
-        {
-            IsConnected = Event.StatusConnected;
-            if (!Event.StatusConnected)
-            {
-                Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Server was disconnected or interuppted, stopping all transmissions and attempting to reconnect...");
-                Reconnect();
-            }
-            else { Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Server (re)connected..."); }
-        }
 
     }
 }
