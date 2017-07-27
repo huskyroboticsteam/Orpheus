@@ -20,7 +20,7 @@ namespace Scarlet.Communications
         private static Thread ProcessThread;
         private static Queue<Packet> SendQueue, ReceiveQueue;
         private static IPEndPoint EndpointUDP, EndpointTCP;
-        private static bool Initialized, HasConnected, Stopping, Sending;
+        private static bool Initialized, HasConnected, Stopping;
         private static int ReceiveBufferSize, OperationPeriod;
         private const int TIMEOUT = 5000; // In ms
         private const int RECONNECT_DELAY_TIMEOUT = 500; // In ms
@@ -253,7 +253,6 @@ namespace Scarlet.Communications
         /// <returns>Success of packet sending.</returns>
         public static bool SendNow(Packet SendPacket)
         {
-            Sending = true;
             if (!Stopping)
             {
                 if (!Initialized) { throw new InvalidOperationException("Cannot use Client before initialization. Call Client.Start()."); }
@@ -262,25 +261,22 @@ namespace Scarlet.Communications
                     int BytesSent = 0;
                     try
                     {
-                        BytesSent = ClientUDP.Send(SendPacket.GetForSend(), SendPacket.GetForSend().Length);
+                        lock (ClientUDP) { BytesSent = ClientUDP.Send(SendPacket.GetForSend(), SendPacket.GetForSend().Length); }
                     }
                     catch (SocketException Exception)
                     {
                         Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "An error occurred when accessing the socket. Check connection status.");
                         Log.Exception(Log.Source.NETWORK, Exception);
-                        Sending = false;
                         return false;
                     }
                     catch (ObjectDisposedException Exception)
                     {
                         Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Client UDP socket stream is closed. Consider restart, check connection status.");
                         Log.Exception(Log.Source.NETWORK, Exception);
-                        Sending = false;
                         return false;
                     }
                     Thread.Sleep(OperationPeriod);
                     if (BytesSent != 0 && StorePackets) { PacketsSent.Add(SendPacket); }
-                    Sending = false;
                     return true;
                 }
                 else
@@ -288,37 +284,35 @@ namespace Scarlet.Communications
                     if (!ClientTCP.Connected)
                     {
                         Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Attemping to send TCP packet without TCP server connection. Check connection status.");
-                        Sending = false;
                         return false;
                     }
                     else
                     {
                         try
                         {
-                            ClientTCP.GetStream().Write(SendPacket.GetForSend(), 0, SendPacket.GetForSend().Length);
+                            lock (ClientTCP)
+                            {
+                                ClientTCP.GetStream().Write(SendPacket.GetForSend(), 0, SendPacket.GetForSend().Length);
+                            }
                         }
                         catch (IOException Exception)
                         {
                             Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Failed to write to socket stream. Check connection status.");
                             Log.Exception(Log.Source.NETWORK, Exception);
-                            Sending = false;
                             return false;
                         }
                         catch (ObjectDisposedException Exception)
                         {
                             Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Client TCP socket stream is closed. Consider restart, check connection status.");
                             Log.Exception(Log.Source.NETWORK, Exception);
-                            Sending = false;
                             return false;
                         }
                         if (StorePackets) { PacketsSent.Add(SendPacket); }
                         Thread.Sleep(OperationPeriod);
                     }
-                    Sending = false;
                     return true;
                 }
             }
-            Sending = false;
             return false;
         }
 
@@ -339,7 +333,6 @@ namespace Scarlet.Communications
                     lock (SendQueue) { ToSend = (Packet)(SendQueue.Peek().Clone()); }
                     try
                     {
-                        while (Sending) { }
                         SendNow(ToSend);
                         lock (SendQueue) { SendQueue.Dequeue(); } // Remove the packet from the queue when it has been sent sucessfully.
                     }
