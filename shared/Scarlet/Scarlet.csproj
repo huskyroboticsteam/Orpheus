@@ -67,6 +67,7 @@
     <Compile Include="Filters\Filter.cs" />
     <Compile Include="Filters\Kalman.cs" />
     <Compile Include="Filters\LowPass.cs" />
+    <Compile Include="IO\BeagleBone\BBBPin.cs" />
     <Compile Include="IO\BeagleBone\BeagleBone.cs" />
     <Compile Include="IO\BeagleBone\Enums.cs" />
     <Compile Include="IO\Enums.cs" />
