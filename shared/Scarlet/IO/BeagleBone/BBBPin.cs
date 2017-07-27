@@ -11,7 +11,7 @@ namespace Scarlet.IO.BeagleBone
 
     static class Pin
     {
-        static GpioEnum PinToGPIO(BBBPin Pin)
+        public static GpioEnum PinToGPIO(BBBPin Pin)
         {
             switch (Pin)
             {
@@ -86,6 +86,102 @@ namespace Scarlet.IO.BeagleBone
 
                 default: return GpioEnum.GPIO_NONE;
             }
+        }
+
+        public static bool CheckPin(BBBPin Pin, SystemMode Mode)
+        {
+            if(Mode == SystemMode.DEFAULT) // Everything enabled
+            {
+                switch (Pin)
+                {
+                    case BBBPin.P8_03:
+                    case BBBPin.P8_04:
+                    case BBBPin.P8_05:
+                    case BBBPin.P8_06:
+                    case BBBPin.P8_20:
+                    case BBBPin.P8_21:
+                    case BBBPin.P8_22:
+                    case BBBPin.P8_23:
+                    case BBBPin.P8_24:
+                    case BBBPin.P8_25:
+                    case BBBPin.P8_27:
+                    case BBBPin.P8_28:
+                    case BBBPin.P8_29:
+                    case BBBPin.P8_30:
+                    case BBBPin.P8_31:
+                    case BBBPin.P8_32:
+                    case BBBPin.P8_33:
+                    case BBBPin.P8_34:
+                    case BBBPin.P8_35:
+                    case BBBPin.P8_36:
+                    case BBBPin.P8_37:
+                    case BBBPin.P8_38:
+                    case BBBPin.P8_39:
+                    case BBBPin.P8_40:
+                    case BBBPin.P8_41:
+                    case BBBPin.P8_42:
+                    case BBBPin.P8_43:
+                    case BBBPin.P8_44:
+                    case BBBPin.P8_45:
+                    case BBBPin.P8_46:
+
+                    case BBBPin.P9_25:
+                    case BBBPin.P9_28:
+                    case BBBPin.P9_29:
+                    case BBBPin.P9_31:
+                        return false;
+                }
+            }
+            else if(Mode == SystemMode.NO_STORAGE) // HDMI Enabled
+            {
+                switch (Pin)
+                {
+                    case BBBPin.P8_27:
+                    case BBBPin.P8_28:
+                    case BBBPin.P8_29:
+                    case BBBPin.P8_30:
+                    case BBBPin.P8_31:
+                    case BBBPin.P8_32:
+                    case BBBPin.P8_33:
+                    case BBBPin.P8_34:
+                    case BBBPin.P8_35:
+                    case BBBPin.P8_36:
+                    case BBBPin.P8_37:
+                    case BBBPin.P8_38:
+                    case BBBPin.P8_39:
+                    case BBBPin.P8_40:
+                    case BBBPin.P8_41:
+                    case BBBPin.P8_42:
+                    case BBBPin.P8_43:
+                    case BBBPin.P8_44:
+                    case BBBPin.P8_45:
+                    case BBBPin.P8_46:
+
+                    case BBBPin.P9_25:
+                    case BBBPin.P9_28:
+                    case BBBPin.P9_29:
+                    case BBBPin.P9_31:
+                        return false;
+                }
+            }
+            else if(Mode == SystemMode.NO_HDMI) // Storage Enabled
+            {
+                switch (Pin)
+                {
+                    case BBBPin.P8_03:
+                    case BBBPin.P8_04:
+                    case BBBPin.P8_05:
+                    case BBBPin.P8_06:
+                    case BBBPin.P8_20:
+                    case BBBPin.P8_21:
+                    case BBBPin.P8_22:
+                    case BBBPin.P8_23:
+                    case BBBPin.P8_24:
+                    case BBBPin.P8_25:
+                        return false;
+                }
+            }
+            return true; // Nothing Enabled, or pin is not in use.
         }
     }
 
