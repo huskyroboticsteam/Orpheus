@@ -14,8 +14,12 @@ namespace Scarlet.IO.BeagleBone
             this.Pin = Pin;
         }
 
-        /// <summary>Does nothing.</summary>
-        public void Initialize() { }
+        /// <summary>Preapres the pin for use.</summary>
+        public void Initialize()
+        {
+            if (BeagleBone.Fast) { this.OutputPort = new OutputPortMM(IO.BeagleBone.Pin.PinToGPIO(this.Pin)); }
+            else { this.OutputPort = new OutputPortFS(IO.BeagleBone.Pin.PinToGPIO(this.Pin)); }
+        }
 
         /// <summary>Sets the logic-level ouput.</summary>
         public void SetOutput(bool Output)
