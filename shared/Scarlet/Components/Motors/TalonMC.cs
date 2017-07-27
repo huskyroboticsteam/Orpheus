@@ -1,5 +1,4 @@
 ﻿using System;
-using WiringPi;
 using Scarlet.Filters;
 
 namespace Scarlet.Components.Motors
@@ -48,8 +47,8 @@ namespace Scarlet.Components.Motors
 
         public void Initialize()
         {
-            GPIO.pinMode(this.Pin, (int)GPIO.GPIOpinmode.PWMOutput);
-            GPIO.pwmSetClock(1000); // TODO: Set this to an actual value.
+            //GPIO.pinMode(this.Pin, (int)GPIO.GPIOpinmode.PWMOutput);
+            //GPIO.pwmSetClock(1000); // TODO: Set this to an actual value.
         }
 
         public void Stop()
