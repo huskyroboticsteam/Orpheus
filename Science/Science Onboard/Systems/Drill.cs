@@ -24,8 +24,8 @@ namespace Science.Systems
 
         public Drill()
         {
-            this.MotorCtrl = new TalonMC(0, MOTOR_MAX_SPEED);
-            this.DoorServo = new Servo(1);
+            this.MotorCtrl = new TalonMC(null, MOTOR_MAX_SPEED); // TODO: Provide actual IPWMOuput.
+            this.DoorServo = new Servo(null); // TODO: Provide actual IPWMOuput.
         }
 
         public void EmergencyStop()

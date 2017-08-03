@@ -17,7 +17,7 @@ namespace Science.Systems
         public Toolhead()
         {
             // TODO: Set these to actual pins.
-            this.MotorCtrl = new TalonMC(0, MOTOR_MAX_SPEED);
+            this.MotorCtrl = new TalonMC(null, MOTOR_MAX_SPEED); // TODO: Provide actual IPWMOuput.
             this.Pot = new Potentiometer(1);
 
             this.Pot.Turned += this.EventTriggered;

@@ -1,13 +1,13 @@
 ﻿using System;
-using WiringPi;
 using Scarlet.Filters;
+using Scarlet.IO;
 
 namespace Scarlet.Components.Motors
 {
     public class TalonMC : IMotor
     {
         private LowPass<double> LPF = new LowPass<double>();
-        private readonly int Pin;
+        private readonly IPWMOutput Pin;
         private readonly float MaxSpeed;
         private float P_RampUp, P_Speed;
 
@@ -35,7 +35,7 @@ namespace Scarlet.Components.Motors
             }
         }
 
-        public TalonMC(int Pin, float MaxSpeed)
+        public TalonMC(IPWMOutput Pin, float MaxSpeed)
         {
             this.Pin = Pin;
             this.MaxSpeed = MaxSpeed;
@@ -48,8 +48,8 @@ namespace Scarlet.Components.Motors
 
         public void Initialize()
         {
-            GPIO.pinMode(this.Pin, (int)GPIO.GPIOpinmode.PWMOutput);
-            GPIO.pwmSetClock(1000); // TODO: Set this to an actual value.
+            this.Pin.Initialize(); // TODO: Clean up the pin when finished using.
+            this.Pin.SetFrequency(1000); // TODO: Set this to an actual value.
         }
 
         public void Stop()
@@ -63,8 +63,7 @@ namespace Scarlet.Components.Motors
             this.LPF.LPFk = this.RampUp;
             this.LPF.Feed(this.Speed);
             double SetSpeed = this.LPF.Output;
-            // TODO: Output the relevant PWM signal use SetSpeed as the actual value.
-            
+            this.Pin.SetOutput((float)SetSpeed);
         }
     }
 }

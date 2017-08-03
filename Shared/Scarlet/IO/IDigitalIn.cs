@@ -1,34 +1,22 @@
-﻿
-using System;
+﻿using System;
 
 namespace Scarlet.IO
 {
     public interface IDigitalIn
     {
-        /// <summary>
-        /// Prepares the output for use.
-        /// </summary>
+        /// <summary> Prepares the input for use. </summary>
         void Initialize();
 
-        /// <summary>
-        /// Sets the output to on or off.
-        /// </summary>
+        /// <summary> Sets the input resistor. </summary>
         void SetResistor(ResistorState Resistor);
 
-        /// <summary>
-        /// Gets the current input.
-        /// </summary>
-        /// <returns></returns>
+        /// <summary> Gets the current input state. </summary>
         bool GetInput();
 
-        /// <summary>
-        /// Releases handles to the pin, allowing it to be used by another component or application.
-        /// </summary>
+        /// <summary> Releases handles to the pin, allowing it to be used by another component or application. </summary>
         void Dispose();
 
-        /// <summary>
-        /// Registers a new interrupt handler, asking for the specificed type of interrupt.
-        /// </summary>
+        /// <summary> Registers a new interrupt handler, asking for the specificed type of interrupt. </summary>
         void RegisterInterruptHandler(EventHandler<InputInterrupt> Handler, InterruptType Type);
     }
 }

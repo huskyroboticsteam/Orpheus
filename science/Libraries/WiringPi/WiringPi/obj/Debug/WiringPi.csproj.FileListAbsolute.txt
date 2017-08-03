@@ -1,0 +1,5 @@
+C:\Users\Brian\Documents\Robotics\2017-18\science\Libraries\WiringPi\WiringPi\bin\Debug\WiringPi.dll
+C:\Users\Brian\Documents\Robotics\2017-18\science\Libraries\WiringPi\WiringPi\bin\Debug\WiringPi.pdb
+C:\Users\Brian\Documents\Robotics\2017-18\science\Libraries\WiringPi\WiringPi\obj\Debug\WiringPi.csprojResolveAssemblyReference.cache
+C:\Users\Brian\Documents\Robotics\2017-18\science\Libraries\WiringPi\WiringPi\obj\Debug\WiringPi.dll
+C:\Users\Brian\Documents\Robotics\2017-18\science\Libraries\WiringPi\WiringPi\obj\Debug\WiringPi.pdb

@@ -32,6 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BBBCSIO">
+      <HintPath>_Libraries\BBBCSIO.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -64,10 +67,14 @@
     <Compile Include="Filters\Filter.cs" />
     <Compile Include="Filters\Kalman.cs" />
     <Compile Include="Filters\LowPass.cs" />
+    <Compile Include="IO\BeagleBone\BBBPin.cs" />
     <Compile Include="IO\BeagleBone\BeagleBone.cs" />
+    <Compile Include="IO\BeagleBone\DigitalOutBBB.cs" />
     <Compile Include="IO\BeagleBone\Enums.cs" />
     <Compile Include="IO\Enums.cs" />
     <Compile Include="IO\Events.cs" />
+    <Compile Include="IO\IAnalogueIn.cs" />
+    <Compile Include="IO\IAnalogueOut.cs" />
     <Compile Include="IO\IDigitalIn.cs" />
     <Compile Include="IO\IDigitalOut.cs" />
     <Compile Include="IO\IPWMOutput.cs" />
@@ -78,12 +85,6 @@
     <Compile Include="Utilities\Log.cs" />
     <Compile Include="Utilities\UtilData.cs" />
     <Compile Include="Utilities\UtilMain.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\science\Libraries\WiringPi\WiringPi\WiringPi.csproj">
-      <Project>{44164c3f-b228-4488-b027-ea9717e7e6e1}</Project>
-      <Name>WiringPi</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
