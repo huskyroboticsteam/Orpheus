@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Scarlet.IO;
+using System;
 
 namespace Scarlet.Components.Motors
 {
     public class Servo : IMotor
     {
-        private readonly int Pin;
+        private readonly IPWMOutput Pin;
         public int Position { get; private set; }
         private int P_TargetPosition;
         public int TargetPosition
@@ -17,7 +18,7 @@ namespace Scarlet.Components.Motors
             }
         }
 
-        public Servo(int Pin)
+        public Servo(IPWMOutput Pin)
         {
             this.Pin = Pin;
         }
@@ -29,8 +30,8 @@ namespace Scarlet.Components.Motors
 
         public void Initialize()
         {
-            //GPIO.pinMode(this.Pin, (int)GPIO.GPIOpinmode.PWMOutput);
-            //GPIO.pwmSetClock(50); // TODO: Set this to an actual value, and check if this overrides others.
+            this.Pin.Initialize();
+            this.Pin.SetFrequency(50); // TODO: Set this to an actual value, and check if this overrides others.
         }
 
         public void Stop()

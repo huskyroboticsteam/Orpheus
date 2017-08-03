@@ -23,7 +23,7 @@ namespace Science.Systems
         public Turntable()
         {
             // TODO: Set these to actual pins.
-            this.MotorCtrl = new TalonMC(4, MOTOR_MAX_SPEED);
+            this.MotorCtrl = new TalonMC(null, MOTOR_MAX_SPEED); // TODO: Provide actual IPWMOuput.
             this.Limit = new LimitSwitch(5, false);
             this.Encoder = new Encoder(6, 7, 420);
 

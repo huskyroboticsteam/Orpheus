@@ -26,7 +26,7 @@ namespace Science.Systems
         public Rail()
         {
             // TODO: Set these to actual pins.
-            this.MotorCtrl = new TalonMC(0, MOTOR_MAX_SPEED);
+            this.MotorCtrl = new TalonMC(null, MOTOR_MAX_SPEED); // TODO: Provide actual IPWMOuput.
             this.Limit = new LimitSwitch(1, false);
             this.Encoder = new Encoder(2, 3, 80);
 
