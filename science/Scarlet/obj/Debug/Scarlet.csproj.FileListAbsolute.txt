@@ -1,0 +1,7 @@
+C:\Users\Brian\Documents\Robotics\2017-18\science\Scarlet\bin\Debug\Scarlet.dll
+C:\Users\Brian\Documents\Robotics\2017-18\science\Scarlet\bin\Debug\Scarlet.pdb
+C:\Users\Brian\Documents\Robotics\2017-18\science\Scarlet\bin\Debug\WiringPi.dll
+C:\Users\Brian\Documents\Robotics\2017-18\science\Scarlet\bin\Debug\WiringPi.pdb
+C:\Users\Brian\Documents\Robotics\2017-18\science\Scarlet\obj\Debug\Scarlet.csprojResolveAssemblyReference.cache
+C:\Users\Brian\Documents\Robotics\2017-18\science\Scarlet\obj\Debug\Scarlet.dll
+C:\Users\Brian\Documents\Robotics\2017-18\science\Scarlet\obj\Debug\Scarlet.pdb

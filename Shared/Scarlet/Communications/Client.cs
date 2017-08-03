@@ -9,21 +9,20 @@ using System.IO;
 
 namespace Scarlet.Communications
 {
+
     public static class Client
     {
         private static TcpClient ClientTCP;
         private static UdpClient ClientUDP;
-        private static IPAddress DestinationIP;
         private static Thread SendThread;
         private static Thread ReceiveThreadTCP;
         private static Thread ReceiveThreadUDP;
         private static Thread ProcessThread;
         private static Queue<Packet> SendQueue, ReceiveQueue;
-        private static int PortUDP, PortTCP;
-        private static bool Initialized;
-        private static bool Stopping;
+        private static IPEndPoint EndpointUDP, EndpointTCP;
+        private static bool Initialized, HasConnected, Stopping;
         private static int ReceiveBufferSize, OperationPeriod;
-        private const int TIMEOUT = 5000;
+        private const int TIMEOUT = 5000; // In ms
         private const int RECONNECT_DELAY_TIMEOUT = 500; // In ms
 
         public static bool StorePackets;
@@ -43,31 +42,32 @@ namespace Scarlet.Communications
         public static void Start(string ServerIP, int PortTCP, int PortUDP, string Name, int ReceiveBufferSize = 64, int OperationPeriod = 20)
         {
             Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Initializing Client.");
-            Stopping = false;
+            Client.Name = Name;
+            Client.ReceiveBufferSize = ReceiveBufferSize;
+            Client.OperationPeriod = OperationPeriod;
+            IPAddress DestinationIP = IPAddress.Parse(ServerIP);
+            Client.EndpointTCP = new IPEndPoint(DestinationIP, PortTCP);
+            Client.EndpointUDP = new IPEndPoint(DestinationIP, PortUDP);
+            Client.Stopping = false;
             if (!Initialized)
             {
                 PacketHandler.Start();
                 WatchdogManager.ConnectionChanged += ChangeConnectionStatus;
-                SendQueue = new Queue<Packet>();
-                ReceiveQueue = new Queue<Packet>();
-                SendThread = new Thread(new ThreadStart(SendPackets));
-                ProcessThread = new Thread(new ThreadStart(ProcessPackets));
-                ReceiveThreadTCP = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
-                ReceiveThreadUDP = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
+                Client.SendQueue = new Queue<Packet>();
+                Client.ReceiveQueue = new Queue<Packet>();
+                Client.SendThread = new Thread(new ThreadStart(SendPackets));
+                Client.ProcessThread = new Thread(new ThreadStart(ProcessPackets));
+                Client.ReceiveThreadTCP = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
+                Client.ReceiveThreadUDP = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
+                Client.ClientTCP = new TcpClient();
+                Client.ClientUDP = new UdpClient();
             }
-            Client.PortTCP = PortTCP;
-            Client.PortUDP = PortUDP;
-            Client.Name = Name;
-            DestinationIP = IPAddress.Parse(ServerIP);
             Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Attempting to connect to Server on Ports " + PortTCP + " (TCP) and " + PortUDP + " (UDP).");
-            ClientTCP = new TcpClient();
-            ClientUDP = new UdpClient();
             Connect();
-            Client.ReceiveBufferSize = ReceiveBufferSize;
-            Client.OperationPeriod = OperationPeriod;
             Initialized = true;
-            new Thread(new ThreadStart(StartThreads)).Start();
         }
+
+        #region Internal
 
         /// <summary>
         /// Connects TCP and UDP clients to 
@@ -75,35 +75,27 @@ namespace Scarlet.Communications
         /// </summary>
         private static void Connect()
         {
-            ClientTCP = new TcpClient();
-            ClientUDP = new UdpClient();
-            try
-            {
-                ClientTCP.Connect(new IPEndPoint(DestinationIP, PortTCP));
-            }
+            if (HasConnected) { return; }
+            try { ClientTCP.Connect(EndpointTCP); }
             catch (SocketException Exception)
             {
                 Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Could not connect to TCP Server.");
                 Log.Exception(Log.Source.NETWORK, Exception);
-                Stop();
-                new Thread(new ThreadStart(ListenForReconnect)).Start();
+                Reconnect();
                 return;
             }
-            try
-            {
-                ClientUDP.Connect(new IPEndPoint(DestinationIP, PortUDP));
-            }
+            try { ClientUDP.Connect(EndpointUDP); }
             catch (SocketException Exception)
             {
                 Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Could not connect to UDP Server.");
                 Log.Exception(Log.Source.NETWORK, Exception);
-                Stop();
-                new Thread(new ThreadStart(ListenForReconnect)).Start();
+                Reconnect();
                 return;
             }
-            Log.Output(Log.Severity.INFO, Log.Source.NETWORK, "TCP and UDP Clients Connected to Server. Using ports " + PortTCP.ToString() + " and " + PortUDP + " respectively.");
+            Log.Output(Log.Severity.INFO, Log.Source.NETWORK, "TCP and UDP Clients Connected to Server. UDP Port " + EndpointUDP.Port.ToString() + " and TCP Port " + EndpointTCP.Port.ToString());
+            Reconnect();
             IsConnected = true;
-            SendName();
+            ClientTCP.Client.SendTimeout = TIMEOUT; // Set send timeout for TCP Client
         }
 
         /// <summary>
@@ -117,29 +109,33 @@ namespace Scarlet.Communications
             ClientUDP.Client.Send(Bytes);
         }
 
+        /// <summary>
+        /// Blocks until reconnect found
+        /// </summary>
         private static void ListenForReconnect()
         {
-            Stop();
+            Stopping = true;
             bool ConnectionFound = false;
+            Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Listening for connection...");
             while (!ConnectionFound)
             {
-                Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Listening for reconnect...");
                 try
                 {
-                    ClientTCP = new TcpClient(new IPEndPoint(DestinationIP, PortTCP)); 
-                    ClientUDP = new UdpClient(new IPEndPoint(DestinationIP, PortUDP));
                     SendName();
+                    Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Connection found...");
                     ConnectionFound = true;
                 }
-                catch (Exception Except)
-                {
-                    if (ClientTCP != null) { Stop(); }
-                    Log.Exception(Log.Source.NETWORK, Except);
-                    Thread.Sleep(Constants.WATCHDOG_WAIT);
-                }
+                catch { Thread.Sleep(RECONNECT_DELAY_TIMEOUT); }
             }
-            if (Stopping) { Restart(); }
+            Stopping = false;
+            HasConnected = true;
+            Restart();
         }
+
+        /// <summary>Starts a thread to reconnect the Server and Client</summary>
+        private static void Reconnect() { new Thread(new ThreadStart(ListenForReconnect)).Start(); }
+        /// <summary>Starts all primary threads.</summary>
+        private static void Restart() { new Thread(new ThreadStart(StartThreads)).Start(); }
 
         /// <summary>
         /// Starts all primary threads.
@@ -158,30 +154,22 @@ namespace Scarlet.Communications
         }
 
         /// <summary>
-        /// Stops the Client completely.
+        /// Happens when watchdog timer sees a connection change.
         /// </summary>
-        public static void Stop()
+        /// <param name="Sender">Event sender parameter, usually "Watchdog Timer" in this case.</param>
+        /// <param name="Event">The event passed to the handler.</param>
+        private static void ChangeConnectionStatus(object Sender, ConnectionStatusChanged Event)
         {
-            Stopping = true; // Invokes thread joining in StartThreads() due to thread loops (Recommended on SO)
-            try
+            IsConnected = Event.StatusConnected;
+            if (!Event.StatusConnected)
             {
-                ClientTCP.GetStream().Close();
-                ClientTCP.Client.Disconnect(true);
-                ClientTCP.Close();
-                ClientUDP.Close();
+                Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Server was disconnected or interuppted, stopping all transmissions and attempting to reconnect...");
+                Reconnect();
             }
-            catch (Exception Exception)
-            {
-                Log.Exception(Log.Source.NETWORK, Exception); 
-            }
-            Initialized = false; // Ensure initialized status is false when stopped
+            else { Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Server (re)connected..."); }
         }
 
-        public static void Restart()
-        {
-            IPEndPoint Endpoint = (IPEndPoint)ClientTCP.Client.RemoteEndPoint;
-            Start(Endpoint.Address.ToString(), Endpoint.Port, ((IPEndPoint)ClientUDP.Client.RemoteEndPoint).Port, Name, ReceiveBufferSize, OperationPeriod);
-        }
+        #endregion
 
         #region Receive
 
@@ -190,7 +178,7 @@ namespace Scarlet.Communications
         /// Client.Stopping is true. Automatically distributes
         /// incoming messages to approprate locations.
         /// </summary>
-        /// <param name="Socket">Socket to receive on.</param>
+        /// <param name="Socket">Socket to receive on. Must be of type Socket</param>
         private static void ReceiveFromSocket(object Socket)
         {
             Socket ReceiveFrom = (Socket)Socket;
@@ -273,7 +261,7 @@ namespace Scarlet.Communications
                     int BytesSent = 0;
                     try
                     {
-                        BytesSent = ClientUDP.Send(SendPacket.GetForSend(), SendPacket.GetForSend().Length);
+                        lock (ClientUDP) { BytesSent = ClientUDP.Send(SendPacket.GetForSend(), SendPacket.GetForSend().Length); }
                     }
                     catch (SocketException Exception)
                     {
@@ -302,7 +290,10 @@ namespace Scarlet.Communications
                     {
                         try
                         {
-                            ClientTCP.GetStream().Write(SendPacket.GetForSend(), 0, SendPacket.GetForSend().Length);
+                            lock (ClientTCP)
+                            {
+                                ClientTCP.GetStream().Write(SendPacket.GetForSend(), 0, SendPacket.GetForSend().Length);
+                            }
                         }
                         catch (IOException Exception)
                         {
@@ -327,7 +318,8 @@ namespace Scarlet.Communications
 
         /// <summary>
         /// Iteratively sends packets that 
-        /// are in the send queue.
+        /// are in the send queue. Blocks
+        /// while Client is running.
         /// </summary>
         private static void SendPackets()
         {
@@ -360,21 +352,6 @@ namespace Scarlet.Communications
         public static int GetReceiveQueueLength() { return ReceiveQueue.Count; }
         public static int GetSendQueueLength() { return SendQueue.Count; }
         #endregion
-
-        private static void ChangeConnectionStatus(object Sender, ConnectionStatusChanged Event)
-        {
-            IsConnected = Event.StatusConnected;
-            if (!Event.StatusConnected)
-            {
-                Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Server was disconnected or interuppted, stopping all transmissions and attempting to reconnect...");
-                ListenForReconnect();
-            }
-            else
-            {
-                if (Stopping) { Restart(); }
-                Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Server (re)connected...");
-            }
-        }
 
     }
 }
