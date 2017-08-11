@@ -1,9 +1,0 @@
-C:\Users\Brian\Documents\Robotics\2017-18\science\Science Library\bin\Debug\Science Library.dll
-C:\Users\Brian\Documents\Robotics\2017-18\science\Science Library\bin\Debug\Science Library.pdb
-C:\Users\Brian\Documents\Robotics\2017-18\science\Science Library\bin\Debug\Scarlet.dll
-C:\Users\Brian\Documents\Robotics\2017-18\science\Science Library\bin\Debug\WiringPi.dll
-C:\Users\Brian\Documents\Robotics\2017-18\science\Science Library\bin\Debug\WiringPi.pdb
-C:\Users\Brian\Documents\Robotics\2017-18\science\Science Library\bin\Debug\Scarlet.pdb
-C:\Users\Brian\Documents\Robotics\2017-18\science\Science Library\obj\Debug\Science Library.csprojResolveAssemblyReference.cache
-C:\Users\Brian\Documents\Robotics\2017-18\science\Science Library\obj\Debug\Science Library.dll
-C:\Users\Brian\Documents\Robotics\2017-18\science\Science Library\obj\Debug\Science Library.pdb
