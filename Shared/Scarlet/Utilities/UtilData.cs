@@ -105,5 +105,37 @@ namespace Scarlet.Utilities
             }
             return Output.ToString();
         }
+
+        /// <summary>
+        /// <c>IsNumericType(Type Type)</c>
+        /// Determines if the given type
+        /// is numeric. 
+        /// </summary>
+        /// <param name="Type">Type to determine whether or not it is a numeric</param>
+        /// <returns>
+        /// Returns <c>true</c> if 
+        /// param is a numeric; 
+        /// otherwise returns <c>false</c>.</returns>
+        public static bool IsNumericType(Type Type)
+        {
+            switch (Type.GetTypeCode(Type))
+            {
+                case TypeCode.Byte:
+                case TypeCode.SByte:
+                case TypeCode.UInt16:
+                case TypeCode.UInt32:
+                case TypeCode.UInt64:
+                case TypeCode.Int16:
+                case TypeCode.Int32:
+                case TypeCode.Int64:
+                case TypeCode.Decimal:
+                case TypeCode.Double:
+                case TypeCode.Single:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
     }
 }

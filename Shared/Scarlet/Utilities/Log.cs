@@ -150,6 +150,9 @@ namespace Scarlet.Utilities
             WriteLine(Str.ToString());
         }
 
+        /// <summary>
+        /// Creates a log file with a unique filename determined by a current timestamp
+        /// </summary>
         private static void CreateLogFile()
         {
             if (!FileCreated)
@@ -180,6 +183,11 @@ namespace Scarlet.Utilities
             LogFile.Close();
         }
 
+        /// <summary>
+        /// Writes a message to the console.
+        /// Does not carriage return/line feed.
+        /// </summary>
+        /// <param name="Message">Message to write.</param>
         private static void Write(string Message)
         {
             if (Log.Destination == WriteDestination.ALL || Log.Destination == WriteDestination.CONSOLE) 
@@ -192,10 +200,12 @@ namespace Scarlet.Utilities
             }
         }
 
-        private static void WriteLine(string Message)
-        {
-            Write(Message + "\n");
-        }
+        /// <summary>
+        /// Writes a string and applies a new line in the console
+        /// with a carriage return and line feed.
+        /// </summary>
+        /// <param name="Message">Message to write.</param>
+        private static void WriteLine(string Message) { Write(Message + "\r\n"); }
 
         /// <summary>
         /// Write destination.
