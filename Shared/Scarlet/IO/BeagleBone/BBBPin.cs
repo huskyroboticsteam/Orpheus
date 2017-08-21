@@ -195,6 +195,7 @@ namespace Scarlet.IO.BeagleBone
         static byte GetModeID(BBBPin Pin, BBBPinMode Mode)
         {
             // Definitely not the prettiest code in the world.
+            // Source: http://www.ofitselfso.com/BeagleNotes/BeagleboneBlackPinMuxModes.php
             switch (Pin)
             {
                 // P8 Header
@@ -347,6 +348,119 @@ namespace Scarlet.IO.BeagleBone
                     else { return 255; }
             }
             return 255;
+        }
+
+        /// <summary>Returns the memory address offset for each pin. Returns 0x000 if not found or invalid input.</summary>
+        static int GetOffset(BBBPin Pin)
+        {
+            switch (Pin)
+            {
+                case BBBPin.P8_03: return 0x818;
+                case BBBPin.P8_04: return 0x81C;
+                case BBBPin.P8_05: return 0x808;
+                case BBBPin.P8_06: return 0x80C;
+                case BBBPin.P8_07: return 0x890;
+                case BBBPin.P8_08: return 0x894;
+                case BBBPin.P8_09: return 0x89C;
+                case BBBPin.P8_10: return 0x898;
+                case BBBPin.P8_11: return 0x834;
+                case BBBPin.P8_12: return 0x830;
+                case BBBPin.P8_13: return 0x824;
+                case BBBPin.P8_14: return 0x828;
+                case BBBPin.P8_15: return 0x83C;
+                case BBBPin.P8_16: return 0x838;
+                case BBBPin.P8_17: return 0x82C;
+                case BBBPin.P8_18: return 0x88C;
+                case BBBPin.P8_19: return 0x820;
+                case BBBPin.P8_20: return 0x884;
+                case BBBPin.P8_21: return 0x880;
+                case BBBPin.P8_22: return 0x814;
+                case BBBPin.P8_23: return 0x810;
+                case BBBPin.P8_24: return 0x804;
+                case BBBPin.P8_25: return 0x800;
+                case BBBPin.P8_26: return 0x87C;
+                case BBBPin.P8_27: return 0x8E0;
+                case BBBPin.P8_28: return 0x8E8;
+                case BBBPin.P8_29: return 0x8E4;
+                case BBBPin.P8_30: return 0x8EC;
+                case BBBPin.P8_31: return 0x8D8;
+                case BBBPin.P8_32: return 0x8DC;
+                case BBBPin.P8_33: return 0x8D4;
+                case BBBPin.P8_34: return 0x8CC;
+                case BBBPin.P8_35: return 0x8D0;
+                case BBBPin.P8_36: return 0x8C8;
+                case BBBPin.P8_37: return 0x8C0;
+                case BBBPin.P8_38: return 0x8C4;
+                case BBBPin.P8_39: return 0x8B8;
+                case BBBPin.P8_40: return 0x8BC;
+                case BBBPin.P8_41: return 0x8B0;
+                case BBBPin.P8_42: return 0x8B4;
+                case BBBPin.P8_43: return 0x8A8;
+                case BBBPin.P8_44: return 0x8AC;
+                case BBBPin.P8_45: return 0x8A0;
+                case BBBPin.P8_46: return 0x8A4;
+
+                case BBBPin.P9_11: return 0x870;
+                case BBBPin.P9_12: return 0x878;
+                case BBBPin.P9_13: return 0x874;
+                case BBBPin.P9_14: return 0x848;
+                case BBBPin.P9_15: return 0x840;
+                case BBBPin.P9_16: return 0x84C;
+                case BBBPin.P9_17: return 0x95C;
+                case BBBPin.P9_18: return 0x958;
+                case BBBPin.P9_19: return 0x97C;
+                case BBBPin.P9_20: return 0x978;
+                case BBBPin.P9_21: return 0x954;
+                case BBBPin.P9_22: return 0x950;
+                case BBBPin.P9_23: return 0x844;
+                case BBBPin.P9_24: return 0x984;
+                case BBBPin.P9_25: return 0x9AC;
+                case BBBPin.P9_26: return 0x980;
+                case BBBPin.P9_27: return 0x9A4;
+                case BBBPin.P9_28: return 0x99C;
+                case BBBPin.P9_29: return 0x994;
+                case BBBPin.P9_30: return 0x998;
+                case BBBPin.P9_31: return 0x990;
+
+                case BBBPin.P9_33:
+                case BBBPin.P9_35:
+                case BBBPin.P9_36:
+                case BBBPin.P9_37:
+                case BBBPin.P9_38:
+                case BBBPin.P9_39:
+                case BBBPin.P9_40:
+                    return 0x000; // TODO: Replace this with an actual value?
+
+                case BBBPin.P9_41: return 0x9B4;
+                case BBBPin.P9_42: return 0x964;
+
+                default: return 0x000;
+            }
+        }
+
+        /// <summary>Creates a 8-bit pin mode from the specified parameters.</summary>
+        static byte GetPinMode(bool FastSlew, bool EnableReceiver, ResistorState Resistor, byte ModeID)
+        {
+            // Bit | Function           | Modes
+            // ====|====================|=====================
+            // 0   | Reserved           | 0
+            // 0   | Slew Rate          | 0=Fast, 1=Slow
+            // 0   | Receiver Enable    | 0=Disable, 1=Enable
+            // 0   | Resistor Selection | 0=Pulldown, 1=Pullup
+            // ----|--------------------|---------------------
+            // 0   | Resistor Enable    | 0=Enable, 1=Disable
+            // 000 | Mux Select         | Value, 0 through 7
+            // -----------------------------------------------
+            // Source: AM3359 Technical Reference Manual: http://www.ti.com/product/AM3359/technicaldocuments
+            // Version P, Page 1512, Section 9.3.1.50, Table 9-60
+            // Find by searching "conf_<module>" in other versions.
+            byte Output = 0b0000_0000;
+            if (!FastSlew) { Output &= 0b0100_0000; }
+            if (EnableReceiver) { Output &= 0b0010_0000; }
+            if (Resistor == ResistorState.PULL_UP) { Output &= 0b0001_0000; }
+            else if(Resistor == ResistorState.NONE) { Output &= 0b0000_1000; }
+            if (ModeID >= 0b000 && ModeID <= 0b111) { Output &= ModeID; }
+            return Output;
         }
     }
 
