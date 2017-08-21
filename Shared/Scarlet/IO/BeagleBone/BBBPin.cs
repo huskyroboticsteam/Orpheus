@@ -9,8 +9,14 @@ namespace Scarlet.IO.BeagleBone
         P9_11, P9_12, P9_13, P9_14, P9_15, P9_16, P9_17, P9_18, P9_19, P9_20, P9_21, P9_22, P9_23, P9_24, P9_25, P9_26, P9_27, P9_28, P9_29, P9_30, P9_31, P9_32, P9_33, P9_34, P9_35, P9_36, P9_37, P9_38, P9_39, P9_40, P9_41, P9_42
     }
 
+    public enum BBBPinMode
+    {
+        NONE, GPIO, PWM, ADC, I2C, SPI, UART
+    }
+
     static class Pin
     {
+        /// <summary>Converts a Scarlet BBBPin to a BBBCSIO GpioEnum.</summary>
         public static GpioEnum PinToGPIO(BBBPin Pin)
         {
             switch (Pin)
@@ -88,6 +94,7 @@ namespace Scarlet.IO.BeagleBone
             }
         }
 
+        /// <summary>Determines if the given pin can be used in the system mode, or if it used by another device.</summary>
         public static bool CheckPin(BBBPin Pin, SystemMode Mode)
         {
             if(Mode == SystemMode.DEFAULT) // Everything enabled
@@ -182,6 +189,102 @@ namespace Scarlet.IO.BeagleBone
                 }
             }
             return true; // Nothing Enabled, or pin is not in use.
+        }
+
+        /// <summary>Gets the mux mode that needs to be used for the given pin usage. Returns 255 if invalid usage provided.</summary>
+        static byte GetModeID(BBBPin Pin, BBBPinMode Mode)
+        {
+            // Definitely not the prettiest code in the world.
+            switch (Pin)
+            {
+                case BBBPin.P9_11:
+                case BBBPin.P9_13:
+                    if (Mode == BBBPinMode.GPIO) { return 7; }
+                    else if (Mode == BBBPinMode.UART) { return 6; }
+                    else { return 255; }
+
+                case BBBPin.P9_12:
+                case BBBPin.P9_15:
+                case BBBPin.P9_23:
+                    if (Mode == BBBPinMode.GPIO) { return 7; }
+                    else { return 255; }
+
+                case BBBPin.P9_14:
+                case BBBPin.P9_16:
+                    if (Mode == BBBPinMode.GPIO) { return 7; }
+                    else if (Mode == BBBPinMode.PWM) { return 6; }
+                    else { return 255; }
+
+                case BBBPin.P9_17:
+                case BBBPin.P9_18:
+                    if (Mode == BBBPinMode.SPI) { return 0; }
+                    else if (Mode == BBBPinMode.I2C) { return 2; }
+                    else if (Mode == BBBPinMode.GPIO) { return 7; }
+                    else { return 255; }
+
+                case BBBPin.P9_19:
+                case BBBPin.P9_20:
+                    if(Mode == BBBPinMode.I2C) { return 3; }
+                    if (Mode == BBBPinMode.SPI) { return 4; }
+                    if (Mode == BBBPinMode.GPIO) { return 7; }
+                    else { return 255; }
+
+                case BBBPin.P9_21:
+                case BBBPin.P9_22:
+                    if (Mode == BBBPinMode.SPI) { return 0; }
+                    else if (Mode == BBBPinMode.UART) { return 1; }
+                    else if (Mode == BBBPinMode.I2C) { return 2; }
+                    else if (Mode == BBBPinMode.PWM) { return 3; }
+                    else if (Mode == BBBPinMode.GPIO) { return 7; }
+                    else { return 255; }
+
+                case BBBPin.P9_24:
+                case BBBPin.P9_26:
+                    if (Mode == BBBPinMode.UART) { return 0; }
+                    else if (Mode == BBBPinMode.I2C) { return 3; }
+                    else if (Mode == BBBPinMode.GPIO) { return 7; }
+                    else { return 255; }
+
+                case BBBPin.P9_25:
+                case BBBPin.P9_27:
+                    if (Mode == BBBPinMode.GPIO) { return 7; }
+                    else { return 255; }
+
+                case BBBPin.P9_28:
+                case BBBPin.P9_29:
+                case BBBPin.P9_31:
+                    if (Mode == BBBPinMode.SPI) { return 3; }
+                    else if (Mode == BBBPinMode.PWM) { return 1; } // TODO: Not sure if this is correct for P9_28.
+                    else if (Mode == BBBPinMode.GPIO) { return 7; }
+                    else { return 255; }
+
+                case BBBPin.P9_30:
+                    if (Mode == BBBPinMode.SPI) { return 3; }
+                    else if (Mode == BBBPinMode.GPIO) { return 7; }
+                    else { return 255; }
+
+                case BBBPin.P9_33:
+                case BBBPin.P9_35:
+                case BBBPin.P9_36:
+                case BBBPin.P9_37:
+                case BBBPin.P9_38:
+                case BBBPin.P9_39:
+                case BBBPin.P9_40:
+                    if(Mode == BBBPinMode.ADC) { return 0; }
+                    else { return 255; }
+
+                case BBBPin.P9_41:
+                    if (Mode == BBBPinMode.GPIO) { return 7; }
+                    else { return 255; }
+
+                case BBBPin.P9_42:
+                    if (Mode == BBBPinMode.SPI) { return 4; }
+                    else if (Mode == BBBPinMode.UART) { return 1; } // TODO: Not sure if this works.
+                    else if (Mode == BBBPinMode.PWM) { return 0; } // TODO: Not sure if this works.
+                    else if(Mode == BBBPinMode.GPIO) { return 7; }
+                    else { return 255; }
+            }
+            return 255;
         }
     }
 
