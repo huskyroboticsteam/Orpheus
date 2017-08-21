@@ -197,6 +197,68 @@ namespace Scarlet.IO.BeagleBone
             // Definitely not the prettiest code in the world.
             switch (Pin)
             {
+                // P8 Header
+                case BBBPin.P8_03:
+                case BBBPin.P8_04:
+                case BBBPin.P8_05:
+                case BBBPin.P8_06:
+                case BBBPin.P8_07:
+                case BBBPin.P8_08:
+                case BBBPin.P8_09:
+                case BBBPin.P8_10:
+                case BBBPin.P8_11:
+                case BBBPin.P8_12://
+                case BBBPin.P8_14:
+                case BBBPin.P8_15:
+                case BBBPin.P8_16:
+                case BBBPin.P8_17:
+                case BBBPin.P8_18://
+                case BBBPin.P8_20:
+                case BBBPin.P8_21:
+                case BBBPin.P8_22:
+                case BBBPin.P8_23:
+                case BBBPin.P8_24:
+                case BBBPin.P8_25:
+                case BBBPin.P8_26:
+                case BBBPin.P8_27:
+                case BBBPin.P8_28:
+                case BBBPin.P8_29:
+                case BBBPin.P8_30:
+                case BBBPin.P8_31:
+                case BBBPin.P8_32:
+                case BBBPin.P8_33://
+                case BBBPin.P8_35://
+                case BBBPin.P8_39:
+                case BBBPin.P8_40:
+                case BBBPin.P8_41:
+                case BBBPin.P8_42:
+                case BBBPin.P8_43:
+                case BBBPin.P8_44:
+                case BBBPin.P8_45:
+                case BBBPin.P8_46:
+                    if (Mode == BBBPinMode.GPIO) { return 7; }
+                    else { return 255; }
+
+                case BBBPin.P8_13:
+                case BBBPin.P8_19:
+                    if (Mode == BBBPinMode.PWM) { return 4; }
+                    else if (Mode == BBBPinMode.GPIO) { return 7; }
+                    else { return 255; }
+
+                case BBBPin.P8_34:
+                case BBBPin.P8_36:
+                    if (Mode == BBBPinMode.PWM) { return 2; }
+                    else if (Mode == BBBPinMode.GPIO) { return 7; }
+                    else { return 255; }
+
+                case BBBPin.P8_37:
+                case BBBPin.P8_38:
+                    if (Mode == BBBPinMode.UART) { return 4; }
+                    else if (Mode == BBBPinMode.GPIO) { return 7; }
+                    else { return 255; }
+
+
+                // P9 Header
                 case BBBPin.P9_11:
                 case BBBPin.P9_13:
                     if (Mode == BBBPinMode.GPIO) { return 7; }
