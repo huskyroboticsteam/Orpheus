@@ -95,6 +95,54 @@ namespace Scarlet.IO.BeagleBone
             }
         }
 
+        private static Dictionary<BBBPin, PinData> PinInfo = new Dictionary<BBBPin, PinData>()
+        {
+            { BBBPin.P8_03, new PinData(0x818, 6, 38, GpioEnum.GPIO_38, 1) },
+            { BBBPin.P8_04, new PinData(0x81C, 7, 39, GpioEnum.GPIO_39, 1) },
+            { BBBPin.P8_05, new PinData(0x808, 2, 34, GpioEnum.GPIO_34, 1) },
+            { BBBPin.P8_06, new PinData(0x80C, 3, 35, GpioEnum.GPIO_35, 1) },
+            { BBBPin.P8_07, new PinData(0x890, 36, 66, GpioEnum.GPIO_66, 0) },
+            { BBBPin.P8_08, new PinData(0x894, 37, 67, GpioEnum.GPIO_67, 0) },
+            { BBBPin.P8_09, new PinData(0x89C, 39, 69, GpioEnum.GPIO_69, 0) },
+            { BBBPin.P8_10, new PinData(0x898, 38, 68, GpioEnum.GPIO_68, 0) },
+            { BBBPin.P8_11, new PinData(0x834, 13, 45, GpioEnum.GPIO_45, 0) },
+            { BBBPin.P8_12, new PinData(0x830, 12, 44, GpioEnum.GPIO_44, 0) },
+            { BBBPin.P8_13, new PinData(0x824, 9, 23, GpioEnum.GPIO_23, 0) },
+            { BBBPin.P8_14, new PinData(0x828, 10, 26, GpioEnum.GPIO_26, 0) },
+            { BBBPin.P8_15, new PinData(0x83C, 15, 47, GpioEnum.GPIO_47, 0) },
+            { BBBPin.P8_16, new PinData(0x838, 14, 46, GpioEnum.GPIO_46, 0) },
+            { BBBPin.P8_17, new PinData(0x82C, 11, 27, GpioEnum.GPIO_27, 0) },
+            { BBBPin.P8_18, new PinData(0x88C, 35, 65, GpioEnum.GPIO_65, 0) },
+            { BBBPin.P8_19, new PinData(0x820, 8, 22, GpioEnum.GPIO_22, 0) },
+            { BBBPin.P8_20, new PinData(0x884, 33, 63, GpioEnum.GPIO_63, 1) },
+            { BBBPin.P8_21, new PinData(0x880, 32, 62, GpioEnum.GPIO_62, 1) },
+            { BBBPin.P8_22, new PinData(0x814, 5, 37, GpioEnum.GPIO_37, 1) },
+            { BBBPin.P8_23, new PinData(0x810, 4, 36, GpioEnum.GPIO_36, 1) },
+            { BBBPin.P8_24, new PinData(0x804, 1, 33, GpioEnum.GPIO_33, 1) },
+            { BBBPin.P8_25, new PinData(0x800, 0, 32, GpioEnum.GPIO_32, 1) },
+            { BBBPin.P8_26, new PinData(0x87C, 31, 61, GpioEnum.GPIO_61, 0) },
+            { BBBPin.P8_27, new PinData(0x8E0, 56, 86, GpioEnum.GPIO_86, 2) },
+            { BBBPin.P8_28, new PinData(0x8E8, 58, 88, GpioEnum.GPIO_88, 2) },
+            { BBBPin.P8_29, new PinData(0x8E4, 57, 87, GpioEnum.GPIO_87, 2) },
+            { BBBPin.P8_30, new PinData(0x8EC, 59, 89, GpioEnum.GPIO_89, 2) },
+            { BBBPin.P8_31, new PinData(0x8D8, 54, 10, GpioEnum.GPIO_10, 2) },
+            { BBBPin.P8_32, new PinData(0x8DC, 55, 11, GpioEnum.GPIO_11, 2) },
+            { BBBPin.P8_33, new PinData(0x8D4, 53, 9, GpioEnum.GPIO_9, 2) },
+            { BBBPin.P8_34, new PinData(0x8CC, 51, 81, GpioEnum.GPIO_81, 2) },
+            { BBBPin.P8_35, new PinData(0x8D0, 52, 8, GpioEnum.GPIO_8, 2) },
+            { BBBPin.P8_36, new PinData(0x8C8, 50, 80, GpioEnum.GPIO_80, 2) },
+            { BBBPin.P8_37, new PinData(0x8C0, 48, 78, GpioEnum.GPIO_78, 2) },
+            { BBBPin.P8_38, new PinData(0x8C4, 49, 79, GpioEnum.GPIO_79, 2) },
+            { BBBPin.P8_39, new PinData(0x8B8, 46, 76, GpioEnum.GPIO_76, 2) },
+            { BBBPin.P8_40, new PinData(0x8BC, 47, 77, GpioEnum.GPIO_77, 2) },
+            { BBBPin.P8_41, new PinData(0x8B0, 44, 74, GpioEnum.GPIO_74, 2) },
+            { BBBPin.P8_42, new PinData(0x8B4, 45, 75, GpioEnum.GPIO_75, 2) },
+            { BBBPin.P8_43, new PinData(0x8A8, 42, 72, GpioEnum.GPIO_72, 2) },
+            { BBBPin.P8_44, new PinData(0x8AC, 43, 73, GpioEnum.GPIO_73, 2) },
+            { BBBPin.P8_45, new PinData(0x8A0, 40, 70, GpioEnum.GPIO_70, 2) },
+            { BBBPin.P8_46, new PinData(0x8A4, 41, 71, GpioEnum.GPIO_71, 2) }
+        };
+
         /// <summary>Determines if the given pin can be used in the system mode, or if it used by another device.</summary>
         public static bool CheckPin(BBBPin Pin, SystemMode Mode)
         {
@@ -462,6 +510,24 @@ namespace Scarlet.IO.BeagleBone
             else if(Resistor == ResistorState.NONE) { Output |= 0b0000_1000; }
             if (ModeID >= 0b000 && ModeID <= 0b111) { Output |= ModeID; }
             return Output;
+        }
+
+        internal struct PinData
+        {
+            int Offset;
+            byte NumLinux;
+            byte NumGPIO;
+            GpioEnum GPIO;
+            byte Devices; // 0 0 0 0 | 0 0 <HDMI> <eMMC>
+
+            public PinData(int Offset, byte NumLinux, byte NumGPIO, GpioEnum GPIO, byte Devices)
+            {
+                this.Offset = Offset;
+                this.NumLinux = NumLinux;
+                this.NumGPIO = NumGPIO;
+                this.GPIO = GPIO;
+                this.Devices = Devices;
+            }
         }
 
     }
