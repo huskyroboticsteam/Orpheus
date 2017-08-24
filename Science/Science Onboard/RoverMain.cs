@@ -2,6 +2,7 @@
 using System.Net;
 using System.Threading;
 using Scarlet.Communications;
+using Scarlet.IO.BeagleBone;
 using Scarlet.Science;
 using Scarlet.Utilities;
 
@@ -24,9 +25,13 @@ namespace Science
             Log.Begin();
             Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Science Station - Rover Side");
 
+            Test();
+
             IOHandler = new IOHandler();
             Client.Start(IP, PortTCP, PortUDP, Constants.CLIENT_NAME);
             PacketHandler PackHan = new PacketHandler();
+
+            
 
             while(true)
             {
@@ -38,6 +43,13 @@ namespace Science
             Console.ReadKey();
             Environment.Exit(0);
 		}
+
+        private static void Test()
+        {
+            BeagleBone.Initialize(SystemMode.DEFAULT, true);
+            BBBPinManager.AddMapping(BBBPin.P8_08, true, Scarlet.IO.ResistorState.PULL_DOWN, BBBPinMode.GPIO);
+            BBBPinManager.ApplyPinSettings();
+        }
 
         private static void ParseArgs(string[] Args)
         {

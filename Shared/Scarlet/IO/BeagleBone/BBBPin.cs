@@ -1,5 +1,6 @@
 ﻿using BBBCSIO;
 using System;
+using System.Collections.Generic;
 
 namespace Scarlet.IO.BeagleBone
 {
@@ -192,7 +193,7 @@ namespace Scarlet.IO.BeagleBone
         }
 
         /// <summary>Gets the mux mode that needs to be used for the given pin usage. Returns 255 if invalid usage provided.</summary>
-        static byte GetModeID(BBBPin Pin, BBBPinMode Mode)
+        internal static byte GetModeID(BBBPin Pin, BBBPinMode Mode)
         {
             // Definitely not the prettiest code in the world.
             // Source: http://www.ofitselfso.com/BeagleNotes/BeagleboneBlackPinMuxModes.php
@@ -351,7 +352,7 @@ namespace Scarlet.IO.BeagleBone
         }
 
         /// <summary>Returns the memory address offset for each pin. Returns 0x000 if not found or invalid input.</summary>
-        static int GetOffset(BBBPin Pin)
+        internal static int GetOffset(BBBPin Pin)
         {
             switch (Pin)
             {
@@ -439,7 +440,7 @@ namespace Scarlet.IO.BeagleBone
         }
 
         /// <summary>Creates a 8-bit pin mode from the specified parameters.</summary>
-        static byte GetPinMode(bool FastSlew, bool EnableReceiver, ResistorState Resistor, byte ModeID)
+        internal static byte GetPinMode(bool FastSlew, bool EnableReceiver, ResistorState Resistor, byte ModeID)
         {
             // Bit | Function           | Modes
             // ====|====================|=====================
@@ -455,13 +456,14 @@ namespace Scarlet.IO.BeagleBone
             // Version P, Page 1512, Section 9.3.1.50, Table 9-60
             // Find by searching "conf_<module>" in other versions.
             byte Output = 0b0000_0000;
-            if (!FastSlew) { Output &= 0b0100_0000; }
-            if (EnableReceiver) { Output &= 0b0010_0000; }
-            if (Resistor == ResistorState.PULL_UP) { Output &= 0b0001_0000; }
-            else if(Resistor == ResistorState.NONE) { Output &= 0b0000_1000; }
-            if (ModeID >= 0b000 && ModeID <= 0b111) { Output &= ModeID; }
+            if (!FastSlew) { Output |= 0b0100_0000; }
+            if (EnableReceiver) { Output |= 0b0010_0000; }
+            if (Resistor == ResistorState.PULL_UP) { Output |= 0b0001_0000; }
+            else if(Resistor == ResistorState.NONE) { Output |= 0b0000_1000; }
+            if (ModeID >= 0b000 && ModeID <= 0b111) { Output |= ModeID; }
             return Output;
         }
+
     }
 
 }
