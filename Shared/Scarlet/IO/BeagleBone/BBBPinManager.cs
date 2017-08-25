@@ -15,6 +15,7 @@ namespace Scarlet.IO.BeagleBone
             byte Mode = Pin.GetModeID(SelectedPin, PinMode);
             if (Mode == 255) { throw new InvalidOperationException("This type of output is not supported on this pin."); }
             if (!Pin.CheckPin(SelectedPin, BeagleBone.Peripherals)) { throw new InvalidOperationException("This pin cannot be used without disabling some peripherals first."); }
+            if (Pin.GetOffset(SelectedPin) == 0x000) { throw new InvalidOperationException("This pin is not valid for device tree registration. ADC pins do not need to be registered."); }
             PinAssignment NewMap = new PinAssignment(SelectedPin, Pin.GetPinMode(FastSlew, !IsOutput, Resistor, Mode));
             lock(Mappings)
             {
@@ -79,7 +80,7 @@ namespace Scarlet.IO.BeagleBone
                 {
                     string Offset = String.Format("0x{0:X3}", (Pin.GetOffset(PinAss.Pin) - 0x800));
                     string Mode = String.Format("0x{0:X2}", PinAss.Mode);
-                    if (Offset != "0x000") { Output.Add("                                        " + Offset + " " + Mode); }
+                    Output.Add("                                        " + Offset + " " + Mode);
                 }
             }
 
