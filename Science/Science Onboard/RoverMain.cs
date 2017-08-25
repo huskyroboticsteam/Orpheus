@@ -59,6 +59,7 @@ namespace Science
                 Value = !Value;
                 Thread.Sleep(100);
             }
+            Output.SetOutput(false);
         }
 
         private static void ParseArgs(string[] Args)
