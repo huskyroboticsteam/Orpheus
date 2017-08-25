@@ -2,6 +2,7 @@
 using System.Net;
 using System.Threading;
 using Scarlet.Communications;
+using Scarlet.IO;
 using Scarlet.IO.BeagleBone;
 using Scarlet.Science;
 using Scarlet.Utilities;
@@ -49,6 +50,15 @@ namespace Science
             BeagleBone.Initialize(SystemMode.DEFAULT, true);
             BBBPinManager.AddMapping(BBBPin.P8_08, true, Scarlet.IO.ResistorState.PULL_DOWN, BBBPinMode.GPIO);
             BBBPinManager.ApplyPinSettings();
+            IDigitalOut Output = new DigitalOutBBB(BBBPin.P8_08);
+            Output.Initialize();
+            bool Value = false;
+            for (int i = 0; i < 50; i++)
+            {
+                Output.SetOutput(Value);
+                Value = !Value;
+                Thread.Sleep(100);
+            }
         }
 
         private static void ParseArgs(string[] Args)

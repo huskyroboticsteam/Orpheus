@@ -3,7 +3,7 @@ using System;
 
 namespace Scarlet.IO.BeagleBone
 {
-    class DigitalOutBBB : IDigitalOut
+    public class DigitalOutBBB : IDigitalOut
     {
         public BBBPin Pin { get; private set; }
         private Port OutputPort;
