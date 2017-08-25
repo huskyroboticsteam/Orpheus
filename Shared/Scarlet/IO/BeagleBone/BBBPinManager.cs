@@ -33,7 +33,7 @@ namespace Scarlet.IO.BeagleBone
         /// </summary>
         public static void ApplyPinSettings()
         {
-            if(Mappings.Count == 0) { Log.Output(Log.Severity.INFO, Log.Source.HARDWAREIO, "No pins defined, skipping device tree application."); return; }
+            if(Mappings == null || Mappings.Count == 0) { Log.Output(Log.Severity.INFO, Log.Source.HARDWAREIO, "No pins defined, skipping device tree application."); return; }
             string FileName = "Scarlet-DeviceTree.dts";
             StreamWriter DTOut = new StreamWriter(FileName);
             List<string> DeviceTree = GenerateDeviceTree();
