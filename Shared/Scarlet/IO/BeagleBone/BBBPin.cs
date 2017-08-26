@@ -208,8 +208,6 @@ namespace Scarlet.IO.BeagleBone
                 case BBBPin.P8_42:
                 case BBBPin.P8_43:
                 case BBBPin.P8_44:
-                case BBBPin.P8_45:
-                case BBBPin.P8_46:
                     if (Mode == BBBPinMode.GPIO) { return 7; }
                     else { return 255; }
 
@@ -229,6 +227,12 @@ namespace Scarlet.IO.BeagleBone
                 case BBBPin.P8_38:
                     if (Mode == BBBPinMode.UART) { return 4; }
                     else if (Mode == BBBPinMode.GPIO) { return 7; }
+                    else { return 255; }
+
+                case BBBPin.P8_45:
+                case BBBPin.P8_46:
+                    if (Mode == BBBPinMode.GPIO) { return 7; }
+                    else if (Mode == BBBPinMode.PWM) { return 3; }
                     else { return 255; }
 
 
@@ -286,14 +290,14 @@ namespace Scarlet.IO.BeagleBone
                     if (Mode == BBBPinMode.GPIO) { return 7; }
                     else { return 255; }
 
-                case BBBPin.P9_28:
                 case BBBPin.P9_29:
                 case BBBPin.P9_31:
                     if (Mode == BBBPinMode.SPI) { return 3; }
-                    else if (Mode == BBBPinMode.PWM) { return 1; } // TODO: Not sure if this is correct for P9_28.
+                    else if (Mode == BBBPinMode.PWM) { return 1; }
                     else if (Mode == BBBPinMode.GPIO) { return 7; }
                     else { return 255; }
 
+                case BBBPin.P9_28:
                 case BBBPin.P9_30:
                     if (Mode == BBBPinMode.SPI) { return 3; }
                     else if (Mode == BBBPinMode.GPIO) { return 7; }
@@ -316,7 +320,6 @@ namespace Scarlet.IO.BeagleBone
                 case BBBPin.P9_42:
                     if (Mode == BBBPinMode.SPI) { return 4; }
                     else if (Mode == BBBPinMode.UART) { return 1; } // TODO: Not sure if this works.
-                    else if (Mode == BBBPinMode.PWM) { return 0; } // TODO: Not sure if this works.
                     else if (Mode == BBBPinMode.GPIO) { return 7; }
                     else { return 255; }
             }
