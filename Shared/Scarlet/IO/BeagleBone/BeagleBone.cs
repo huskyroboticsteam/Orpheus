@@ -21,6 +21,7 @@ namespace Scarlet.IO.BeagleBone
 		{
             Peripherals = Mode;
             Fast = UseFastAccess;
+            PWMBBB.Initialize();
 		}
 	}
 }
