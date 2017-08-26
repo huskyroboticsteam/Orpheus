@@ -48,7 +48,7 @@ namespace Science
         private static void Test()
         {
             BeagleBone.Initialize(SystemMode.DEFAULT, true);
-            BBBPinManager.AddMapping(BBBPin.P8_08, true, Scarlet.IO.ResistorState.PULL_DOWN, BBBPinMode.GPIO);
+            BBBPinManager.AddMappingGPIO(BBBPin.P8_08, true, Scarlet.IO.ResistorState.PULL_DOWN);
             BBBPinManager.ApplyPinSettings();
             IDigitalOut Output = new DigitalOutBBB(BBBPin.P8_08);
             Output.Initialize();
