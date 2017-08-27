@@ -26,7 +26,8 @@ namespace Science
             Log.Begin();
             Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Science Station - Rover Side");
 
-            Test();
+            BeagleBone.Initialize(SystemMode.DEFAULT, true);
+            TestPWM();
 
             IOHandler = new IOHandler();
             Client.Start(IP, PortTCP, PortUDP, Constants.CLIENT_NAME);
@@ -45,9 +46,8 @@ namespace Science
             Environment.Exit(0);
 		}
 
-        private static void Test()
+        private static void TestGPIO()
         {
-            BeagleBone.Initialize(SystemMode.DEFAULT, true);
             BBBPinManager.AddMappingGPIO(BBBPin.P8_08, true, Scarlet.IO.ResistorState.PULL_DOWN);
             BBBPinManager.ApplyPinSettings();
             IDigitalOut Output = new DigitalOutBBB(BBBPin.P8_08);
@@ -60,6 +60,22 @@ namespace Science
                 Thread.Sleep(100);
             }
             Output.SetOutput(false);
+        }
+
+        private static void TestPWM()
+        {
+            BBBPinManager.AddMappingGPIO(BBBPin.P8_08, true, Scarlet.IO.ResistorState.PULL_DOWN); // TODO: Remove this dependency from DT
+            BBBPinManager.AddMappingPWM(BBBPin.P9_14);
+            BBBPinManager.ApplyPinSettings();
+            IPWMOutput Output = PWMBBB.PWMDevice1.OutputA;
+            Output.Initialize();
+            PWMBBB.PWMDevice1.SetFrequency(5000);
+            for(int i = 0; i < 100; i++)
+            {
+                Output.SetOutput(i / 100.000F);
+                Thread.Sleep(50);
+            }
+            Output.SetOutput(0);
         }
 
         private static void ParseArgs(string[] Args)

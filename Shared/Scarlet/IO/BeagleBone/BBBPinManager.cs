@@ -16,10 +16,7 @@ namespace Scarlet.IO.BeagleBone
             if (Mode == 255) { throw new InvalidOperationException("This type of output is not supported on this pin."); }
             if (!Pin.CheckPin(SelectedPin, BeagleBone.Peripherals)) { throw new InvalidOperationException("This pin cannot be used without disabling some peripherals first."); }
             if (Pin.GetOffset(SelectedPin) == 0x000) { throw new InvalidOperationException("This pin is not valid for device tree registration. ADC pins do not need to be registered."); }
-            lock (PWMMappings)
-            {
-                if (PWMMappings.ContainsKey(SelectedPin)) { throw new InvalidOperationException("This pin is already registered as PWM, cannot also use for GPIO."); }
-            }
+            if (PWMMappings != null && PWMMappings.ContainsKey(SelectedPin)) { throw new InvalidOperationException("This pin is already registered as PWM, cannot also use for GPIO."); }
 
             if (GPIOMappings == null) { GPIOMappings = new Dictionary<BBBPin, PinAssignment>(); }
             PinAssignment NewMap = new PinAssignment(SelectedPin, Pin.GetPinMode(FastSlew, !IsOutput, Resistor, Mode));
@@ -40,10 +37,7 @@ namespace Scarlet.IO.BeagleBone
             if (Mode == 255) { throw new InvalidOperationException("This pin cannot be used for PWM output."); }
             if (!Pin.CheckPin(SelectedPin, BeagleBone.Peripherals)) { throw new InvalidOperationException("This pin cannot be used for PWM without disabling some peripherals first."); }
             if (Pin.GetOffset(SelectedPin) == 0x000) { throw new InvalidOperationException("This pin is not valid for device tree registration."); }
-            lock (GPIOMappings)
-            {
-                if (GPIOMappings.ContainsKey(SelectedPin)) { throw new InvalidOperationException("This pin is already registered as GPIO, cannot also use for PWM."); }
-            }
+            if (GPIOMappings != null && GPIOMappings.ContainsKey(SelectedPin)) { throw new InvalidOperationException("This pin is already registered as GPIO, cannot also use for PWM."); }
 
             if (PWMMappings == null) { PWMMappings = new Dictionary<BBBPin, PinAssignment>(); }
             PinAssignment NewMap = new PinAssignment(SelectedPin, Mode);
