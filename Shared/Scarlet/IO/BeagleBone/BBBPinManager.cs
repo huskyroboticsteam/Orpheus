@@ -166,7 +166,7 @@ namespace Scarlet.IO.BeagleBone
 
                     int ListedNum = 0;
                     Output.Add("    exclusive-use =");
-                    if (PWMDev0.Count != 0)
+                    if (PWMDev0.Count > 0)
                     {
                         Output.Add("        \"epwmss0\",");
                         Output.Add("        \"ehrpwm0\",");
@@ -179,7 +179,7 @@ namespace Scarlet.IO.BeagleBone
                             ListedNum++;
                         }
                     }
-                    if (PWMDev1.Count != 0)
+                    if (PWMDev1.Count > 0)
                     {
                         Output.Add("        \"epwmss1\",");
                         Output.Add("        \"ehrpwm1\",");
@@ -192,7 +192,7 @@ namespace Scarlet.IO.BeagleBone
                             ListedNum++;
                         }
                     }
-                    if (PWMDev2.Count != 0)
+                    if (PWMDev2.Count > 0)
                     {
                         Output.Add("        \"epwmss2\",");
                         Output.Add("        \"ehrpwm2\",");
@@ -209,7 +209,7 @@ namespace Scarlet.IO.BeagleBone
                 }
             }
 
-            Output.Add("    fragment@0{");
+            Output.Add("    fragment@0 {");
             Output.Add("        target = <&am33xx_pinmux>;");
             Output.Add("        __overlay__ {");
             Output.Add("            scarlet_pins: scarlet_pin_set {");
@@ -230,7 +230,7 @@ namespace Scarlet.IO.BeagleBone
             Output.Add("        };");
             Output.Add("    };");
             Output.Add("    ");
-            Output.Add("    fragment@1{");
+            Output.Add("    fragment@1 {");
             Output.Add("        target = <&ocp>;");
             Output.Add("        __overlay__ {");
             Output.Add("            test_helper: helper {");
@@ -241,10 +241,116 @@ namespace Scarlet.IO.BeagleBone
             Output.Add("            };");
             Output.Add("        };");
             Output.Add("    };");
+            Output.Add("    ");
 
-            if(PWMMappings != null)
+            if (PWMMappings != null)
             {
-                // TODO: Output PWM fragments.
+                lock (PWMMappings)
+                {
+                    Output.Add("    fragment@2 {");
+                    Output.Add("        target = <&am33xx_pinmux>;");
+                    Output.Add("        __overlay__ {");
+                    if (PWMDev0.Count > 0)
+                    {
+                        Output.Add("            bbb_ehrpwm0_pins: pinmux_bbb_ehrpwm0_pins {");
+                        Output.Add("                pinctrl-single,pins = <");
+                        foreach (PinAssignment PinAss in PWMDev0.Values)
+                        {
+                            string Offset = String.Format("0x{0:X3}", (Pin.GetOffset(PinAss.Pin) - 0x800));
+                            string Mode = String.Format("0x{0:X2}", PinAss.Mode);
+                            Output.Add("                    " + Offset + " " + Mode);
+                        }
+                        Output.Add("                >;");
+                        Output.Add("            };");
+                    }
+                    if (PWMDev1.Count > 0)
+                    {
+                        Output.Add("            bbb_ehrpwm1_pins: pinmux_bbb_ehrpwm1_pins {");
+                        Output.Add("                pinctrl-single,pins = <");
+                        foreach (PinAssignment PinAss in PWMDev1.Values)
+                        {
+                            string Offset = String.Format("0x{0:X3}", (Pin.GetOffset(PinAss.Pin) - 0x800));
+                            string Mode = String.Format("0x{0:X2}", PinAss.Mode);
+                            Output.Add("                    " + Offset + " " + Mode);
+                        }
+                        Output.Add("                >;");
+                        Output.Add("            };");
+                    }
+                    if (PWMDev2.Count > 0)
+                    {
+                        Output.Add("            bbb_ehrpwm2_pins: pinmux_bbb_ehrpwm2_pins {");
+                        Output.Add("                pinctrl-single,pins = <");
+                        foreach (PinAssignment PinAss in PWMDev2.Values)
+                        {
+                            string Offset = String.Format("0x{0:X3}", (Pin.GetOffset(PinAss.Pin) - 0x800));
+                            string Mode = String.Format("0x{0:X2}", PinAss.Mode);
+                            Output.Add("                    " + Offset + " " + Mode);
+                        }
+                        Output.Add("                >;");
+                        Output.Add("            };");
+                    }
+                    Output.Add("        };");
+                    Output.Add("    };");
+                    Output.Add("    ");
+
+                    if (PWMDev0.Count > 0)
+                    {
+                        Output.Add("    fragment@10 {");
+                        Output.Add("        target = <&epwmss0>;");
+                        Output.Add("        __overlay__ {");
+                        Output.Add("            status = \"okay\";");
+                        Output.Add("            pinctrl-names = \"default\";");
+                        Output.Add("        };");
+                        Output.Add("    };");
+                        Output.Add("    fragment@11 {");
+                        Output.Add("        target = <&ehrpwm0>;");
+                        Output.Add("        __overlay__ {");
+                        Output.Add("            status = \"okay\";");
+                        Output.Add("            pinctrl-names = \"default\";");
+                        Output.Add("            pinctrl-0 = <&bbb_ehrpwm0_pins>;");
+                        Output.Add("        };");
+                        Output.Add("    };");
+                        Output.Add("    ");
+                    }
+                    if (PWMDev1.Count > 0)
+                    {
+                        Output.Add("    fragment@12 {");
+                        Output.Add("        target = <&epwmss1>;");
+                        Output.Add("        __overlay__ {");
+                        Output.Add("            status = \"okay\";");
+                        Output.Add("            pinctrl-names = \"default\";");
+                        Output.Add("        };");
+                        Output.Add("    };");
+                        Output.Add("    fragment@13 {");
+                        Output.Add("        target = <&ehrpwm1>;");
+                        Output.Add("        __overlay__ {");
+                        Output.Add("            status = \"okay\";");
+                        Output.Add("            pinctrl-names = \"default\";");
+                        Output.Add("            pinctrl-0 = <&bbb_ehrpwm1_pins>;");
+                        Output.Add("        };");
+                        Output.Add("    };");
+                        Output.Add("    ");
+                    }
+                    if (PWMDev2.Count > 0)
+                    {
+                        Output.Add("    fragment@14 {");
+                        Output.Add("        target = <&epwmss2>;");
+                        Output.Add("        __overlay__ {");
+                        Output.Add("            status = \"okay\";");
+                        Output.Add("            pinctrl-names = \"default\";");
+                        Output.Add("        };");
+                        Output.Add("    };");
+                        Output.Add("    fragment@15 {");
+                        Output.Add("        target = <&ehrpwm2>;");
+                        Output.Add("        __overlay__ {");
+                        Output.Add("            status = \"okay\";");
+                        Output.Add("            pinctrl-names = \"default\";");
+                        Output.Add("            pinctrl-0 = <&bbb_ehrpwm2_pins>;");
+                        Output.Add("        };");
+                        Output.Add("    };");
+                        Output.Add("    ");
+                    }
+                }
             }
 
             Output.Add("};");
