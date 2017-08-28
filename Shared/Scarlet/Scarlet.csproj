@@ -70,6 +70,7 @@
     <Compile Include="IO\BeagleBone\BBBPin.cs" />
     <Compile Include="IO\BeagleBone\BeagleBone.cs" />
     <Compile Include="IO\BeagleBone\BBBPinManager.cs" />
+    <Compile Include="IO\BeagleBone\DigitalInBBB.cs" />
     <Compile Include="IO\BeagleBone\DigitalOutBBB.cs" />
     <Compile Include="IO\BeagleBone\Enums.cs" />
     <Compile Include="IO\BeagleBone\PWMDeviceBBB.cs" />

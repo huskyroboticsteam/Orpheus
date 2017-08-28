@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Threading;
+using BBBCSIO;
 using Scarlet.Communications;
 using Scarlet.IO;
 using Scarlet.IO.BeagleBone;
@@ -27,7 +28,7 @@ namespace Science
             Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Science Station - Rover Side");
 
             BeagleBone.Initialize(SystemMode.DEFAULT, true);
-            TestPWM();
+            TestPWMLow();
 
             IOHandler = new IOHandler();
             Client.Start(IP, PortTCP, PortUDP, Constants.CLIENT_NAME);
@@ -76,6 +77,14 @@ namespace Science
                 Thread.Sleep(50);
             }
             Output.SetOutput(0);
+        }
+
+        private static void TestPWMLow()
+        {
+            PWMPortMM Port = new PWMPortMM(PWMPortEnum.PWM1_A);
+            Port.PeriodNS = 250000;
+            Port.DutyPercent = 50;
+            Port.RunState = true;
         }
 
         private static void ParseArgs(string[] Args)
