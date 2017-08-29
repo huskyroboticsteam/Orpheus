@@ -28,7 +28,8 @@ namespace Science
             Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Science Station - Rover Side");
 
             BeagleBone.Initialize(SystemMode.DEFAULT, true);
-            TestPWMLow();
+            Log.SetSingleOutputLevel(Log.Source.HARDWAREIO, Log.Severity.DEBUG);
+            TestDigI();
 
             IOHandler = new IOHandler();
             Client.Start(IP, PortTCP, PortUDP, Constants.CLIENT_NAME);
@@ -47,7 +48,7 @@ namespace Science
             Environment.Exit(0);
 		}
 
-        private static void TestGPIO()
+        private static void TestDigO()
         {
             BBBPinManager.AddMappingGPIO(BBBPin.P8_08, true, Scarlet.IO.ResistorState.PULL_DOWN);
             BBBPinManager.ApplyPinSettings();
@@ -61,6 +62,19 @@ namespace Science
                 Thread.Sleep(100);
             }
             Output.SetOutput(false);
+        }
+
+        private static void TestDigI()
+        {
+            BBBPinManager.AddMappingGPIO(BBBPin.P9_12, false, Scarlet.IO.ResistorState.PULL_DOWN);
+            BBBPinManager.ApplyPinSettings();
+            IDigitalIn Input = new DigitalInBBB(BBBPin.P9_12);
+            Input.Initialize();
+            for(int i = 0; i < 50; i++)
+            {
+                Log.Output(Log.Severity.DEBUG, Log.Source.HARDWAREIO, "Input is " + Input.GetInput());
+                Thread.Sleep(250);
+            }
         }
 
         private static void TestPWM()

@@ -17,21 +17,21 @@ namespace Scarlet.IO.BeagleBone
         /// <summary>Preapres the pin for use.</summary>
         public void Initialize()
         {
-            if (BeagleBone.Fast) { this.OutputPort = new OutputPortMM(IO.BeagleBone.Pin.PinToGPIO(this.Pin)); }
+            if (BeagleBone.FastGPIO) { this.OutputPort = new OutputPortMM(IO.BeagleBone.Pin.PinToGPIO(this.Pin)); }
             else { this.OutputPort = new OutputPortFS(IO.BeagleBone.Pin.PinToGPIO(this.Pin)); }
         }
 
         /// <summary>Sets the logic-level ouput.</summary>
         public void SetOutput(bool Output)
         {
-            if (BeagleBone.Fast) { ((OutputPortMM)this.OutputPort).Write(Output); }
+            if (BeagleBone.FastGPIO) { ((OutputPortMM)this.OutputPort).Write(Output); }
             else { ((OutputPortFS)this.OutputPort).Write(Output); }
         }
 
         /// <summary>Cleans up the pin for future use by other software.</summary>
         public void Dispose()
         {
-            if(BeagleBone.Fast)
+            if(BeagleBone.FastGPIO)
             {
                 ((OutputPortMM)this.OutputPort).ClosePort();
                 ((OutputPortMM)this.OutputPort).Dispose();

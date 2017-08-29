@@ -8,15 +8,20 @@ namespace Scarlet.IO.BeagleBone
         public BBBPin Pin { get; private set; }
         private Port InputPort;
 
+        public DigitalInBBB(BBBPin Pin)
+        {
+            this.Pin = Pin;
+        }
+
         public bool GetInput()
         {
-            if (BeagleBone.Fast) { return ((InputPortMM)this.InputPort).Read(); }
+            if (BeagleBone.FastGPIO) { return ((InputPortMM)this.InputPort).Read(); }
             else { return ((InputPortFS)this.InputPort).Read(); }
         }
 
         public void Initialize()
         {
-            if (BeagleBone.Fast) { this.InputPort = new InputPortMM(IO.BeagleBone.Pin.PinToGPIO(this.Pin)); }
+            if (BeagleBone.FastGPIO) { this.InputPort = new InputPortMM(IO.BeagleBone.Pin.PinToGPIO(this.Pin)); }
             else { this.InputPort = new InputPortFS(IO.BeagleBone.Pin.PinToGPIO(this.Pin)); }
         }
 
@@ -33,7 +38,7 @@ namespace Scarlet.IO.BeagleBone
 
         public void Dispose()
         {
-            if(BeagleBone.Fast)
+            if(BeagleBone.FastGPIO)
             {
                 ((InputPortMM)this.InputPort).ClosePort();
                 ((InputPortMM)this.InputPort).Dispose();

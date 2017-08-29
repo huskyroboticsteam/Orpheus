@@ -73,7 +73,6 @@ namespace Scarlet.IO.BeagleBone
     public class PWMOutputBBB : IPWMOutput
     {
         private BBBPin[] Pins;
-        private bool Enable1, Enable2;
         private float DutyCycle = -1;
 
         internal PWMPortMM Port;
