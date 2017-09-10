@@ -29,7 +29,7 @@ namespace Science
 
             BeagleBone.Initialize(SystemMode.DEFAULT, true);
             Log.SetSingleOutputLevel(Log.Source.HARDWAREIO, Log.Severity.DEBUG);
-            TestDigI();
+            TestPWM();
 
             IOHandler = new IOHandler();
             Client.Start(IP, PortTCP, PortUDP, Constants.CLIENT_NAME);
@@ -67,7 +67,7 @@ namespace Science
         private static void TestDigI()
         {
             BBBPinManager.AddMappingGPIO(BBBPin.P9_12, false, Scarlet.IO.ResistorState.PULL_DOWN);
-            BBBPinManager.ApplyPinSettings();
+            //BBBPinManager.ApplyPinSettings();
             IDigitalIn Input = new DigitalInBBB(BBBPin.P9_12);
             Input.Initialize();
             for(int i = 0; i < 50; i++)
