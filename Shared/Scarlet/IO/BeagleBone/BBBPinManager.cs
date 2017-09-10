@@ -8,7 +8,7 @@ namespace Scarlet.IO.BeagleBone
 {
     public static class BBBPinManager
     {
-        private static Dictionary<BBBPin, PinAssignment> GPIOMappings, PWMMappings;
+        private static Dictionary<BBBPin, PinAssignment> GPIOMappings, PWMMappings, I2CMappings;
 
         public static void AddMappingGPIO(BBBPin SelectedPin, bool IsOutput, ResistorState Resistor, bool FastSlew = true)
         {
@@ -49,6 +49,59 @@ namespace Scarlet.IO.BeagleBone
                     PWMMappings[SelectedPin] = NewMap;
                 }
                 else { PWMMappings.Add(SelectedPin, NewMap); }
+            }
+        }
+
+        public static void AddMappingsI2C(BBBPin ClockPin, BBBPin DataPin)
+        {
+            byte ClockMode = Pin.GetModeID(ClockPin, BBBPinMode.I2C);
+            byte DataMode = Pin.GetModeID(DataPin, BBBPinMode.I2C);
+            if (ClockMode == 255) { throw new InvalidOperationException("This pin cannot be used for I2C clock line."); }
+            if (DataMode == 255) { throw new InvalidOperationException("This pin cannot be used for I2C data line."); }
+            if (!Pin.CheckPin(ClockPin, BeagleBone.Peripherals)) { throw new InvalidOperationException("I2C clock pin cannot be used without disabling some peripherals first."); }
+            if (!Pin.CheckPin(DataPin, BeagleBone.Peripherals)) { throw new InvalidOperationException("I2C data pin cannot be used without disabling some peripherals first."); }
+            if (Pin.GetOffset(ClockPin) == 0x000) { throw new InvalidOperationException("I2C clock pin is not valid for device tree registration."); }
+            if (Pin.GetOffset(DataPin) == 0x000) { throw new InvalidOperationException("I2C data pin is not valid for device tree registration."); }
+
+            if (ClockPin == BBBPin.P9_17 || ClockPin == BBBPin.P9_24) // Port 1 SCL
+            {
+                if(DataPin != BBBPin.P9_18 && DataPin != BBBPin.P9_26) // Not Port 1 SDA
+                {
+                    throw new InvalidOperationException("I2C SDA pin selected is invalid with the selected SCL pin. Make sure that it is part of the same I2C port.");
+                }
+            }
+            else if (ClockPin == BBBPin.P9_19 || ClockPin == BBBPin.P9_21) // Port 2 SCL
+            {
+                if(DataPin != BBBPin.P9_20 && DataPin != BBBPin.P9_22) // Not Port 2 SDA
+                {
+                    throw new InvalidOperationException("I2C SDA pin selected is invalid with the selected SCL pin. Make sure that it is part of the same I2C port.");
+                }
+            }
+            else { throw new InvalidOperationException("Given pin is not a possible I2C SDA pin. Check the documentation for pinouts."); }
+
+
+            if (GPIOMappings != null && GPIOMappings.ContainsKey(ClockPin)) { throw new InvalidOperationException("I2C clock pin is already registered as GPIO, cannot also use for PWM."); }
+            if (GPIOMappings != null && GPIOMappings.ContainsKey(DataPin)) { throw new InvalidOperationException("I2C data pin is already registered as GPIO, cannot also use for PWM."); }
+            // TODO check PWM
+
+            if (I2CMappings == null) { I2CMappings = new Dictionary<BBBPin, PinAssignment>(); }
+            PinAssignment ClockMap = new PinAssignment(ClockPin, ClockMode);
+            PinAssignment DataMap = new PinAssignment(DataPin, DataMode);
+            lock (I2CMappings)
+            {
+                if(I2CMappings.ContainsKey(ClockPin))
+                {
+                    Log.Output(Log.Severity.WARNING, Log.Source.HARDWAREIO, "Overriding I2C SCL pin setting. This may mean that you have a pin usage conflict.");
+                    I2CMappings[ClockPin] = ClockMap;
+                }
+                else { I2CMappings.Add(ClockPin, ClockMap); }
+
+                if (I2CMappings.ContainsKey(DataPin))
+                {
+                    Log.Output(Log.Severity.WARNING, Log.Source.HARDWAREIO, "Overriding I2C SDA pin setting. This may mean that you have a pin usage conflict.");
+                    I2CMappings[DataPin] = DataMap;
+                }
+                else { I2CMappings.Add(DataPin, DataMap); }
             }
         }
 

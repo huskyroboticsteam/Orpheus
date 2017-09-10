@@ -3,6 +3,8 @@ using System.Net;
 using System.Threading;
 using BBBCSIO;
 using Scarlet.Communications;
+using Scarlet.Components;
+using Scarlet.Components.Sensors;
 using Scarlet.IO;
 using Scarlet.IO.BeagleBone;
 using Scarlet.Science;
@@ -99,6 +101,20 @@ namespace Science
             Port.PeriodNS = 250000;
             Port.DutyPercent = 50;
             Port.RunState = true;
+        }
+
+        private static void TestI2C()
+        {
+            BBBPinManager.AddMappingsI2C(BBBPin.P9_24, BBBPin.P9_26);
+            BBBPinManager.ApplyPinSettings();
+            VEML6070 UV = new VEML6070(I2CBBB.I2CBus1);
+            UV.Initialize();
+            for (int i = 0; i < 20; i++)
+            {
+                UV.UpdateState();
+                Log.Output(Log.Severity.DEBUG, Log.Source.SENSORS, "UV Reading: " + UV.GetData());
+                Thread.Sleep(200);
+            }
         }
 
         private static void ParseArgs(string[] Args)
