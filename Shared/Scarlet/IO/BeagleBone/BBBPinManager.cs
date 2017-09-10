@@ -87,8 +87,8 @@ namespace Scarlet.IO.BeagleBone
             // TODO check PWM
 
             if (I2CMappings == null) { I2CMappings = new Dictionary<BBBPin, PinAssignment>(); }
-            PinAssignment ClockMap = new PinAssignment(ClockPin, ClockMode);
-            PinAssignment DataMap = new PinAssignment(DataPin, DataMode);
+            PinAssignment ClockMap = new PinAssignment(ClockPin, Pin.GetPinMode(false, true, ResistorState.PULL_UP, ClockMode));
+            PinAssignment DataMap = new PinAssignment(DataPin, Pin.GetPinMode(false, true, ResistorState.PULL_UP, DataMode));
             lock (I2CMappings)
             {
                 if(I2CMappings.ContainsKey(ClockPin))
@@ -115,7 +115,7 @@ namespace Scarlet.IO.BeagleBone
         {
             // Generate the device tree
             if(GPIOMappings == null || GPIOMappings.Count == 0) { Log.Output(Log.Severity.INFO, Log.Source.HARDWAREIO, "No pins defined, skipping device tree application."); return; }
-            string FileName = "Scarlet-DT10";
+            string FileName = "Scarlet-DT11";
             string OutputDTFile = FileName + ".dts";
             List<string> DeviceTree = GenerateDeviceTree();
 
