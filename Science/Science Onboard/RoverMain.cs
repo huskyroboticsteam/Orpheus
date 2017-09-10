@@ -108,8 +108,9 @@ namespace Science
             BBBPinManager.AddMappingGPIO(BBBPin.P8_08, true, Scarlet.IO.ResistorState.PULL_DOWN);
             BBBPinManager.AddMappingsI2C(BBBPin.P9_24, BBBPin.P9_26);
             BBBPinManager.ApplyPinSettings();
-            VEML6070 UV = new VEML6070(I2CBBB.I2CBus1);
+            VEML6070 UV = new VEML6070(I2CBBB.I2CBus2);
             UV.Initialize();
+            Log.SetSingleOutputLevel(Log.Source.SENSORS, Log.Severity.DEBUG);
             for (int i = 0; i < 20; i++)
             {
                 UV.UpdateState();

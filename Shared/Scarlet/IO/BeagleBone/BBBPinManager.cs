@@ -115,7 +115,7 @@ namespace Scarlet.IO.BeagleBone
         {
             // Generate the device tree
             if(GPIOMappings == null || GPIOMappings.Count == 0) { Log.Output(Log.Severity.INFO, Log.Source.HARDWAREIO, "No pins defined, skipping device tree application."); return; }
-            string FileName = "Scarlet-DT9";
+            string FileName = "Scarlet-DT10";
             string OutputDTFile = FileName + ".dts";
             List<string> DeviceTree = GenerateDeviceTree();
 
@@ -147,7 +147,7 @@ namespace Scarlet.IO.BeagleBone
             Thread.Sleep(100);
 
             // Start relevant components.
-            I2CBBB.Initialize(EnableI2C1, EnableI2C2);
+            I2CBBB.Initialize(EnableI2C1, true);
         }
 
         private class PinAssignment

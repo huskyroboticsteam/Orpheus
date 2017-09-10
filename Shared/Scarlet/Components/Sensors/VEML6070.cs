@@ -13,6 +13,23 @@ namespace Scarlet.Components.Sensors
         private byte AddressLSB, AddressMSB;
         private II2CBus Bus;
         private ushort LastReading;
+        private byte Speed = (byte)RefreshSpeed.REGULAR;
+
+        /// <summary>
+        /// Determines how often readins are taken. DOUBLE is fastest, QUARTER is slowest.
+        /// The actual time depends on R_SET. See here for times:
+        /// (Note: The Adafruit breakout board uses 300k)
+        /// 
+        /// SETTING     TIME@300k   TIME@600k
+        /// =================================
+        /// DOUBLE      62.5ms      125ms
+        /// REGULAR     125ms       250ms
+        /// HALF        250ms       500ms
+        /// QUARTER     500ms       1000ms
+        /// 
+        /// (From page 8 in datasheet)
+        /// </summary>
+        public enum RefreshSpeed { DOUBLE, REGULAR, HALF, QUARTER }
 
         public VEML6070(II2CBus Bus, byte Address = 0x38)
         {
@@ -23,7 +40,12 @@ namespace Scarlet.Components.Sensors
 
         public void Initialize()
         {
-            this.Bus.Write(this.AddressLSB, new byte[] { (0x02 << 2) | 2 }, 1); // Set timing.
+            this.Bus.Write(this.AddressLSB, new byte[] { (byte)(((this.Speed & 0b0000_0011) << 2) | 0b0000_0010) }, 1); // Set timing.
+        }
+
+        public void SetRefreshSpeed(RefreshSpeed Speed)
+        {
+            this.Speed = (byte)Speed;
         }
 
         /// <summary>
