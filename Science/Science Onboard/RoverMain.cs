@@ -31,7 +31,7 @@ namespace Science
 
             BeagleBone.Initialize(SystemMode.DEFAULT, true);
             Log.SetSingleOutputLevel(Log.Source.HARDWAREIO, Log.Severity.DEBUG);
-            TestPWM();
+            TestI2C();
 
             IOHandler = new IOHandler();
             Client.Start(IP, PortTCP, PortUDP, Constants.CLIENT_NAME);
@@ -105,6 +105,7 @@ namespace Science
 
         private static void TestI2C()
         {
+            BBBPinManager.AddMappingGPIO(BBBPin.P8_08, true, Scarlet.IO.ResistorState.PULL_DOWN);
             BBBPinManager.AddMappingsI2C(BBBPin.P9_24, BBBPin.P9_26);
             BBBPinManager.ApplyPinSettings();
             VEML6070 UV = new VEML6070(I2CBBB.I2CBus1);

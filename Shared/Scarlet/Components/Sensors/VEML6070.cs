@@ -18,6 +18,7 @@ namespace Scarlet.Components.Sensors
         {
             this.AddressLSB = Address;
             this.AddressMSB = (byte)(Address + 1);
+            this.Bus = Bus;
         }
 
         public void Initialize()

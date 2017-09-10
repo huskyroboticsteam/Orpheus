@@ -8,10 +8,10 @@ namespace Scarlet.IO.BeagleBone
         public static I2CBusBBB I2CBus1 { get; private set; }
         public static I2CBusBBB I2CBus2 { get; private set; }
 
-        static internal void Initialize()
+        static internal void Initialize(bool Enable1, bool Enable2)
         {
-            I2CBus1 = new I2CBusBBB(1);
-            I2CBus2 = new I2CBusBBB(2);
+            if (Enable1) { I2CBus1 = new I2CBusBBB(1); }
+            if (Enable2) { I2CBus2 = new I2CBusBBB(2); }
         }
     }
 

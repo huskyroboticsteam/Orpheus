@@ -3,12 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 
 namespace Scarlet.IO.BeagleBone
 {
     public static class BBBPinManager
     {
         private static Dictionary<BBBPin, PinAssignment> GPIOMappings, PWMMappings, I2CMappings;
+        private static bool EnableI2C1, EnableI2C2;
 
         public static void AddMappingGPIO(BBBPin SelectedPin, bool IsOutput, ResistorState Resistor, bool FastSlew = true)
         {
@@ -113,7 +115,7 @@ namespace Scarlet.IO.BeagleBone
         {
             // Generate the device tree
             if(GPIOMappings == null || GPIOMappings.Count == 0) { Log.Output(Log.Severity.INFO, Log.Source.HARDWAREIO, "No pins defined, skipping device tree application."); return; }
-            string FileName = "Scarlet-DT3";
+            string FileName = "Scarlet-DT9";
             string OutputDTFile = FileName + ".dts";
             List<string> DeviceTree = GenerateDeviceTree();
 
@@ -141,6 +143,11 @@ namespace Scarlet.IO.BeagleBone
             // Apply the device tree
             // Command: echo Scarlet-DT > /sys/devices/platform/bone_capemgr/slots
             File.WriteAllText("/sys/devices/platform/bone_capemgr/slots", FileName);
+
+            Thread.Sleep(100);
+
+            // Start relevant components.
+            I2CBBB.Initialize(EnableI2C1, EnableI2C2);
         }
 
         private class PinAssignment
@@ -262,6 +269,7 @@ namespace Scarlet.IO.BeagleBone
                             string PinName = OnePin.Pin.ToString("F").Replace('_', '.');
                             ExclusiveUseList.Add(PinName);
                         }
+                        EnableI2C1 = true;
                     }
                     if (I2CDev2.Count > 0)
                     {
@@ -271,6 +279,7 @@ namespace Scarlet.IO.BeagleBone
                             string PinName = OnePin.Pin.ToString("F").Replace('_', '.');
                             ExclusiveUseList.Add(PinName);
                         }
+                        EnableI2C2 = true;
                     }
                 }
             }
