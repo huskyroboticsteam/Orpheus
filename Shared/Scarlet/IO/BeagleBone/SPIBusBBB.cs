@@ -35,8 +35,7 @@ namespace Scarlet.IO.BeagleBone
         }
 
         public byte[] Read(BBBPin DeviceSelect, int DataLength)
-        { // TODO: Make this use IDigitalOut instead of BBBPin.
-            this.Port
+        { // TODO: Make this use IDigitalOut instead of BBBPin
             throw new NotImplementedException();
         }
 
