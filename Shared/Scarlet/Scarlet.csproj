@@ -76,6 +76,7 @@
     <Compile Include="IO\BeagleBone\I2CBusBBB.cs" />
     <Compile Include="IO\BeagleBone\PWMDeviceBBB.cs" />
     <Compile Include="Components\Sensors\VEML6070.cs" />
+    <Compile Include="IO\BeagleBone\SPIBusBBB.cs" />
     <Compile Include="IO\Enums.cs" />
     <Compile Include="IO\Events.cs" />
     <Compile Include="IO\IAnalogueIn.cs" />
@@ -84,6 +85,7 @@
     <Compile Include="IO\IDigitalOut.cs" />
     <Compile Include="IO\II2CBus.cs" />
     <Compile Include="IO\IPWMOutput.cs" />
+    <Compile Include="IO\ISPIBus.cs" />
     <Compile Include="IO\RaspberryPi\DigitalInPi.cs" />
     <Compile Include="IO\RaspberryPi\DigitalOutPi.cs" />
     <Compile Include="IO\RaspberryPi\RaspberryPi.cs" />
@@ -92,8 +94,6 @@
     <Compile Include="Utilities\UtilData.cs" />
     <Compile Include="Utilities\UtilMain.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="IO\Devices\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

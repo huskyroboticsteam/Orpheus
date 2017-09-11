@@ -108,7 +108,7 @@ namespace Science
             BBBPinManager.AddMappingGPIO(BBBPin.P8_08, true, Scarlet.IO.ResistorState.PULL_DOWN);
             BBBPinManager.AddMappingsI2C(BBBPin.P9_24, BBBPin.P9_26);
             BBBPinManager.ApplyPinSettings();
-            VEML6070 UV = new VEML6070(I2CBBB.I2CBus2);
+            VEML6070 UV = new VEML6070(I2CBBB.I2CBus1);
             UV.Initialize();
             Log.SetSingleOutputLevel(Log.Source.SENSORS, Log.Severity.DEBUG);
             for (int i = 0; i < 20; i++)
@@ -117,6 +117,14 @@ namespace Science
                 Log.Output(Log.Severity.DEBUG, Log.Source.SENSORS, "UV Reading: " + UV.GetData());
                 Thread.Sleep(200);
             }
+        }
+
+        private static void TestSPI()
+        {
+            BBBPinManager.AddMappingsSPI(BBBPin.P9_18, BBBPin.NONE, BBBPin.P9_22);
+            BBBPinManager.AddMappingSPI_CS(BBBPin.P9_12);
+            BBBPinManager.ApplyPinSettings();
+            // Do SPI stuff
         }
 
         private static void ParseArgs(string[] Args)

@@ -9,7 +9,7 @@ namespace Scarlet.IO.BeagleBone
 {
     public static class BBBPinManager
     {
-        private static Dictionary<BBBPin, PinAssignment> GPIOMappings, PWMMappings, I2CMappings;
+        private static Dictionary<BBBPin, PinAssignment> GPIOMappings, PWMMappings, I2CMappings, SPIMappings;
         private static bool EnableI2C1, EnableI2C2;
 
         public static void AddMappingGPIO(BBBPin SelectedPin, bool IsOutput, ResistorState Resistor, bool FastSlew = true)
@@ -79,7 +79,7 @@ namespace Scarlet.IO.BeagleBone
                     throw new InvalidOperationException("I2C SDA pin selected is invalid with the selected SCL pin. Make sure that it is part of the same I2C port.");
                 }
             }
-            else { throw new InvalidOperationException("Given pin is not a possible I2C SDA pin. Check the documentation for pinouts."); }
+            else { throw new InvalidOperationException("Given pin is not a possible I2C SCL pin. Check the documentation for pinouts."); }
 
 
             if (GPIOMappings != null && GPIOMappings.ContainsKey(ClockPin)) { throw new InvalidOperationException("I2C clock pin is already registered as GPIO, cannot also use for PWM."); }
@@ -107,6 +107,89 @@ namespace Scarlet.IO.BeagleBone
             }
         }
 
+        // Either MISO or MOSI can be BBBPin.NONE if you only need 1-way communication.
+        // To add chip select pins, call AddMappingSPI_CS().
+        public static void AddMappingsSPI(BBBPin MISO, BBBPin MOSI, BBBPin Clock) // TODO: I might have gotten MOSI/MISO backwards.
+        {
+            byte ClockMode = Pin.GetModeID(Clock, BBBPinMode.SPI);
+            byte MISOMode = 255;
+            byte MOSIMode = 255;
+            if (ClockMode == 255) { throw new InvalidOperationException("This pin cannot be used for SPI clock."); }
+            if (!Pin.CheckPin(Clock, BeagleBone.Peripherals)) { throw new InvalidOperationException("SPI pin cannot be used without disabling some peripherals first."); }
+            if (Pin.GetOffset(Clock) == 0x000) { throw new InvalidOperationException("SPI pin is not valid for device tree registration."); }
+
+            if (MISO == BBBPin.NONE && MOSI == BBBPin.NONE) { throw new InvalidOperationException("You must set either MOSI or MISO, or both."); }
+
+            if (MISO != BBBPin.NONE)
+            {
+                MISOMode = Pin.GetModeID(MISO, BBBPinMode.SPI);
+                if (MISOMode == 255) { throw new InvalidOperationException("This pin cannot be used for SPI MISO."); }
+                if (!Pin.CheckPin(MISO, BeagleBone.Peripherals)) { throw new InvalidOperationException("SPI pin cannot be used without disabling some peripherals first."); }
+                if (Pin.GetOffset(MISO) == 0x000) { throw new InvalidOperationException("SPI pin is not valid for device tree registration."); }
+            }
+            if (MOSI != BBBPin.NONE)
+            {
+                MOSIMode = Pin.GetModeID(MOSI, BBBPinMode.SPI);
+                if (MOSIMode == 255) { throw new InvalidOperationException("This pin cannot be used for SPI MOSI."); }
+                if (!Pin.CheckPin(MOSI, BeagleBone.Peripherals)) { throw new InvalidOperationException("SPI pin cannot be used without disabling some peripherals first."); }
+                if (Pin.GetOffset(MOSI) == 0x000) { throw new InvalidOperationException("SPI pin is not valid for device tree registration."); }
+            }
+
+            if (Clock == BBBPin.P9_22) // Port 0
+            {
+                if (MISO != BBBPin.NONE && MISO != BBBPin.P9_18 && MISO == BBBPin.P9_30) { throw new InvalidOperationException("MISO pin selected is invalid with the selected clock pin. Make sure that they are part of the same SPI port."); }
+                if (MOSI != BBBPin.NONE && MOSI != BBBPin.P9_21 && MOSI != BBBPin.P9_29) { throw new InvalidOperationException("MOSI pin selected is invalid with the selected clock pin. Make sure that they are part of the same SPI port."); }
+            }
+            else if (Clock == BBBPin.P9_31 || Clock == BBBPin.P9_42) // Port 1
+            {
+                if (MISO != BBBPin.NONE && MISO != BBBPin.P9_30) { throw new InvalidOperationException("MISO pin selected is invalid with the selected clock pin. Make sure that they are part of the same SPI port."); }
+                if (MOSI != BBBPin.NONE && MOSI != BBBPin.P9_29) { throw new InvalidOperationException("MOSI pin selected is invalid with the selected clock pin. Make sure that they are part of the same SPI port."); }
+            }
+            else { throw new InvalidOperationException("SPI Clock pin selected is invalid. Make sure MISO, MOSI, and clock are valid selections and part of the same port."); }
+
+            if (SPIMappings == null) { SPIMappings = new Dictionary<BBBPin, PinAssignment>(); }
+            PinAssignment ClockMap = new PinAssignment(Clock, Pin.GetPinMode(true, true, ResistorState.PULL_UP, ClockMode));
+            PinAssignment MOSIMap = null;
+            PinAssignment MISOMap = null;
+            if (MOSI != BBBPin.NONE) { MOSIMap = new PinAssignment(MOSI, Pin.GetPinMode(true, false, ResistorState.PULL_UP, MOSIMode)); }
+            if (MISO != BBBPin.NONE) { MISOMap = new PinAssignment(MISO, Pin.GetPinMode(true, true, ResistorState.PULL_UP, MISOMode)); }
+
+            lock (SPIMappings)
+            {
+                if (SPIMappings.ContainsKey(Clock))
+                {
+                    Log.Output(Log.Severity.WARNING, Log.Source.HARDWAREIO, "Overriding SPI clock pin setting. This may mean that you have a pin usage conflict.");
+                    SPIMappings[Clock] = ClockMap;
+                }
+                else { SPIMappings.Add(Clock, ClockMap); }
+
+                if (MISO != BBBPin.NONE)
+                {
+                    if (SPIMappings.ContainsKey(MISO))
+                    {
+                        Log.Output(Log.Severity.WARNING, Log.Source.HARDWAREIO, "Overriding SPI MISO pin setting. This may mean that you have a pin usage conflict.");
+                        SPIMappings[MISO] = MISOMap;
+                    }
+                    else { SPIMappings.Add(MISO, MISOMap); }
+                }
+
+                if (MOSI != BBBPin.NONE)
+                {
+                    if (SPIMappings.ContainsKey(MOSI))
+                    {
+                        Log.Output(Log.Severity.WARNING, Log.Source.HARDWAREIO, "Overriding SPI MOSI pin setting. This may mean that you have a pin usage conflict.");
+                        SPIMappings[MOSI] = MOSIMap;
+                    }
+                    else { SPIMappings.Add(MOSI, MOSIMap); }
+                }
+            }
+        }
+
+        public static void AddMappingSPI_CS(BBBPin ChipSelect)
+        {
+
+        }
+
         /// <summary>
         /// Generates the device tree file, compiles it, and instructs the kernel to load the overlay though the cape manager. May take a while.
         /// Currently this can only be done once, as Scarlet does not have a way of removing the existing mappings.
@@ -115,7 +198,7 @@ namespace Scarlet.IO.BeagleBone
         {
             // Generate the device tree
             if(GPIOMappings == null || GPIOMappings.Count == 0) { Log.Output(Log.Severity.INFO, Log.Source.HARDWAREIO, "No pins defined, skipping device tree application."); return; }
-            string FileName = "Scarlet-DT11";
+            string FileName = "Scarlet-DT12";
             string OutputDTFile = FileName + ".dts";
             List<string> DeviceTree = GenerateDeviceTree();
 
@@ -147,7 +230,7 @@ namespace Scarlet.IO.BeagleBone
             Thread.Sleep(100);
 
             // Start relevant components.
-            I2CBBB.Initialize(EnableI2C1, true);
+            I2CBBB.Initialize(EnableI2C1, EnableI2C2);
         }
 
         private class PinAssignment
@@ -511,7 +594,7 @@ namespace Scarlet.IO.BeagleBone
                     }
                 }
             }
-
+            
             Output.Add("};");
 
             return Output;
