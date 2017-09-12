@@ -233,6 +233,27 @@ namespace Scarlet.IO.BeagleBone
             I2CBBB.Initialize(EnableI2C1, EnableI2C2);
         }
 
+        /// <summary>
+        /// Unloads all Scarlet device tree overlays.
+        /// </summary>
+        public static void RemovePinSettings()
+        {
+            // Command: cat /sys/devices/platform/bone_capemgr/slots
+            string[] Overlays = File.ReadAllLines("/sys/devices/platform/bone_capemgr/slots");
+            List<int> ToRemove = new List<int>();
+            foreach(string Overlay in Overlays)
+            {
+                if(Overlay.Contains("Scarlet-DT"))
+                {
+                    ToRemove.Add(int.Parse(Overlay.Substring(0, Overlay.IndexOf(":"))));
+                }
+            }
+            StreamWriter SlotManager = File.AppendText("/sys/devices/platform/bone_capemgr/slots");
+            // Command: echo -[NUM] > /sys/devices/platform/bone_capemgr/slots
+            ToRemove.ForEach(Num => SlotManager.Write('-' + Num + Environment.NewLine));
+            SlotManager.Flush();
+        }
+
         private class PinAssignment
         {
             public BBBPin Pin { get; private set; }
