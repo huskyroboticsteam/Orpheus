@@ -121,7 +121,7 @@ namespace Science
 
         private static void TestSPI()
         {
-            BBBPinManager.AddMappingsSPI(BBBPin.P9_18, BBBPin.NONE, BBBPin.P9_22);
+            BBBPinManager.AddMappingsSPI(BBBPin.P9_21, BBBPin.NONE, BBBPin.P9_22);
             BBBPinManager.AddMappingSPI_CS(BBBPin.P9_12);
             BBBPinManager.ApplyPinSettings();
             SPIBBB.SPIBus0.Initialize();
@@ -131,7 +131,7 @@ namespace Science
             for (int i = 0; i < 100; i++)
             {
                 Thermo.UpdateState();
-                Log.Output(Log.Severity.DEBUG, Log.Source.SENSORS, "Thermocouple Data, Faults: " + string.Format("{1:G}", Thermo.GetFaults()) + ", Internal: " + Thermo.GetInternalTemp() + ", External: " + Thermo.GetExternalTemp());
+                Log.Output(Log.Severity.DEBUG, Log.Source.SENSORS, "Thermocouple Data, Faults: " + string.Format("{0:G}", Thermo.GetFaults()) + ", Internal: " + Thermo.GetInternalTemp() + ", External: " + Thermo.GetExternalTemp() + " (Raw: " + Thermo.GetRawData() + ")");
                 Thread.Sleep(500);
             }
         }

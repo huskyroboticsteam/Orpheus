@@ -200,7 +200,7 @@ namespace Scarlet.IO.BeagleBone
         {
             // Generate the device tree
             if(GPIOMappings == null || GPIOMappings.Count == 0) { Log.Output(Log.Severity.INFO, Log.Source.HARDWAREIO, "No pins defined, skipping device tree application."); return; }
-            string FileName = "Scarlet-DT14";
+            string FileName = "Scarlet-DT15";
             string OutputDTFile = FileName + ".dts";
             List<string> DeviceTree = GenerateDeviceTree();
 
@@ -295,6 +295,9 @@ namespace Scarlet.IO.BeagleBone
 
             Dictionary<BBBPin, PinAssignment> I2CDev1 = new Dictionary<BBBPin, PinAssignment>();
             Dictionary<BBBPin, PinAssignment> I2CDev2 = new Dictionary<BBBPin, PinAssignment>();
+
+            Dictionary<BBBPin, PinAssignment> SPIDev0 = new Dictionary<BBBPin, PinAssignment>();
+            Dictionary<BBBPin, PinAssignment> SPIDev1 = new Dictionary<BBBPin, PinAssignment>();
 
             // Build exclusive-use list
             if (PWMMappings != null)
@@ -392,6 +395,34 @@ namespace Scarlet.IO.BeagleBone
                         }
                         EnableI2C2 = true;
                     }
+                }
+            }
+
+            if(SPIMappings != null)
+            {
+                lock (SPIMappings)
+                {
+                    // Sort SPI pins into devices
+                    foreach (KeyValuePair<BBBPin, PinAssignment> Entry in SPIMappings)
+                    {
+                        switch (Entry.Key)
+                        {
+                            case BBBPin.P9_22: // 0_CLK
+                            case BBBPin.P9_21: // 0_D0
+                            case BBBPin.P9_18: // 0_D1
+                            case BBBPin.P9_17: // 0_CS0
+                                SPIDev0.Add(Entry.Key, Entry.Value); continue;
+                            case BBBPin.P9_31: case BBBPin.P9_42: // 1_CLK
+                            case BBBPin.P9_29: // 1_D0
+                            case BBBPin.P9_30: // 1_D1
+                            case BBBPin.P9_20: case BBBPin.P9_28: // 1_CS0
+                            case BBBPin.P9_19: // 1_CS1
+                                SPIDev1.Add(Entry.Key, Entry.Value); continue;
+                        }
+                    }
+
+                    // Add SPI pins to the exclusive-use list
+                    // TODO: See if this is needed.
                 }
             }
 
@@ -622,9 +653,101 @@ namespace Scarlet.IO.BeagleBone
                     }
                 }
             }
-            
-            Output.Add("};");
 
+            // Output SPI device fragments
+            if (SPIMappings != null)
+            {
+                lock (SPIMappings)
+                {
+                    Output.Add("    fragment@4 {");
+                    Output.Add("        target = <&am33xx_pinmux>;");
+                    Output.Add("        __overlay__ {");
+                    if (SPIDev0.Count > 0)
+                    {
+                        Output.Add("            scarlet_spi0_pins: pinmux_scarlet_spi0_pins {");
+                        Output.Add("                pinctrl-single,pins = <");
+                        foreach (PinAssignment PinAss in SPIDev0.Values)
+                        {
+                            string Offset = String.Format("0x{0:X3}", (Pin.GetOffset(PinAss.Pin) - 0x800));
+                            string Mode = String.Format("0x{0:X2}", PinAss.Mode);
+                            Output.Add("                    " + Offset + " " + Mode);
+                        }
+                        Output.Add("                >;");
+                        Output.Add("            };");
+                    }
+                    if (SPIDev1.Count > 0)
+                    {
+                        Output.Add("            scarlet_spi1_pins: pinmux_scarlet_spi1_pins {");
+                        Output.Add("                pinctrl-single,pins = <");
+                        foreach (PinAssignment PinAss in SPIDev1.Values)
+                        {
+                            string Offset = String.Format("0x{0:X3}", (Pin.GetOffset(PinAss.Pin) - 0x800));
+                            string Mode = String.Format("0x{0:X2}", PinAss.Mode);
+                            Output.Add("                    " + Offset + " " + Mode);
+                        }
+                        Output.Add("                >;");
+                        Output.Add("            };");
+                    }
+                    Output.Add("        };");
+                    Output.Add("    };");
+                    Output.Add("    ");
+
+                    if (SPIDev0.Count > 0)
+                    {
+                        Output.Add("    fragment@30 {");
+                        Output.Add("        target = <&spi0>;");
+                        Output.Add("        __overlay__ {");
+                        Output.Add("            status = \"okay\";");
+                        Output.Add("            pinctrl-names = \"default\";");
+                        Output.Add("            pinctrl-0 = <&scarlet_spi0_pins>;");
+                        Output.Add("            ti,pio-mode;");
+                        Output.Add("            #address-cells = <1>;");
+                        Output.Add("            #size-cells = <0>;");
+                        Output.Add("            spidev@0 {");
+                        Output.Add("                spi-max-frequency = <24000000>;");
+                        Output.Add("                reg = <0>;");
+                        Output.Add("                compatible = \"spidev\";");
+                        Output.Add("                spi-cpha;");
+                        Output.Add("            };");
+                        Output.Add("            spidev@1 {");
+                        Output.Add("                spi-max-frequency = <24000000>;");
+                        Output.Add("                reg = <1>;");
+                        Output.Add("                compatible = \"spidev\";");
+                        Output.Add("            };");
+                        Output.Add("        };");
+                        Output.Add("    };");
+                        Output.Add("    ");
+                    }
+                    if (SPIDev1.Count > 0)
+                    {
+                        Output.Add("    fragment@31 {");
+                        Output.Add("        target = <&spi1>;");
+                        Output.Add("        __overlay__ {");
+                        Output.Add("            status = \"okay\";");
+                        Output.Add("            pinctrl-names = \"default\";");
+                        Output.Add("            pinctrl-0 = <&scarlet_spi1_pins>;");
+                        Output.Add("            ti,pio-mode;");
+                        Output.Add("            #address-cells = <1>;");
+                        Output.Add("            #size-cells = <0>;");
+                        Output.Add("            spidev@2 {");
+                        Output.Add("                spi-max-frequency = <24000000>;");
+                        Output.Add("                reg = <0>;");
+                        Output.Add("                compatible = \"spidev\";");
+                        Output.Add("                spi-cpha;");
+                        Output.Add("            };");
+                        Output.Add("            spidev@3 {");
+                        Output.Add("                spi-max-frequency = <24000000>;");
+                        Output.Add("                reg = <1>;");
+                        Output.Add("                compatible = \"spidev\";");
+                        Output.Add("            };");
+                        Output.Add("        };");
+                        Output.Add("    };");
+                        Output.Add("    ");
+                    }
+                }
+            }
+
+            Output.Add("};");
             return Output;
         }
     }

@@ -41,12 +41,13 @@ namespace Scarlet.Components.Sensors
         public void UpdateState()
         {
             byte[] InputData = this.Bus.Write(this.ChipSelect, new byte[] { 0x00, 0x00, 0x00, 0x00 }, 4);
-            this.LastReading = UtilData.ToUShort(InputData);
+            if (InputData != null && InputData.Length == 4) { this.LastReading = UtilData.ToUInt(InputData); }
         }
 
         public float GetInternalTemp() { return ConvertInternalFromRaw(this.LastReading); }
         public float GetExternalTemp() { return ConvertExternalFromRaw(this.LastReading); }
         public Fault GetFaults() { return ConvertFaultFromRaw(this.LastReading); }
+        public uint GetRawData() { return this.LastReading; }
 
         public static float ConvertInternalFromRaw(uint RawData)
         {
@@ -68,7 +69,7 @@ namespace Scarlet.Components.Sensors
 
         public static Fault ConvertFaultFromRaw(uint RawData)
         {
-            if (((RawData >> 17) & 1) == 1) // FAULT bit is set.
+            if (((RawData >> 16) & 1) == 1) // FAULT bit is set.
             {
                 return (Fault)((RawData & 0b111));
             }

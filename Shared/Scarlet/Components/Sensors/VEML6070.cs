@@ -52,15 +52,11 @@ namespace Scarlet.Components.Sensors
         /// Gets the current UV light level.
         /// </summary>
         /// <returns>UV light level in μW/cm/cm.</returns>
-        public int GetData()
-        {
-            return ConvertFromRaw(this.LastReading);
-        }
+        public int GetData() { return ConvertFromRaw(this.LastReading); }
 
-        public static int ConvertFromRaw(ushort RawData)
-        {
-            return RawData * 5;
-        }
+        public ushort GetRawData() { return this.LastReading; }
+
+        public static int ConvertFromRaw(ushort RawData) { return RawData * 5; }
 
         public bool Test() { return true; } // TODO: See if there is a way to test.
 
