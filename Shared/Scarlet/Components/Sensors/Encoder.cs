@@ -10,6 +10,7 @@ namespace Scarlet.Components.Sensors
         public int Angle { get; private set; }
         public event EventHandler<EncoderTurn> Turned;
 
+        // TODO: Can we implement this (as a separate Component) using BB CPU Encoder counter?
         public Encoder(int PinA, int PinB, int PulsesPerTurn)
         {
             this.PinA = PinA;
