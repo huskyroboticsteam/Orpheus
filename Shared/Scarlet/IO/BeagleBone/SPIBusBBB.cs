@@ -1,5 +1,6 @@
 ﻿using BBBCSIO;
 using System;
+using System.Collections.Generic;
 
 namespace Scarlet.IO.BeagleBone
 {
@@ -17,7 +18,10 @@ namespace Scarlet.IO.BeagleBone
 
     public class SPIBusBBB : ISPIBus
     {
+        // TODO: Make this use IDigitalOut instead of BBBPin
+
         private SPIPortFS Port;
+        private Dictionary<BBBPin, SPISlaveDeviceHandle> Devices;
 
         internal SPIBusBBB(byte ID)
         {
@@ -31,19 +35,29 @@ namespace Scarlet.IO.BeagleBone
 
         public void Initialize()
         {
-
+            this.Devices = new Dictionary<BBBPin, SPISlaveDeviceHandle>();
+            this.Devices.Add(BBBPin.NONE, this.Port.EnableSPISlaveDevice(SPISlaveDeviceEnum.SPI_SLAVEDEVICE_CS1));
+            this.Port.SetMode(SPIModeEnum.SPI_MODE_0);
+            this.Port.SetDefaultSpeedInHz(500000); // TODO: Determine appropriate speed.
         }
 
-        public byte[] Read(BBBPin DeviceSelect, int DataLength)
-        { // TODO: Make this use IDigitalOut instead of BBBPin
-            throw new NotImplementedException();
+        private SPISlaveDeviceHandle GetOrCreateHandle(BBBPin CSPin)
+        {
+            if (!this.Devices.ContainsKey(CSPin) || this.Devices[CSPin] == null) { this.Devices.Add(CSPin, this.Port.EnableSPIGPIOSlaveDevice(Pin.PinToGPIO(CSPin))); }
+            return this.Devices[CSPin];
         }
 
-        public void Write(BBBPin DeviceSelect, byte[] Data, int DataLength)
-        { // TODO: Make this use IDigitalOut instead of BBBPin.
-            throw new NotImplementedException();
+        public byte[] Write(BBBPin DeviceSelect, byte[] Data, int DataLength)
+        {
+            byte[] ReceivedData = new byte[DataLength];
+            this.Port.SPITransfer(GetOrCreateHandle(DeviceSelect), Data, ReceivedData, DataLength);
+            return ReceivedData;
         }
 
-        public void Dispose() { }
+        public void Dispose()
+        {
+            this.Port.ClosePort();
+            this.Port.Dispose();
+        }
     }
 }

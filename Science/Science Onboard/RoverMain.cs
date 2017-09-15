@@ -31,7 +31,7 @@ namespace Science
 
             BeagleBone.Initialize(SystemMode.DEFAULT, true);
             Log.SetSingleOutputLevel(Log.Source.HARDWAREIO, Log.Severity.DEBUG);
-            TestI2C();
+            TestSPI();
 
             IOHandler = new IOHandler();
             Client.Start(IP, PortTCP, PortUDP, Constants.CLIENT_NAME);
@@ -124,7 +124,16 @@ namespace Science
             BBBPinManager.AddMappingsSPI(BBBPin.P9_18, BBBPin.NONE, BBBPin.P9_22);
             BBBPinManager.AddMappingSPI_CS(BBBPin.P9_12);
             BBBPinManager.ApplyPinSettings();
-            // Do SPI stuff
+            SPIBBB.SPIBus0.Initialize();
+            MAX31855 Thermo = new MAX31855(SPIBBB.SPIBus0, BBBPin.P9_12);
+            Thermo.Initialize();
+            Log.SetSingleOutputLevel(Log.Source.SENSORS, Log.Severity.DEBUG);
+            for (int i = 0; i < 100; i++)
+            {
+                Thermo.UpdateState();
+                Log.Output(Log.Severity.DEBUG, Log.Source.SENSORS, "Thermocouple Data, Faults: " + string.Format("{1:G}", Thermo.GetFaults()) + ", Internal: " + Thermo.GetInternalTemp() + ", External: " + Thermo.GetExternalTemp());
+                Thread.Sleep(500);
+            }
         }
 
         private static void ParseArgs(string[] Args)

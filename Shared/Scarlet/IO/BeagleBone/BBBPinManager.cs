@@ -10,7 +10,7 @@ namespace Scarlet.IO.BeagleBone
     public static class BBBPinManager
     {
         private static Dictionary<BBBPin, PinAssignment> GPIOMappings, PWMMappings, I2CMappings, SPIMappings;
-        private static bool EnableI2C1, EnableI2C2;
+        private static bool EnableI2C1, EnableI2C2, EnableSPI0, EnableSPI1;
 
         public static void AddMappingGPIO(BBBPin SelectedPin, bool IsOutput, ResistorState Resistor, bool FastSlew = true)
         {
@@ -139,11 +139,13 @@ namespace Scarlet.IO.BeagleBone
             {
                 if (MISO != BBBPin.NONE && MISO != BBBPin.P9_18 && MISO == BBBPin.P9_30) { throw new InvalidOperationException("MISO pin selected is invalid with the selected clock pin. Make sure that they are part of the same SPI port."); }
                 if (MOSI != BBBPin.NONE && MOSI != BBBPin.P9_21 && MOSI != BBBPin.P9_29) { throw new InvalidOperationException("MOSI pin selected is invalid with the selected clock pin. Make sure that they are part of the same SPI port."); }
+                EnableSPI0 = true;
             }
             else if (Clock == BBBPin.P9_31 || Clock == BBBPin.P9_42) // Port 1
             {
                 if (MISO != BBBPin.NONE && MISO != BBBPin.P9_30) { throw new InvalidOperationException("MISO pin selected is invalid with the selected clock pin. Make sure that they are part of the same SPI port."); }
                 if (MOSI != BBBPin.NONE && MOSI != BBBPin.P9_29) { throw new InvalidOperationException("MOSI pin selected is invalid with the selected clock pin. Make sure that they are part of the same SPI port."); }
+                EnableSPI1 = true;
             }
             else { throw new InvalidOperationException("SPI Clock pin selected is invalid. Make sure MISO, MOSI, and clock are valid selections and part of the same port."); }
 
@@ -187,7 +189,7 @@ namespace Scarlet.IO.BeagleBone
 
         public static void AddMappingSPI_CS(BBBPin ChipSelect)
         {
-
+            AddMappingGPIO(ChipSelect, true, ResistorState.PULL_UP);
         }
 
         /// <summary>
@@ -198,7 +200,7 @@ namespace Scarlet.IO.BeagleBone
         {
             // Generate the device tree
             if(GPIOMappings == null || GPIOMappings.Count == 0) { Log.Output(Log.Severity.INFO, Log.Source.HARDWAREIO, "No pins defined, skipping device tree application."); return; }
-            string FileName = "Scarlet-DT12";
+            string FileName = "Scarlet-DT14";
             string OutputDTFile = FileName + ".dts";
             List<string> DeviceTree = GenerateDeviceTree();
 
@@ -215,6 +217,9 @@ namespace Scarlet.IO.BeagleBone
             Compile.Start();
             Compile.WaitForExit();
 
+            // Remove previous device tree
+            RemovePinSettings();
+
             // Copy the compiled file to the firmware folder
             // Command: cp Scarlet-DT-00A0.dtbo /lib/firmware
             if(!File.Exists(CompiledDTFile)) { throw new FileNotFoundException("Failed to get compiled device tree!"); }
@@ -225,12 +230,13 @@ namespace Scarlet.IO.BeagleBone
 
             // Apply the device tree
             // Command: echo Scarlet-DT > /sys/devices/platform/bone_capemgr/slots
-            File.WriteAllText("/sys/devices/platform/bone_capemgr/slots", FileName);
+            File.WriteAllText("/sys/devices/platform/bone_capemgr/slots", FileName); // TODO: Make this able to handle a non-empty file.
 
             Thread.Sleep(100);
 
             // Start relevant components.
             I2CBBB.Initialize(EnableI2C1, EnableI2C2);
+            SPIBBB.Initialize(EnableSPI0, EnableSPI1);
         }
 
         /// <summary>
@@ -252,6 +258,7 @@ namespace Scarlet.IO.BeagleBone
             // Command: echo -[NUM] > /sys/devices/platform/bone_capemgr/slots
             ToRemove.ForEach(Num => SlotManager.Write('-' + Num + Environment.NewLine));
             SlotManager.Flush();
+            SlotManager.Close();
         }
 
         private class PinAssignment

@@ -61,6 +61,7 @@
     <Compile Include="Components\Motors\TalonMC.cs" />
     <Compile Include="Components\Sensors\Encoder.cs" />
     <Compile Include="Components\Sensors\LimitSwitch.cs" />
+    <Compile Include="Components\Sensors\MAX31855.cs" />
     <Compile Include="Components\Sensors\Potentiometer.cs" />
     <Compile Include="Controllers\PID.cs" />
     <Compile Include="Filters\Average.cs" />
