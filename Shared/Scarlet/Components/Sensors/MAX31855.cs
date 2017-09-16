@@ -12,7 +12,7 @@ namespace Scarlet.Components.Sensors
     public class MAX31855 : ISensor
     {
         private ISPIBus Bus;
-        private BBBPin ChipSelect;
+        private IDigitalOut ChipSelect;
         private uint LastReading;
 
         /// <summary>
@@ -24,7 +24,7 @@ namespace Scarlet.Components.Sensors
         [Flags]
         public enum Fault { NONE = 0, NO_THERMOCOUPLE = 1, SHORT_GND = 2, SHORT_VCC = 4 }
 
-        public MAX31855(ISPIBus Bus, BBBPin ChipSelect)
+        public MAX31855(ISPIBus Bus, IDigitalOut ChipSelect)
         {
             this.Bus = Bus;
             this.ChipSelect = ChipSelect;

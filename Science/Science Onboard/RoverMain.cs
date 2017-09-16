@@ -18,6 +18,7 @@ namespace Science
         private static string IP = Constants.DEFAULT_SERVER_IP;
         private static int PortTCP = Constants.DEFAULT_PORT_TCP;
         private static int PortUDP = Constants.DEFAULT_PORT_UDP;
+        private static bool ApplyDevTree = true;
 
         static void Main(string[] Args)
 		{
@@ -53,7 +54,7 @@ namespace Science
         private static void TestDigO()
         {
             BBBPinManager.AddMappingGPIO(BBBPin.P8_08, true, Scarlet.IO.ResistorState.PULL_DOWN);
-            BBBPinManager.ApplyPinSettings();
+            BBBPinManager.ApplyPinSettings(ApplyDevTree);
             IDigitalOut Output = new DigitalOutBBB(BBBPin.P8_08);
             Output.Initialize();
             bool Value = false;
@@ -69,7 +70,7 @@ namespace Science
         private static void TestDigI()
         {
             BBBPinManager.AddMappingGPIO(BBBPin.P9_12, false, Scarlet.IO.ResistorState.PULL_DOWN);
-            //BBBPinManager.ApplyPinSettings();
+            //if (ApplyDevTree) { BBBPinManager.ApplyPinSettings(); }
             IDigitalIn Input = new DigitalInBBB(BBBPin.P9_12);
             Input.Initialize();
             for(int i = 0; i < 50; i++)
@@ -83,7 +84,7 @@ namespace Science
         {
             BBBPinManager.AddMappingGPIO(BBBPin.P8_08, true, Scarlet.IO.ResistorState.PULL_DOWN); // TODO: Remove this dependency from DT
             BBBPinManager.AddMappingPWM(BBBPin.P9_14);
-            BBBPinManager.ApplyPinSettings();
+            BBBPinManager.ApplyPinSettings(ApplyDevTree);
             IPWMOutput Output = PWMBBB.PWMDevice1.OutputA;
             Output.Initialize();
             PWMBBB.PWMDevice1.SetFrequency(5000);
@@ -107,7 +108,7 @@ namespace Science
         {
             BBBPinManager.AddMappingGPIO(BBBPin.P8_08, true, Scarlet.IO.ResistorState.PULL_DOWN);
             BBBPinManager.AddMappingsI2C(BBBPin.P9_24, BBBPin.P9_26);
-            BBBPinManager.ApplyPinSettings();
+            BBBPinManager.ApplyPinSettings(ApplyDevTree);
             VEML6070 UV = new VEML6070(I2CBBB.I2CBus1);
             UV.Initialize();
             Log.SetSingleOutputLevel(Log.Source.SENSORS, Log.Severity.DEBUG);
@@ -123,9 +124,11 @@ namespace Science
         {
             BBBPinManager.AddMappingsSPI(BBBPin.P9_21, BBBPin.NONE, BBBPin.P9_22);
             BBBPinManager.AddMappingSPI_CS(BBBPin.P9_12);
-            BBBPinManager.ApplyPinSettings();
+            BBBPinManager.ApplyPinSettings(ApplyDevTree);
+            IDigitalOut CS_Thermo = new DigitalOutBBB(BBBPin.P9_12);
+            CS_Thermo.Initialize();
             SPIBBB.SPIBus0.Initialize();
-            MAX31855 Thermo = new MAX31855(SPIBBB.SPIBus0, BBBPin.P9_12);
+            MAX31855 Thermo = new MAX31855(SPIBBB.SPIBus0, CS_Thermo);
             Thermo.Initialize();
             Log.SetSingleOutputLevel(Log.Source.SENSORS, Log.Severity.DEBUG);
             for (int i = 0; i < 100; i++)
@@ -167,6 +170,11 @@ namespace Science
                     Console.WriteLine("  -s|--server <IP> : Connects to the given server instead of the default.");
                     Console.WriteLine("  -pt|--port-tcp <Port> : Connects to the server via TCP using the given port instead of the default.");
                     Console.WriteLine("  -pu|--port-udp <Port> : Connects to the server via UDP using the given port instead of the default.");
+                    Console.WriteLine("  --no-dt : Do not attempt to remove/add device tree overlays.");
+                }
+                if(Args[i] == "--no-dt")
+                {
+                    ApplyDevTree = false;
                 }
             }
         }

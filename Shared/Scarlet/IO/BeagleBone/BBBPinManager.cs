@@ -229,7 +229,7 @@ namespace Scarlet.IO.BeagleBone
         /// Generates the device tree file, compiles it, and instructs the kernel to load the overlay though the cape manager. May take a while.
         /// Currently this can only be done once, as Scarlet does not have a way of removing the existing mappings.
         /// </summary>
-        public static void ApplyPinSettings()
+        public static void ApplyPinSettings(bool AttemptOverlayChanges)
         {
             // Generate the device tree
             if(GPIOMappings == null || GPIOMappings.Count == 0) { Log.Output(Log.Severity.INFO, Log.Source.HARDWAREIO, "No pins defined, skipping device tree application."); return; }
@@ -240,32 +240,35 @@ namespace Scarlet.IO.BeagleBone
             // Save the device tree to file
             File.WriteAllLines(OutputDTFile, DeviceTree);
 
-            // Compile the device tree file
-            // Command: dtc -O dtb -o Scarlet-DT-00A0.dtbo -b 0 -@ Scarlet-DT.dts
-            string CompiledDTFile = FileName + "-00A0.dtbo";
-            Process Compile = new Process();
-            Compile.StartInfo.FileName = "dtc";
-            Compile.StartInfo.Arguments = "-O dtb -o \"" + CompiledDTFile + "\" -b 0 -@ \"" + OutputDTFile + "\"";
-            Log.Output(Log.Severity.INFO, Log.Source.HARDWAREIO, "Compiling device tree...");
-            Compile.Start();
-            Compile.WaitForExit();
+            if (AttemptOverlayChanges)
+            {
+                // Compile the device tree file
+                // Command: dtc -O dtb -o Scarlet-DT-00A0.dtbo -b 0 -@ Scarlet-DT.dts
+                string CompiledDTFile = FileName + "-00A0.dtbo";
+                Process Compile = new Process();
+                Compile.StartInfo.FileName = "dtc";
+                Compile.StartInfo.Arguments = "-O dtb -o \"" + CompiledDTFile + "\" -b 0 -@ \"" + OutputDTFile + "\"";
+                Log.Output(Log.Severity.INFO, Log.Source.HARDWAREIO, "Compiling device tree...");
+                Compile.Start();
+                Compile.WaitForExit();
 
-            // Remove previous device tree
-            RemovePinSettings();
+                // Remove previous device tree
+                RemovePinSettings();
 
-            // Copy the compiled file to the firmware folder
-            // Command: cp Scarlet-DT-00A0.dtbo /lib/firmware
-            if(!File.Exists(CompiledDTFile)) { throw new FileNotFoundException("Failed to get compiled device tree!"); }
-            File.Copy(CompiledDTFile, "/lib/firmware/" + CompiledDTFile, true);
+                // Copy the compiled file to the firmware folder
+                // Command: cp Scarlet-DT-00A0.dtbo /lib/firmware
+                if (!File.Exists(CompiledDTFile)) { throw new FileNotFoundException("Failed to get compiled device tree!"); }
+                File.Copy(CompiledDTFile, "/lib/firmware/" + CompiledDTFile, true);
 
-            // Delete the compiled tree file in execution folder
-            File.Delete(CompiledDTFile);
+                // Delete the compiled tree file in execution folder
+                File.Delete(CompiledDTFile);
 
-            // Apply the device tree
-            // Command: echo Scarlet-DT > /sys/devices/platform/bone_capemgr/slots
-            File.WriteAllText("/sys/devices/platform/bone_capemgr/slots", FileName); // TODO: Make this able to handle a non-empty file.
+                // Apply the device tree
+                // Command: echo Scarlet-DT > /sys/devices/platform/bone_capemgr/slots
+                File.WriteAllText("/sys/devices/platform/bone_capemgr/slots", FileName); // TODO: Make this able to handle a non-empty file.
 
-            Thread.Sleep(100);
+                Thread.Sleep(100);
+            }
 
             // Start relevant components.
             I2CBBB.Initialize(EnableI2C1, EnableI2C2);

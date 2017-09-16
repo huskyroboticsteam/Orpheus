@@ -8,7 +8,7 @@ namespace Scarlet.IO
         void Initialize();
 
         // This will be changed to IDigitalOut instead of BBBPin.
-        byte[] Write(BBBPin DeviceSelect, byte[] Data, int DataLength);
+        byte[] Write(IDigitalOut DeviceSelect, byte[] Data, int DataLength);
 
         void Dispose();
     }

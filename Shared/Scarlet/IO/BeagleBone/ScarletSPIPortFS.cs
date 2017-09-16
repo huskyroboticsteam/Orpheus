@@ -2,6 +2,7 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using Scarlet.IO;
 
 /// +------------------------------------------------------------------------------------------------------------------------------+
 /// |                                                   TERMS OF USE: MIT License                                                  |
@@ -41,16 +42,22 @@ namespace BBBCSIO
     /// 
     /// </summary>
     /// <history>
+    ///    16 Sep 17  Cai Biesinger - Modified for Scarlet:
+    ///     - Removed native CS pin usage features, as we don't need this.
+    ///     - Switched from using pins to IDigitalOut to better align with Scarlet's structure.
+    ///     - Fixed bug that caused CS line to not be returned to high after communication finished.
     ///    21 Dec 14  Cynic - Originally written
     /// </history>
-    public class SPIPortFS : PortFS
-    {
+    public class ScarletSPIPortFS : PortFS
+    { // TODO: Go through and update documentation for changes made.
 
         // the SPI port we use
         private SPIPortEnum spiPort = SPIPortEnum.SPIPORT_NONE;
 
         // the open slave devices we have created
-        List<SPISlaveDeviceHandle> openSlaveDevices = new List<SPISlaveDeviceHandle>();
+        //List<SPISlaveDeviceHandle> openSlaveDevices = new List<SPISlaveDeviceHandle>();
+        SPISlaveDeviceHandle PortDevice;
+        List<IDigitalOut> SlaveDevices = new List<IDigitalOut>();
 
         // used for external file open calls
         const int O_RDONLY = 0x0;
@@ -78,15 +85,16 @@ namespace BBBCSIO
         /// <history>
         ///    21 Dec 14  Cynic - Originally written
         /// </history>
-        public SPIPortFS(SPIPortEnum spiPortIn) : base(GpioEnum.GPIO_NONE)
+        public ScarletSPIPortFS(SPIPortEnum spiPortIn) : base(GpioEnum.GPIO_NONE)
         {
             spiPort = spiPortIn;
+            PortDevice = EnableSPIDevice();
             // NOTE the port is not opened here as per the usual manner. Because
             // each SPI dev device represents a distinct Slave select, we open the
             // spidev file on the EnableSPISlaveDevice call();
             //Console.WriteLine("SPIPort Starts");
         }
-                               
+
         /// +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
         /// <summary>
         /// Writes/Reads a buffer out/in to/from an SPI Slave Device. 
@@ -113,60 +121,30 @@ namespace BBBCSIO
         /// <param name="rxByteBuf">The buffer with bytes to receive. Can be NULL</param>
         /// <param name="numBytes">The number of bytes to send/receive
         /// <history>
+        ///    16 Sep 17  Cai Biesinger: Scarlet - Modified for better integration with Scarlet.
         ///    21 Dec 14  Cynic - Originally written
         /// </history>
-        public void SPITransfer(SPISlaveDeviceHandle ssHandle, byte[] txByteBuf, byte[] rxByteBuf, int numBytes)
+        public void SPITransfer(IDigitalOut output, byte[] txByteBuf, byte[] rxByteBuf, int numBytes)
         {
             int spiFileDescriptor = -1;
             int ioctlRetVal = -1;
 
             // sanity check
-            if (ssHandle == null)
-            {
-                throw new Exception ("Null Slave Device Handle");
-            }
-            if (txByteBuf == null)
-            {
-                throw new Exception ("Null tx buffer");
-            }
-            if (numBytes <= 0)
-            {
-                throw new Exception ("numBytes <= 0");
-            }
+            if (output == null) { throw new Exception("Null IDigitalOut object"); }
+            if (txByteBuf == null) { throw new Exception ("Null tx buffer"); }
+            if (numBytes <= 0) { throw new Exception ("numBytes <= 0"); }
 
             // set up our file descriptor
-            // are we an internal chip select type slave device?
-            if ((ssHandle.SPISlaveDevice == SPISlaveDeviceEnum.SPI_SLAVEDEVICE_CS0) ||
-                (ssHandle.SPISlaveDevice == SPISlaveDeviceEnum.SPI_SLAVEDEVICE_CS1))
-            {
-                // yes we are, just use this descriptor
-                spiFileDescriptor = ssHandle.SpiDevFileDescriptor;
-            }
-            else if (ssHandle.SPISlaveDevice == SPISlaveDeviceEnum.SPI_SLAVEDEVICE_GPIO)
-            {
-                if (ssHandle.GpioSlaveSelect == null)
-                {
-                    throw new Exception ("No GPIO Slave Select device found.");
-                }
 
-                // use the descriptor of the first non-GPIO slave select 
-                // we find.
+            // use the descriptor of the first non-GPIO slave select 
+            // we find.
 
-                // get first slave device. We need the file descriptor
-                SPISlaveDeviceHandle firstHandle = GetFirstSlaveDeviceWithFD();
-                // sanity check
-                if (firstHandle == null)
-                {
-                    throw new Exception ("At least one non GPIO Slave Device must be enabled.");
-                }
-                // use this descriptor
-                spiFileDescriptor = firstHandle.SpiDevFileDescriptor;
-            }
-            else
-            {
-                // should never happen
-                throw new Exception("unknown slave device type");
-            }
+            // get first slave device. We need the file descriptor
+            SPISlaveDeviceHandle firstHandle = PortDevice;
+            // sanity check
+            if (firstHandle == null) { throw new Exception("At least one non GPIO Slave Device must be enabled."); }
+            // use this descriptor
+            spiFileDescriptor = firstHandle.SpiDevFileDescriptor;
 
             // the data needs to be in unmanaged global memory
             // so the spidev driver can see it. This allocates
@@ -184,16 +162,14 @@ namespace BBBCSIO
                 xfer.tx_buf = txBufPtr;
                 xfer.rx_buf = rxBufPtr;
                 xfer.len = (UInt32)numBytes;
-                xfer.speed_hz = (UInt16)ssHandle.SpeedInHz;
-                xfer.delay_usecs = ssHandle.DelayUSecs;
-                xfer.bits_per_word = ssHandle.BitsPerWord;
-                xfer.cs_change = ssHandle.CSChange;
+                xfer.speed_hz = 0;//(UInt16)ssHandle.SpeedInHz;
+                xfer.delay_usecs = 0;// ssHandle.DelayUSecs;
+                xfer.bits_per_word = 0;// ssHandle.BitsPerWord;
+                xfer.cs_change = 0;// ssHandle.CSChange;
                 xfer.pad = 0;
 
-                if (ssHandle.SPISlaveDevice == SPISlaveDeviceEnum.SPI_SLAVEDEVICE_GPIO)
-                {      
                     // lower the slave select
-                    ssHandle.GpioSlaveSelect.Write(false);
+                    output.SetOutput(false);
                     try
                     {
                         // this is an external call to the libc.so.6 library
@@ -202,20 +178,14 @@ namespace BBBCSIO
                     finally
                     {
                         // raise the slave select
-                        ssHandle.GpioSlaveSelect.Write(false);
+                        output.SetOutput(true);
                     }
-                }
-                else
-                {
-                    // this is an external call to the libc.so.6 library
-                    ioctlRetVal = ExternalIoCtl(spiFileDescriptor, SPI_IOC_MESSAGE_1, ref xfer);
-                }
 
                 // did the call succeed?
                 if(ioctlRetVal < 0)
                 {
                     // it failed
-                    throw new Exception("ExternalIoCtl on device " + ssHandle.SPISlaveDevice + " failed. retval="+ioctlRetVal.ToString());
+                    throw new Exception("ExternalIoCtl on device " + output + " failed. retval="+ioctlRetVal.ToString());
                 }
 
                 // did the caller supply a receive buffer
@@ -248,7 +218,7 @@ namespace BBBCSIO
         public SPIModeEnum GetMode()
         {
             // get first slave device. We need the file descriptor
-            SPISlaveDeviceHandle ssHandle = GetFirstSlaveDeviceWithFD();
+            SPISlaveDeviceHandle ssHandle = PortDevice;
             // sanity check
             if (ssHandle == null)
             {
@@ -281,7 +251,7 @@ namespace BBBCSIO
         public void SetMode(SPIModeEnum spiMode)
         {
             // get first slave device. We need the file descriptor
-            SPISlaveDeviceHandle ssHandle = GetFirstSlaveDeviceWithFD();
+            SPISlaveDeviceHandle ssHandle = PortDevice;
             // sanity check
             if (ssHandle == null)
             {
@@ -311,7 +281,7 @@ namespace BBBCSIO
         public uint GetDefaultSpeedInHz()
         {
             // get first slave device. We need the file descriptor
-            SPISlaveDeviceHandle ssHandle = GetFirstSlaveDeviceWithFD();
+            SPISlaveDeviceHandle ssHandle = PortDevice;
             // sanity check
             if (ssHandle == null)
             {
@@ -343,7 +313,7 @@ namespace BBBCSIO
         public void SetDefaultSpeedInHz(uint spiSpeedInHz)
         {
             // get first slave device. We need the file descriptor
-            SPISlaveDeviceHandle ssHandle = GetFirstSlaveDeviceWithFD();
+            SPISlaveDeviceHandle ssHandle = PortDevice;
             // sanity check
             if (ssHandle == null)
             {
@@ -361,39 +331,7 @@ namespace BBBCSIO
             }
         }           
 
-        /// +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
-        /// <summary>
-        /// Gets the first SPISlaveDeviceHandle which has a file descriptor. We need
-        /// at least one of these to access the port even if we are using a GPIO based
-        /// Slave Select
-        /// </summary>
-        /// <returns>ssHandle - the handle for the Slave Device or null for fail</returns>
-        /// <history>
-        ///    21 Dec 14  Cynic - Originally written
-        /// </history>
-        private SPISlaveDeviceHandle GetFirstSlaveDeviceWithFD()
-        {
-            if (openSlaveDevices == null) return null;
-
-            // check each slave device
-            foreach(SPISlaveDeviceHandle ssHandle in openSlaveDevices)
-            {
-                if (ssHandle.SpiDevFileDescriptor >= 0) return ssHandle;
-            }
-            return null;
-        }
-
-        /// +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
-        /// <summary>
-        /// Enables the SPI slave device. Will throw exceptions if it cannot open the
-        /// device
-        /// </summary>
-        /// <returns>ssHandle - the handle for the Slave Device or null for fail</returns>
-        /// <param name="spiSlaveDeviceIn">The SPI Slave Device we are configuring</param>
-        /// <history>
-        ///    21 Dec 14  Cynic - Originally written
-        /// </history>
-        public SPISlaveDeviceHandle EnableSPISlaveDevice(SPISlaveDeviceEnum spiSlaveDeviceIn)
+        private SPISlaveDeviceHandle EnableSPIDevice()
         {
             string deviceFileName;
             // set up now
@@ -413,29 +351,17 @@ namespace BBBCSIO
             else
             {
                 // should never happen
-                throw new Exception ("Unknown SPI Port:" + SPIPort.ToString());
+                throw new Exception("Unknown SPI Port:" + SPIPort.ToString());
             }
 
             // set up the spi slave number
-            if (spiSlaveDeviceIn == SPISlaveDeviceEnum.SPI_SLAVEDEVICE_CS0)
-            {
-                deviceFileName = deviceFileName.Replace("%slave%", "0");
-            }
-            else if (spiSlaveDeviceIn == SPISlaveDeviceEnum.SPI_SLAVEDEVICE_CS1)
-            {
-                deviceFileName = deviceFileName.Replace("%slave%", "1");
-            }
-            else
-            {
-                // should never happen
-                throw new Exception ("Unknown SPI Slave Device:" + spiSlaveDeviceIn.ToString());
-            }
+            deviceFileName = deviceFileName.Replace("%slave%", "1");
 
             // we open the file. We have to have an open file descriptor
             // note this is an external call. It has to be because the 
             // ioctl needs an open file descriptor it can use
-            int fd = ExternalFileOpen(deviceFileName, O_RDWR|O_NONBLOCK);
-            if(fd <= 0)
+            int fd = ExternalFileOpen(deviceFileName, O_RDWR | O_NONBLOCK);
+            if (fd <= 0)
             {
                 throw new Exception("Could not open spidev file:" + deviceFileName);
             }
@@ -443,12 +369,10 @@ namespace BBBCSIO
             //Console.WriteLine("SPIPort Slave Device Enabled: "+ deviceFileName);
 
             // create a new slave device handle
-            SPISlaveDeviceHandle outHandle = new SPISlaveDeviceHandle(spiSlaveDeviceIn, fd);
-            // record that we opened this slave device (so we can close it later)
-            openSlaveDevices.Add(outHandle);
+            SPISlaveDeviceHandle outHandle = new SPISlaveDeviceHandle(SPISlaveDeviceEnum.SPI_SLAVEDEVICE_CS1, fd);
             // return the slave device handle
             return outHandle;
-        }          
+        }
 
         /// +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
         /// <summary>
@@ -476,36 +400,28 @@ namespace BBBCSIO
         /// <returns>ssHandle - the handle for the Slave Device or null for fail</returns>
         /// <param name="spiSlaveDeviceIn">The GPIO of the pin we use as the slave select</param>
         /// <history>
+        ///    16 Sep 17  Cai Biesinger: Scarlet - Modified for better integration with Scarlet.
         ///    21 Dec 14  Cynic - Originally written
         /// </history>
-        public SPISlaveDeviceHandle EnableSPIGPIOSlaveDevice(GpioEnum gpioEnum)
+        public void EnableSPIGPIOSlaveDevice(IDigitalOut output)
         {
             // get first slave device. We need to check we have one
-            SPISlaveDeviceHandle ssHandle = GetFirstSlaveDeviceWithFD();
+            SPISlaveDeviceHandle ssHandle = PortDevice;
             // sanity check
             if (ssHandle == null)
             {
                 throw new Exception ("At least one non GPIO Slave Device must be enabled first.");
             }
-            // create a new output port
-            OutputPortMM gpioSlaveSelect = new OutputPortMM(gpioEnum);
-            // set this high by default, most modes have slave selects high and go low to activate
-            gpioSlaveSelect.Write(true);
 
-            // create a new slave device handle
-            SPISlaveDeviceHandle outHandle = new SPISlaveDeviceHandle(SPISlaveDeviceEnum.SPI_SLAVEDEVICE_GPIO, gpioSlaveSelect);
-            if(outHandle == null)
-            {
-                throw new Exception("Could not create GPIO based slave select device");
-            }
+            // set this high by default, most modes have slave selects high and go low to activate
+            output.Initialize();
+            output.SetOutput(true);
 
             //Console.WriteLine("SPIPort GPIO Slave Device Enabled: "+ gpioEnum.ToString());
 
             // record that we opened this slave device (so we can close it later)
-            openSlaveDevices.Add(outHandle);
-            // return the slave device handle
-            return outHandle;
-        }          
+            SlaveDevices.Add(output);
+        }
 
         /// +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
         /// <summary>
@@ -515,7 +431,7 @@ namespace BBBCSIO
         /// <history>
         ///    21 Dec 14  Cynic - Originally written
         /// </history>
-        private void DisableSPISlaveDevice(SPISlaveDeviceHandle ssHandle)
+        /*private void DisableSPISlaveDevice(SPISlaveDeviceHandle ssHandle)
         {
             if (ssHandle == null) return;
 
@@ -550,25 +466,22 @@ namespace BBBCSIO
                 // unknown type of slave device should never happen
                 throw new Exception ("Unknown SPI Slave Device:" + ssHandle.SPISlaveDevice.ToString());
             }
-        }
+        }*/
 
         /// +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
         /// <summary>
         /// Disables all SPI slave devices. 
         /// </summary>
         /// <history>
+        ///    16 Sep 17  Cai Biesinger: Scarlet - Modified for better integration with Scarlet.
         ///    21 Dec 14  Cynic - Originally written
         /// </history>
         private void DisableAllSPISlaveDevices()
         {
-            if (openSlaveDevices == null) return;
-            foreach (SPISlaveDeviceHandle ssHandle in openSlaveDevices)
-            {
-                // disable the device
-                DisableSPISlaveDevice(ssHandle);
-            }
+            if (SlaveDevices == null) { return; }
+            SlaveDevices.ForEach(x => x.Dispose());
             // reset this
-            openSlaveDevices = new List<SPISlaveDeviceHandle>();
+            SlaveDevices = new List<IDigitalOut>();
         }
 
         /// +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
