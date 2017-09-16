@@ -1,8 +1,10 @@
 ﻿using Scarlet.Utilities;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 
 namespace Scarlet.IO.BeagleBone
@@ -10,14 +12,18 @@ namespace Scarlet.IO.BeagleBone
     public static class BBBPinManager
     {
         private static Dictionary<BBBPin, PinAssignment> GPIOMappings, PWMMappings, I2CMappings, SPIMappings;
+        private static Dictionary<BBBPin, int> ADCMappings;
         private static bool EnableI2C1, EnableI2C2, EnableSPI0, EnableSPI1;
 
+        //TODO: Check locks.
+
+        #region Adding Mappings
         public static void AddMappingGPIO(BBBPin SelectedPin, bool IsOutput, ResistorState Resistor, bool FastSlew = true)
         {
             byte Mode = Pin.GetModeID(SelectedPin, BBBPinMode.GPIO);
             if (Mode == 255) { throw new InvalidOperationException("This type of output is not supported on this pin."); }
             if (!Pin.CheckPin(SelectedPin, BeagleBone.Peripherals)) { throw new InvalidOperationException("This pin cannot be used without disabling some peripherals first."); }
-            if (Pin.GetOffset(SelectedPin) == 0x000) { throw new InvalidOperationException("This pin is not valid for device tree registration. ADC pins do not need to be registered."); }
+            if (Pin.GetOffset(SelectedPin) == 0x000) { throw new InvalidOperationException("This pin is not valid for device tree registration."); }
             if (PWMMappings != null && PWMMappings.ContainsKey(SelectedPin)) { throw new InvalidOperationException("This pin is already registered as PWM, cannot also use for GPIO."); }
 
             if (GPIOMappings == null) { GPIOMappings = new Dictionary<BBBPin, PinAssignment>(); }
@@ -109,7 +115,7 @@ namespace Scarlet.IO.BeagleBone
 
         // Either MISO or MOSI can be BBBPin.NONE if you only need 1-way communication.
         // To add chip select pins, call AddMappingSPI_CS().
-        public static void AddMappingsSPI(BBBPin MISO, BBBPin MOSI, BBBPin Clock) // TODO: I might have gotten MOSI/MISO backwards.
+        public static void AddMappingsSPI(BBBPin MISO, BBBPin MOSI, BBBPin Clock)
         {
             byte ClockMode = Pin.GetModeID(Clock, BBBPinMode.SPI);
             byte MISOMode = 255;
@@ -189,8 +195,35 @@ namespace Scarlet.IO.BeagleBone
 
         public static void AddMappingSPI_CS(BBBPin ChipSelect)
         {
-            AddMappingGPIO(ChipSelect, true, ResistorState.PULL_UP);
+            AddMappingGPIO(ChipSelect, true, ResistorState.PULL_UP); // TODO: Switch this to be in SPI overlay section instead of GPIO to make it clear.
         }
+
+        public static void AddMappingADC(BBBPin SelectedPin)
+        {
+            int ADCNum = -1;
+            switch(SelectedPin)
+            {
+                case BBBPin.P9_39: ADCNum = 0; break;
+                case BBBPin.P9_40: ADCNum = 1; break;
+                case BBBPin.P9_37: ADCNum = 2; break;
+                case BBBPin.P9_38: ADCNum = 3; break;
+                case BBBPin.P9_33: ADCNum = 4; break;
+                case BBBPin.P9_36: ADCNum = 5; break;
+                case BBBPin.P9_35: ADCNum = 6; break;
+                default: throw new InvalidOperationException("This pin is not an ADC pin. Cannot be registered for ADC use.");
+            }
+            lock (ADCMappings)
+            {
+                if (ADCMappings == null) { ADCMappings = new Dictionary<BBBPin, int>(); }
+                if (ADCMappings.ContainsKey(SelectedPin))
+                {
+                    Log.Output(Log.Severity.WARNING, Log.Source.HARDWAREIO, "Overriding ADC pin setting. This may mean you have a pin usage conflict.");
+                    ADCMappings[SelectedPin] = ADCNum;
+                }
+                else { ADCMappings.Add(SelectedPin, ADCNum); }
+            }
+        }
+        #endregion
 
         /// <summary>
         /// Generates the device tree file, compiles it, and instructs the kernel to load the overlay though the cape manager. May take a while.
@@ -438,39 +471,40 @@ namespace Scarlet.IO.BeagleBone
             }
 
             // Output GPIO mappings
-            Output.Add("    fragment@0 {");
-            Output.Add("        target = <&am33xx_pinmux>;");
-            Output.Add("        __overlay__ {");
-            Output.Add("            scarlet_pins: scarlet_pin_set {");
-            Output.Add("                pinctrl-single,pins = <");
-
+            // TODO: Make this optional.
             lock (GPIOMappings)
             {
+                Output.Add("    fragment@0 {");
+                Output.Add("        target = <&am33xx_pinmux>;");
+                Output.Add("        __overlay__ {");
+                Output.Add("            scarlet_pins: scarlet_pin_set {");
+                Output.Add("                pinctrl-single,pins = <");
+
                 foreach (PinAssignment PinAss in GPIOMappings.Values)
                 {
                     string Offset = String.Format("0x{0:X3}", (Pin.GetOffset(PinAss.Pin) - 0x800));
                     string Mode = String.Format("0x{0:X2}", PinAss.Mode);
                     Output.Add("                    " + Offset + " " + Mode);
                 }
-            }
 
-            Output.Add("                >;");
-            Output.Add("            };");
-            Output.Add("        };");
-            Output.Add("    };");
-            Output.Add("    ");
-            Output.Add("    fragment@1 {");
-            Output.Add("        target = <&ocp>;");
-            Output.Add("        __overlay__ {");
-            Output.Add("            scarlet_pinmux: scarlet {");
-            Output.Add("                compatible = \"bone-pinmux-helper\";");
-            Output.Add("                pinctrl-names = \"default\";");
-            Output.Add("                pinctrl-0 = <&scarlet_pins>;");
-            Output.Add("                status = \"okay\";");
-            Output.Add("            };");
-            Output.Add("        };");
-            Output.Add("    };");
-            Output.Add("    ");
+                Output.Add("                >;");
+                Output.Add("            };");
+                Output.Add("        };");
+                Output.Add("    };");
+                Output.Add("    ");
+                Output.Add("    fragment@1 {");
+                Output.Add("        target = <&ocp>;");
+                Output.Add("        __overlay__ {");
+                Output.Add("            scarlet_pinmux: scarlet {");
+                Output.Add("                compatible = \"bone-pinmux-helper\";");
+                Output.Add("                pinctrl-names = \"default\";");
+                Output.Add("                pinctrl-0 = <&scarlet_pins>;");
+                Output.Add("                status = \"okay\";");
+                Output.Add("            };");
+                Output.Add("        };");
+                Output.Add("    };");
+                Output.Add("    ");
+            }
 
             // Output PWM device fragments
             if (PWMMappings != null)
@@ -744,6 +778,38 @@ namespace Scarlet.IO.BeagleBone
                         Output.Add("    };");
                         Output.Add("    ");
                     }
+                }
+            }
+
+            // Output ADC device fragment
+            if(ADCMappings != null)
+            {
+                lock(ADCMappings)
+                {
+                    SortedList Channels = new SortedList(7);
+                    ADCMappings.Values.ToList().ForEach(x => Channels.Add(x, x));
+
+                    string ChannelsOut = "<";
+                    for(int i = 0; i < Channels.Count; i++)
+                    {
+                        ChannelsOut += Channels.GetByIndex(i);
+                        if (i + 1 < Channels.Count) { ChannelsOut += " "; }
+                    }
+                    ChannelsOut += ">";
+
+                    Output.Add("    fragment@5 {");
+                    Output.Add("        target = <&tscadc>;");
+                    Output.Add("        __overlay__ {");
+                    Output.Add("            status = \"okay\";");
+                    Output.Add("            adc {");
+                    Output.Add("                ti,adc-channels = " + ChannelsOut + ";");
+                    Output.Add("                ti,chan-step-avg = <>;"); // TODO: Output this.
+                    Output.Add("                ti,chan-step-opendelay = <>;"); // TODO: Output this.
+                    Output.Add("                ti,chan-step-sampledelay = <>;"); // TODO: Output this.
+                    Output.Add("            };");
+                    Output.Add("        };");
+                    Output.Add("    };");
+                    Output.Add("    ");
                 }
             }
 
