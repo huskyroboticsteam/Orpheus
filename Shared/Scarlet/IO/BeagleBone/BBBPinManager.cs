@@ -803,9 +803,9 @@ namespace Scarlet.IO.BeagleBone
                     Output.Add("            status = \"okay\";");
                     Output.Add("            adc {");
                     Output.Add("                ti,adc-channels = " + ChannelsOut + ";");
-                    Output.Add("                ti,chan-step-avg = <>;"); // TODO: Output this.
-                    Output.Add("                ti,chan-step-opendelay = <>;"); // TODO: Output this.
-                    Output.Add("                ti,chan-step-sampledelay = <>;"); // TODO: Output this.
+                    Output.Add("                ti,chan-step-avg = <" + UtilMain.RepeatWithSeperator("0x16", " ", Channels.Count) + ">;");
+                    Output.Add("                ti,chan-step-opendelay = <" + UtilMain.RepeatWithSeperator("0x98", " ", Channels.Count) + ">;");
+                    Output.Add("                ti,chan-step-sampledelay = <" + UtilMain.RepeatWithSeperator("0x0", " ", Channels.Count) + ">;");
                     Output.Add("            };");
                     Output.Add("        };");
                     Output.Add("    };");

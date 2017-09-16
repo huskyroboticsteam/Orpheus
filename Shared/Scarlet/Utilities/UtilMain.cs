@@ -100,6 +100,21 @@ namespace Scarlet.Utilities
             return Output.ToArray();
         }
 
+        /// <summary>Creates a string bby repeating a sequence seperated by something else, with fenceposting.</summary>
+        /// <param name="ToRepeat">The string to repeat [Times] times.</param>
+        /// <param name="Seperator">The string to place in between each occurence of [ToRepeat].</param>
+        public static string RepeatWithSeperator(string ToRepeat, string Seperator, int Times)
+        {
+            if (Times <= 0) { throw new InvalidOperationException("Cannot repeat string by a negative number."); }
+            StringBuilder Output = new StringBuilder();
+            for(int i = 0; i < Times; i++)
+            {
+                Output.Append(ToRepeat);
+                if (i + 1 < Times) { Output.Append(Seperator); }
+            }
+            return Output.ToString();
+        }
+
     }
 
 }
