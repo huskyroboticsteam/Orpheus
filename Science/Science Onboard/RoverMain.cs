@@ -32,7 +32,7 @@ namespace Science
 
             BeagleBone.Initialize(SystemMode.DEFAULT, true);
             Log.SetSingleOutputLevel(Log.Source.HARDWAREIO, Log.Severity.DEBUG);
-            TestSPI();
+            TestADC();
 
             IOHandler = new IOHandler();
             Client.Start(IP, PortTCP, PortUDP, Constants.CLIENT_NAME);
@@ -136,6 +136,20 @@ namespace Science
                 Thermo.UpdateState();
                 Log.Output(Log.Severity.DEBUG, Log.Source.SENSORS, "Thermocouple Data, Faults: " + string.Format("{0:G}", Thermo.GetFaults()) + ", Internal: " + Thermo.GetInternalTemp() + ", External: " + Thermo.GetExternalTemp() + " (Raw: " + Thermo.GetRawData() + ")");
                 Thread.Sleep(500);
+            }
+        }
+
+        private static void TestADC()
+        {
+            BBBPinManager.AddMappingGPIO(BBBPin.P8_08, true, Scarlet.IO.ResistorState.PULL_DOWN); // TODO: Remove this dependency from DT
+            BBBPinManager.AddMappingADC(BBBPin.P9_36);
+            BBBPinManager.ApplyPinSettings(ApplyDevTree);
+            IAnalogueIn Input = new AnalogueInBBB(BBBPin.P9_36);
+            Input.Initialize();
+            for(int i = 0; i < 200; i++)
+            {
+                Log.Output(Log.Severity.DEBUG, Log.Source.HARDWAREIO, "ADC Input: " + Input.GetInput() + "(Raw: " + Input.GetRawInput() + ")");
+                Thread.Sleep(100);
             }
         }
 

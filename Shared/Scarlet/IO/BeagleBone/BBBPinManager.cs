@@ -212,9 +212,9 @@ namespace Scarlet.IO.BeagleBone
                 case BBBPin.P9_35: ADCNum = 6; break;
                 default: throw new InvalidOperationException("This pin is not an ADC pin. Cannot be registered for ADC use.");
             }
+            if (ADCMappings == null) { ADCMappings = new Dictionary<BBBPin, int>(); }
             lock (ADCMappings)
             {
-                if (ADCMappings == null) { ADCMappings = new Dictionary<BBBPin, int>(); }
                 if (ADCMappings.ContainsKey(SelectedPin))
                 {
                     Log.Output(Log.Severity.WARNING, Log.Source.HARDWAREIO, "Overriding ADC pin setting. This may mean you have a pin usage conflict.");
@@ -233,7 +233,7 @@ namespace Scarlet.IO.BeagleBone
         {
             // Generate the device tree
             if(GPIOMappings == null || GPIOMappings.Count == 0) { Log.Output(Log.Severity.INFO, Log.Source.HARDWAREIO, "No pins defined, skipping device tree application."); return; }
-            string FileName = "Scarlet-DT15";
+            string FileName = "Scarlet-DT16";
             string OutputDTFile = FileName + ".dts";
             List<string> DeviceTree = GenerateDeviceTree();
 

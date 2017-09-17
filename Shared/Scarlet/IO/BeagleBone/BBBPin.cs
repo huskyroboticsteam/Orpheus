@@ -104,6 +104,22 @@ namespace Scarlet.IO.BeagleBone
             else { return GpioEnum.GPIO_NONE; }
         }
 
+        /// <summary>Converts a Scarlet BBBPin to a BBBCSIO A2DPinEnum.</summary>
+        public static A2DPortEnum PinToA2D(BBBPin Pin)
+        {
+            switch(Pin)
+            {
+                case BBBPin.P9_39: return A2DPortEnum.AIN_0;
+                case BBBPin.P9_40: return A2DPortEnum.AIN_1;
+                case BBBPin.P9_37: return A2DPortEnum.AIN_2;
+                case BBBPin.P9_38: return A2DPortEnum.AIN_3;
+                case BBBPin.P9_33: return A2DPortEnum.AIN_4;
+                case BBBPin.P9_36: return A2DPortEnum.AIN_5;
+                case BBBPin.P9_35: return A2DPortEnum.AIN_6;
+                default: return A2DPortEnum.AIN_NONE;
+            }
+        }
+
         /// <summary>Determines if the given pin can be used in the system mode, or if it used by another device.</summary>
         public static bool CheckPin(BBBPin Pin, SystemMode Mode)
         {
