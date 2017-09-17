@@ -148,7 +148,7 @@ namespace Science
             Input.Initialize();
             for(int i = 0; i < 200; i++)
             {
-                Log.Output(Log.Severity.DEBUG, Log.Source.HARDWAREIO, "ADC Input: " + Input.GetInput() + "(Raw: " + Input.GetRawInput() + ")");
+                Log.Output(Log.Severity.DEBUG, Log.Source.HARDWAREIO, "ADC Input: " + Input.GetInput() + " (Raw: " + Input.GetRawInput() + ")");
                 Thread.Sleep(100);
             }
         }

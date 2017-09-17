@@ -45,7 +45,7 @@ namespace Scarlet.IO.BeagleBone
         public long GetRawRange() { return 4096; } // This may change depending on device tree settings.
         public double GetRange() { return 1.8D; }
 
-        public double GetInput() { return (double)GetRawInput() * GetRange() / (double)GetRawRange(); }
+        public double GetInput() { return (double)GetRawInput() * GetRange() / (double)(GetRawRange() - 1); }
         public long GetRawInput() { return this.Port.Read(); }
 
         public void Dispose() { this.Port.Dispose(); }
