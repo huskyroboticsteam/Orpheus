@@ -83,21 +83,22 @@ namespace Science
         private static void TestPWM()
         {
             BBBPinManager.AddMappingGPIO(BBBPin.P8_08, true, Scarlet.IO.ResistorState.PULL_DOWN); // TODO: Remove this dependency from DT
-            BBBPinManager.AddMappingPWM(BBBPin.P9_14);
+            BBBPinManager.AddMappingPWM(BBBPin.P9_16);
             BBBPinManager.ApplyPinSettings(ApplyDevTree);
-            IPWMOutput Output = PWMBBB.PWMDevice1.OutputA;
+            IPWMOutput Output = PWMBBB.PWMDevice1.OutputB;
             Output.Initialize();
             PWMBBB.PWMDevice1.SetFrequency(5000);
+            Output.SetEnabled(true);
             while (true)
             {
                 for (int i = 0; i < 100; i++)
                 {
-                    Output.SetOutput(i);
+                    Output.SetOutput(i / 100.000F);
                     Thread.Sleep(50);
                 }
                 for (int i = 100; i > 0; i--)
                 {
-                    Output.SetOutput(i);
+                    Output.SetOutput(i / 100.000F);
                     Thread.Sleep(50);
                 }
                 Output.SetOutput(0);

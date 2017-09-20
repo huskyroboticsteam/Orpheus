@@ -172,8 +172,13 @@ namespace Scarlet.IO.BeagleBone
 
         public void SetOutput(float DutyCycle)
         {
-            this.Port.DutyPercent = DutyCycle;
-            this.DutyCycle = DutyCycle;
+            this.Port.DutyPercent = DutyCycle * 100F;
+            this.DutyCycle = DutyCycle * 100F;
+        }
+
+        public void SetEnabled(bool Enabled)
+        {
+            this.Port.RunState = Enabled;
         }
 
         internal void ResetOutput()
