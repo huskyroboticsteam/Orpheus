@@ -83,26 +83,27 @@ namespace Science
         private static void TestPWM()
         {
             BBBPinManager.AddMappingGPIO(BBBPin.P8_08, true, Scarlet.IO.ResistorState.PULL_DOWN); // TODO: Remove this dependency from DT
+            BBBPinManager.AddMappingPWM(BBBPin.P9_14);
             BBBPinManager.AddMappingPWM(BBBPin.P9_16);
             BBBPinManager.ApplyPinSettings(ApplyDevTree);
-            IPWMOutput Output = PWMBBB.PWMDevice1.OutputB;
-            Output.Initialize();
+            IPWMOutput OutA = PWMBBB.PWMDevice1.OutputA;
+            IPWMOutput OutB = PWMBBB.PWMDevice1.OutputB;
+            OutA.Initialize();
+            OutB.Initialize();
             PWMBBB.PWMDevice1.SetFrequency(5000);
-            Output.SetEnabled(true);
+            OutA.SetEnabled(true);
+            OutB.SetEnabled(true);
+            int Cycle = 0;
             while (true)
             {
-                for (int i = 0; i < 100; i++)
-                {
-                    Output.SetOutput(i / 100.000F);
-                    Thread.Sleep(50);
-                }
-                for (int i = 100; i > 0; i--)
-                {
-                    Output.SetOutput(i / 100.000F);
-                    Thread.Sleep(50);
-                }
-                Output.SetOutput(0);
-                Thread.Sleep(500);
+                float A = (float)((Math.Sin(Cycle * Math.PI / 180.000D) + 1) / 2); // Sine waves! Fun!
+                float B = (float)((Math.Sin(Cycle * Math.PI / 360.000D) + 1) / 2);
+
+                OutA.SetOutput(A);
+                OutB.SetOutput(B);
+
+                Thread.Sleep(50);
+                Cycle += 20;
             }
         }
 

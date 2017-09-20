@@ -235,7 +235,7 @@ namespace Scarlet.IO.BeagleBone
         {
             // Generate the device tree
             if(GPIOMappings == null || GPIOMappings.Count == 0) { Log.Output(Log.Severity.INFO, Log.Source.HARDWAREIO, "No pins defined, skipping device tree application."); return; }
-            string FileName = "Scarlet-DT22";
+            string FileName = "Scarlet-DT23";
             string OutputDTFile = FileName + ".dts";
             List<string> DeviceTree = GenerateDeviceTree();
 
