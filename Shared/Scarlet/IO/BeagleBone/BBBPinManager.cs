@@ -225,20 +225,37 @@ namespace Scarlet.IO.BeagleBone
         }
         #endregion
 
+        public enum ApplicationMode { NO_CHANGES, APPLY_IF_NONE, REMOVE_AND_APPLY, APPLY_REGARDLESS }
+
         /// <summary>
         /// Generates the device tree file, compiles it, and instructs the kernel to load the overlay though the cape manager. May take a while.
         /// Currently this can only be done once, as Scarlet does not have a way of removing the existing mappings.
         /// </summary>
-        public static void ApplyPinSettings(bool AttemptOverlayChanges)
+        public static void ApplyPinSettings(ApplicationMode Mode)
         {
             // Generate the device tree
             if(GPIOMappings == null || GPIOMappings.Count == 0) { Log.Output(Log.Severity.INFO, Log.Source.HARDWAREIO, "No pins defined, skipping device tree application."); return; }
-            string FileName = "Scarlet-DT16";
+            string FileName = "Scarlet-DT20";
             string OutputDTFile = FileName + ".dts";
             List<string> DeviceTree = GenerateDeviceTree();
 
             // Save the device tree to file
             File.WriteAllLines(OutputDTFile, DeviceTree);
+
+            bool AttemptOverlayChanges = false;
+            switch(Mode)
+            {
+                case ApplicationMode.APPLY_IF_NONE:
+                    AttemptOverlayChanges = FindScarletOverlays().Count == 0;
+                    break;
+                case ApplicationMode.APPLY_REGARDLESS:
+                    AttemptOverlayChanges = true;
+                    break;
+                case ApplicationMode.REMOVE_AND_APPLY:
+                    RemovePinSettings();
+                    AttemptOverlayChanges = true;
+                    break;
+            }
 
             if (AttemptOverlayChanges)
             {
@@ -273,28 +290,36 @@ namespace Scarlet.IO.BeagleBone
             // Start relevant components.
             I2CBBB.Initialize(EnableI2C1, EnableI2C2);
             SPIBBB.Initialize(EnableSPI0, EnableSPI1);
+            PWMBBB.Initialize();
         }
 
         /// <summary>
         /// Unloads all Scarlet device tree overlays.
+        /// NOTE: This has a high probability of causing instability, issues, and possibly even a kernel panic. Only do this if it is really necessary.
         /// </summary>
-        public static void RemovePinSettings()
+        private static void RemovePinSettings()
         {
-            // Command: cat /sys/devices/platform/bone_capemgr/slots
-            string[] Overlays = File.ReadAllLines("/sys/devices/platform/bone_capemgr/slots");
-            List<int> ToRemove = new List<int>();
-            foreach(string Overlay in Overlays)
-            {
-                if(Overlay.Contains("Scarlet-DT"))
-                {
-                    ToRemove.Add(int.Parse(Overlay.Substring(0, Overlay.IndexOf(":"))));
-                }
-            }
+            List<int> ToRemove = FindScarletOverlays();
             StreamWriter SlotManager = File.AppendText("/sys/devices/platform/bone_capemgr/slots");
             // Command: echo -[NUM] > /sys/devices/platform/bone_capemgr/slots
             ToRemove.ForEach(Num => SlotManager.Write('-' + Num + Environment.NewLine));
             SlotManager.Flush();
             SlotManager.Close();
+        }
+
+        private static List<int> FindScarletOverlays()
+        {
+            // Command: cat /sys/devices/platform/bone_capemgr/slots
+            string[] Overlays = File.ReadAllLines("/sys/devices/platform/bone_capemgr/slots");
+            List<int> ToRemove = new List<int>();
+            foreach (string Overlay in Overlays)
+            {
+                if (Overlay.Contains("Scarlet-DT"))
+                {
+                    ToRemove.Add(int.Parse(Overlay.Substring(0, Overlay.IndexOf(":"))));
+                }
+            }
+            return ToRemove;
         }
 
         private class PinAssignment
@@ -519,7 +544,7 @@ namespace Scarlet.IO.BeagleBone
                     Output.Add("        __overlay__ {");
                     if (PWMDev0.Count > 0)
                     {
-                        Output.Add("            bbb_ehrpwm0_pins: pinmux_bbb_ehrpwm0_pins {");
+                        Output.Add("            scarlet_pwm0_pins: pinmux_scarlet_pwm0_pins {");
                         Output.Add("                pinctrl-single,pins = <");
                         foreach (PinAssignment PinAss in PWMDev0.Values)
                         {
@@ -532,7 +557,7 @@ namespace Scarlet.IO.BeagleBone
                     }
                     if (PWMDev1.Count > 0)
                     {
-                        Output.Add("            bbb_ehrpwm1_pins: pinmux_bbb_ehrpwm1_pins {");
+                        Output.Add("            scarlet_pwm1_pins: pinmux_scarlet_pwm1_pins {");
                         Output.Add("                pinctrl-single,pins = <");
                         foreach (PinAssignment PinAss in PWMDev1.Values)
                         {
@@ -545,7 +570,7 @@ namespace Scarlet.IO.BeagleBone
                     }
                     if (PWMDev2.Count > 0)
                     {
-                        Output.Add("            bbb_ehrpwm2_pins: pinmux_bbb_ehrpwm2_pins {");
+                        Output.Add("            scarlet_pwm2_pins: pinmux_scarlet_pwm2_pins {");
                         Output.Add("                pinctrl-single,pins = <");
                         foreach (PinAssignment PinAss in PWMDev2.Values)
                         {
@@ -574,7 +599,7 @@ namespace Scarlet.IO.BeagleBone
                         Output.Add("        __overlay__ {");
                         Output.Add("            status = \"okay\";");
                         Output.Add("            pinctrl-names = \"default\";");
-                        Output.Add("            pinctrl-0 = <&bbb_ehrpwm0_pins>;");
+                        Output.Add("            pinctrl-0 = <&scarlet_pwm0_pins>;");
                         Output.Add("        };");
                         Output.Add("    };");
                         Output.Add("    ");
@@ -593,7 +618,7 @@ namespace Scarlet.IO.BeagleBone
                         Output.Add("        __overlay__ {");
                         Output.Add("            status = \"okay\";");
                         Output.Add("            pinctrl-names = \"default\";");
-                        Output.Add("            pinctrl-0 = <&bbb_ehrpwm1_pins>;");
+                        Output.Add("            pinctrl-0 = <&scarlet_pwm1_pins>;");
                         Output.Add("        };");
                         Output.Add("    };");
                         Output.Add("    ");
@@ -612,7 +637,7 @@ namespace Scarlet.IO.BeagleBone
                         Output.Add("        __overlay__ {");
                         Output.Add("            status = \"okay\";");
                         Output.Add("            pinctrl-names = \"default\";");
-                        Output.Add("            pinctrl-0 = <&bbb_ehrpwm2_pins>;");
+                        Output.Add("            pinctrl-0 = <&scarlet_pwm2_pins>;");
                         Output.Add("        };");
                         Output.Add("    };");
                         Output.Add("    ");

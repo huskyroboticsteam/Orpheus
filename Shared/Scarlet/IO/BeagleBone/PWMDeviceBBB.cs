@@ -1,6 +1,7 @@
 ﻿using BBBCSIO;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -86,7 +87,47 @@ namespace Scarlet.IO.BeagleBone
 
         public void Initialize()
         {
-            this.Port = new PWMPortMM(PWMBBB.PinToPWMID(this.Pins[0]));
+            PWMPortEnum Device = PWMBBB.PinToPWMID(this.Pins[0]);
+            /*string Path = "/sys/devices/platform/ocp";
+            byte ExportNum = 0;
+            switch(Device)
+            {
+                case PWMPortEnum.PWM0_A:
+                    Path += "/48300000.epwmss/48300200.pwm/pwm/pwmchip0";
+                    ExportNum = 0;
+                    break;
+                case PWMPortEnum.PWM0_B:
+                    Path += "/48300000.epwmss/48300200.pwm/pwm/pwmchip0";
+                    ExportNum = 1;
+                    break;
+                case PWMPortEnum.PWM1_A:
+                    Path += "/48302000.epwmss/48302200.pwm/pwm/pwmchip0";
+                    ExportNum = 0;
+                    break;
+                case PWMPortEnum.PWM1_B:
+                    Path += "/48302000.epwmss/48302200.pwm/pwm/pwmchip0";
+                    ExportNum = 1;
+                    break;
+                case PWMPortEnum.PWM2_A:
+                    Path += "/48304000.epwmss/48304200.pwm/pwm/pwmchip0";
+                    ExportNum = 0;
+                    break;
+                case PWMPortEnum.PWM2_B:
+                    Path += "/48304000.epwmss/48304200.pwm/pwm/pwmchip0";
+                    ExportNum = 1;
+                    break;
+                default: throw new Exception("Invalid PWM pin given.");
+            }
+            StreamWriter Exporter = File.AppendText(Path + "/export");
+            Exporter.Write(ExportNum);
+            Exporter.Flush();
+            Exporter.Close();
+            Path += ("/pwm" + ExportNum);
+            StreamWriter Enabler = File.AppendText(Path + "/enable");
+            Enabler.Write("1");
+            Enabler.Flush();
+            Enabler.Close();*/
+            this.Port = new PWMPortMM(Device);
         }
 
         public void SetFrequency(int Frequency)

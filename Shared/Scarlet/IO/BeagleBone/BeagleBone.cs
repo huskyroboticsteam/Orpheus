@@ -22,7 +22,6 @@ namespace Scarlet.IO.BeagleBone
 		{
             Peripherals = Mode;
             FastGPIO = UseFastAccess;
-            PWMBBB.Initialize();
 		}
 	}
 }

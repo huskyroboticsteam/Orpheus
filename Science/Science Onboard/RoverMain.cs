@@ -18,7 +18,7 @@ namespace Science
         private static string IP = Constants.DEFAULT_SERVER_IP;
         private static int PortTCP = Constants.DEFAULT_PORT_TCP;
         private static int PortUDP = Constants.DEFAULT_PORT_UDP;
-        private static bool ApplyDevTree = true;
+        private static BBBPinManager.ApplicationMode ApplyDevTree = BBBPinManager.ApplicationMode.APPLY_IF_NONE;
 
         static void Main(string[] Args)
 		{
@@ -32,7 +32,7 @@ namespace Science
 
             BeagleBone.Initialize(SystemMode.DEFAULT, true);
             Log.SetSingleOutputLevel(Log.Source.HARDWAREIO, Log.Severity.DEBUG);
-            TestADC();
+            TestPWMLow();
 
             IOHandler = new IOHandler();
             Client.Start(IP, PortTCP, PortUDP, Constants.CLIENT_NAME);
@@ -98,10 +98,31 @@ namespace Science
 
         private static void TestPWMLow()
         {
-            PWMPortMM Port = new PWMPortMM(PWMPortEnum.PWM1_A);
-            Port.PeriodNS = 250000;
-            Port.DutyPercent = 50;
+            BBBPinManager.AddMappingGPIO(BBBPin.P8_08, true, Scarlet.IO.ResistorState.PULL_DOWN); // TODO: Remove this dependency from DT
+            BBBPinManager.AddMappingPWM(BBBPin.P9_14);
+            BBBPinManager.ApplyPinSettings(ApplyDevTree);
+
+            ScarletPWMPortMM Port = new ScarletPWMPortMM(PWMPortEnum.PWM1_A);
+            Port.PeriodNS = 1000000;
+            Port.DutyPercent = 0;
             Port.RunState = true;
+            while (true)
+            {
+                for (int i = 0; i < 100; i++)
+                {
+                    Port.DutyPercent = i;
+                    Thread.Sleep(10);
+                }
+                Port.DutyPercent = 100;
+                Thread.Sleep(50);
+                for (int i = 100; i > 0; i--)
+                {
+                    Port.DutyPercent = i;
+                    Thread.Sleep(10);
+                }
+                Port.DutyPercent = 0;
+                Thread.Sleep(50);
+            }
         }
 
         private static void TestI2C()
@@ -185,10 +206,20 @@ namespace Science
                     Console.WriteLine("  -pt|--port-tcp <Port> : Connects to the server via TCP using the given port instead of the default.");
                     Console.WriteLine("  -pu|--port-udp <Port> : Connects to the server via UDP using the given port instead of the default.");
                     Console.WriteLine("  --no-dt : Do not attempt to remove/add device tree overlays.");
+                    Console.WriteLine("  --replace-dt : Remove all Scarlet DT overlays, then apply the new one. DANGEROUS!");
+                    Console.WriteLine("  --add-dt : Add device tree overlay even if there is one already.");
                 }
                 if(Args[i] == "--no-dt")
                 {
-                    ApplyDevTree = false;
+                    ApplyDevTree = BBBPinManager.ApplicationMode.NO_CHANGES;
+                }
+                if(Args[i] == "--replace-dt")
+                {
+                    ApplyDevTree = BBBPinManager.ApplicationMode.REMOVE_AND_APPLY;
+                }
+                if(Args[i] == "--add-dt")
+                {
+                    ApplyDevTree = BBBPinManager.ApplicationMode.APPLY_REGARDLESS;
                 }
             }
         }
