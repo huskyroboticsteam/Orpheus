@@ -1,4 +1,5 @@
 ﻿using BBBCSIO;
+using Scarlet.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -88,45 +89,79 @@ namespace Scarlet.IO.BeagleBone
         public void Initialize()
         {
             PWMPortEnum Device = PWMBBB.PinToPWMID(this.Pins[0]);
-            /*string Path = "/sys/devices/platform/ocp";
+            // Final path will be: /sys/devices/platform/ocp/4830_000.epwmss/4830_200.pwm/pwm/pwmchip_/pwm_
+            //                                                   x               x                   y    z
+            // Where x refers to device #. dev 0 = 0, dev 1 = 2, dev 2 = 4.
+            //       y is an arbitrary number.
+            //          To me, it looks like this is assigned from 0 in steps of +2, in the order that the PWM devices were loaded into the device tree.
+            //          Operationally, it seems to have no significance, and there only ever seems to be one in each *.epwmss/*.pwm/ folder.
+            //          This is probably because at that point it is already narrowed to a single device (2 pins).
+            //       z refers to output #. out A = 0, out B = 2.
+            // We need to write the pin number (z) into the "export" file, and a 1 into the "enable" file to prepare the pin for use.
+            // At that point, whatever needed to be set in memory is ready for BBBCSIO's PWMPortMM to take over and work.
+            // Why does Linux have to be so damn difficult with everything it does? :(
+            string Path = "/sys/devices/platform/ocp";
+            // Append the memory addresses.
             byte ExportNum = 0;
             switch(Device)
             {
                 case PWMPortEnum.PWM0_A:
-                    Path += "/48300000.epwmss/48300200.pwm/pwm/pwmchip0";
+                    Path += "/48300000.epwmss/48300200.pwm/pwm/";
                     ExportNum = 0;
                     break;
                 case PWMPortEnum.PWM0_B:
-                    Path += "/48300000.epwmss/48300200.pwm/pwm/pwmchip0";
+                    Path += "/48300000.epwmss/48300200.pwm/pwm/";
                     ExportNum = 1;
                     break;
                 case PWMPortEnum.PWM1_A:
-                    Path += "/48302000.epwmss/48302200.pwm/pwm/pwmchip0";
+                    Path += "/48302000.epwmss/48302200.pwm/pwm/";
                     ExportNum = 0;
                     break;
                 case PWMPortEnum.PWM1_B:
-                    Path += "/48302000.epwmss/48302200.pwm/pwm/pwmchip0";
+                    Path += "/48302000.epwmss/48302200.pwm/pwm/";
                     ExportNum = 1;
                     break;
                 case PWMPortEnum.PWM2_A:
-                    Path += "/48304000.epwmss/48304200.pwm/pwm/pwmchip0";
+                    Path += "/48304000.epwmss/48304200.pwm/pwm/";
                     ExportNum = 0;
                     break;
                 case PWMPortEnum.PWM2_B:
-                    Path += "/48304000.epwmss/48304200.pwm/pwm/pwmchip0";
+                    Path += "/48304000.epwmss/48304200.pwm/pwm/";
                     ExportNum = 1;
                     break;
                 default: throw new Exception("Invalid PWM pin given.");
             }
-            StreamWriter Exporter = File.AppendText(Path + "/export");
-            Exporter.Write(ExportNum);
-            Exporter.Flush();
-            Exporter.Close();
+
+            // Append the (arbitrary) pwmchip #, by using the first one we find.
+            string[] PWMChips = Directory.GetDirectories(Path);
+            Log.Output(Log.Severity.DEBUG, Log.Source.HARDWAREIO, "Attempting to find correct pwmchip number...");
+            bool FoundPWMChip = false;
+            foreach(string SubdirPath in PWMChips)
+            {
+                string Subdir = new DirectoryInfo(SubdirPath).Name;
+                if (Subdir.StartsWith("pwmchip"))
+                {
+                    Path += Subdir;
+                    FoundPWMChip = true;
+                    Log.Output(Log.Severity.DEBUG, Log.Source.HARDWAREIO, "Found \"" + Subdir + "\", using.");
+                }
+                else { Log.Output(Log.Severity.DEBUG, Log.Source.HARDWAREIO, "Found \"" + Subdir + "\", no good."); }
+            }
+            if (!FoundPWMChip) { throw new Exception("Could not find PWM chip number. Is your device tree set correctly?"); }
+
+            // Export and enable the pin.
+            if (!Directory.Exists(Path + "/pwm" + ExportNum))
+            {
+                StreamWriter Exporter = File.AppendText(Path + "/export");
+                Exporter.Write(ExportNum);
+                Exporter.Flush();
+                Exporter.Close();
+            }
             Path += ("/pwm" + ExportNum);
             StreamWriter Enabler = File.AppendText(Path + "/enable");
             Enabler.Write("1");
             Enabler.Flush();
-            Enabler.Close();*/
+            Enabler.Close();
             this.Port = new PWMPortMM(Device);
         }
 

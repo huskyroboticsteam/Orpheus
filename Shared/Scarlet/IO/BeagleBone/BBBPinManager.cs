@@ -235,7 +235,7 @@ namespace Scarlet.IO.BeagleBone
         {
             // Generate the device tree
             if(GPIOMappings == null || GPIOMappings.Count == 0) { Log.Output(Log.Severity.INFO, Log.Source.HARDWAREIO, "No pins defined, skipping device tree application."); return; }
-            string FileName = "Scarlet-DT20";
+            string FileName = "Scarlet-DT21";
             string OutputDTFile = FileName + ".dts";
             List<string> DeviceTree = GenerateDeviceTree();
 
@@ -243,6 +243,7 @@ namespace Scarlet.IO.BeagleBone
             File.WriteAllLines(OutputDTFile, DeviceTree);
 
             bool AttemptOverlayChanges = false;
+            bool WarnAboutApplication = false;
             switch(Mode)
             {
                 case ApplicationMode.APPLY_IF_NONE:
@@ -254,6 +255,9 @@ namespace Scarlet.IO.BeagleBone
                 case ApplicationMode.REMOVE_AND_APPLY:
                     RemovePinSettings();
                     AttemptOverlayChanges = true;
+                    break;
+                case ApplicationMode.NO_CHANGES:
+                    if (FindScarletOverlays().Count > 0) { WarnAboutApplication = true; }
                     break;
             }
 
@@ -286,6 +290,7 @@ namespace Scarlet.IO.BeagleBone
 
                 Thread.Sleep(100);
             }
+            if(WarnAboutApplication) { Log.Output(Log.Severity.WARNING, Log.Source.HARDWAREIO, "Scarlet device tree overlays have not been applied. Ensure that this is what you intended, otherwise I/O pins may not work as expected."); }
 
             // Start relevant components.
             I2CBBB.Initialize(EnableI2C1, EnableI2C2);

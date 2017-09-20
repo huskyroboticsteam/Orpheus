@@ -32,7 +32,7 @@ namespace Science
 
             BeagleBone.Initialize(SystemMode.DEFAULT, true);
             Log.SetSingleOutputLevel(Log.Source.HARDWAREIO, Log.Severity.DEBUG);
-            TestPWMLow();
+            TestPWM();
 
             IOHandler = new IOHandler();
             Client.Start(IP, PortTCP, PortUDP, Constants.CLIENT_NAME);
@@ -88,12 +88,21 @@ namespace Science
             IPWMOutput Output = PWMBBB.PWMDevice1.OutputA;
             Output.Initialize();
             PWMBBB.PWMDevice1.SetFrequency(5000);
-            for(int i = 0; i < 100; i++)
+            while (true)
             {
-                Output.SetOutput(i / 100.000F);
-                Thread.Sleep(50);
+                for (int i = 0; i < 100; i++)
+                {
+                    Output.SetOutput(i);
+                    Thread.Sleep(50);
+                }
+                for (int i = 100; i > 0; i--)
+                {
+                    Output.SetOutput(i);
+                    Thread.Sleep(50);
+                }
+                Output.SetOutput(0);
+                Thread.Sleep(500);
             }
-            Output.SetOutput(0);
         }
 
         private static void TestPWMLow()
@@ -102,7 +111,7 @@ namespace Science
             BBBPinManager.AddMappingPWM(BBBPin.P9_14);
             BBBPinManager.ApplyPinSettings(ApplyDevTree);
 
-            ScarletPWMPortMM Port = new ScarletPWMPortMM(PWMPortEnum.PWM1_A);
+            PWMPortMM Port = new PWMPortMM(PWMPortEnum.PWM1_A);
             Port.PeriodNS = 1000000;
             Port.DutyPercent = 0;
             Port.RunState = true;
