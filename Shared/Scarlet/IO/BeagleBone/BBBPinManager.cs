@@ -235,9 +235,18 @@ namespace Scarlet.IO.BeagleBone
         {
             // Generate the device tree
             if(GPIOMappings == null || GPIOMappings.Count == 0) { Log.Output(Log.Severity.INFO, Log.Source.HARDWAREIO, "No pins defined, skipping device tree application."); return; }
-            string FileName = "Scarlet-DT23";
-            string OutputDTFile = FileName + ".dts";
+            if (!StateStore.Started) { throw new Exception("Please start the StateStore system first."); }
+            string FileName = "Scarlet-DT";
+            string PrevNum = StateStore.GetOrCreate("Scarlet-DevTreeNum", "0");
+            string PrevHash = StateStore.GetOrCreate("Scarlet-DevTreeHash", "NONE");
+
             List<string> DeviceTree = GenerateDeviceTree();
+            bool New = PrevHash != DeviceTree.GetHashCode().ToString();
+            if (New) { StateStore.Set("Scarlet-DevTreeNum", (int.Parse(PrevNum) + 1).ToString()); }
+            FileName += StateStore.Get("Scarlet-DevTreeNum");
+            StateStore.Set("Scarlet-DevTreeHash", DeviceTree.GetHashCode().ToString());
+            StateStore.Save();
+            string OutputDTFile = FileName + ".dts";
 
             // Save the device tree to file
             File.WriteAllLines(OutputDTFile, DeviceTree);
@@ -251,6 +260,7 @@ namespace Scarlet.IO.BeagleBone
                     break;
                 case ApplicationMode.APPLY_REGARDLESS:
                     AttemptOverlayChanges = true;
+                    New = false;
                     break;
                 case ApplicationMode.REMOVE_AND_APPLY:
                     RemovePinSettings();
@@ -263,27 +273,29 @@ namespace Scarlet.IO.BeagleBone
 
             if (AttemptOverlayChanges)
             {
-                // Compile the device tree file
-                // Command: dtc -O dtb -o Scarlet-DT-00A0.dtbo -b 0 -@ Scarlet-DT.dts
-                string CompiledDTFile = FileName + "-00A0.dtbo";
-                Process Compile = new Process();
-                Compile.StartInfo.FileName = "dtc";
-                Compile.StartInfo.Arguments = "-O dtb -o \"" + CompiledDTFile + "\" -b 0 -@ \"" + OutputDTFile + "\"";
-                Log.Output(Log.Severity.INFO, Log.Source.HARDWAREIO, "Compiling device tree...");
-                Compile.Start();
-                Compile.WaitForExit();
+                if (New)
+                {
+                    // Compile the device tree file
+                    // Command: dtc -O dtb -o Scarlet-DT-00A0.dtbo -b 0 -@ Scarlet-DT.dts
+                    string CompiledDTFile = FileName + "-00A0.dtbo";
+                    Process Compile = new Process();
+                    Compile.StartInfo.FileName = "dtc";
+                    Compile.StartInfo.Arguments = "-O dtb -o \"" + CompiledDTFile + "\" -b 0 -@ \"" + OutputDTFile + "\"";
+                    Log.Output(Log.Severity.INFO, Log.Source.HARDWAREIO, "Compiling device tree...");
+                    Compile.Start();
+                    Compile.WaitForExit();
 
-                // Remove previous device tree
-                RemovePinSettings();
+                    // Remove previous device tree
+                    RemovePinSettings();
 
-                // Copy the compiled file to the firmware folder
-                // Command: cp Scarlet-DT-00A0.dtbo /lib/firmware
-                if (!File.Exists(CompiledDTFile)) { throw new FileNotFoundException("Failed to get compiled device tree!"); }
-                File.Copy(CompiledDTFile, "/lib/firmware/" + CompiledDTFile, true);
+                    // Copy the compiled file to the firmware folder
+                    // Command: cp Scarlet-DT-00A0.dtbo /lib/firmware
+                    if (!File.Exists(CompiledDTFile)) { throw new FileNotFoundException("Failed to get compiled device tree!"); }
+                    File.Copy(CompiledDTFile, "/lib/firmware/" + CompiledDTFile, true);
 
-                // Delete the compiled tree file in execution folder
-                File.Delete(CompiledDTFile);
-
+                    // Delete the compiled tree file in execution folder
+                    File.Delete(CompiledDTFile);
+                }
                 // Apply the device tree
                 // Command: echo Scarlet-DT > /sys/devices/platform/bone_capemgr/slots
                 File.WriteAllText("/sys/devices/platform/bone_capemgr/slots", FileName); // TODO: Make this able to handle a non-empty file.

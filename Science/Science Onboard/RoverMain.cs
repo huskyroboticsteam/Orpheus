@@ -23,6 +23,7 @@ namespace Science
         static void Main(string[] Args)
 		{
             ParseArgs(Args);
+            StateStore.Start("SciRover");
             Log.SetGlobalOutputLevel(Log.Severity.INFO);
             Log.SetSingleOutputLevel(Log.Source.NETWORK, Log.Severity.DEBUG);
             Log.ErrorCodes = ScienceErrors.ERROR_CODES;
