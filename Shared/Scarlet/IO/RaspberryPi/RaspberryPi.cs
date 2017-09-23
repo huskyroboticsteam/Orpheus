@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Scarlet.Utilities;
+using System;
 using System.Runtime.InteropServices;
 
 namespace Scarlet.IO.RaspberryPi
@@ -124,6 +125,26 @@ namespace Scarlet.IO.RaspberryPi
         internal static void I2CWrite(byte DeviceID, byte Data)
         {
             Ext_I2CWrite(DeviceID, Data);
+        }
+
+        #endregion
+
+        #region SPI
+
+        [DllImport(SPI_LIB, EntryPoint = "wiringPiSPISetup")]
+        private static extern void Ext_SPISetup(int BusNum, int Speed);
+
+        internal static void SPISetup(int BusNum, int Speed) { Ext_SPISetup(BusNum, Speed); }
+
+        [DllImport(SPI_LIB, EntryPoint = "wiringPiSPIDataRW")]
+        private static extern int Ext_SPIRW(int BusNum, [In,Out] byte[] Data, int Length);
+
+        internal static byte[] SPIRW(int BusNum, byte[] Data, int Length)
+        {
+            byte[] DataNew = Data; // Unsure if Data will be changed if sent through WiringPI, but this should clone
+            int ReturnData = Ext_SPIRW(BusNum, DataNew, Length);
+            byte[] ReturnBytes = UtilData.ToBytes(ReturnData);
+            return ReturnBytes;
         }
 
         #endregion

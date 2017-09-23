@@ -8,12 +8,13 @@ namespace Scarlet.IO.RaspberryPi
 {
     public class I2CBusPi : II2CBus
     {
-
-        public void Initialize()
+        
+        public I2CBusPi(int Bus)
         {
-            // Setup I2C line
-            RaspberryPi.I2CSetup(1);
+            RaspberryPi.I2CSetup((byte)Bus);
         }
+
+        public void Initialize() { }
 
         public byte[] Read(byte Address, int DataLength)
         {
