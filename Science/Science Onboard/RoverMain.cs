@@ -4,6 +4,7 @@ using System.Threading;
 using BBBCSIO;
 using Scarlet.Communications;
 using Scarlet.Components;
+using Scarlet.Components.Motors;
 using Scarlet.Components.Sensors;
 using Scarlet.IO;
 using Scarlet.IO.BeagleBone;
@@ -33,7 +34,7 @@ namespace Science
 
             BeagleBone.Initialize(SystemMode.DEFAULT, true);
             Log.SetSingleOutputLevel(Log.Source.HARDWAREIO, Log.Severity.DEBUG);
-            TestPWM();
+            TestMotor();
 
             IOHandler = new IOHandler();
             Client.Start(IP, PortTCP, PortUDP, Constants.CLIENT_NAME);
@@ -106,6 +107,37 @@ namespace Science
                 Thread.Sleep(50);
                 Cycle += 20;
             }
+        }
+
+        private static void TestMotor()
+        {
+            BBBPinManager.AddMappingGPIO(BBBPin.P8_08, true, Scarlet.IO.ResistorState.PULL_DOWN); // TODO: Remove this dependency from DT
+            BBBPinManager.AddMappingPWM(BBBPin.P9_14);
+            BBBPinManager.ApplyPinSettings(ApplyDevTree);
+            IPWMOutput MotorOut = PWMBBB.PWMDevice1.OutputA;
+            MotorOut.Initialize();
+            MotorOut.SetEnabled(true);
+            TalonMC Motor = new TalonMC(MotorOut, 0.2F);
+            Log.SetSingleOutputLevel(Log.Source.MOTORS, Log.Severity.DEBUG);
+            Motor.Initialize();
+            Motor.RampUp = 0.5F;
+            Motor.Speed = 0.1F;
+            Motor.UpdateState();
+            while (true)
+            {
+                //Motor.UpdateState();
+                Thread.Sleep(100);
+            }
+            /*int Cycle = 0;
+            while (true)
+            {
+                Motor.UpdateState();
+                float Spd = (float)((Math.Sin(Cycle * Math.PI / 360.000D) + 1) / 40) + 0.1F;
+                Log.Output(Log.Severity.DEBUG, Log.Source.MOTORS, "Outputting " + Spd + ", currently " + Motor.Speed);
+                Motor.Speed = Spd;
+                Thread.Sleep(100);
+                Cycle += 15;
+            }*/
         }
 
         private static void TestPWMLow()

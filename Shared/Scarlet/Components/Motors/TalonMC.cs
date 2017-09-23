@@ -49,7 +49,7 @@ namespace Scarlet.Components.Motors
         public void Initialize()
         {
             this.Pin.Initialize(); // TODO: Clean up the pin when finished using.
-            this.Pin.SetFrequency(1000); // TODO: Set this to an actual value.
+            this.Pin.SetFrequency(333);
         }
 
         public void Stop()
@@ -63,7 +63,7 @@ namespace Scarlet.Components.Motors
             this.LPF.LPFk = this.RampUp;
             this.LPF.Feed(this.Speed);
             double SetSpeed = this.LPF.Output;
-            this.Pin.SetOutput((float)SetSpeed);
+            this.Pin.SetOutput(((float)SetSpeed / 2) + 0.5F);
         }
     }
 }

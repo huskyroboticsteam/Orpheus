@@ -13,6 +13,8 @@ namespace Scarlet.Utilities
         private static Dictionary<string, string> Data;
         public static bool Started { get; private set; }
 
+        //TODO: Make this thread-safe.
+
         public static void Start(string SystemName)
         {
             FileName = "ScarletStore-" + SystemName + ".txt";

@@ -57,8 +57,8 @@ namespace Scarlet.IO.BeagleBone
 
         internal PWMDeviceBBB(BBBPin[] PinsA, BBBPin[] PinsB)
         {
-            this.OutputA = new PWMOutputBBB(PinsA);
-            this.OutputB = new PWMOutputBBB(PinsB);
+            this.OutputA = new PWMOutputBBB(PinsA, this);
+            this.OutputB = new PWMOutputBBB(PinsB, this);
         }
 
         public void SetFrequency(int Frequency)
@@ -75,13 +75,15 @@ namespace Scarlet.IO.BeagleBone
     public class PWMOutputBBB : IPWMOutput
     {
         private BBBPin[] Pins;
+        private PWMDeviceBBB Parent;
         private float DutyCycle = -1;
 
         internal PWMPortMM Port;
 
-        internal PWMOutputBBB(BBBPin[] Pins)
+        internal PWMOutputBBB(BBBPin[] Pins, PWMDeviceBBB Parent)
         {
             this.Pins = Pins;
+            this.Parent = Parent;
         }
 
         public void Dispose() { }
@@ -167,7 +169,7 @@ namespace Scarlet.IO.BeagleBone
 
         public void SetFrequency(int Frequency)
         {
-            throw new InvalidOperationException("Cannot set frequency on individual outputs on BBB. You must change the frequency on a PWM device level. Please see the documentation for more details.");
+            this.Parent.SetFrequency(Frequency);
         }
 
         public void SetOutput(float DutyCycle)
