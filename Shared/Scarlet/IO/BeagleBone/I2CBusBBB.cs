@@ -31,9 +31,17 @@ namespace Scarlet.IO.BeagleBone
 
         public void Initialize() { }
 
-        public void Write(byte Address, byte[] Data, int DataLength)
+        public void Write(byte Address, byte[] Data)
         {
-            this.Port.Write(Address, Data, DataLength);
+            this.Port.Write(Address, Data, Data.Length);
+        }
+
+        public void WriteRegister(byte Address, byte Register, byte[] Data)
+        {
+            byte[] NewData = new byte[Data.Length + 1];
+            NewData[0] = Register;
+            for(int Index = 1; Index < NewData.Length; Index++) { NewData[Index] = Data[Index - 1]; }
+            Write(Address, NewData);
         }
 
         public byte[] Read(byte Address, int DataLength)
@@ -41,6 +49,12 @@ namespace Scarlet.IO.BeagleBone
             byte[] Buffer = new byte[DataLength];
             this.Port.Read(Address, Buffer, DataLength);
             return Buffer;
+        }
+
+        public byte[] ReadRegister(byte Address, byte Register, int DataLength)
+        {
+            Write(Address, new byte[] { Register });
+            return Read(Address, DataLength);
         }
 
         public void Dispose() { } // TODO: Implement.
