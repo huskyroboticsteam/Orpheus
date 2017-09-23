@@ -6,6 +6,9 @@ namespace Scarlet.IO.RaspberryPi
     public static class RaspberryPi
     {
         private const string MAIN_LIB = "libwiringPi.so";
+        private const string I2C_LIB = "libwiringPiI2C.so";
+        private const string SPI_LIB = "libwiringPiSPI.so";
+
         private static bool P_Initialized = false;
         internal static bool Initialized
         {
@@ -94,5 +97,36 @@ namespace Scarlet.IO.RaspberryPi
         }
 
         #endregion
+
+        #region I2C
+
+        [DllImport(I2C_LIB, EntryPoint = "wiringPiI2CSetup")]
+        private static extern int Ext_I2CSetup(int DeviceID);
+
+        internal static void I2CSetup(byte DeviceID)
+        {
+            int SetupVal = Ext_I2CSetup(DeviceID);
+            if (SetupVal == -1) { throw new Exception("Unable to setup I2C device: " + DeviceID); }
+        }
+
+        [DllImport(I2C_LIB, EntryPoint = "wiringPiI2CRead")]
+        private static extern int Ext_I2CRead(int DeviceID);
+
+        internal static byte I2CRead(byte DeviceID)
+        {
+            int Data = Ext_I2CRead(DeviceID);
+            return (byte)Data;
+        }
+
+        [DllImport(I2C_LIB, EntryPoint = "wiringPiI2CWrite")]
+        private static extern int Ext_I2CWrite(int DeviceID, int Data);
+
+        internal static void I2CWrite(byte DeviceID, byte Data)
+        {
+            Ext_I2CWrite(DeviceID, Data);
+        }
+
+        #endregion
+
     }
 }
