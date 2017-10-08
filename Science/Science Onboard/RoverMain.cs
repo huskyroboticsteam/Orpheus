@@ -218,6 +218,11 @@ namespace Science
             }
         }
 
+        private static void TestInterrupts()
+        {
+
+        }
+
         private static void ParseArgs(string[] Args)
         {
             if (Args == null || Args.Length == 0) { return; } // Nothing to parse.
