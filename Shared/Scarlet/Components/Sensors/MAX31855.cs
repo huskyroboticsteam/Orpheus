@@ -30,8 +30,6 @@ namespace Scarlet.Components.Sensors
             this.ChipSelect = ChipSelect;
         }
 
-        public void Initialize() { }
-
         public bool Test()
         {
             UpdateState();

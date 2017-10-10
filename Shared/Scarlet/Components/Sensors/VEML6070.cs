@@ -36,11 +36,7 @@ namespace Scarlet.Components.Sensors
             this.AddressLSB = Address;
             this.AddressMSB = (byte)(Address + 1);
             this.Bus = Bus;
-        }
-
-        public void Initialize()
-        {
-            this.Bus.Write(this.AddressLSB, new byte[] { (byte)(((this.Speed & 0b0000_0011) << 2) | 0b0000_0010) }); // Set timing.
+            SetRefreshSpeed((RefreshSpeed)this.Speed);
         }
 
         public void SetRefreshSpeed(RefreshSpeed Speed)

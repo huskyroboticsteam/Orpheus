@@ -15,8 +15,6 @@ namespace Scarlet.IO.RaspberryPi
             DeviceID = RaspberryPi.SerialOpen(Device, Baud);
         }
 
-        public void Initialize() { }
-
         public byte[] Read(int Length)
         {
             List<byte> Data = new List<byte>();

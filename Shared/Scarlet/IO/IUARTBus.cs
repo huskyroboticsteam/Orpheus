@@ -8,8 +8,6 @@ namespace Scarlet.IO
 {
     public interface IUARTBus
     {
-        void Initialize();
-
         void Write(byte[] Data);
 
         byte[] Read(int Length);

@@ -58,7 +58,6 @@ namespace Science
             BBBPinManager.AddMappingGPIO(BBBPin.P8_08, true, Scarlet.IO.ResistorState.PULL_DOWN);
             BBBPinManager.ApplyPinSettings(ApplyDevTree);
             IDigitalOut Output = new DigitalOutBBB(BBBPin.P8_08);
-            Output.Initialize();
             bool Value = false;
             for (int i = 0; i < 50; i++)
             {
@@ -74,7 +73,6 @@ namespace Science
             BBBPinManager.AddMappingGPIO(BBBPin.P9_12, false, Scarlet.IO.ResistorState.PULL_DOWN);
             //if (ApplyDevTree) { BBBPinManager.ApplyPinSettings(); }
             IDigitalIn Input = new DigitalInBBB(BBBPin.P9_12);
-            Input.Initialize();
             for(int i = 0; i < 50; i++)
             {
                 Log.Output(Log.Severity.DEBUG, Log.Source.HARDWAREIO, "Input is " + Input.GetInput());
@@ -90,8 +88,6 @@ namespace Science
             BBBPinManager.ApplyPinSettings(ApplyDevTree);
             IPWMOutput OutA = PWMBBB.PWMDevice1.OutputA;
             IPWMOutput OutB = PWMBBB.PWMDevice1.OutputB;
-            OutA.Initialize();
-            OutB.Initialize();
             PWMBBB.PWMDevice1.SetFrequency(5000);
             OutA.SetEnabled(true);
             OutB.SetEnabled(true);
@@ -115,7 +111,6 @@ namespace Science
             BBBPinManager.AddMappingPWM(BBBPin.P9_14);
             BBBPinManager.ApplyPinSettings(ApplyDevTree);
             IPWMOutput MotorOut = PWMBBB.PWMDevice1.OutputA;
-            MotorOut.Initialize();
             MotorOut.SetEnabled(true);
             TalonMC Motor = new TalonMC(MotorOut, 0.2F);
             Log.SetSingleOutputLevel(Log.Source.MOTORS, Log.Severity.DEBUG);
@@ -192,8 +187,6 @@ namespace Science
             BBBPinManager.AddMappingSPI_CS(BBBPin.P9_12);
             BBBPinManager.ApplyPinSettings(ApplyDevTree);
             IDigitalOut CS_Thermo = new DigitalOutBBB(BBBPin.P9_12);
-            CS_Thermo.Initialize();
-            SPIBBB.SPIBus0.Initialize();
             MAX31855 Thermo = new MAX31855(SPIBBB.SPIBus0, CS_Thermo);
             Thermo.Initialize();
             Log.SetSingleOutputLevel(Log.Source.SENSORS, Log.Severity.DEBUG);
@@ -211,7 +204,6 @@ namespace Science
             BBBPinManager.AddMappingADC(BBBPin.P9_36);
             BBBPinManager.ApplyPinSettings(ApplyDevTree);
             IAnalogueIn Input = new AnalogueInBBB(BBBPin.P9_36);
-            Input.Initialize();
             for(int i = 0; i < 200; i++)
             {
                 Log.Output(Log.Severity.DEBUG, Log.Source.HARDWAREIO, "ADC Input: " + Input.GetInput() + " (Raw: " + Input.GetRawInput() + ")");

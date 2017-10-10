@@ -15,8 +15,6 @@ namespace Scarlet.Filters
     ///  This is an interface meant to
     ///  wrap all filters in the Filters namespace.
     ///  
-    ///  * * * Filters requires the RoboticsLibrary.Utility Namespace.
-    ///  
     ///  * * * Some Filters require use of just the
     ///        Feed(T Input) method. Others require
     ///        a given Feed(T Input, T Rate).

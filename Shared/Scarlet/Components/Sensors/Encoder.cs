@@ -46,11 +46,6 @@ namespace Scarlet.Components.Sensors
             Turned?.Invoke(this, Event);
         }
 
-        public void Initialize()
-        {
-            // TODO: Set up GPIO pins/interrupts
-        }
-
         public void EventTriggered(object Sender, EventArgs Event)
         {
             

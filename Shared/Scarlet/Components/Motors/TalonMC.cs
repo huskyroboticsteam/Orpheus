@@ -8,7 +8,7 @@ namespace Scarlet.Components.Motors
     public class TalonMC : IMotor
     {
         private LowPass<double> LPF = new LowPass<double>();
-        private readonly IPWMOutput Pin;
+        private readonly IPWMOutput PWMOut;
         private readonly float MaxSpeed;
         private float P_RampUp, P_Speed;
 
@@ -36,21 +36,16 @@ namespace Scarlet.Components.Motors
             }
         }
 
-        public TalonMC(IPWMOutput Pin, float MaxSpeed)
+        public TalonMC(IPWMOutput PWMOut, float MaxSpeed)
         {
-            this.Pin = Pin;
+            this.PWMOut = PWMOut;
             this.MaxSpeed = MaxSpeed;
+            this.PWMOut.SetFrequency(333);
         }
         
         public void EventTriggered(object Sender, EventArgs Event)
         {
 
-        }
-
-        public void Initialize()
-        {
-            //this.Pin.Initialize(); // TODO: Clean up the pin when finished using.
-            this.Pin.SetFrequency(333);
         }
 
         public void Stop()
@@ -65,7 +60,7 @@ namespace Scarlet.Components.Motors
             this.LPF.Feed(this.Speed);
             double SetSpeed = this.LPF.Output;
             //Log.Output(Log.Severity.DEBUG, Log.Source.MOTORS, "Outputting " + (((float)SetSpeed / 2) + 0.5F));
-            this.Pin.SetOutput(((float)SetSpeed / 2) + 0.5F);
+            this.PWMOut.SetOutput(((float)SetSpeed / 2) + 0.5F);
         }
     }
 }

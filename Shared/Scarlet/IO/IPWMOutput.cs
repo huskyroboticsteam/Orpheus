@@ -2,9 +2,6 @@
 {
     public interface IPWMOutput
     {
-        /// <summary>Prepares the output for use.</summary>
-        void Initialize();
-
         /// <summary>Sets the PWM Frequency.</summary>
         /// <param name="Frequency">The output frequency in Hz.</param>
         void SetFrequency(int Frequency);

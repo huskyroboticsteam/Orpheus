@@ -22,8 +22,6 @@ namespace Scarlet.Components.Sensors
             this.Bus = Bus;
         }
 
-        public void Initialize() { }
-
         public void Configure(MPU6050Configuration Config)
         {
             Bus.WriteRegister(Address, 0x19, new byte[] { Config.SampleRateDivider });

@@ -18,8 +18,6 @@ namespace Scarlet.IO.RaspberryPi
             RaspberryPi.SPISetup(Bus, DEFAULT_SPEED);
         }
 
-        public void Initialize() { }
-
         public void SetBusSpeed(int Speed)
         {
             RaspberryPi.SPISetup(BusNum, Speed);

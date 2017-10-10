@@ -5,7 +5,7 @@ namespace Scarlet.Components.Motors
 {
     public class Servo : IMotor
     {
-        private readonly IPWMOutput Pin;
+        private readonly IPWMOutput PWMOut;
         public int Position { get; private set; }
         private int P_TargetPosition;
         public int TargetPosition
@@ -18,20 +18,15 @@ namespace Scarlet.Components.Motors
             }
         }
 
-        public Servo(IPWMOutput Pin)
+        public Servo(IPWMOutput PWMOut)
         {
-            this.Pin = Pin;
+            this.PWMOut = PWMOut;
+            this.PWMOut.SetFrequency(50); // TODO: Set this to an actual value, and check if this overrides others.
         }
 
         public void EventTriggered(object Sender, EventArgs Event)
         {
             
-        }
-
-        public void Initialize()
-        {
-            this.Pin.Initialize();
-            this.Pin.SetFrequency(50); // TODO: Set this to an actual value, and check if this overrides others.
         }
 
         public void Stop()

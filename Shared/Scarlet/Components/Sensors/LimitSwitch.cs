@@ -44,11 +44,6 @@ namespace Scarlet.Components.Sensors
             SwitchToggle?.Invoke(this, Event);
         }
 
-        public void Initialize()
-        {
-            // TODO: Set up GPIO pins/interrupts.
-        }
-
         public void EventTriggered(object Sender, EventArgs Event)
         {
             
