@@ -29,27 +29,14 @@ namespace Scarlet.IO.BeagleBone
                 case 0: this.Port = new ScarletSPIPortFS(SPIPortEnum.SPIPORT_0); break;
                 case 1: this.Port = new ScarletSPIPortFS(SPIPortEnum.SPIPORT_1); break;
                 default: throw new ArgumentOutOfRangeException("Only SPI ports 0 and 1 are supported.");
+                    this.Port.SetMode(SPIModeEnum.SPI_MODE_0);
+                    this.Port.SetDefaultSpeedInHz(500000); // TODO: Determine appropriate speed.
             }
         }
-
-        public void Initialize()
-        {
-            //this.Devices = new Dictionary<BBBPin, SPISlaveDeviceHandle>();
-            //this.Devices.Add(BBBPin.NONE, this.Port.EnableSPISlaveDevice(SPISlaveDeviceEnum.SPI_SLAVEDEVICE_CS1));
-            this.Port.SetMode(SPIModeEnum.SPI_MODE_0);
-            this.Port.SetDefaultSpeedInHz(500000); // TODO: Determine appropriate speed.
-        }
-
-        /*private SPISlaveDeviceHandle GetOrCreateHandle(BBBPin CSPin)
-        {
-            if (!this.Devices.ContainsKey(CSPin) || this.Devices[CSPin] == null) { this.Devices.Add(CSPin, this.Port.EnableSPIGPIOSlaveDevice(Pin.PinToGPIO(CSPin))); }
-            return this.Devices[CSPin];
-        }*/
 
         public byte[] Write(IDigitalOut DeviceSelect, byte[] Data, int DataLength)
         {
             byte[] ReceivedData = new byte[DataLength];
-            //this.Port.SPITransfer(GetOrCreateHandle(DeviceSelect), Data, ReceivedData, DataLength);
             this.Port.SPITransfer(DeviceSelect, Data, ReceivedData, DataLength);
             return ReceivedData;
         }

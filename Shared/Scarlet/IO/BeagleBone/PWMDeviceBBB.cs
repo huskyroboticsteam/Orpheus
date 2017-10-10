@@ -84,11 +84,12 @@ namespace Scarlet.IO.BeagleBone
         {
             this.Pins = Pins;
             this.Parent = Parent;
+            Initialize();
         }
 
         public void Dispose() { }
 
-        public void Initialize()
+        private void Initialize()
         {
             PWMPortEnum Device = PWMBBB.PinToPWMID(this.Pins[0]);
             // Final path will be: /sys/devices/platform/ocp/4830_000.epwmss/4830_200.pwm/pwm/pwmchip_/pwm_
@@ -182,6 +183,9 @@ namespace Scarlet.IO.BeagleBone
         {
             this.Port.RunState = Enabled;
         }
+
+        public float GetOutput() { return Port.DutyPercent / 100.000F; }
+        public uint GetFrequency() { return Port.FrequencyHz; }
 
         internal void ResetOutput()
         {

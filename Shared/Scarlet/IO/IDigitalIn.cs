@@ -4,9 +4,6 @@ namespace Scarlet.IO
 {
     public interface IDigitalIn
     {
-        /// <summary> Prepares the input for use. </summary>
-        void Initialize();
-
         /// <summary> Sets the input resistor. </summary>
         void SetResistor(ResistorState Resistor);
 

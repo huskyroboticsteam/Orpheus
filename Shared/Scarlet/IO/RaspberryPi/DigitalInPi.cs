@@ -13,13 +13,6 @@ namespace Scarlet.IO.RaspberryPi
         public DigitalInPi(int PinNumber)
         {
             this.PinNumber = PinNumber;
-        }
-
-        /// <summary>
-        /// Prepares the GPIO pin for input use. Make sure to call RaspberryPi.Initialize() once in your program before this.
-        /// </summary>
-        public void Initialize()
-        {
             RaspberryPi.SetPinMode(this.PinNumber, (int)RaspberryPi.PinMode.INPUT);
         }
 

@@ -11,18 +11,14 @@ namespace Scarlet.IO.BeagleBone
         public DigitalInBBB(BBBPin Pin)
         {
             this.Pin = Pin;
+            if (BeagleBone.FastGPIO) { this.InputPort = new InputPortMM(IO.BeagleBone.Pin.PinToGPIO(this.Pin)); }
+            else { this.InputPort = new InputPortFS(IO.BeagleBone.Pin.PinToGPIO(this.Pin)); }
         }
 
         public bool GetInput()
         {
             if (BeagleBone.FastGPIO) { return ((InputPortMM)this.InputPort).Read(); }
             else { return ((InputPortFS)this.InputPort).Read(); }
-        }
-
-        public void Initialize()
-        {
-            if (BeagleBone.FastGPIO) { this.InputPort = new InputPortMM(IO.BeagleBone.Pin.PinToGPIO(this.Pin)); }
-            else { this.InputPort = new InputPortFS(IO.BeagleBone.Pin.PinToGPIO(this.Pin)); }
         }
 
         public void RegisterInterruptHandler(EventHandler<InputInterrupt> Handler, InterruptType Type)
@@ -32,8 +28,7 @@ namespace Scarlet.IO.BeagleBone
 
         public void SetResistor(ResistorState Resistor)
         {
-            throw new NotImplementedException();
-            // TODO: Does this actually require device tree changes? O.o
+            throw new NotImplementedException("Resistor state cannot be changed on BBB without re-applying device tree overlay.");
         }
 
         public void Dispose()

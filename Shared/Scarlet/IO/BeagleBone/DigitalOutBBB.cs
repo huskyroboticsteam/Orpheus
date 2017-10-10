@@ -12,11 +12,6 @@ namespace Scarlet.IO.BeagleBone
         {
             if (!IO.BeagleBone.Pin.CheckPin(Pin, BeagleBone.Peripherals)) { throw new ArgumentOutOfRangeException("Cannot use pin " + Enum.GetName(typeof(BBBPin), Pin) + " in current peripheral mode."); }
             this.Pin = Pin;
-        }
-
-        /// <summary>Preapres the pin for use.</summary>
-        public void Initialize()
-        {
             if (BeagleBone.FastGPIO) { this.OutputPort = new OutputPortMM(IO.BeagleBone.Pin.PinToGPIO(this.Pin)); }
             else { this.OutputPort = new OutputPortFS(IO.BeagleBone.Pin.PinToGPIO(this.Pin)); }
         }

@@ -2,9 +2,6 @@
 {
     public interface IAnalogueOut
     {
-        /// <summary> Prepares the output for use. </summary>
-        void Initialize();
-
         /// <summary> Sets the output to the specified level. </summary>
         void SetOutput(double Output);
 

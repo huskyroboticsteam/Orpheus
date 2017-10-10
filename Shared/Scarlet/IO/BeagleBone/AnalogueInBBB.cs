@@ -11,9 +11,9 @@ namespace Scarlet.IO.BeagleBone
         public BBBPin Pin { get; private set; }
         private A2DPortFS Port;
 
-        public AnalogueInBBB(BBBPin Pin) { this.Pin = Pin; }
-        public void Initialize()
+        public AnalogueInBBB(BBBPin Pin)
         {
+            this.Pin = Pin;
             // The ADC input file is not always available immediately, it can take a bit for it to be available after device tree overaly application.
             // Therefore, we will wait for it for up to 5 seconds, then throw an error if it is not ready at that time.
             string Filename = "/sys/bus/iio/devices/iio:device0/in_voltage";

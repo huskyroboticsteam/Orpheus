@@ -2,9 +2,6 @@
 {
     public interface IAnalogueIn
     {
-        /// <summary> Prepares the input for use. </summary>
-        void Initialize();
-
         /// <summary> Gets the current input level in Volts. </summary>
         double GetInput();
 

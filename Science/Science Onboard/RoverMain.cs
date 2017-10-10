@@ -121,10 +121,11 @@ namespace Science
             Log.SetSingleOutputLevel(Log.Source.MOTORS, Log.Severity.DEBUG);
             Motor.Initialize();
             Motor.RampUp = 0.5F;
-            Motor.Speed = 0.1F;
+            //Motor.Speed = 0.2F;
             Motor.UpdateState();
             while (true)
             {
+                Log.Output(Log.Severity.DEBUG, Log.Source.MOTORS, "Outputs: " + Motor.Speed + ", " + ((PWMOutputBBB)MotorOut).GetOutput() + ", " + ((PWMOutputBBB)MotorOut).GetFrequency());
                 //Motor.UpdateState();
                 Thread.Sleep(100);
             }

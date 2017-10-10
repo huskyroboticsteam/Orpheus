@@ -14,8 +14,6 @@ namespace Scarlet.IO.RaspberryPi
             RaspberryPi.I2CSetup((byte)Bus);
         }
 
-        public void Initialize() { }
-
         public byte[] Read(byte Address, int DataLength)
         {
             byte[] Buffer = new byte[DataLength];

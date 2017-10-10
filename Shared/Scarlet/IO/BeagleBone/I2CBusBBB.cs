@@ -29,8 +29,6 @@ namespace Scarlet.IO.BeagleBone
             }
         }
 
-        public void Initialize() { }
-
         public void Write(byte Address, byte[] Data)
         {
             this.Port.Write(Address, Data, Data.Length);

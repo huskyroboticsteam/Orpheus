@@ -1,6 +1,7 @@
 ﻿using System;
 using Scarlet.Filters;
 using Scarlet.IO;
+using Scarlet.Utilities;
 
 namespace Scarlet.Components.Motors
 {
@@ -48,7 +49,7 @@ namespace Scarlet.Components.Motors
 
         public void Initialize()
         {
-            this.Pin.Initialize(); // TODO: Clean up the pin when finished using.
+            //this.Pin.Initialize(); // TODO: Clean up the pin when finished using.
             this.Pin.SetFrequency(333);
         }
 
@@ -63,6 +64,7 @@ namespace Scarlet.Components.Motors
             this.LPF.LPFk = this.RampUp;
             this.LPF.Feed(this.Speed);
             double SetSpeed = this.LPF.Output;
+            //Log.Output(Log.Severity.DEBUG, Log.Source.MOTORS, "Outputting " + (((float)SetSpeed / 2) + 0.5F));
             this.Pin.SetOutput(((float)SetSpeed / 2) + 0.5F);
         }
     }
