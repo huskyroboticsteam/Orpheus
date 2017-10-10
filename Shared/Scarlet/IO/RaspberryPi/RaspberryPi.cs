@@ -9,6 +9,7 @@ namespace Scarlet.IO.RaspberryPi
         private const string MAIN_LIB = "libwiringPi.so";
         private const string I2C_LIB = "libwiringPiI2C.so";
         private const string SPI_LIB = "libwiringPiSPI.so";
+        private const string UART_LIB = "libwiringPiUART.so";
 
         private static bool P_Initialized = false;
         internal static bool Initialized
@@ -30,7 +31,6 @@ namespace Scarlet.IO.RaspberryPi
             Initialized = true;
             Ext_SetupGPIO();
         }
-
 
         internal enum PinMode
         {
@@ -148,6 +148,48 @@ namespace Scarlet.IO.RaspberryPi
         }
 
         #endregion
+
+        #region UART
+
+        [DllImport(UART_LIB, EntryPoint = "serialOpen")]
+        private static extern int Ext_SerialOpen(byte Device, int Baud);
+
+        // Returns Device ID, -1 on error
+        internal static int SerialOpen(byte Device, int Baud) { return Ext_SerialOpen(Device, Baud); }
+
+        [DllImport(UART_LIB, EntryPoint = "serialClose")]
+        private static extern void Ext_SerialClose(int DeviceID);
+
+        internal static void SerialClose(int DeviceID) { Ext_SerialClose(DeviceID); }
+
+        [DllImport(UART_LIB, EntryPoint = "serialPuts")]
+        private static extern void Ext_SerialPut(int DeviceID, [In,Out] byte[] Data);
+
+        internal static void SerialPut(int DeviceID, byte[] Data) { Ext_SerialPut(DeviceID, Data); }
+
+        [DllImport(UART_LIB, EntryPoint = "serialDataAvail")]
+        private static extern int Ext_SerialDataAvailable(int DeviceID);
+
+        // Returns # bytes available to read
+        internal static int SerialDataAvailable(int DeviceID) { return Ext_SerialDataAvailable(DeviceID); }
+
+        [DllImport(UART_LIB, EntryPoint = "serialFlush")]
+        private static extern void Ext_SerialFlush(int DeviceID);
+
+        internal static void SerialFlush(int DeviceID) { Ext_SerialFlush(DeviceID); }
+
+        [DllImport(UART_LIB, EntryPoint = "serialGetchar")]
+        private static extern byte Ext_SerialGetChar(int DeviceID);
+
+        internal static byte SerialGetChar(int DeviceID) { return Ext_SerialGetChar(DeviceID); }
+
+        [DllImport(UART_LIB, EntryPoint = "serialPrintf")]
+        private static extern void Ext_SerialPrintf(int DeviceID, [In,Out] byte[] Data);
+
+        internal static void SerialPrintf(int DeviceID, byte[] Data) { Ext_SerialPrintf(DeviceID, Data); }
+
+        #endregion
+    
 
     }
 }
