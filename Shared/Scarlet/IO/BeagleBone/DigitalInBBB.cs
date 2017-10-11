@@ -68,20 +68,29 @@ namespace Scarlet.IO.BeagleBone
 
         internal void InterruptRising(GpioEnum EventPin, bool EventState, DateTime Time, EventData Data)
         {
-            InputInterrupt Event = new InputInterrupt();
-            this.RisingHandlers?.Invoke(this, Event);
+            if (EventPin == IO.BeagleBone.Pin.PinToGPIO(this.Pin))
+            {
+                InputInterrupt Event = new InputInterrupt(Data.EvState);
+                this.RisingHandlers?.Invoke(this, Event);
+            }
         }
 
         internal void InterruptFalling(GpioEnum EventPin, bool EventState, DateTime Time, EventData Data)
         {
-            InputInterrupt Event = new InputInterrupt();
-            this.FallingHandlers?.Invoke(this, Event);
+            if (EventPin == IO.BeagleBone.Pin.PinToGPIO(this.Pin))
+            {
+                InputInterrupt Event = new InputInterrupt(Data.EvState);
+                this.FallingHandlers?.Invoke(this, Event);
+            }
         }
 
         internal void InterruptAny(GpioEnum EventPin, bool EventState, DateTime Time, EventData Data)
         {
-            InputInterrupt Event = new InputInterrupt();
-            this.AnyHandlers?.Invoke(this, Event);
+            if (EventPin == IO.BeagleBone.Pin.PinToGPIO(this.Pin))
+            {
+                InputInterrupt Event = new InputInterrupt(Data.EvState);
+                this.AnyHandlers?.Invoke(this, Event);
+            }
         }
 
         public void SetResistor(ResistorState Resistor)
@@ -101,10 +110,27 @@ namespace Scarlet.IO.BeagleBone
                 ((InputPortFS)this.InputPort).ClosePort();
                 ((InputPortFS)this.InputPort).Dispose();
             }
-            this.IntPort.DisableInterrupt();
-            this.IntPort.ClosePort();
-            this.IntPort.Dispose();
-            this.IntPort = null;
+            if (this.IntPortRise != null)
+            {
+                this.IntPortRise.DisableInterrupt();
+                this.IntPortRise.ClosePort();
+                this.IntPortRise.Dispose();
+                this.IntPortRise = null;
+            }
+            if (this.IntPortFall != null)
+            {
+                this.IntPortFall.DisableInterrupt();
+                this.IntPortFall.ClosePort();
+                this.IntPortFall.Dispose();
+                this.IntPortFall = null;
+            }
+            if (this.IntPortAny != null)
+            {
+                this.IntPortAny.DisableInterrupt();
+                this.IntPortAny.ClosePort();
+                this.IntPortAny.Dispose();
+                this.IntPortAny = null;
+            }
         }
     }
 }

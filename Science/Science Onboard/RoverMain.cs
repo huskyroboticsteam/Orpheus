@@ -114,7 +114,6 @@ namespace Science
             MotorOut.SetEnabled(true);
             TalonMC Motor = new TalonMC(MotorOut, 0.2F);
             Log.SetSingleOutputLevel(Log.Source.MOTORS, Log.Severity.DEBUG);
-            Motor.Initialize();
             Motor.RampUp = 0.5F;
             //Motor.Speed = 0.2F;
             Motor.UpdateState();
@@ -171,7 +170,6 @@ namespace Science
             BBBPinManager.AddMappingsI2C(BBBPin.P9_24, BBBPin.P9_26);
             BBBPinManager.ApplyPinSettings(ApplyDevTree);
             VEML6070 UV = new VEML6070(I2CBBB.I2CBus1);
-            UV.Initialize();
             Log.SetSingleOutputLevel(Log.Source.SENSORS, Log.Severity.DEBUG);
             for (int i = 0; i < 20; i++)
             {
@@ -188,7 +186,6 @@ namespace Science
             BBBPinManager.ApplyPinSettings(ApplyDevTree);
             IDigitalOut CS_Thermo = new DigitalOutBBB(BBBPin.P9_12);
             MAX31855 Thermo = new MAX31855(SPIBBB.SPIBus0, CS_Thermo);
-            Thermo.Initialize();
             Log.SetSingleOutputLevel(Log.Source.SENSORS, Log.Severity.DEBUG);
             for (int i = 0; i < 100; i++)
             {

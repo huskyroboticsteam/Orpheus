@@ -414,7 +414,6 @@ namespace BBBCSIO
             }
 
             // set this high by default, most modes have slave selects high and go low to activate
-            output.Initialize();
             output.SetOutput(true);
 
             //Console.WriteLine("SPIPort GPIO Slave Device Enabled: "+ gpioEnum.ToString());

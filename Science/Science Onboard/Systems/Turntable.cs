@@ -59,10 +59,6 @@ namespace Science.Systems
 
         public void Initialize()
         {
-            this.MotorCtrl.Initialize();
-            this.Limit.Initialize();
-            this.Encoder.Initialize();
-
             this.Initializing = true;
             
             Timer TimeoutTrigger = new Timer() { Interval = INIT_TIMEOUT, AutoReset = false };

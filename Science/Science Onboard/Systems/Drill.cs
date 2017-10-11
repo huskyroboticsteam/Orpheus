@@ -41,8 +41,6 @@ namespace Science.Systems
 
         public void Initialize()
         {
-            this.MotorCtrl.Initialize();
-            this.DoorServo.Initialize();
             this.DoorOpen = false;
         }
 

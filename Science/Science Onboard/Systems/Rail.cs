@@ -66,9 +66,6 @@ namespace Science.Systems
         /// </summary>
         public void Initialize()
         { // TODO: What happens when it is already at the top? This likely won't toggle the switch...
-            this.MotorCtrl.Initialize();
-            this.Limit.Initialize();
-            this.Encoder.Initialize();
 
             this.Initializing = true;
 

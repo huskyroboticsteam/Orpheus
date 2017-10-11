@@ -74,19 +74,19 @@ namespace Scarlet.IO.RaspberryPi
 
         internal void InterruptRising()
         {
-            InputInterrupt Event = new InputInterrupt();
+            InputInterrupt Event = new InputInterrupt(GetInput());
             this.RisingHandlers?.Invoke(this, Event);
         }
 
         internal void InterruptFalling()
         {
-            InputInterrupt Event = new InputInterrupt();
+            InputInterrupt Event = new InputInterrupt(GetInput());
             this.FallingHandlers?.Invoke(this, Event);
         }
 
         internal void InterruptAny()
         {
-            InputInterrupt Event = new InputInterrupt();
+            InputInterrupt Event = new InputInterrupt(GetInput());
             this.AnyHandlers?.Invoke(this, Event);
         }
 

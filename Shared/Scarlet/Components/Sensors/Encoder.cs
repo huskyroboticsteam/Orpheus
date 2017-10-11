@@ -3,6 +3,7 @@ using Scarlet.Utilities;
 
 namespace Scarlet.Components.Sensors
 {
+    [Obsolete] // Marked as such to warn users, as this class is not ready for use yet.
     public class Encoder : ISensor
     {
         private int PinA, PinB;
