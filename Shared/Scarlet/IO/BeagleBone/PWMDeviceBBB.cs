@@ -16,12 +16,12 @@ namespace Scarlet.IO.BeagleBone
         public static PWMDeviceBBB PWMDevice2 { get; private set; }
 
         // Called by BeagleBone.Initialize() as part of system preparation.
-        static internal void Initialize()
+        static internal void Initialize(bool En0, bool En1, bool En2)
         {
-            //                                                  A1            A2                             B1            B2
-            PWMDevice0 = new PWMDeviceBBB(new BBBPin[] { BBBPin.P9_22, BBBPin.P9_31 }, new BBBPin[] { BBBPin.P9_21, BBBPin.P9_29 });
-            PWMDevice1 = new PWMDeviceBBB(new BBBPin[] { BBBPin.P9_14, BBBPin.P8_36 }, new BBBPin[] { BBBPin.P9_16, BBBPin.P8_34 });
-            PWMDevice2 = new PWMDeviceBBB(new BBBPin[] { BBBPin.P8_19, BBBPin.P8_45 }, new BBBPin[] { BBBPin.P8_13, BBBPin.P8_46 });
+            //                                                             A1            A2                             B1            B2
+            if (En0) { PWMDevice0 = new PWMDeviceBBB(new BBBPin[] { BBBPin.P9_22, BBBPin.P9_31 }, new BBBPin[] { BBBPin.P9_21, BBBPin.P9_29 }); }
+            if (En1) { PWMDevice1 = new PWMDeviceBBB(new BBBPin[] { BBBPin.P9_14, BBBPin.P8_36 }, new BBBPin[] { BBBPin.P9_16, BBBPin.P8_34 }); }
+            if (En2) { PWMDevice2 = new PWMDeviceBBB(new BBBPin[] { BBBPin.P8_19, BBBPin.P8_45 }, new BBBPin[] { BBBPin.P8_13, BBBPin.P8_46 }); }
         }
 
         static internal PWMPortEnum PinToPWMID(BBBPin Pin)

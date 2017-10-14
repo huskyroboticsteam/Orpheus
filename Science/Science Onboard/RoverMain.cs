@@ -35,7 +35,7 @@ namespace Science
 
             BeagleBone.Initialize(SystemMode.DEFAULT, true);
             Log.SetSingleOutputLevel(Log.Source.HARDWAREIO, Log.Severity.DEBUG);
-            TestInterrupt();
+            TestPWM();
 
             IOHandler = new IOHandler();
             Client.Start(IP, PortTCP, PortUDP, Constants.CLIENT_NAME);
@@ -83,7 +83,6 @@ namespace Science
 
         private static void TestPWM()
         {
-            BBBPinManager.AddMappingGPIO(BBBPin.P8_08, true, Scarlet.IO.ResistorState.PULL_DOWN); // TODO: Remove this dependency from DT
             BBBPinManager.AddMappingPWM(BBBPin.P9_14);
             BBBPinManager.AddMappingPWM(BBBPin.P9_16);
             BBBPinManager.ApplyPinSettings(ApplyDevTree);
@@ -108,7 +107,6 @@ namespace Science
 
         private static void TestMotor()
         {
-            BBBPinManager.AddMappingGPIO(BBBPin.P8_08, true, Scarlet.IO.ResistorState.PULL_DOWN); // TODO: Remove this dependency from DT
             BBBPinManager.AddMappingPWM(BBBPin.P9_14);
             BBBPinManager.ApplyPinSettings(ApplyDevTree);
             IPWMOutput MotorOut = PWMBBB.PWMDevice1.OutputA;
@@ -138,7 +136,6 @@ namespace Science
 
         private static void TestPWMLow()
         {
-            BBBPinManager.AddMappingGPIO(BBBPin.P8_08, true, Scarlet.IO.ResistorState.PULL_DOWN); // TODO: Remove this dependency from DT
             BBBPinManager.AddMappingPWM(BBBPin.P9_14);
             BBBPinManager.ApplyPinSettings(ApplyDevTree);
 
@@ -198,7 +195,6 @@ namespace Science
 
         private static void TestADC()
         {
-            BBBPinManager.AddMappingGPIO(BBBPin.P8_08, true, Scarlet.IO.ResistorState.PULL_DOWN); // TODO: Remove this dependency from DT
             BBBPinManager.AddMappingADC(BBBPin.P9_36);
             BBBPinManager.ApplyPinSettings(ApplyDevTree);
             IAnalogueIn Input = new AnalogueInBBB(BBBPin.P9_36);

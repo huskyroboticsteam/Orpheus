@@ -13,9 +13,7 @@ namespace Scarlet.IO.BeagleBone
     {
         private static Dictionary<BBBPin, PinAssignment> GPIOMappings, PWMMappings, I2CMappings, SPIMappings;
         private static Dictionary<BBBPin, int> ADCMappings;
-        private static bool EnableI2C1, EnableI2C2, EnableSPI0, EnableSPI1;
-
-        //TODO: Check locks.
+        private static bool EnableI2C1, EnableI2C2, EnableSPI0, EnableSPI1, EnablePWM0, EnablePWM1, EnablePWM2;
 
         #region Adding Mappings
         public static void AddMappingGPIO(BBBPin SelectedPin, bool IsOutput, ResistorState Resistor, bool FastSlew = true)
@@ -24,7 +22,10 @@ namespace Scarlet.IO.BeagleBone
             if (Mode == 255) { throw new InvalidOperationException("This type of output is not supported on this pin."); }
             if (!Pin.CheckPin(SelectedPin, BeagleBone.Peripherals)) { throw new InvalidOperationException("This pin cannot be used without disabling some peripherals first."); }
             if (Pin.GetOffset(SelectedPin) == 0x000) { throw new InvalidOperationException("This pin is not valid for device tree registration."); }
+
             if (PWMMappings != null && PWMMappings.ContainsKey(SelectedPin)) { throw new InvalidOperationException("This pin is already registered as PWM, cannot also use for GPIO."); }
+            if (I2CMappings != null && I2CMappings.ContainsKey(SelectedPin)) { throw new InvalidOperationException("This pin is already registered as I2C, cannot also use for GPIO."); }
+            if (SPIMappings != null && SPIMappings.ContainsKey(SelectedPin)) { throw new InvalidOperationException("This pin is already registered as SPI, cannot also use for GPIO."); }
 
             if (GPIOMappings == null) { GPIOMappings = new Dictionary<BBBPin, PinAssignment>(); }
             PinAssignment NewMap = new PinAssignment(SelectedPin, Pin.GetPinMode(FastSlew, !IsOutput, Resistor, Mode));
@@ -32,7 +33,7 @@ namespace Scarlet.IO.BeagleBone
             {
                 if (GPIOMappings.ContainsKey(SelectedPin))
                 {
-                    Log.Output(Log.Severity.WARNING, Log.Source.HARDWAREIO, "Overriding pin setting. This may mean that you have a pin usage conflict.");
+                    Log.Output(Log.Severity.WARNING, Log.Source.HARDWAREIO, "Overriding GPIO pin setting. This may mean that you have a pin usage conflict.");
                     GPIOMappings[SelectedPin] = NewMap;
                 }
                 else { GPIOMappings.Add(SelectedPin, NewMap); }
@@ -45,7 +46,17 @@ namespace Scarlet.IO.BeagleBone
             if (Mode == 255) { throw new InvalidOperationException("This pin cannot be used for PWM output."); }
             if (!Pin.CheckPin(SelectedPin, BeagleBone.Peripherals)) { throw new InvalidOperationException("This pin cannot be used for PWM without disabling some peripherals first."); }
             if (Pin.GetOffset(SelectedPin) == 0x000) { throw new InvalidOperationException("This pin is not valid for device tree registration."); }
+
             if (GPIOMappings != null && GPIOMappings.ContainsKey(SelectedPin)) { throw new InvalidOperationException("This pin is already registered as GPIO, cannot also use for PWM."); }
+            if (I2CMappings != null && I2CMappings.ContainsKey(SelectedPin)) { throw new InvalidOperationException("This pin is already registered as I2C, cannot also use for PWM."); }
+            if (SPIMappings != null && SPIMappings.ContainsKey(SelectedPin)) { throw new InvalidOperationException("This pin is already registered as SPI, cannot also use for PWM."); }
+
+            switch(PWMBBB.PinToPWMID(SelectedPin))
+            {
+                case BBBCSIO.PWMPortEnum.PWM0_A: case BBBCSIO.PWMPortEnum.PWM0_B: EnablePWM0 = true; break;
+                case BBBCSIO.PWMPortEnum.PWM1_A: case BBBCSIO.PWMPortEnum.PWM1_B: EnablePWM1 = true; break;
+                case BBBCSIO.PWMPortEnum.PWM2_A: case BBBCSIO.PWMPortEnum.PWM2_B: EnablePWM2 = true; break;
+            }
 
             if (PWMMappings == null) { PWMMappings = new Dictionary<BBBPin, PinAssignment>(); }
             PinAssignment NewMap = new PinAssignment(SelectedPin, Mode);
@@ -87,10 +98,12 @@ namespace Scarlet.IO.BeagleBone
             }
             else { throw new InvalidOperationException("Given pin is not a possible I2C SCL pin. Check the documentation for pinouts."); }
 
-
-            if (GPIOMappings != null && GPIOMappings.ContainsKey(ClockPin)) { throw new InvalidOperationException("I2C clock pin is already registered as GPIO, cannot also use for PWM."); }
-            if (GPIOMappings != null && GPIOMappings.ContainsKey(DataPin)) { throw new InvalidOperationException("I2C data pin is already registered as GPIO, cannot also use for PWM."); }
-            // TODO check PWM
+            if (GPIOMappings != null && GPIOMappings.ContainsKey(ClockPin)) { throw new InvalidOperationException("This pin is already registered as GPIO, cannot also use for I2C Clock."); }
+            if (GPIOMappings != null && GPIOMappings.ContainsKey(DataPin)) { throw new InvalidOperationException("This pin is already registered as GPIO, cannot also use for I2C Data."); }
+            if (PWMMappings != null && PWMMappings.ContainsKey(ClockPin)) { throw new InvalidOperationException("This pin is already registered as PWM, cannot also use for I2C Clock."); }
+            if (PWMMappings != null && PWMMappings.ContainsKey(DataPin)) { throw new InvalidOperationException("This pin is already registered as PWM, cannot also use for I2C Data."); }
+            if (SPIMappings != null && SPIMappings.ContainsKey(ClockPin)) { throw new InvalidOperationException("This pin is already registered as SPI, cannot also use for I2C Clock."); }
+            if (SPIMappings != null && SPIMappings.ContainsKey(DataPin)) { throw new InvalidOperationException("This pin is already registered as SPI, cannot also use for I2C Data."); }
 
             if (I2CMappings == null) { I2CMappings = new Dictionary<BBBPin, PinAssignment>(); }
             PinAssignment ClockMap = new PinAssignment(ClockPin, Pin.GetPinMode(false, true, ResistorState.PULL_UP, ClockMode));
@@ -140,6 +153,16 @@ namespace Scarlet.IO.BeagleBone
                 if (!Pin.CheckPin(MOSI, BeagleBone.Peripherals)) { throw new InvalidOperationException("SPI pin cannot be used without disabling some peripherals first."); }
                 if (Pin.GetOffset(MOSI) == 0x000) { throw new InvalidOperationException("SPI pin is not valid for device tree registration."); }
             }
+
+            if (GPIOMappings != null && MISO != BBBPin.NONE && GPIOMappings.ContainsKey(MISO)) { throw new InvalidOperationException("This pin is already registered as GPIO, cannot also use for SPI MISO."); }
+            if (GPIOMappings != null && MOSI != BBBPin.NONE && GPIOMappings.ContainsKey(MOSI)) { throw new InvalidOperationException("This pin is already registered as GPIO, cannot also use for SPI MOSI."); }
+            if (GPIOMappings != null && GPIOMappings.ContainsKey(Clock)) { throw new InvalidOperationException("This pin is already registered as GPIO, cannot also use for SPI Clock."); }
+            if (PWMMappings != null && MISO != BBBPin.NONE && PWMMappings.ContainsKey(MISO)) { throw new InvalidOperationException("This pin is already registered as PWM, cannot also use for SPI MISO."); }
+            if (PWMMappings != null && MOSI != BBBPin.NONE && PWMMappings.ContainsKey(MOSI)) { throw new InvalidOperationException("This pin is already registered as PWM, cannot also use for SPI MOSI."); }
+            if (PWMMappings != null && PWMMappings.ContainsKey(Clock)) { throw new InvalidOperationException("This pin is already registered as PWM, cannot also use for SPI Clock."); }
+            if (I2CMappings != null && MISO != BBBPin.NONE && I2CMappings.ContainsKey(MISO)) { throw new InvalidOperationException("This pin is already registered as I2C, cannot also use for SPI MISO."); }
+            if (I2CMappings != null && MOSI != BBBPin.NONE && I2CMappings.ContainsKey(MOSI)) { throw new InvalidOperationException("This pin is already registered as I2C, cannot also use for SPI MOSI."); }
+            if (I2CMappings != null && I2CMappings.ContainsKey(Clock)) { throw new InvalidOperationException("This pin is already registered as I2C, cannot also use for SPI Clock."); }
 
             if (Clock == BBBPin.P9_22) // Port 0
             {
@@ -234,7 +257,12 @@ namespace Scarlet.IO.BeagleBone
         public static void ApplyPinSettings(ApplicationMode Mode)
         {
             // Generate the device tree
-            if(GPIOMappings == null || GPIOMappings.Count == 0) { Log.Output(Log.Severity.INFO, Log.Source.HARDWAREIO, "No pins defined, skipping device tree application."); return; }
+            if((GPIOMappings == null || GPIOMappings.Count == 0) &&
+               (PWMMappings == null || PWMMappings.Count == 0) &&
+               (I2CMappings == null || I2CMappings.Count == 0) &&
+               (SPIMappings == null || SPIMappings.Count == 0) &&
+               (ADCMappings == null || ADCMappings.Count == 0))
+                { Log.Output(Log.Severity.INFO, Log.Source.HARDWAREIO, "No pins defined, skipping device tree application."); return; }
             if (!StateStore.Started) { throw new Exception("Please start the StateStore system first."); }
             string FileName = "Scarlet-DT";
             string PrevNum = StateStore.GetOrCreate("Scarlet-DevTreeNum", "0");
@@ -288,9 +316,10 @@ namespace Scarlet.IO.BeagleBone
                     // Remove previous device tree
                     RemovePinSettings();
 
-                    // Copy the compiled file to the firmware folder
+                    // Copy the compiled file to the firmware folder, removing the existing one
                     // Command: cp Scarlet-DT-00A0.dtbo /lib/firmware
                     if (!File.Exists(CompiledDTFile)) { throw new FileNotFoundException("Failed to get compiled device tree!"); }
+                    if (File.Exists("/lib/firmware/" + CompiledDTFile)) { File.Delete("/lib/firmware/" + CompiledDTFile); }
                     File.Copy(CompiledDTFile, "/lib/firmware/" + CompiledDTFile, true);
 
                     // Delete the compiled tree file in execution folder
@@ -298,10 +327,18 @@ namespace Scarlet.IO.BeagleBone
                 }
                 // Apply the device tree
                 // Command: echo Scarlet-DT > /sys/devices/platform/bone_capemgr/slots
-                using (StreamWriter SlotWriter = File.AppendText("/sys/devices/platform/bone_capemgr/slots"))
+                try
                 {
-                    SlotWriter.WriteLine(FileName);
-                    SlotWriter.Flush();
+                    using (StreamWriter SlotWriter = File.AppendText("/sys/devices/platform/bone_capemgr/slots"))
+                    {
+                        SlotWriter.WriteLine(FileName);
+                        SlotWriter.Flush();
+                    }
+                }
+                catch(IOException Exc)
+                {
+                    Log.Output(Log.Severity.ERROR, Log.Source.HARDWAREIO, "Failed to apply device tree overlay. This is likely caused by a conflict. Please read 'Common Issues' in the documentation.");
+                    throw;
                 }
 
                 Thread.Sleep(100);
@@ -311,7 +348,7 @@ namespace Scarlet.IO.BeagleBone
             // Start relevant components.
             I2CBBB.Initialize(EnableI2C1, EnableI2C2);
             SPIBBB.Initialize(EnableSPI0, EnableSPI1);
-            PWMBBB.Initialize();
+            PWMBBB.Initialize(EnablePWM0, EnablePWM1, EnablePWM2);
         }
 
         /// <summary>
@@ -355,6 +392,8 @@ namespace Scarlet.IO.BeagleBone
             }
         }
 
+        // WARNING: Treacherous territory ahead. This is an extremely complex function that does all the work of actually generating a device tree overlay.
+        // Don't read through this unless you really need to :P
         static List<string> GenerateDeviceTree()
         {
             List<string> Output = new List<string>();
@@ -480,7 +519,7 @@ namespace Scarlet.IO.BeagleBone
                 }
             }
 
-            if(SPIMappings != null)
+            if (SPIMappings != null)
             {
                 lock (SPIMappings)
                 {
@@ -520,39 +559,41 @@ namespace Scarlet.IO.BeagleBone
             }
 
             // Output GPIO mappings
-            // TODO: Make this optional.
-            lock (GPIOMappings)
+            if (GPIOMappings != null)
             {
-                Output.Add("    fragment@0 {");
-                Output.Add("        target = <&am33xx_pinmux>;");
-                Output.Add("        __overlay__ {");
-                Output.Add("            scarlet_pins: scarlet_pin_set {");
-                Output.Add("                pinctrl-single,pins = <");
-
-                foreach (PinAssignment PinAss in GPIOMappings.Values)
+                lock (GPIOMappings)
                 {
-                    string Offset = String.Format("0x{0:X3}", (Pin.GetOffset(PinAss.Pin) - 0x800));
-                    string Mode = String.Format("0x{0:X2}", PinAss.Mode);
-                    Output.Add("                    " + Offset + " " + Mode);
-                }
+                    Output.Add("    fragment@0 {");
+                    Output.Add("        target = <&am33xx_pinmux>;");
+                    Output.Add("        __overlay__ {");
+                    Output.Add("            scarlet_pins: scarlet_pin_set {");
+                    Output.Add("                pinctrl-single,pins = <");
 
-                Output.Add("                >;");
-                Output.Add("            };");
-                Output.Add("        };");
-                Output.Add("    };");
-                Output.Add("    ");
-                Output.Add("    fragment@1 {");
-                Output.Add("        target = <&ocp>;");
-                Output.Add("        __overlay__ {");
-                Output.Add("            scarlet_pinmux: scarlet {");
-                Output.Add("                compatible = \"bone-pinmux-helper\";");
-                Output.Add("                pinctrl-names = \"default\";");
-                Output.Add("                pinctrl-0 = <&scarlet_pins>;");
-                Output.Add("                status = \"okay\";");
-                Output.Add("            };");
-                Output.Add("        };");
-                Output.Add("    };");
-                Output.Add("    ");
+                    foreach (PinAssignment PinAss in GPIOMappings.Values)
+                    {
+                        string Offset = String.Format("0x{0:X3}", (Pin.GetOffset(PinAss.Pin) - 0x800));
+                        string Mode = String.Format("0x{0:X2}", PinAss.Mode);
+                        Output.Add("                    " + Offset + " " + Mode);
+                    }
+
+                    Output.Add("                >;");
+                    Output.Add("            };");
+                    Output.Add("        };");
+                    Output.Add("    };");
+                    Output.Add("    ");
+                    Output.Add("    fragment@1 {");
+                    Output.Add("        target = <&ocp>;");
+                    Output.Add("        __overlay__ {");
+                    Output.Add("            scarlet_pinmux: scarlet {");
+                    Output.Add("                compatible = \"bone-pinmux-helper\";");
+                    Output.Add("                pinctrl-names = \"default\";");
+                    Output.Add("                pinctrl-0 = <&scarlet_pins>;");
+                    Output.Add("                status = \"okay\";");
+                    Output.Add("            };");
+                    Output.Add("        };");
+                    Output.Add("    };");
+                    Output.Add("    ");
+                }
             }
 
             // Output PWM device fragments
