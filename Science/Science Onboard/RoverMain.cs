@@ -34,7 +34,7 @@ namespace Science
 
             BeagleBone.Initialize(SystemMode.DEFAULT, true);
             Log.SetSingleOutputLevel(Log.Source.HARDWAREIO, Log.Severity.DEBUG);
-            TestMotor();
+            TestInterrupt();
 
             IOHandler = new IOHandler();
             Client.Start(IP, PortTCP, PortUDP, Constants.CLIENT_NAME);
@@ -163,7 +163,7 @@ namespace Science
                 Thread.Sleep(50);
             }
         }
-
+        
         private static void TestI2C()
         {
             BBBPinManager.AddMappingGPIO(BBBPin.P8_08, true, Scarlet.IO.ResistorState.PULL_DOWN);
@@ -208,9 +208,17 @@ namespace Science
             }
         }
 
-        private static void TestInterrupts()
+        private static void TestInterrupt()
         {
+            BBBPinManager.AddMappingGPIO(BBBPin.P9_12, true, Scarlet.IO.ResistorState.PULL_DOWN);
+            BBBPinManager.ApplyPinSettings(ApplyDevTree);
+            IDigitalIn Input = new DigitalInBBB(BBBPin.P9_12);
+            Input.RegisterInterruptHandler(GetInterrupt, InterruptType.ANY_EDGE);
+        }
 
+        public static void GetInterrupt(object Senser, InputInterrupt Event)
+        {
+            Log.Output(Log.Severity.DEBUG, Log.Source.HARDWAREIO, "Interrupt Received! Now " + Event.NewState);
         }
 
         private static void ParseArgs(string[] Args)
