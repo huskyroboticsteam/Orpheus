@@ -26,12 +26,12 @@ namespace Science.Systems
         public Rail()
         {
             // TODO: Set these to actual pins.
-            this.MotorCtrl = new TalonMC(null, MOTOR_MAX_SPEED); // TODO: Provide actual IPWMOuput.
-            this.Limit = new LimitSwitch(1, false);
-            this.Encoder = new Encoder(2, 3, 80);
+            //this.MotorCtrl = new TalonMC(null, MOTOR_MAX_SPEED); // TODO: Provide actual IPWMOuput.
+            //this.Limit = new LimitSwitch(null, false); // TODO: Provide actual output.
+            //this.Encoder = new Encoder(2, 3, 80);
 
-            this.Limit.SwitchToggle += this.EventTriggered;
-            this.Encoder.Turned += this.EventTriggered;
+            //this.Limit.SwitchToggle += this.EventTriggered;
+            //this.Encoder.Turned += this.EventTriggered;
         }
 
         public void EventTriggered(object Sender, EventArgs Event)

@@ -20,6 +20,7 @@ namespace Science
         private static int PortTCP = Constants.DEFAULT_PORT_TCP;
         private static int PortUDP = Constants.DEFAULT_PORT_UDP;
         private static BBBPinManager.ApplicationMode ApplyDevTree = BBBPinManager.ApplicationMode.APPLY_IF_NONE;
+        private static IDigitalIn IntTestIn;
 
         static void Main(string[] Args)
 		{
@@ -212,8 +213,14 @@ namespace Science
         {
             BBBPinManager.AddMappingGPIO(BBBPin.P9_12, true, Scarlet.IO.ResistorState.PULL_DOWN);
             BBBPinManager.ApplyPinSettings(ApplyDevTree);
-            IDigitalIn Input = new DigitalInBBB(BBBPin.P9_12);
-            Input.RegisterInterruptHandler(GetInterrupt, InterruptType.ANY_EDGE);
+            IntTestIn = new DigitalInBBB(BBBPin.P9_12);
+            IntTestIn.RegisterInterruptHandler(GetInterrupt, InterruptType.ANY_EDGE);
+            Log.Output(Log.Severity.DEBUG, Log.Source.HARDWAREIO, "Interrupt handler added.");
+            while(true)
+            {
+                //Log.Output(Log.Severity.DEBUG, Log.Source.HARDWAREIO, "State: " + IntTestIn.GetInput());
+                Thread.Sleep(100);
+            }
         }
 
         public static void GetInterrupt(object Senser, InputInterrupt Event)

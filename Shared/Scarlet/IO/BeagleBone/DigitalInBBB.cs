@@ -1,4 +1,5 @@
 ﻿using BBBCSIO;
+using Scarlet.Utilities;
 using System;
 
 namespace Scarlet.IO.BeagleBone
@@ -72,6 +73,7 @@ namespace Scarlet.IO.BeagleBone
             {
                 InputInterrupt Event = new InputInterrupt(Data.EvState);
                 this.RisingHandlers?.Invoke(this, Event);
+                this.IntPortRise.ClearInterrupt();
             }
         }
 
@@ -81,6 +83,7 @@ namespace Scarlet.IO.BeagleBone
             {
                 InputInterrupt Event = new InputInterrupt(Data.EvState);
                 this.FallingHandlers?.Invoke(this, Event);
+                this.IntPortFall.ClearInterrupt();
             }
         }
 
@@ -90,6 +93,7 @@ namespace Scarlet.IO.BeagleBone
             {
                 InputInterrupt Event = new InputInterrupt(Data.EvState);
                 this.AnyHandlers?.Invoke(this, Event);
+                this.IntPortAny.ClearInterrupt();
             }
         }
 

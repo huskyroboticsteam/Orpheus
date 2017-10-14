@@ -298,7 +298,11 @@ namespace Scarlet.IO.BeagleBone
                 }
                 // Apply the device tree
                 // Command: echo Scarlet-DT > /sys/devices/platform/bone_capemgr/slots
-                File.WriteAllText("/sys/devices/platform/bone_capemgr/slots", FileName); // TODO: Make this able to handle a non-empty file.
+                using (StreamWriter SlotWriter = File.AppendText("/sys/devices/platform/bone_capemgr/slots"))
+                {
+                    SlotWriter.WriteLine(FileName);
+                    SlotWriter.Flush();
+                }
 
                 Thread.Sleep(100);
             }
