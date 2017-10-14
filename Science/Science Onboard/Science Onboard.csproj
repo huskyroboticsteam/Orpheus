@@ -47,7 +47,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BBBTests.cs" />
     <Compile Include="IOHandler.cs" />
+    <Compile Include="RPiTests.cs" />
     <Compile Include="Systems\Drill.cs" />
     <Compile Include="Systems\Microscope.cs" />
     <Compile Include="Systems\Toolhead.cs" />
