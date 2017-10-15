@@ -46,6 +46,8 @@ namespace Scarlet.Components.Sensors
             Bus.WriteRegister(Address, 0x1B, new byte[] { GyroConfig });
             Bus.WriteRegister(Address, 0x1C, new byte[] { AccelConfig });
 
+            // Ensure self test is disabled
+            EnableSelfTest(false);
         }
 
         // Uses a default configuration
@@ -68,8 +70,32 @@ namespace Scarlet.Components.Sensors
 
         public bool Test()
         {
-            // TODO: Implement Self Test Features
-            throw new NotImplementedException();
+            // Read Self Test Registers
+            byte[] FactoryTrims = GetFactoryTrims(Bus.ReadRegister(Address, 0x0D, 4));
+
+            // Activate self test for accelerometer
+            EnableSelfTest(true);
+
+            UpdateState();
+            MPUData SelfTestResponse = GetData();
+
+            // Disable self test
+            EnableSelfTest(false);
+
+            UpdateState();
+            MPUData RawTest = GetData();
+
+            // Check each field for self test deviation
+            bool ReturnValue = true;
+
+            ReturnValue &= FieldOkay(SelfTestResponse.AccelX, RawTest.AccelX, FactoryTrims[0]);
+            ReturnValue &= FieldOkay(SelfTestResponse.AccelY, RawTest.AccelY, FactoryTrims[1]);
+            ReturnValue &= FieldOkay(SelfTestResponse.AccelZ, RawTest.AccelZ, FactoryTrims[3]);
+            ReturnValue &= FieldOkay(SelfTestResponse.GyroX, RawTest.GyroX, FactoryTrims[2]);
+            ReturnValue &= FieldOkay(SelfTestResponse.GyroY, RawTest.GyroY, FactoryTrims[4]);
+            ReturnValue &= FieldOkay(SelfTestResponse.GyroZ, RawTest.GyroZ, FactoryTrims[5]);
+
+            return ReturnValue;
         }
 
         public void UpdateState()
@@ -94,6 +120,7 @@ namespace Scarlet.Components.Sensors
         public double GetInternalTemp()
         {
             byte[] Temp = Bus.ReadRegister(Address, 0x41, 2);
+            // TODO Implement
             return 0.0;
         }
 
@@ -140,6 +167,49 @@ namespace Scarlet.Components.Sensors
             
             // Higher the number, the lower the sample rate
             public byte SampleRateDivider;
+        }
+
+        private void EnableSelfTest(bool Enable)
+        {
+            byte RegisterData = Bus.ReadRegister(Address, 0x1B, 1)[0];
+            RegisterData &= 0b00011111;
+            if (Enable) { RegisterData |= 0b11100000; } // Writes true to the ST regs
+            Bus.WriteRegister(Address, 0x1B, new byte[] { RegisterData });
+            RegisterData = Bus.ReadRegister(Address, 0x1C, 1)[0];
+            RegisterData &= 0b00011111;
+            if (Enable) { RegisterData |= 0b11100000; } // Writes true to the ST regs
+            Bus.WriteRegister(Address, 0x1C, new byte[] { RegisterData });
+        }
+
+        private static byte[] GetFactoryTrims(byte[] ST_Registers)
+        {
+            if (ST_Registers.Length != 4) { throw new Exception("Self Test can only take 4 bytes."); }
+
+            byte Reg1 = ST_Registers[0];
+            byte Reg2 = ST_Registers[1];
+            byte Reg3 = ST_Registers[2];
+            byte Reg4 = ST_Registers[3];
+
+            byte[] STS = new byte[6];
+
+            // Parse factory trims
+            STS[0] = (byte)(((Reg1 >> 5) << 2) | ((Reg4 >> 4) & 0b00000011));
+            STS[1] = (byte)(((Reg1 >> 5) << 2) | ((Reg4 >> 2) & 0b00000011));
+            STS[2] = (byte)(((Reg1 >> 5) << 2) | (Reg4 & 0b00000011));
+            STS[3] = (byte)(Reg1 & 0b00011111);
+            STS[4] = (byte)(Reg2 & 0b00011111);
+            STS[5] = (byte)(Reg3 & 0b00011111);
+       
+            return STS;
+        }
+
+        private static bool FieldOkay(double SelfTestEnabledReading, double SelfTestDisabledReading, int FactoryTrim)
+        {
+            double Response = SelfTestEnabledReading - SelfTestDisabledReading;
+            int AcceptableDeviation = 14; // % (+/-)
+            double PercentDeviation = (Response - FactoryTrim) / FactoryTrim;
+            if (Math.Abs(PercentDeviation) > AcceptableDeviation) { return false; }
+            return true;
         }
 
     }
