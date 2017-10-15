@@ -47,7 +47,7 @@ namespace Scarlet.Filters
         /// Low Pass Filter Time Constant.</param>
         public LowPass(double LPFk = 0.25)
         {
-            if (!UtilMain.IsNumericType(typeof(T)))
+            if (!UtilData.IsNumericType(typeof(T)))
             {
                 Log.Output(Log.Severity.ERROR, Log.Source.OTHER, "Low-pass filter cannot be instantiated with non-numeric type.");
                 throw new ArgumentException("Cannot create filter of non-numeric type: " + typeof(T).ToString());

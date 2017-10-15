@@ -40,7 +40,7 @@ namespace Scarlet.Filters
         /// Roll length for the average filter.</param>
         public Average(int FilterCount = 10)
         {
-            if (!UtilMain.IsNumericType(typeof(T)))
+            if (!UtilData.IsNumericType(typeof(T)))
             {
                 Log.Output(Log.Severity.ERROR, Log.Source.OTHER, "Average filter cannot be instantiated with non-numeric type.");
                 throw new ArgumentException("Cannot create filter of non-numeric type: " + typeof(T).ToString());

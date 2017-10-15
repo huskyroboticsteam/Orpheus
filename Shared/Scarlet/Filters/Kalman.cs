@@ -65,7 +65,7 @@ namespace Scarlet.Filters
         /// implementation.</summary>
         public Kalman()
         {
-            if (!UtilMain.IsNumericType(typeof(T))) // Can now assert that T is a numeric
+            if (!UtilData.IsNumericType(typeof(T))) // Can now assert that T is a numeric
             {
                 Log.Output(Log.Severity.ERROR, Log.Source.OTHER, "Kalman filter cannot be instantiated with non-numeric type.");
                 throw new ArgumentException("Cannot create filter of non-numeric type: " + typeof(T).ToString());
