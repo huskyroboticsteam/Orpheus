@@ -31,6 +31,7 @@ namespace Scarlet.Components.Motors
             this.MaxSpeed = MaxSpeed;
             this.Filter = SpeedFilter;
             this.PWMOut.SetFrequency(333);
+            this.PWMOut.SetEnabled(true);
         }
         
         public void EventTriggered(object Sender, EventArgs Event)
@@ -58,9 +59,8 @@ namespace Scarlet.Components.Motors
             if (SetSpeed > this.MaxSpeed) { SetSpeed = this.MaxSpeed; }
             if (SetSpeed * -1 > this.MaxSpeed) { SetSpeed = this.MaxSpeed * -1; }
 
-            Log.Output(Log.Severity.DEBUG, Log.Source.MOTORS, "Target: " + this.TargetSpeed + ", Filtered: " + SetSpeed);
+            //Log.Output(Log.Severity.DEBUG, Log.Source.MOTORS, "Target: " + this.TargetSpeed + ", Filtered: " + SetSpeed);
             this.PWMOut.SetOutput((SetSpeed / 2) + 0.5F);
-            this.PWMOut.SetEnabled(SetSpeed != 0);
         }
     }
 }

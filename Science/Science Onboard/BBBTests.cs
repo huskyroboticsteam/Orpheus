@@ -74,8 +74,8 @@ namespace Science
             BBBPinManager.AddMappingPWM(BBBPin.P9_14);
             BBBPinManager.ApplyPinSettings(RoverMain.ApplyDevTree);
             IPWMOutput MotorOut = PWMBBB.PWMDevice1.OutputA;
-            IFilter<float> MotorFilter = new LowPass<float>(0.01F);
-            TalonMC Motor = new TalonMC(MotorOut, 0.2F, MotorFilter);
+            IFilter<float> MotorFilter = new Average<float>(5);
+            TalonMC Motor = new TalonMC(MotorOut, 1F, MotorFilter);
             Log.SetSingleOutputLevel(Log.Source.MOTORS, Log.Severity.DEBUG);
             Motor.TargetSpeed = 0.2F;
             Motor.UpdateState();
@@ -88,7 +88,7 @@ namespace Science
             int Cycle = 0;
             while (true)
             {
-                Motor.TargetSpeed = ((Cycle / 10) % 2 == 0) ? 1 : 0;
+                Motor.TargetSpeed = ((Cycle / 10) % 2 == 0) ? 1 : -1;
                 Motor.UpdateState();
                 Thread.Sleep(25);
                 Cycle += 1;
