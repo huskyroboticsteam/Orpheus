@@ -75,7 +75,7 @@ namespace Scarlet.IO.RaspberryPi
         internal static void DigitalWrite(int Pin, bool OutputVal)
         {
             if (!Initialized) { throw new InvalidOperationException("Cannot perform GPIO operations until the system is initialized. Call RasperryPi.Initialize()."); }
-            Ext_DigitalWrite(Pin, OutputVal ? 0 : 1);
+            Ext_DigitalWrite(Pin, OutputVal ? 1 : 0);
         }
 
         #endregion
@@ -138,9 +138,8 @@ namespace Scarlet.IO.RaspberryPi
         internal static byte[] SPIRW(int BusNum, byte[] Data, int Length)
         {
             byte[] DataNew = Data; // Unsure if Data will be changed if sent through WiringPI, but this should clone
-            int ReturnData = Ext_SPIRW(BusNum, DataNew, Length);
-            byte[] ReturnBytes = UtilData.ToBytes(ReturnData);
-            return ReturnBytes;
+            int ReturnDataLen = Ext_SPIRW(BusNum, DataNew, Length);
+            return DataNew;
         }
 
         #endregion
