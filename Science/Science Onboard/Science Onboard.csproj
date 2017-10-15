@@ -33,6 +33,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BBBCSIO, Version=1.6.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\shared\Scarlet\_Libraries\BBBCSIO.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -43,7 +47,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BBBTests.cs" />
     <Compile Include="IOHandler.cs" />
+    <Compile Include="RPiTests.cs" />
     <Compile Include="Systems\Drill.cs" />
     <Compile Include="Systems\Microscope.cs" />
     <Compile Include="Systems\Toolhead.cs" />
@@ -60,10 +66,6 @@
     <ProjectReference Include="..\..\shared\Scarlet\Scarlet.csproj">
       <Project>{eb8d6fe6-e3dd-4049-89a2-f636c6d70477}</Project>
       <Name>Scarlet</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Libraries\WiringPi\WiringPi\WiringPi.csproj">
-      <Project>{44164C3F-B228-4488-B027-EA9717E7E6E1}</Project>
-      <Name>WiringPi</Name>
     </ProjectReference>
     <ProjectReference Include="..\Science Library\Science Library.csproj">
       <Project>{a43e6103-949b-4efd-9a17-662ea79df9c7}</Project>

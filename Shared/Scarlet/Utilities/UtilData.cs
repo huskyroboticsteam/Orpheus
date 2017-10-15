@@ -6,7 +6,7 @@ namespace Scarlet.Utilities
 {
     public static class UtilData
     {
-        public static byte[] Reverse(byte[] Input)
+        internal static byte[] Reverse(byte[] Input)
         {
             if (BitConverter.IsLittleEndian) { Array.Reverse(Input); }
             return Input;

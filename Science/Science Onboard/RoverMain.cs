@@ -1,7 +1,14 @@
 ﻿using System;
 using System.Net;
 using System.Threading;
+using BBBCSIO;
 using Scarlet.Communications;
+using Scarlet.Components;
+using Scarlet.Components.Motors;
+using Scarlet.Components.Sensors;
+using Scarlet.IO;
+using Scarlet.IO.BeagleBone;
+using Scarlet.IO.RaspberryPi;
 using Scarlet.Science;
 using Scarlet.Utilities;
 
@@ -13,10 +20,12 @@ namespace Science
         private static string IP = Constants.DEFAULT_SERVER_IP;
         private static int PortTCP = Constants.DEFAULT_PORT_TCP;
         private static int PortUDP = Constants.DEFAULT_PORT_UDP;
+        public static BBBPinManager.ApplicationMode ApplyDevTree = BBBPinManager.ApplicationMode.APPLY_IF_NONE;
 
         static void Main(string[] Args)
 		{
             ParseArgs(Args);
+            StateStore.Start("SciRover");
             Log.SetGlobalOutputLevel(Log.Severity.INFO);
             Log.SetSingleOutputLevel(Log.Source.NETWORK, Log.Severity.DEBUG);
             Log.ErrorCodes = ScienceErrors.ERROR_CODES;
@@ -24,9 +33,19 @@ namespace Science
             Log.Begin();
             Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Science Station - Rover Side");
 
+            BeagleBone.Initialize(SystemMode.DEFAULT, true);
+            Log.SetSingleOutputLevel(Log.Source.HARDWAREIO, Log.Severity.DEBUG);
+
+            BBBTests.TestMotor();
+
+            //RaspberryPi.Initialize();
+            //RPiTests.TestUART();
+
             IOHandler = new IOHandler();
             Client.Start(IP, PortTCP, PortUDP, Constants.CLIENT_NAME);
             PacketHandler PackHan = new PacketHandler();
+
+            
 
             while(true)
             {
@@ -70,6 +89,21 @@ namespace Science
                     Console.WriteLine("  -s|--server <IP> : Connects to the given server instead of the default.");
                     Console.WriteLine("  -pt|--port-tcp <Port> : Connects to the server via TCP using the given port instead of the default.");
                     Console.WriteLine("  -pu|--port-udp <Port> : Connects to the server via UDP using the given port instead of the default.");
+                    Console.WriteLine("  --no-dt : Do not attempt to remove/add device tree overlays.");
+                    Console.WriteLine("  --replace-dt : Remove all Scarlet DT overlays, then apply the new one. DANGEROUS!");
+                    Console.WriteLine("  --add-dt : Add device tree overlay even if there is one already.");
+                }
+                if(Args[i] == "--no-dt")
+                {
+                    ApplyDevTree = BBBPinManager.ApplicationMode.NO_CHANGES;
+                }
+                if(Args[i] == "--replace-dt")
+                {
+                    ApplyDevTree = BBBPinManager.ApplicationMode.REMOVE_AND_APPLY;
+                }
+                if(Args[i] == "--add-dt")
+                {
+                    ApplyDevTree = BBBPinManager.ApplicationMode.APPLY_REGARDLESS;
                 }
             }
         }

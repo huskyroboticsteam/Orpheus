@@ -17,10 +17,10 @@ namespace Science.Systems
         public Toolhead()
         {
             // TODO: Set these to actual pins.
-            this.MotorCtrl = new TalonMC(null, MOTOR_MAX_SPEED); // TODO: Provide actual IPWMOuput.
-            this.Pot = new Potentiometer(1);
+            //this.MotorCtrl = new TalonMC(null, MOTOR_MAX_SPEED);
+            //this.Pot = new Potentiometer(null, 300);
 
-            this.Pot.Turned += this.EventTriggered;
+            //this.Pot.Turned += this.EventTriggered;
         }
 
         public void EmergencyStop()
@@ -39,8 +39,6 @@ namespace Science.Systems
 
         public void Initialize()
         {
-            this.MotorCtrl.Initialize();
-            this.Pot.Initialize();
             this.GotoDrill();
         }
 

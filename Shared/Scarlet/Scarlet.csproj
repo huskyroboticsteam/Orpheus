@@ -31,6 +31,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>ScarletLogo.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="BBBCSIO">
       <HintPath>_Libraries\BBBCSIO.dll</HintPath>
@@ -61,31 +64,51 @@
     <Compile Include="Components\Motors\TalonMC.cs" />
     <Compile Include="Components\Sensors\Encoder.cs" />
     <Compile Include="Components\Sensors\LimitSwitch.cs" />
+    <Compile Include="Components\Sensors\MAX31855.cs" />
+    <Compile Include="Components\Sensors\MPU6050.cs" />
     <Compile Include="Components\Sensors\Potentiometer.cs" />
     <Compile Include="Controllers\PID.cs" />
     <Compile Include="Filters\Average.cs" />
     <Compile Include="Filters\Filter.cs" />
     <Compile Include="Filters\Kalman.cs" />
     <Compile Include="Filters\LowPass.cs" />
+    <Compile Include="IO\BeagleBone\AnalogueInBBB.cs" />
     <Compile Include="IO\BeagleBone\BBBPin.cs" />
     <Compile Include="IO\BeagleBone\BeagleBone.cs" />
+    <Compile Include="IO\BeagleBone\BBBPinManager.cs" />
+    <Compile Include="IO\BeagleBone\DigitalInBBB.cs" />
     <Compile Include="IO\BeagleBone\DigitalOutBBB.cs" />
     <Compile Include="IO\BeagleBone\Enums.cs" />
+    <Compile Include="IO\BeagleBone\I2CBusBBB.cs" />
+    <Compile Include="IO\BeagleBone\PWMDeviceBBB.cs" />
+    <Compile Include="Components\Sensors\VEML6070.cs" />
+    <Compile Include="IO\BeagleBone\ScarletSPIPortFS.cs" />
+    <Compile Include="IO\BeagleBone\SPIBusBBB.cs" />
     <Compile Include="IO\Enums.cs" />
     <Compile Include="IO\Events.cs" />
     <Compile Include="IO\IAnalogueIn.cs" />
     <Compile Include="IO\IAnalogueOut.cs" />
     <Compile Include="IO\IDigitalIn.cs" />
     <Compile Include="IO\IDigitalOut.cs" />
+    <Compile Include="IO\II2CBus.cs" />
     <Compile Include="IO\IPWMOutput.cs" />
+    <Compile Include="IO\ISPIBus.cs" />
+    <Compile Include="IO\IUARTBus.cs" />
     <Compile Include="IO\RaspberryPi\DigitalInPi.cs" />
     <Compile Include="IO\RaspberryPi\DigitalOutPi.cs" />
+    <Compile Include="IO\RaspberryPi\I2CBusPi.cs" />
     <Compile Include="IO\RaspberryPi\RaspberryPi.cs" />
+    <Compile Include="IO\RaspberryPi\SPIBusPi.cs" />
+    <Compile Include="IO\RaspberryPi\UARTBusPi.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\Log.cs" />
+    <Compile Include="Utilities\StateStore.cs" />
     <Compile Include="Utilities\UtilConstants.cs" />
     <Compile Include="Utilities\UtilData.cs" />
     <Compile Include="Utilities\UtilMain.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ScarletLogo.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,42 +1,39 @@
 ﻿using System;
 using Scarlet.Utilities;
+using Scarlet.IO;
 
 namespace Scarlet.Components.Sensors
 {
+    /// <summary>
+    /// Quickly releases incoming interrupt events to prevent I/O system from getting bogged down, then will pass them on when UpdateState is called next.
+    /// </summary>
     public class LimitSwitch : ISensor
     {
-        private int Pin;
-        private bool NormallyLow;
-        private bool PrevToggled = false;
+        private IDigitalIn Input;
+        private readonly bool Invert;
+        private volatile bool HadEvent, NewState;
         public event EventHandler<LimitSwitchToggle> SwitchToggle;
 
-        public LimitSwitch(int Pin, bool NormallyLow)
+        public LimitSwitch(IDigitalIn Input, bool Invert = false)
         {
-            this.Pin = Pin;
-            this.NormallyLow = NormallyLow;
+            this.Input = Input;
+            this.Invert = Invert;
+            Input.RegisterInterruptHandler(EventTriggered, InterruptType.ANY_EDGE);
         }
         
         public bool Test()
         {
-            // TODO: Call a GPIO library to check functionality.
-            Log.Output(Log.Severity.WARNING, Log.Source.SENSORS, "Limit switch testing not implemented properly.");
-            return true;
+            return true; // TODO: Determine method for, and implement, limit switch testing.
         }
 
         public void UpdateState()
         {
-            // TODO: Call a GPIO library to update the state.
-            Log.Output(Log.Severity.WARNING, Log.Source.SENSORS, "Limit switch updating not implemented properly.");
-            Random RandomGen = new Random();
-            bool NowToggled = RandomGen.NextDouble() > 0.5;
-            if (!this.NormallyLow) { NowToggled = !NowToggled; } // Invert the input if it is normally high.
-
-            if (this.PrevToggled != NowToggled)
+            if(this.HadEvent)
             {
-                LimitSwitchToggle Event = new LimitSwitchToggle() { CurrentState = NowToggled };
+                LimitSwitchToggle Event = new LimitSwitchToggle() { CurrentState = this.Invert ? !this.NewState : this.NewState };
                 OnSwitchToggle(Event);
+                this.HadEvent = false;
             }
-            this.PrevToggled = NowToggled;
         }
 
         protected virtual void OnSwitchToggle(LimitSwitchToggle Event)
@@ -44,14 +41,13 @@ namespace Scarlet.Components.Sensors
             SwitchToggle?.Invoke(this, Event);
         }
 
-        public void Initialize()
-        {
-            // TODO: Set up GPIO pins/interrupts.
-        }
-
         public void EventTriggered(object Sender, EventArgs Event)
         {
-            
+            if(Event is InputInterrupt)
+            {
+                this.HadEvent = true;
+                this.NewState = ((InputInterrupt)Event).NewState;
+            }
         }
     }
 

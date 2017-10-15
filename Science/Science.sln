@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.13
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Science Onboard", "Science Onboard\Science Onboard.csproj", "{D33A5CED-F246-4423-B237-DBE217B208DB}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -17,10 +17,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Science Library", "Science 
 	ProjectSection(ProjectDependencies) = postProject
 		{EB8D6FE6-E3DD-4049-89A2-F636C6D70477} = {EB8D6FE6-E3DD-4049-89A2-F636C6D70477}
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WiringPi", "Libraries\WiringPi\WiringPi\WiringPi.csproj", "{44164C3F-B228-4488-B027-EA9717E7E6E1}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WiringPi-Test", "Libraries\WiringPi\ConsoleApplication1\WiringPi-Test.csproj", "{48C92185-31AE-4E72-A83F-A4F1E4E6D625}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scarlet", "..\shared\Scarlet\Scarlet.csproj", "{EB8D6FE6-E3DD-4049-89A2-F636C6D70477}"
 EndProject
@@ -56,20 +52,6 @@ Global
 		{A43E6103-949B-4EFD-9A17-662EA79DF9C7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A43E6103-949B-4EFD-9A17-662EA79DF9C7}.Release|x86.ActiveCfg = Release|Any CPU
 		{A43E6103-949B-4EFD-9A17-662EA79DF9C7}.Release|x86.Build.0 = Release|Any CPU
-		{44164C3F-B228-4488-B027-EA9717E7E6E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{44164C3F-B228-4488-B027-EA9717E7E6E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{44164C3F-B228-4488-B027-EA9717E7E6E1}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{44164C3F-B228-4488-B027-EA9717E7E6E1}.Debug|x86.Build.0 = Debug|Any CPU
-		{44164C3F-B228-4488-B027-EA9717E7E6E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{44164C3F-B228-4488-B027-EA9717E7E6E1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{44164C3F-B228-4488-B027-EA9717E7E6E1}.Release|x86.ActiveCfg = Release|Any CPU
-		{44164C3F-B228-4488-B027-EA9717E7E6E1}.Release|x86.Build.0 = Release|Any CPU
-		{48C92185-31AE-4E72-A83F-A4F1E4E6D625}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{48C92185-31AE-4E72-A83F-A4F1E4E6D625}.Debug|x86.ActiveCfg = Debug|x86
-		{48C92185-31AE-4E72-A83F-A4F1E4E6D625}.Debug|x86.Build.0 = Debug|x86
-		{48C92185-31AE-4E72-A83F-A4F1E4E6D625}.Release|Any CPU.ActiveCfg = Release|x86
-		{48C92185-31AE-4E72-A83F-A4F1E4E6D625}.Release|x86.ActiveCfg = Release|x86
-		{48C92185-31AE-4E72-A83F-A4F1E4E6D625}.Release|x86.Build.0 = Release|x86
 		{EB8D6FE6-E3DD-4049-89A2-F636C6D70477}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EB8D6FE6-E3DD-4049-89A2-F636C6D70477}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB8D6FE6-E3DD-4049-89A2-F636C6D70477}.Debug|x86.ActiveCfg = Debug|Any CPU
@@ -81,5 +63,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A83E2A6B-2B81-420F-84B7-D6E29D380CFE}
 	EndGlobalSection
 EndGlobal

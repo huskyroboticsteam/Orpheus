@@ -220,7 +220,7 @@ namespace Scarlet.Utilities
         /// </summary>
         public enum Source
         {
-            ALL, MOTORS, NETWORK, GUI, SENSORS, CAMERAS, SUBSYSTEM, OTHER
+            ALL, MOTORS, NETWORK, GUI, SENSORS, CAMERAS, SUBSYSTEM, HARDWAREIO, OTHER
         }
 
         /// <summary>

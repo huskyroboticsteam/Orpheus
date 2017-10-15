@@ -23,12 +23,12 @@ namespace Science.Systems
         public Turntable()
         {
             // TODO: Set these to actual pins.
-            this.MotorCtrl = new TalonMC(null, MOTOR_MAX_SPEED); // TODO: Provide actual IPWMOuput.
-            this.Limit = new LimitSwitch(5, false);
-            this.Encoder = new Encoder(6, 7, 420);
+            //this.MotorCtrl = new TalonMC(null, MOTOR_MAX_SPEED); // TODO: Provide actual IPWMOuput.
+            //this.Limit = new LimitSwitch(null, false); // TODO: Provide actual output.
+            //this.Encoder = new Encoder(6, 7, 420);
 
-            this.Limit.SwitchToggle += this.EventTriggered;
-            this.Encoder.Turned += this.EventTriggered;
+            //this.Limit.SwitchToggle += this.EventTriggered;
+            //this.Encoder.Turned += this.EventTriggered;
         }
 
         public void EventTriggered(object Sender, EventArgs Event)
@@ -59,10 +59,6 @@ namespace Science.Systems
 
         public void Initialize()
         {
-            this.MotorCtrl.Initialize();
-            this.Limit.Initialize();
-            this.Encoder.Initialize();
-
             this.Initializing = true;
             
             Timer TimeoutTrigger = new Timer() { Interval = INIT_TIMEOUT, AutoReset = false };

@@ -3,6 +3,7 @@ using Scarlet.Utilities;
 
 namespace Scarlet.Components.Sensors
 {
+    [Obsolete] // Marked as such to warn users, as this class is not ready for use yet.
     public class Encoder : ISensor
     {
         private int PinA, PinB;
@@ -10,6 +11,7 @@ namespace Scarlet.Components.Sensors
         public int Angle { get; private set; }
         public event EventHandler<EncoderTurn> Turned;
 
+        // TODO: Can we implement this (as a separate Component) using BB CPU Encoder counter?
         public Encoder(int PinA, int PinB, int PulsesPerTurn)
         {
             this.PinA = PinA;
@@ -43,11 +45,6 @@ namespace Scarlet.Components.Sensors
         protected virtual void OnTurn(EncoderTurn Event)
         {
             Turned?.Invoke(this, Event);
-        }
-
-        public void Initialize()
-        {
-            // TODO: Set up GPIO pins/interrupts
         }
 
         public void EventTriggered(object Sender, EventArgs Event)

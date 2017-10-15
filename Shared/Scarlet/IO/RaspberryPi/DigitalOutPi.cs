@@ -7,13 +7,6 @@
         public DigitalOutPi(int PinNumber)
         {
             this.PinNumber = PinNumber;
-        }
-
-        /// <summary>
-        /// Prepares the GPIO pin for output use. Make sure to call RaspberryPi.Initialize() once in your program before this.
-        /// </summary>
-        public void Initialize()
-        {
             RaspberryPi.SetPinMode(this.PinNumber, RaspberryPi.PinMode.OUTPUT);
         }
 

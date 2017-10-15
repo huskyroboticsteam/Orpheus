@@ -1,33 +1,42 @@
 ﻿using System;
 using Scarlet.Utilities;
+using Scarlet.IO;
 
 namespace Scarlet.Components.Sensors
 {
+    /// <summary>
+    /// A class for converting an IAnalogueInput with a linear potentiometer connected into a rotation degrees value.
+    /// Can send events when the potentiometer has been turned.
+    /// Will only update the current angle when UpdateState is called, and therefore will only send events then as well.
+    /// </summary>
     public class Potentiometer : ISensor
     {
-        private int Pin;
+        private IAnalogueIn Input;
         public int Angle { get; private set; }
+        private readonly int Range;
+        private readonly bool Invert;
         public event EventHandler<PotentiometerTurn> Turned;
 
-        public Potentiometer(int Pin)
+        public Potentiometer(IAnalogueIn Input, int Degrees, bool Invert = false)
         {
-            this.Pin = Pin;
+            this.Input = Input;
+            this.Range = Degrees;
+            this.Invert = Invert;
         }
 
         public bool Test()
         {
-            // TODO: Replace this with an actual check.
-            Log.Output(Log.Severity.WARNING, Log.Source.SENSORS, "Potentiometer testing not implemented properly.");
-            return true;
+            return true; // TODO: What could we check for?
         }
 
         public void UpdateState()
         {
-            // TODO: Actually check state.
-            Log.Output(Log.Severity.WARNING, Log.Source.SENSORS, "Potentiometer updating not implemented properly.");
-            int AngleChange = 0;
+            int NewAngle = this.Range - (int)((this.Input.GetRawInput() / this.Input.GetRawRange()) * this.Range);
+            if (this.Invert) { NewAngle = this.Range - NewAngle; }
+            
+            int AngleChange = this.Angle - NewAngle;
+            this.Angle = NewAngle;
 
-            this.Angle += AngleChange;
             if(AngleChange != 0)
             {
                 PotentiometerTurn Event = new PotentiometerTurn() { TurnAmount = AngleChange, Angle = this.Angle };
@@ -38,11 +47,6 @@ namespace Scarlet.Components.Sensors
         protected virtual void OnTurn(PotentiometerTurn Event)
         {
             Turned?.Invoke(this, Event);
-        }
-
-        public void Initialize()
-        {
-            // TODO: Set up GPIO pins.
         }
 
         public void EventTriggered(object Sender, EventArgs Event)

@@ -13,13 +13,6 @@ namespace Scarlet.IO.RaspberryPi
         public DigitalInPi(int PinNumber)
         {
             this.PinNumber = PinNumber;
-        }
-
-        /// <summary>
-        /// Prepares the GPIO pin for input use. Make sure to call RaspberryPi.Initialize() once in your program before this.
-        /// </summary>
-        public void Initialize()
-        {
             RaspberryPi.SetPinMode(this.PinNumber, (int)RaspberryPi.PinMode.INPUT);
         }
 
@@ -81,19 +74,19 @@ namespace Scarlet.IO.RaspberryPi
 
         internal void InterruptRising()
         {
-            InputInterrupt Event = new InputInterrupt();
+            InputInterrupt Event = new InputInterrupt(GetInput());
             this.RisingHandlers?.Invoke(this, Event);
         }
 
         internal void InterruptFalling()
         {
-            InputInterrupt Event = new InputInterrupt();
+            InputInterrupt Event = new InputInterrupt(GetInput());
             this.FallingHandlers?.Invoke(this, Event);
         }
 
         internal void InterruptAny()
         {
-            InputInterrupt Event = new InputInterrupt();
+            InputInterrupt Event = new InputInterrupt(GetInput());
             this.AnyHandlers?.Invoke(this, Event);
         }
 
