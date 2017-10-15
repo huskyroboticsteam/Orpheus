@@ -171,6 +171,7 @@ namespace Scarlet.IO.RaspberryPi
         [DllImport(WIRING_PI_LIB, EntryPoint = "serialFlush")]
         private static extern void Ext_SerialFlush(int DeviceID);
 
+        // Clears all data waiting to be sent.
         internal static void SerialFlush(int DeviceID) { Ext_SerialFlush(DeviceID); }
 
         [DllImport(WIRING_PI_LIB, EntryPoint = "serialGetchar")]

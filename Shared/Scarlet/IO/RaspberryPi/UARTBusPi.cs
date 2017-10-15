@@ -12,22 +12,27 @@ namespace Scarlet.IO.RaspberryPi
 
         public UARTBusPi(byte Device, int Baud)
         {
-            DeviceID = RaspberryPi.SerialOpen(Device, Baud);
+            if (Device == 0)
+            {
+                RaspberryPi.SetPinMode(8, RaspberryPi.PinMode.OUTPUT);
+                RaspberryPi.SetPinMode(10, RaspberryPi.PinMode.INPUT);
+            }
+            this.DeviceID = RaspberryPi.SerialOpen(Device, Baud);
         }
 
         public byte[] Read(int Length)
         {
             List<byte> Data = new List<byte>();
-            int Avail = RaspberryPi.SerialDataAvailable(DeviceID);
+            int Avail = RaspberryPi.SerialDataAvailable(this.DeviceID);
             if (Avail < Length) { Length = Avail; }
             for (int i = 0; i < Length; i++)
             {
-                Data.Add(RaspberryPi.SerialGetChar(DeviceID));
+                Data.Add(RaspberryPi.SerialGetChar(this.DeviceID));
             }
             return Data.ToArray();
         }
 
-        public void Write(byte[] Data) { RaspberryPi.SerialPut(DeviceID, Data); }
+        public void Write(byte[] Data) { RaspberryPi.SerialPut(this.DeviceID, Data); }
 
         public void Dispose() { throw new NotImplementedException(); }
 

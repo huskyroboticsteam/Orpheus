@@ -37,7 +37,7 @@ namespace Science
             Log.SetSingleOutputLevel(Log.Source.HARDWAREIO, Log.Severity.DEBUG);
 
             RaspberryPi.Initialize();
-            RPiTests.TestSPI();
+            RPiTests.TestUART();
 
             IOHandler = new IOHandler();
             Client.Start(IP, PortTCP, PortUDP, Constants.CLIENT_NAME);

@@ -25,5 +25,15 @@ namespace Science
                 Thread.Sleep(500);
             }
         }
+
+        internal static void TestUART()
+        {
+            IUARTBus UART = new UARTBusPi(0, 9600);
+            for (byte i = 0; i < 255; i++)
+            {
+                UART.Write(new byte[] { i });
+                Thread.Sleep(250);
+            }
+        }
     }
 }
