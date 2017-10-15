@@ -39,9 +39,9 @@ namespace Scarlet.Filters
     public class Kalman<T> : IFilter<T> where T : IComparable
     { 
         public double Rmeasure { get; set; } // Measurement noise variance.
-        public T Output { get; private set; } // Ouput of the filter system.
         public bool Initialized { get; private set; } // Whether or not the system is initialized
 
+        private T Output; // Ouput of the filter system.
         private double CalcMeasure;  // The output calculated by the Kalman filter.
         private double Bias;         // The rate bias calculated by the Kalman filter.
         private double NewRate;      // New Rate to the Kalman Filter
@@ -168,5 +168,7 @@ namespace Scarlet.Filters
             dynamic SetAngle = this.CalcMeasure;
             this.Output = SetAngle;
         }
+
+        public T GetOutput() { return Output; }
     }
 }

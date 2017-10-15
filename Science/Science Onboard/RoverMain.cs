@@ -33,11 +33,13 @@ namespace Science
             Log.Begin();
             Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Science Station - Rover Side");
 
-            //BeagleBone.Initialize(SystemMode.DEFAULT, true);
+            BeagleBone.Initialize(SystemMode.DEFAULT, true);
             Log.SetSingleOutputLevel(Log.Source.HARDWAREIO, Log.Severity.DEBUG);
 
-            RaspberryPi.Initialize();
-            RPiTests.TestUART();
+            BBBTests.TestMotor();
+
+            //RaspberryPi.Initialize();
+            //RPiTests.TestUART();
 
             IOHandler = new IOHandler();
             Client.Start(IP, PortTCP, PortUDP, Constants.CLIENT_NAME);

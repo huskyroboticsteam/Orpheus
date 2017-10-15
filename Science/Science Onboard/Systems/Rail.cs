@@ -80,7 +80,7 @@ namespace Science.Systems
         /// </summary>
         public void GotoTop()
         {
-            this.MotorCtrl.Speed = MOTOR_MAX_SPEED;
+            this.MotorCtrl.TargetSpeed = MOTOR_MAX_SPEED;
         }
 
         /// <summary>

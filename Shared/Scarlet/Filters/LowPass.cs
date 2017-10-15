@@ -24,8 +24,8 @@ namespace Scarlet.Filters
     /// A type, which must be a numeric.</typeparam>
     public class LowPass<T> : IFilter<T> where T : IComparable
     {
+        private T Output;
 
-        public T Output { get; private set; } // Output for the Low Pass Filter
         private double P_LPFk;
         public double LPFk
         {
@@ -70,7 +70,7 @@ namespace Scarlet.Filters
             dynamic _dInput = Input;
             // Find output by adding the difference of the output and
             // input and multiplying by the time constant.
-            dynamic _dOutput = this.LastValue + (_dLastValue - _dInput) * this.LPFk;
+            dynamic _dOutput = (T)(this.LastValue + (_dLastValue - _dInput) * this.LPFk);
             // Set iterative variables
             this.Output = _dOutput;
             this.LastValue = Input;
@@ -89,13 +89,11 @@ namespace Scarlet.Filters
         }
 
         /// <summary>
-        /// Resets the low pass filter to the
-        /// default value of <c>T</c>
+        /// Resets the low pass filter to the default value of <c>T</c>
         /// </summary>
-        public void Reset()
-        {
-            this.LastValue = default(T); // Set to default T value.
-        }
+        public void Reset() { this.LastValue = default(T); }
+
+        public T GetOutput() { return this.Output; }
 
     }
 }

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using BBBCSIO;
 using Scarlet.Components.Motors;
 using Scarlet.Components.Sensors;
+using Scarlet.Filters;
 using Scarlet.IO;
 using Scarlet.IO.BeagleBone;
 using Scarlet.Utilities;
@@ -73,28 +74,25 @@ namespace Science
             BBBPinManager.AddMappingPWM(BBBPin.P9_14);
             BBBPinManager.ApplyPinSettings(RoverMain.ApplyDevTree);
             IPWMOutput MotorOut = PWMBBB.PWMDevice1.OutputA;
-            MotorOut.SetEnabled(true);
-            TalonMC Motor = new TalonMC(MotorOut, 0.2F);
+            IFilter<float> MotorFilter = new LowPass<float>(0.01F);
+            TalonMC Motor = new TalonMC(MotorOut, 0.2F, MotorFilter);
             Log.SetSingleOutputLevel(Log.Source.MOTORS, Log.Severity.DEBUG);
-            Motor.RampUp = 0.5F;
-            //Motor.Speed = 0.2F;
+            Motor.TargetSpeed = 0.2F;
             Motor.UpdateState();
-            while (true)
+            /*while (true)
             {
-                Log.Output(Log.Severity.DEBUG, Log.Source.MOTORS, "Outputs: " + Motor.Speed + ", " + ((PWMOutputBBB)MotorOut).GetOutput() + ", " + ((PWMOutputBBB)MotorOut).GetFrequency());
+                Log.Output(Log.Severity.DEBUG, Log.Source.MOTORS, "Outputs: " + Motor.TargetSpeed + ", " + ((PWMOutputBBB)MotorOut).GetOutput() + ", " + ((PWMOutputBBB)MotorOut).GetFrequency());
                 //Motor.UpdateState();
                 Thread.Sleep(100);
-            }
-            /*int Cycle = 0;
+            }*/
+            int Cycle = 0;
             while (true)
             {
+                Motor.TargetSpeed = ((Cycle / 10) % 2 == 0) ? 1 : 0;
                 Motor.UpdateState();
-                float Spd = (float)((Math.Sin(Cycle * Math.PI / 360.000D) + 1) / 40) + 0.1F;
-                Log.Output(Log.Severity.DEBUG, Log.Source.MOTORS, "Outputting " + Spd + ", currently " + Motor.Speed);
-                Motor.Speed = Spd;
-                Thread.Sleep(100);
-                Cycle += 15;
-            }*/
+                Thread.Sleep(25);
+                Cycle += 1;
+            }
         }
 
         internal static void TestPWMLow()
