@@ -77,12 +77,13 @@ namespace Scarlet.Utilities
         {
             if (Times <= 0) { throw new InvalidOperationException("Cannot repeat string by a negative number."); }
             StringBuilder Output = new StringBuilder();
-            for(int i = 0; i < Times; i++)
+            for (int i = 0; i < Times; i++)
             {
                 Output.Append(ToRepeat);
                 if (i + 1 < Times) { Output.Append(Seperator); }
             }
             return Output.ToString();
+        }
 
         /// <summary>
         /// Searches a file system starting in a given path,
