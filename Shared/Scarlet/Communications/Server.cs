@@ -89,6 +89,7 @@ namespace Scarlet.Communications
         {
             Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Stopping Server.");
             Stopping = true;
+            WatchdogManager.Stop();
 
             // This is a meh solution to the WaitForClientsTCP thread not ending until the next client connects.
             TcpClient Dummy = new TcpClient();

@@ -29,6 +29,12 @@ namespace Scarlet.Communications
             }
         }
 
+        public static void Stop()
+        {
+            Continue = false;
+            Started = false;
+        }
+
         public static void Send()
         {
             while (Continue)

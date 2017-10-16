@@ -12,7 +12,7 @@ namespace Scarlet.Communications
     {
 
         // Delegate method type for parsing specific packet ids
-        public delegate void ParseMethod(Message NewMessage);
+        public delegate void ParseMethod(Packet Packet);
         // Stored parsing Handlers for all possible message ids
         static readonly Dictionary<byte, Delegate> ParsingHandlers = new Dictionary<byte, Delegate>();
 
@@ -38,17 +38,17 @@ namespace Scarlet.Communications
         /// </summary>
         /// <param name="NewMessage">Message to parse.</param>
         /// <returns>Whether or not parsing was successful.</returns>
-        public static bool ParseMessage(Message NewMessage)
+        public static bool ParseMessage(Packet Packet)
         {
             try
             {
-                Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Parsing packet: " + NewMessage.ToString());
-                if (!ParsingHandlers.ContainsKey(NewMessage.ID))
+                Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Parsing packet: " + Packet.Data.ToString());
+                if (!ParsingHandlers.ContainsKey(Packet.Data.ID))
                 {
-                    Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "No handler is registered for parsing packet ID " + NewMessage.ID + "!");
+                    Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "No handler is registered for parsing packet ID " + Packet.Data.ID + "!");
                     return false;
                 }
-                ParsingHandlers[NewMessage.ID].DynamicInvoke(NewMessage);
+                ParsingHandlers[Packet.Data.ID].DynamicInvoke(Packet);
                 return true;
             }
             catch (Exception Except)
@@ -57,16 +57,6 @@ namespace Scarlet.Communications
                 Log.Exception(Log.Source.NETWORK, Except);
                 return false;
             }
-        }
-
-        /// <summary>
-        /// Appropriately parses incoming packet.
-        /// Does the same thing as ParseMessage(Message NewMessage)
-        /// </summary>
-        /// <param name="NewMessage">Packet to parse.</param>
-        public static bool ParseMessage(Packet NewMessage)
-        {
-            return ParseMessage(NewMessage.Data);
         }
 
     }

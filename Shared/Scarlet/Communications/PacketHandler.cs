@@ -34,9 +34,9 @@ namespace Scarlet.Communications
         /// Watchdog parse handler
         /// </summary>
         /// <param name="WatchdogPacket">Packet to parse</param>
-        public static void ParseWatchdogPacket(Message WatchdogPacket)
+        public static void ParseWatchdogPacket(Packet WatchdogPacket)
         {
-            WatchdogManager.FoundWatchdog(UtilData.ToString(WatchdogPacket.Payload));
+            WatchdogManager.FoundWatchdog(UtilData.ToString(WatchdogPacket.Data.Payload));
         }
 
     }
