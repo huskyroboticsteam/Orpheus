@@ -14,18 +14,18 @@ namespace Science
             Parse.SetParseHandler(PacketType.EMERGENCY_STOP, ParseStopPacket);
         }
 
-        public static void ParseErrorPacket(Message Error)
+        public static void ParseErrorPacket(Packet Error)
         {
             Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Error Packet Received");
         }
 
-        public static void ParseStopPacket(Message StopPacket)
+        public static void ParseStopPacket(Packet StopPacket)
         {
             Log.Output(Log.Severity.FATAL, Log.Source.OTHER, "EMERGENCY STOP RECEIVED");
             RoverMain.IOHandler.EmergencyStop();
         }
 
-        public static void ParseWatchdog(Message WatchdogPacket)
+        public static void ParseWatchdog(Packet WatchdogPacket)
         {
             
         }
