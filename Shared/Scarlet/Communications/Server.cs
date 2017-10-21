@@ -266,7 +266,6 @@ namespace Scarlet.Communications
                 Listener = (UdpClient)Result.AsyncState;
                 ReceivedEndpoint = new IPEndPoint(IPAddress.Any, 0);
                 Data = Listener.EndReceive(Result, ref ReceivedEndpoint);
-                Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Received data from client (UDP).");
                 ClientName = FindClient(ReceivedEndpoint, true);
             }
             catch(Exception Exc)
@@ -318,13 +317,6 @@ namespace Scarlet.Communications
                 }
                 else // Existing client
                 {
-                    bool Output = true;
-                    try
-                    {
-                        if (Data[5] == Constants.WATCHDOG_PING) { Output = OutputWatchdogDebug; }
-                    }
-                    catch { }
-                    if (Output) { Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Received data from client (UDP)."); }
                     Packet ReceivedPack = new Packet(new Message(Data), false, ClientName);
                     lock (ReceiveQueue) { ReceiveQueue.Enqueue(ReceivedPack); }
                     if (StorePackets) { PacketsReceived.Add(ReceivedPack); }
