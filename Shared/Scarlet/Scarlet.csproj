@@ -32,7 +32,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>ScarletLogo.ico</ApplicationIcon>
+    <ApplicationIcon>
+    </ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BBBCSIO">
@@ -106,9 +107,6 @@
     <Compile Include="Utilities\UtilConstants.cs" />
     <Compile Include="Utilities\UtilData.cs" />
     <Compile Include="Utilities\UtilMain.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="ScarletLogo.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
