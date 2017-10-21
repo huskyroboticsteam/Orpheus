@@ -253,6 +253,7 @@ namespace Scarlet.Communications
         /// <returns>Success of packet sending.</returns>
         public static bool SendNow(Packet SendPacket)
         {
+            if (SendPacket.Endpoint == null) { SendPacket.Endpoint = "Server"; }
             if (!Stopping)
             {
                 if (!Initialized) { throw new InvalidOperationException("Cannot use Client before initialization. Call Client.Start()."); }
