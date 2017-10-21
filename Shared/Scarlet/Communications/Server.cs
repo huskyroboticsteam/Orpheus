@@ -25,6 +25,7 @@ namespace Scarlet.Communications
         public static List<Packet> PacketsReceived, PacketsSent;
         private static int ReceiveBufferSize, OperationPeriod;
         public static event EventHandler<EventArgs> ClientConnectionChange;
+        public static bool OutputWatchdogDebug = false;
 
         /// <summary>
         /// Prepares the server for use, and starts listening for clients.
@@ -112,7 +113,7 @@ namespace Scarlet.Communications
             while (!Stopping)
             {
                 TcpClient Client = TCPListener.AcceptTcpClient();
-                Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Client is connecting.");
+                if (!Stopping) { Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Client is connecting."); }
                 // Start sub-threads for every client.
                 Thread ClientThread = new Thread(new ParameterizedThreadStart(HandleTCPClient));
                 ClientThread.Start(Client);
@@ -143,7 +144,7 @@ namespace Scarlet.Communications
                 if(DataSize == 0)
                 {
                     Receive?.Close();
-                    Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Client disconnected before sending name.");
+                    if (!Stopping) { Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Client disconnected before sending name."); }
                     return;
                 }
                 else
@@ -317,7 +318,13 @@ namespace Scarlet.Communications
                 }
                 else // Existing client
                 {
-                    Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Received data from client (UDP).");
+                    bool Output = true;
+                    try
+                    {
+                        if (Data[5] == Constants.WATCHDOG_PING) { Output = false; }
+                    }
+                    catch { }
+                    if (Output) { Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Received data from client (UDP)."); }
                     Packet ReceivedPack = new Packet(new Message(Data), false, ClientName);
                     lock (ReceiveQueue) { ReceiveQueue.Enqueue(ReceivedPack); }
                     if (StorePackets) { PacketsReceived.Add(ReceivedPack); }
@@ -339,6 +346,16 @@ namespace Scarlet.Communications
                 return Clients[Result].Connected ? Result : null;
             }
             catch { return null; }
+        }
+
+        /// <summary>Gets the TCP and UDP endpoints of the specified client by client name.</summary>
+        public static IPEndPoint[] GetEndpoints(string ClientName)
+        {
+            if (Clients.ContainsKey(ClientName))
+            {
+                return new IPEndPoint[] { Clients[ClientName].EndpointTCP , Clients[ClientName].EndpointUDP };
+            }
+            else { return null; }
         }
 
         private static void ClientConnChange(EventArgs Event) { ClientConnectionChange?.Invoke("Server", Event); }
@@ -410,7 +427,7 @@ namespace Scarlet.Communications
 
             if (Packet.IsUDP)
             {
-                Thread PacketSender = new Thread(new ParameterizedThreadStart(SendNow));
+                Thread PacketSender = new Thread(new ParameterizedThreadStart(SendNowGen));
                 PacketSender.Start(Packet);
             }
             else
@@ -423,9 +440,9 @@ namespace Scarlet.Communications
         /// Used for threaded applications.
         /// </summary>
         /// <param name="Packet">A Packet, which will be passed to SendNow(Packet).</param>
-        private static void SendNow(object Packet)
+        private static void SendNowGen(object Packet)
         {
-            SendNow(Packet);
+            SendNow((Packet)Packet);
         }
 
         /// <summary>
