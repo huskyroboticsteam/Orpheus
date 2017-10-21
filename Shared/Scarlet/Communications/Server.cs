@@ -451,7 +451,10 @@ namespace Scarlet.Communications
         public static void SendNow(Packet ToSend)
         {
             if (!Initialized) { throw new InvalidOperationException("Cannot use Server before initialization. Call Server.Start()."); }
-            Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Sending packet: " + ToSend);
+            if (ToSend.Data.ID != Constants.WATCHDOG_PING || OutputWatchdogDebug)
+            {
+                Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Sending packet: " + ToSend);
+            }
             if (!Clients.ContainsKey(ToSend.Endpoint))
             {
                 Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Tried to send packet to unknown client. Dropping.");
