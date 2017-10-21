@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net;
 using System.Threading;
 using BBBCSIO;
@@ -6,6 +7,7 @@ using Scarlet.Communications;
 using Scarlet.Components;
 using Scarlet.Components.Motors;
 using Scarlet.Components.Sensors;
+using Scarlet.Filters;
 using Scarlet.IO;
 using Scarlet.IO.BeagleBone;
 using Scarlet.IO.RaspberryPi;
@@ -33,25 +35,14 @@ namespace Science
             Log.Begin();
             Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Science Station - Rover Side");
 
-            BeagleBone.Initialize(SystemMode.DEFAULT, true);
-            Log.SetSingleOutputLevel(Log.Source.HARDWAREIO, Log.Severity.DEBUG);
-
-            BBBTests.TestMotor();
-
-            //RaspberryPi.Initialize();
-            //RPiTests.TestUART();
-
-            IOHandler = new IOHandler();
-            Client.Start(IP, PortTCP, PortUDP, Constants.CLIENT_NAME);
-            PacketHandler PackHan = new PacketHandler();
-
+            // Test Low Pass Filter Response
+            IFilter<double> AverageTest = new Average<double>(5);
             
-
-            while(true)
+            for(int i = 1; i <= 16; i++)
             {
-                Thread.Sleep(100);
+                AverageTest.Feed(i*i);
             }
-
+            
             while (Console.KeyAvailable) { Console.ReadKey(); }
             Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Press any key to exit.");
             Console.ReadKey();

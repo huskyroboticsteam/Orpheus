@@ -67,7 +67,7 @@ namespace Scarlet.Filters
             // Store input as a dynamic type since we know T is a numeric
             dynamic dynamicInput = Input; 
             // Subtract current array index value from sum
-            this.CurSum -= this.AverageArray[this.Index]; 
+            this.CurSum -= this.AverageArray[this.Index];
             // Add current value to sum
             this.CurSum += dynamicInput; 
             // Store curent value in old spot

@@ -66,11 +66,11 @@ namespace Scarlet.Filters
         public void Feed(T Input)
         {
             // Store values as dynamic for manipulation
-            dynamic _dLastValue = this.LastValue;
+            dynamic _dLastOutput = Output;
             dynamic _dInput = Input;
-            // Find output by adding the difference of the output and
-            // input and multiplying by the time constant.
-            dynamic _dOutput = (T)(this.LastValue + (_dLastValue - _dInput) * this.LPFk);
+            // Find output by LPF equation: y(t) = y[t-1] * (1 - c) + x(t) * c, 
+            // where c is the time constant and x(t) is the filter input at that time.
+            dynamic _dOutput = ((_dLastOutput * (1 - this.LPFk) + _dInput * this.LPFk));
             // Set iterative variables
             this.Output = _dOutput;
             this.LastValue = Input;
