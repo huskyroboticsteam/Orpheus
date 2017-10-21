@@ -30,6 +30,7 @@ namespace Scarlet.Communications
         public static List<Packet> PacketsSent { get; private set; }
         public static string Name { get; private set; }
         public static bool IsConnected { get; private set; }
+        public static bool OutputWatchdogDebug = false;
 
         /// <summary>
         /// Starts a Client process.
@@ -192,7 +193,9 @@ namespace Scarlet.Communications
                         Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Receiving from socket...");
                         int Size = ReceiveFrom.Receive(ReceiveBuffer);
                         Packet Received = new Packet(new Message(ReceiveBuffer.Take(Size).ToArray()), ReceiveFrom.ProtocolType == ProtocolType.Udp);
-                        Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Received: " + Received.ToString());
+                        bool Output = true;
+                        if (Received.Data.ID == Constants.WATCHDOG_PING) { Output = OutputWatchdogDebug; }
+                        if (Output) { Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Received: " + Received.ToString()); }
                         if (StorePackets) { PacketsReceived.Add(Received); }
                         lock (ReceiveQueue) { ReceiveQueue.Enqueue(Received); }
                         Thread.Sleep(OperationPeriod);

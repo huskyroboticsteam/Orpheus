@@ -321,7 +321,7 @@ namespace Scarlet.Communications
                     bool Output = true;
                     try
                     {
-                        if (Data[5] == Constants.WATCHDOG_PING) { Output = false; }
+                        if (Data[5] == Constants.WATCHDOG_PING) { Output = OutputWatchdogDebug; }
                     }
                     catch { }
                     if (Output) { Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Received data from client (UDP)."); }
