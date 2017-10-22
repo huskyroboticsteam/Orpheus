@@ -28,7 +28,8 @@ namespace Scarlet.Communications
         private static int ReceiveBufferSize;
         private static int OperationPeriod;
         private static bool Initialized;
-        private static bool StopProcesses;
+        private static volatile bool StopProcesses;
+        private static bool HasDetectedDisconnect; // To be set if there is a send or receive error that would likely be caused by a disconnect.
 
         public static string Name { get; private set; }
         public static bool IsConnected { get; private set; }
@@ -123,6 +124,8 @@ namespace Scarlet.Communications
         private static void ConnectionChange(object Sender, ConnectionStatusChanged Args)
         {
             IsConnected = Args.StatusConnected;
+            if (IsConnected) { SendNames(); } // Must send names after a reconnect so that the server knows the endpoints.
+                                              // in case the server did a reboot
         }
 
         /// <summary>
@@ -168,8 +171,10 @@ namespace Scarlet.Communications
             {
                 // Checks if the client is connected and if
                 // the server has available data
-                if (IsConnected && Socket.Available > 0)
+
+                if (Socket.Available > 0)
                 {
+                    Thread.Sleep(OperationPeriod);
                     // Buffer for the newly received data
                     byte[] ReceiveBuffer = new byte[ReceiveBufferSize];
                     try
@@ -181,11 +186,16 @@ namespace Scarlet.Communications
                         Packet Received = new Packet(new Message(ReceiveBuffer.Take(Size).ToArray()), Socket.ProtocolType == ProtocolType.Udp);
                         // Queues the packet for processing
                         lock (ReceiveQueue) { ReceiveQueue.Enqueue(Received); }
+                        HasDetectedDisconnect = false;
                     }
                     catch (Exception Exception)
                     {
-                        Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Failed to receive from socket. Check network connectivity.");
-                        Log.Exception(Log.Source.NETWORK, Exception);
+                        if (IsConnected && !HasDetectedDisconnect)
+                        {
+                            Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Failed to receive from socket. Check network connectivity.");
+                            Log.Exception(Log.Source.NETWORK, Exception);
+                            HasDetectedDisconnect = true;
+                        }
                     }
                 }
             }
@@ -285,7 +295,11 @@ namespace Scarlet.Communications
         /// <returns>The success of the TCP transmission</returns>
         private static bool SendTCPNow(Packet TCPPacket)
         {
-            return false;
+            byte[] Data = TCPPacket.Data.GetRawData();
+            try { ServerTCP.Client.Send(Data); }
+            catch { HasDetectedDisconnect = true; return false; }
+            HasDetectedDisconnect = false;
+            return true;
         }
 
         private static void SendPackets()
@@ -304,8 +318,11 @@ namespace Scarlet.Communications
                     }
                     catch (Exception Exception)
                     {
-                        Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Failed to send packet. Check connection status.");
-                        Log.Exception(Log.Source.NETWORK, Exception);
+                        if (IsConnected)
+                        {
+                            Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Failed to send packet. Check connection status.");
+                            Log.Exception(Log.Source.NETWORK, Exception);
+                        }
                     }
                     lock (SendQueue) { SendQueue.Dequeue(); }
                 }
