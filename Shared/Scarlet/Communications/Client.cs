@@ -24,6 +24,7 @@ namespace Scarlet.Communications
 
         private static Thread SendThread, ProcessThread; // Threads for sending and parsing/processing
         private static Thread ReceiveThreadUDP, ReceiveThreadTCP; // Threads for receiving on TCP and UDP
+        private static Thread RetryConnection; // Retries Server connection after detecting disconnect. Only runs in disconnected state
 
         private static int ReceiveBufferSize; // Size of the receive buffer. Change this in Start() to receive larger packets
         private static int OperationPeriod; // The operation period (the higher this is, the longer the wait in between receiving/sending packets)
@@ -66,6 +67,7 @@ namespace Scarlet.Communications
                 // Initialize (but do not start the threads)
                 SendThread = new Thread(new ThreadStart(SendPackets));
                 ProcessThread = new Thread(new ThreadStart(ProcessPackets));
+                RetryConnection = RetyConnectionThreadFactory();
                 ReceiveThreadTCP = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
                 ReceiveThreadUDP = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
 
@@ -119,8 +121,30 @@ namespace Scarlet.Communications
         private static void ConnectionChange(object Sender, ConnectionStatusChanged Args)
         {
             IsConnected = Args.StatusConnected;
-            if (IsConnected) { SendNames(); } // Must send names after a reconnect so that the server knows the endpoints.
-                                              // in case the server did a reboot
+            Console.WriteLine("Connection Status Changed");
+            if (IsConnected && RetryConnection.IsAlive) { RetryConnection.Join(); }
+            else
+            {
+                RetryConnection = RetyConnectionThreadFactory();
+                RetryConnection.Start();
+                Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Disconnected from server... Retrying...");
+            }
+        }
+
+        /// <summary>
+        /// Retries sending names to the
+        /// server until the Watchdog Manager finds 
+        /// watchdog ping again.
+        /// </summary>
+        private static void RetryConnecting()
+        {
+            while (!IsConnected)
+            {
+                SendNames();
+                // Sleep longer than the operation period to reconnect
+                // We do not need to reconnect with that much speed.
+                Thread.Sleep(OperationPeriod * 4); 
+            }
         }
 
         /// <summary>
@@ -145,6 +169,16 @@ namespace Scarlet.Communications
             ProcessThread.Start();
             ReceiveThreadTCP.Start(ServerTCP.Client);
             ReceiveThreadUDP.Start(ServerUDP.Client);
+        }
+
+        /// <summary>
+        /// Creates a new thread for
+        /// handling connection retries
+        /// </summary>
+        /// <returns></returns>
+        private static Thread RetyConnectionThreadFactory()
+        {
+            return new Thread(new ThreadStart(RetryConnecting));
         }
 
         #endregion
