@@ -449,6 +449,7 @@ namespace Scarlet.Communications
             }
             if (!Clients.ContainsKey(ToSend.Endpoint))
             {
+                WatchdogManager.RemoveWatchdog(ToSend.Endpoint);
                 Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Tried to send packet to unknown client. Dropping.");
                 return;
             }

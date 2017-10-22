@@ -12,9 +12,10 @@ namespace Scarlet.Communications
         private static string MyName;
         private static Packet WatchdogPacket;
         private static Dictionary<string, Watchdog> Watchdogs;
+        private static List<string> WatchdogKeys;
         public static event EventHandler<ConnectionStatusChanged> ConnectionChanged;
 
-        public static void Start(bool IsClient=false, string MyName="Server")
+        public static void Start(bool IsClient = false, string MyName = "Server")
         {
             if (!Started)
             {
@@ -23,7 +24,8 @@ namespace Scarlet.Communications
                 WatchdogManager.Watchdogs = new Dictionary<string, Watchdog>();
                 WatchdogManager.WatchdogPacket = new Packet(Constants.WATCHDOG_PING, true);
                 WatchdogManager.WatchdogPacket.AppendData(Utilities.UtilData.ToBytes(MyName));
-                if (IsClient) { Watchdogs.Add("Server", new Watchdog("Server", true)); }
+                WatchdogManager.WatchdogKeys = new List<string>();
+                if (IsClient) { Watchdogs.Add("Server", new Watchdog("Server", true)); WatchdogKeys.Add("Server"); }
                 new Thread(new ThreadStart(Send)).Start();
                 Started = true;
             }
@@ -41,13 +43,16 @@ namespace Scarlet.Communications
             {
                 WatchdogPacket.UpdateTimestamp();
                 Thread.Sleep(Constants.WATCHDOG_INTERVAL);
-                if (IsClient) { Client.SendRegardless(WatchdogPacket); }
+                if (IsClient) { Client.SendNow(WatchdogPacket); }
                 else
                 {
-                    foreach (string EP in Watchdogs.Keys)
+                    lock (WatchdogKeys)
                     {
-                        WatchdogPacket.Endpoint = EP;
-                        Server.SendNow(WatchdogPacket);
+                        foreach (string EP in WatchdogKeys.ToArray())
+                        {
+                            WatchdogPacket.Endpoint = EP;
+                            Server.SendNow(WatchdogPacket);
+                        }
                     }
                 }
             }
@@ -58,12 +63,22 @@ namespace Scarlet.Communications
             if (IsClient) { throw new InvalidOperationException("Clients cannot add watchdogs"); }
             Packet WatchdogPacket = new Packet(Constants.WATCHDOG_PING, true, Endpoint);
             WatchdogPacket.AppendData(Utilities.UtilData.ToBytes(Endpoint));
-            Watchdogs.Add(Endpoint, new Watchdog(Endpoint, false));
+            if (!Watchdogs.ContainsKey(Endpoint))
+            {
+                Watchdogs.Add(Endpoint, new Watchdog(Endpoint, false));
+            }
+        }
+
+        public static void RemoveWatchdog(string Endpoint)
+        {
+            lock (Watchdogs) { Watchdogs.Remove(Endpoint); }
+            lock (WatchdogKeys) { WatchdogKeys.Remove(Endpoint); }
+            Console.WriteLine(Watchdogs.Keys.ToString());
         }
 
         public static void FoundWatchdog(string Endpoint)
         {
-            if (!Started && Endpoint == "Server") { Start(true, Client.Name); }
+            if (!Started) { Start(true, Client.Name); }
             Watchdogs[Endpoint].FoundWatchdog();
         }
 
@@ -79,7 +94,7 @@ namespace Scarlet.Communications
                 get { return P_IsConnected; }
                 private set
                 {
-                    if(value != P_IsConnected) // Status is changing
+                    if (value != P_IsConnected) // Status is changing
                     {
                         ConnectionStatusChanged Event = new ConnectionStatusChanged() { StatusEndpoint = Endpoint, StatusConnected = value };
                         OnConnectionChange(Event);
