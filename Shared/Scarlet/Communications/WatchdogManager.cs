@@ -66,6 +66,7 @@ namespace Scarlet.Communications
             if (!Watchdogs.ContainsKey(Endpoint))
             {
                 Watchdogs.Add(Endpoint, new Watchdog(Endpoint, false));
+                WatchdogKeys.Add(Endpoint);
             }
         }
 
