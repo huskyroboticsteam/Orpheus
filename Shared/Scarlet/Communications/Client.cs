@@ -11,10 +11,17 @@ using System.Collections;
 namespace Scarlet.Communications
 {
 
+    /// <summary>
+    /// Client is a class used to network
+    /// a client to a server.
+    /// 
+    /// Please read the Scarlet documentation
+    /// before use.
+    /// </summary>
     public static class Client
     {
 
-        private static IPEndPoint ServerEndpointTCP;
+        private static IPEndPoint ServerEndpointTCP; // Endpoints for TCP and UDP
         private static IPEndPoint ServerEndpointUDP;
         private static UdpClient ServerUDP; // TCP and UDP Clients
         private static TcpClient ServerTCP;
@@ -34,6 +41,9 @@ namespace Scarlet.Communications
 
         public static string Name { get; private set; } // Name of the client.
         public static bool IsConnected { get; private set; } // Whether or not the client and server are connected
+        public static List<Packet> SentPackets { get; private set; } // Storage for send packets.
+        public static List<Packet> ReceivedPackets { get; private set; } // Storage for received packets.
+        public static event EventHandler<ConnectionStatusChanged> ClientConnectionChanged;
         public static bool StorePackets; // Whether or not the client stores packets
 
         /// <summary>
@@ -64,6 +74,10 @@ namespace Scarlet.Communications
                 SendQueue = new Queue<Packet>();
                 ReceiveQueue = new Queue<Packet>();
 
+                // Initialize packet storage structures
+                SentPackets = new List<Packet>();
+                ReceivedPackets = new List<Packet>();
+
                 // Initialize (but do not start the threads)
                 SendThread = new Thread(new ThreadStart(SendPackets));
                 ProcessThread = new Thread(new ThreadStart(ProcessPackets));
@@ -73,11 +87,8 @@ namespace Scarlet.Communications
 
                 try
                 {
-                    // Initialize and connect to the UDP and TCP clients
-                    ServerTCP = new TcpClient();
-                    ServerTCP.Connect(ServerEndpointTCP);
-                    ServerUDP = new UdpClient();
-                    ServerUDP.Connect(ServerEndpointUDP);
+                    // Initialize the TCP and UDP clients.
+                    InitializeClients();
                     // Set the Connection status of the Client.
                     // This should be the only time we manually set this. 
                     // We just need to get to the point where the watchdog
@@ -120,10 +131,14 @@ namespace Scarlet.Communications
         /// <param name="Args">A ConnectionStatusChanged object containing the new status of the Client.</param>
         private static void ConnectionChange(object Sender, ConnectionStatusChanged Args)
         {
+            // Trigger Client internal event
+            ClientConnectionChanged?.Invoke(Name, Args);
+            // Changed IsConnected state
             IsConnected = Args.StatusConnected;
-            Console.WriteLine("Connection Status Changed");
+            // Kill the reconnect thread or try to reconnect
+            if (IsConnected) { Log.Output(Log.Severity.INFO, Log.Source.NETWORK, "Server Connected..."); }
             if (IsConnected && RetryConnection.IsAlive) { RetryConnection.Join(); }
-            else
+            else if (!IsConnected)
             {
                 RetryConnection = RetyConnectionThreadFactory();
                 RetryConnection.Start();
@@ -140,10 +155,25 @@ namespace Scarlet.Communications
         {
             while (!IsConnected)
             {
-                SendNames();
+                // Initialized the Client connections
+                // (retries the connection establishment)
+                // Mainly used for TCP.
+                try
+                {
+                    // Both these commands are allowed to fail
+                    // Initialize the TCP connection
+                    // We only need to initialize the
+                    // TCP connection if the UDP connection
+                    // has ever began
+                    InitializeTCPClient();
+                    // Send the name of the client
+                    // on the TCP and UDP bus
+                    SendNames();
+                }
+                catch { }
                 // Sleep longer than the operation period to reconnect
                 // We do not need to reconnect with that much speed.
-                Thread.Sleep(OperationPeriod * 4); 
+                Thread.Sleep(Constants.WATCHDOG_WAIT);
             }
         }
 
@@ -157,6 +187,27 @@ namespace Scarlet.Communications
             byte[] SendData = UtilData.ToBytes(Name);
             ServerUDP.Client.Send(SendData);
             ServerTCP.Client.Send(SendData);
+        }
+
+        /// <summary>
+        /// Initializes the Client connections
+        /// </summary>
+        private static void InitializeClients()
+        {
+            // Initialize and connect to the UDP and TCP clients
+            InitializeTCPClient();
+            ServerUDP = new UdpClient();
+            ServerUDP.Connect(ServerEndpointUDP);
+        }
+
+        /// <summary>
+        /// Initializes TCP Client connection
+        /// </summary>
+        private static void InitializeTCPClient()
+        {
+            // Initialize and connect to the UDP and TCP clients
+            ServerTCP = new TcpClient();
+            ServerTCP.Connect(ServerEndpointTCP);
         }
 
         /// <summary>
@@ -215,6 +266,10 @@ namespace Scarlet.Communications
                         Packet Received = new Packet(new Message(ReceiveBuffer.Take(Size).ToArray()), Socket.ProtocolType == ProtocolType.Udp);
                         // Queues the packet for processing
                         lock (ReceiveQueue) { ReceiveQueue.Enqueue(Received); }
+                        if (StorePackets)
+                        {
+                            lock (ReceivedPackets) { ReceivedPackets.Add(Received); }
+                        }
                         HasDetectedDisconnect = false;
                     }
                     catch (Exception Exception)
@@ -294,6 +349,10 @@ namespace Scarlet.Communications
             // Checks the connection status of client
             if (IsConnected)
             {
+                if (StorePackets)
+                {
+                    lock (SentPackets) { SentPackets.Add(SendPacket); }
+                }
                 // Chooses the correct send method for the type of packet (TCP/UDP)
                 if (SendPacket.IsUDP) { return SendUDPNow(SendPacket); }
                 else { return SendTCPNow(SendPacket); }
@@ -418,10 +477,19 @@ namespace Scarlet.Communications
         }
 
         /// <summary>
-        /// 
+        /// Gets the length of the current receive queue.
+        /// (The processing queue) i.e. the packets in this 
+        /// queue have yet to be parsed.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The length of the recieve queue</returns>
         public static int GetReceiveQueueCount() { return ReceiveQueue.Count; }
+
+        /// <summary>
+        /// Gets the length of the current send queue.
+        /// i.e. the packets in this 
+        /// queue have yet to be sent.
+        /// </summary>
+        /// <returns>The length of the send queue</returns>
         public static int GetSendQueueCount() { return SendQueue.Count; }
         #endregion
 
