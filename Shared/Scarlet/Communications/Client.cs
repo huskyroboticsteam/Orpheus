@@ -25,14 +25,15 @@ namespace Scarlet.Communications
         private static Thread SendThread, ProcessThread; // Threads for sending and parsing/processing
         private static Thread ReceiveThreadUDP, ReceiveThreadTCP; // Threads for receiving on TCP and UDP
 
-        private static int ReceiveBufferSize;
-        private static int OperationPeriod;
-        private static bool Initialized;
-        private static volatile bool StopProcesses;
+        private static int ReceiveBufferSize; // Size of the receive buffer. Change this in Start() to receive larger packets
+        private static int OperationPeriod; // The operation period (the higher this is, the longer the wait in between receiving/sending packets)
+        private static bool Initialized; // Whether or not the client is initialized
+        private static volatile bool StopProcesses; // If true, stops all threading processes
         private static bool HasDetectedDisconnect; // To be set if there is a send or receive error that would likely be caused by a disconnect.
 
-        public static string Name { get; private set; }
-        public static bool IsConnected { get; private set; }
+        public static string Name { get; private set; } // Name of the client.
+        public static bool IsConnected { get; private set; } // Whether or not the client and server are connected
+        public static bool StorePackets; // Whether or not the client stores packets
 
         /// <summary>
         /// Starts a Client process.
@@ -79,13 +80,13 @@ namespace Scarlet.Communications
                     // This should be the only time we manually set this. 
                     // We just need to get to the point where the watchdog
                     // takes control of this.
-                    IsConnected = true; 
+                    IsConnected = true;
                 }
                 catch (Exception Exception)
                 {
-                    Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Could not connect to TCP and UDP Servers");
+                    Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Could not connect to TCP and UDP Servers. Failed to intitialize Client.");
                     Log.Exception(Log.Source.NETWORK, Exception);
-                    return;
+                    return; // Do not let the Client continue through initialization if it did not see the server.
                 }
 
                 // Setup Watchdog
@@ -95,14 +96,8 @@ namespace Scarlet.Communications
                 WatchdogManager.ConnectionChanged += ConnectionChange;
 
                 // Send names to the server
-                try
-                {
-                    SendNames();
-                }
-                catch
-                {
-                    throw new InvalidOperationException("Could not begin communication with Server.");
-                }
+                try { SendNames(); }
+                catch { throw new InvalidOperationException("Could not begin communication with Server."); }
 
                 // Start all primary thread procedures
                 StartThreads();
@@ -230,6 +225,9 @@ namespace Scarlet.Communications
 
         /// <summary>
         /// Sends a packet. Handles both UDP and TCP.
+        /// Places packet into send queue to send
+        /// later. Use SendNow for more important
+        /// packets.
         /// </summary>
         /// <param name="SendPacket">Packet to send</param>
         /// <returns>Success of packet sending</returns>
@@ -241,7 +239,7 @@ namespace Scarlet.Communications
             if (!StopProcesses)
             {
                 // Add packet to the send queue
-                lock(SendQueue) { SendQueue.Enqueue(SendPacket); }
+                lock (SendQueue) { SendQueue.Enqueue(SendPacket); }
             }
             // Returns true, because the TCP data will keep getting retried until it succeeds
             // and we must assume that UDP packets are successful since there is no way to 
@@ -302,6 +300,10 @@ namespace Scarlet.Communications
             return true;
         }
 
+        /// <summary>
+        /// Iteratively sends packets to the server
+        /// from the send queue.
+        /// </summary>
         private static void SendPackets()
         {
             while (!StopProcesses)
@@ -366,9 +368,27 @@ namespace Scarlet.Communications
 
         #region Info and Control
 
-        public static void Stop() { StopProcesses = true; Initialized = false; }
+        /// <summary>
+        /// Stops the Client.
+        /// Removes all packets from the receuve and send queues.
+        /// Changes the initialization state of the Client.
+        /// </summary>
+        public static void Stop()
+        {
+            StopProcesses = true;
+            SendThread.Join();
+            ProcessThread.Join();
+            ReceiveThreadTCP.Join();
+            ReceiveThreadUDP.Join();
+            Initialized = false;
+        }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public static int GetReceiveQueueCount() { return ReceiveQueue.Count; }
+        public static int GetSendQueueCount() { return SendQueue.Count; }
         #endregion
 
     }
