@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
 using System.IO;
+using System.Collections;
 
 namespace Scarlet.Communications
 {
@@ -13,7 +14,24 @@ namespace Scarlet.Communications
     public static class Client
     {
 
-        public static string Name;
+        private static IPEndPoint ServerEndpointTCP;
+        private static IPEndPoint ServerEndpointUDP;
+        private static UdpClient ServerUDP; // TCP and UDP Clients
+        private static TcpClient ServerTCP;
+
+        private static Queue<Packet> SendQueue; // Queue to send packets
+        private static Queue<Packet> ReceiveQueue; // Queue to process packets (incoming packet queue)
+
+        private static Thread SendThread, ProcessThread; // Threads for sending and parsing/processing
+        private static Thread ReceiveThreadUDP, ReceiveThreadTCP; // Threads for receiving on TCP and UDP
+
+        private static int ReceiveBufferSize;
+        private static int OperationPeriod;
+        private static bool Initialized;
+        private static bool StopProcesses;
+
+        public static string Name { get; private set; }
+        public static bool IsConnected { get; private set; }
 
         /// <summary>
         /// Starts a Client process.
@@ -25,10 +43,176 @@ namespace Scarlet.Communications
         /// <param name="OperationPeriod">Time in between receiving and sending individual packets.</param>
         public static void Start(string ServerIP, int PortTCP, int PortUDP, string Name, int ReceiveBufferSize = 64, int OperationPeriod = 20)
         {
-            
+            // Initialize PacketHandler
+            PacketHandler.Start();
+            // Output to debug that the client is starting up
+            Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Initializing Client.");
+            // Set local variables given the parameters
+            Client.Name = Name;
+            Client.ReceiveBufferSize = ReceiveBufferSize;
+            Client.OperationPeriod = OperationPeriod;
+            IPAddress ServerIPA = IPAddress.Parse(ServerIP);
+            // Setup Endpoints for TCP and UDP
+            ServerEndpointTCP = new IPEndPoint(ServerIPA, PortTCP);
+            ServerEndpointUDP = new IPEndPoint(ServerIPA, PortUDP);
+            if (!Initialized)
+            {
+                // Initialize the send and receive queues
+                SendQueue = new Queue<Packet>();
+                ReceiveQueue = new Queue<Packet>();
+
+                // Initialize (but do not start the threads)
+                SendThread = new Thread(new ThreadStart(SendPackets));
+                ProcessThread = new Thread(new ThreadStart(ProcessPackets));
+                ReceiveThreadTCP = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
+                ReceiveThreadUDP = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
+
+                try
+                {
+                    // Initialize and connect to the UDP and TCP clients
+                    ServerTCP = new TcpClient();
+                    ServerTCP.Connect(ServerEndpointTCP);
+                    ServerUDP = new UdpClient();
+                    ServerUDP.Connect(ServerEndpointUDP);
+                    // Set the Connection status of the Client.
+                    // This should be the only time we manually set this. 
+                    // We just need to get to the point where the watchdog
+                    // takes control of this.
+                    IsConnected = true; 
+                }
+                catch (Exception Exception)
+                {
+                    Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Could not connect to TCP and UDP Servers");
+                    Log.Exception(Log.Source.NETWORK, Exception);
+                    return;
+                }
+
+                // Setup Watchdog
+                // Client watchdog manager is automatically started
+                // when it receives the first watchdog from the server.
+                // Subscribe to the watchdog manager
+                WatchdogManager.ConnectionChanged += ConnectionChange;
+
+                // Send names to the server
+                try
+                {
+                    SendNames();
+                }
+                catch
+                {
+                    throw new InvalidOperationException("Could not begin communication with Server.");
+                }
+
+                // Start all primary thread procedures
+                StartThreads();
+
+                // Set the state of client to initialized.
+                Initialized = true;
+            }
+
         }
 
+        #region Internal
+
+        /// <summary>
+        /// Event triggered when WatchdogManager
+        /// detects a change in connection status.
+        /// </summary>
+        /// <param name="Sender">If triggered internally by WatchdogManager, this will be "Watchdog Timer"</param>
+        /// <param name="Args">A ConnectionStatusChanged object containing the new status of the Client.</param>
+        private static void ConnectionChange(object Sender, ConnectionStatusChanged Args)
+        {
+            IsConnected = Args.StatusConnected;
+        }
+
+        /// <summary>
+        /// Assumes TCP and UCP clients are connected.
+        /// Sends name to initialize a connection
+        /// with server.
+        /// </summary>
+        private static void SendNames()
+        {
+            byte[] SendData = UtilData.ToBytes(Name);
+            ServerUDP.Client.Send(SendData);
+            ServerTCP.Client.Send(SendData);
+        }
+
+        /// <summary>
+        /// Starts the threads for the receive, send, and processing
+        /// systems.
+        /// </summary>
+        private static void StartThreads()
+        {
+            SendThread.Start();
+            ProcessThread.Start();
+            ReceiveThreadTCP.Start(ServerTCP.Client);
+            ReceiveThreadUDP.Start(ServerUDP.Client);
+        }
+
+        #endregion
+
         #region Receive
+
+        /// <summary>
+        /// Receives packets from a given socket
+        /// Object type parameter, because it must
+        /// be if called from a thread.
+        /// </summary>
+        /// <param name="ReceiveSocket">The socket to recieve from.</param>
+        private static void ReceiveFromSocket(object ReceiveSocket)
+        {
+            // Cast to a socket
+            Socket Socket = (Socket)ReceiveSocket;
+            // While we need to continue receiving
+            while (!StopProcesses)
+            {
+                // Checks if the client is connected and if
+                // the server has available data
+                if (IsConnected && Socket.Available > 0)
+                {
+                    // Buffer for the newly received data
+                    byte[] ReceiveBuffer = new byte[ReceiveBufferSize];
+                    try
+                    {
+                        // Receives data from the server, and stored the length 
+                        // of the received data.
+                        int Size = Socket.Receive(ReceiveBuffer, ReceiveBuffer.Length, SocketFlags.None);
+                        // Parses the data into a message
+                        Packet Received = new Packet(new Message(ReceiveBuffer.Take(Size).ToArray()), Socket.ProtocolType == ProtocolType.Udp);
+                        // Queues the packet for processing
+                        lock (ReceiveQueue) { ReceiveQueue.Enqueue(Received); }
+                    }
+                    catch (Exception Exception)
+                    {
+                        Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Failed to receive from socket. Check network connectivity.");
+                        Log.Exception(Log.Source.NETWORK, Exception);
+                    }
+                }
+            }
+
+        }
+
+        /// <summary>
+        /// Processes packets/sends them to the parsing system.
+        /// </summary>
+        private static void ProcessPackets()
+        {
+            // While we need to continue the processing
+            while (!StopProcesses)
+            {
+                // Whether or not there are packets in the queue
+                bool HasPackets;
+                // Determines the length of the queue
+                lock (ReceiveQueue) { HasPackets = ReceiveQueue.Count != 0; }
+                if (HasPackets)
+                {
+                    // Grabs the packet and sends it the parse handler
+                    Packet Processing;
+                    lock (ReceiveQueue) { Processing = ReceiveQueue.Dequeue(); }
+                    Parse.ParseMessage(Processing);
+                }
+            }
+        }
 
         #endregion
 
@@ -41,7 +225,17 @@ namespace Scarlet.Communications
         /// <returns>Success of packet sending</returns>
         public static bool Send(Packet SendPacket)
         {
-
+            // Check initialization status of Client.
+            if (!Initialized) { throw new InvalidOperationException("Cannot use client before initialization. Call Client.Start();"); }
+            // If we are not stopping
+            if (!StopProcesses)
+            {
+                // Add packet to the send queue
+                lock(SendQueue) { SendQueue.Enqueue(SendPacket); }
+            }
+            // Returns true, because the TCP data will keep getting retried until it succeeds
+            // and we must assume that UDP packets are successful since there is no way to 
+            // tell otherwise
             return true;
         }
 
@@ -53,9 +247,112 @@ namespace Scarlet.Communications
         /// <returns>Success of packet sending.</returns>
         public static bool SendNow(Packet SendPacket)
         {
+            // Check initialization status of Client
+            if (!Initialized) { throw new InvalidOperationException("Cannot use client before initialization. Call Client.Start();"); }
+            // Checks the connection status of client
+            if (IsConnected)
+            {
+                // Chooses the correct send method for the type of packet (TCP/UDP)
+                if (SendPacket.IsUDP) { return SendUDPNow(SendPacket); }
+                else { return SendTCPNow(SendPacket); }
+            }
+            else { return false; }
+        }
+
+        /// <summary>
+        /// Assumes IsConnected is true,
+        /// sends a packet to the Server UDP
+        /// port.
+        /// </summary>
+        /// <param name="UDPPacket">The Packet to send via UDP</param>
+        /// <returns>True always, because there is no way to detect a successful UDP transmission</returns>
+        private static bool SendUDPNow(Packet UDPPacket)
+        {
+            // Sends the data as a byte array
+            byte[] Data = UDPPacket.Data.GetRawData();
+            ServerUDP.Send(Data, Data.Length);
+            // Returns true always, because there is no way to detect if a UDP
+            // message is received
+            return true;
+        }
+
+        /// <summary>
+        /// Assumes IsConnected is true,
+        /// sends a packet to the Server TCP
+        /// port.
+        /// </summary>
+        /// <param name="TCPPacket">The Packet to send via TCP</param>
+        /// <returns>The success of the TCP transmission</returns>
+        private static bool SendTCPNow(Packet TCPPacket)
+        {
             return false;
         }
+
+        private static void SendPackets()
+        {
+            while (!StopProcesses)
+            {
+                bool HasPackets;
+                lock (SendQueue) { HasPackets = SendQueue.Count != 0; }
+                if (HasPackets)
+                {
+                    Packet ToSend;
+                    lock (SendQueue) { ToSend = (Packet)(SendQueue.Peek().Clone()); }
+                    try
+                    {
+                        SendNow(ToSend);
+                    }
+                    catch (Exception Exception)
+                    {
+                        Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Failed to send packet. Check connection status.");
+                        Log.Exception(Log.Source.NETWORK, Exception);
+                    }
+                    lock (SendQueue) { SendQueue.Dequeue(); }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Sends a Packet regardless of the connection
+        /// status of Client. This method will throw an
+        /// exception if you try and send a TCP exception
+        /// without IsConnected being true.
+        /// </summary>
+        /// <param name="SendPacket">The Packet to send</param>
+        /// <returns>Whether or not the packet was sent.</returns>
+        internal static bool SendRegardless(Packet SendPacket)
+        {
+            // Check to make sure that you are not
+            // sending a TCP connection without an
+            // established connection
+            if (SendPacket.IsUDP || IsConnected)
+            {
+                // Temporarily store the IsConnected variable
+                bool Temp = IsConnected;
+                // Set the state of Client to Connected
+                IsConnected = true;
+                // Send the packet
+                bool Sent = SendNow(SendPacket);
+                // Reset the state of Client
+                IsConnected = Temp;
+                // Return the success of the send process
+                return Sent;
+            }
+            else
+            {
+                // Cannot send a TCP message without an established connection
+                throw new InvalidOperationException("Must have a known, established connection to send a TCP packet");
+            }
+        }
+
         #endregion
-        
+
+        #region Info and Control
+
+        public static void Stop() { StopProcesses = true; Initialized = false; }
+
+
+        #endregion
+
     }
 }

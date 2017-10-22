@@ -41,7 +41,7 @@ namespace Scarlet.Communications
             {
                 WatchdogPacket.UpdateTimestamp();
                 Thread.Sleep(Constants.WATCHDOG_INTERVAL);
-                if (IsClient) { Client.SendNow(WatchdogPacket); }
+                if (IsClient) { Client.SendRegardless(WatchdogPacket); }
                 else
                 {
                     foreach (string EP in Watchdogs.Keys)
@@ -63,7 +63,7 @@ namespace Scarlet.Communications
 
         public static void FoundWatchdog(string Endpoint)
         {
-            if (!Started) { Start(true, Client.Name); }
+            if (!Started && Endpoint == "Server") { Start(true, Client.Name); }
             Watchdogs[Endpoint].FoundWatchdog();
         }
 
