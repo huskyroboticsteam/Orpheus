@@ -8,18 +8,21 @@ namespace Scarlet.IO.RaspberryPi
 {
     public class I2CBusPi : II2CBus
     {
-        
-        public I2CBusPi(int Bus)
+
+        private int[] DeviceIDs;
+
+        public I2CBusPi()
         {
-            RaspberryPi.I2CSetup((byte)Bus);
+            this.DeviceIDs = new int[0x7F];
         }
 
         public byte[] Read(byte Address, int DataLength)
         {
+            if (this.DeviceIDs[Address] < 1) { this.DeviceIDs[Address] = RaspberryPi.I2CSetup(Address); }
             byte[] Buffer = new byte[DataLength];
             for (int i = 0; i < DataLength; i++)
             {
-                Buffer[i] = RaspberryPi.I2CRead(Address);
+                Buffer[i] = RaspberryPi.I2CRead(this.DeviceIDs[Address]);
             }
             return Buffer;
         }
@@ -32,7 +35,8 @@ namespace Scarlet.IO.RaspberryPi
 
         public void Write(byte Address, byte[] Data)
         {
-            foreach (byte Byte in Data) { RaspberryPi.I2CWrite(Address, Byte); }
+            if (this.DeviceIDs[Address] < 1) { this.DeviceIDs[Address] = RaspberryPi.I2CSetup(Address); }
+            foreach (byte Byte in Data) { RaspberryPi.I2CWrite(this.DeviceIDs[Address], Byte); }
         }
 
         public void WriteRegister(byte Address, byte Register, byte[] Data)

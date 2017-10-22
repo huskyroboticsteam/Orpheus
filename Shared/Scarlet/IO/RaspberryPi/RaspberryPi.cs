@@ -100,16 +100,17 @@ namespace Scarlet.IO.RaspberryPi
         [DllImport(WIRING_PI_LIB, EntryPoint = "wiringPiI2CSetup")]
         private static extern int Ext_I2CSetup(int DeviceID);
 
-        internal static void I2CSetup(byte DeviceID)
+        internal static int I2CSetup(byte DeviceID)
         {
             int SetupVal = Ext_I2CSetup(DeviceID);
             if (SetupVal == -1) { throw new Exception("Unable to setup I2C device: " + DeviceID); }
+            return SetupVal;
         }
 
         [DllImport(WIRING_PI_LIB, EntryPoint = "wiringPiI2CRead")]
         private static extern int Ext_I2CRead(int DeviceID);
 
-        internal static byte I2CRead(byte DeviceID)
+        internal static byte I2CRead(int DeviceID)
         {
             int Data = Ext_I2CRead(DeviceID);
             return (byte)Data;
@@ -118,7 +119,7 @@ namespace Scarlet.IO.RaspberryPi
         [DllImport(WIRING_PI_LIB, EntryPoint = "wiringPiI2CWrite")]
         private static extern int Ext_I2CWrite(int DeviceID, int Data);
 
-        internal static void I2CWrite(byte DeviceID, byte Data)
+        internal static void I2CWrite(int DeviceID, byte Data)
         {
             Ext_I2CWrite(DeviceID, Data);
         }
