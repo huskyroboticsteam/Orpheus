@@ -35,5 +35,18 @@ namespace Science
                 Thread.Sleep(250);
             }
         }
+
+        internal static void TestI2C()
+        {
+            II2CBus Bus = new I2CBusPi();
+            VEML6070 UV = new VEML6070(Bus);
+            Log.SetSingleOutputLevel(Log.Source.SENSORS, Log.Severity.DEBUG);
+            for (int i = 0; i < 50; i++)
+            {
+                UV.UpdateState();
+                Log.Output(Log.Severity.DEBUG, Log.Source.SENSORS, "UV Reading: " + UV.GetData());
+                Thread.Sleep(200);
+            }
+        }
     }
 }

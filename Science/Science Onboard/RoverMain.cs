@@ -35,6 +35,9 @@ namespace Science
             Log.Begin();
             Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Science Station - Rover Side");
 
+            RaspberryPi.Initialize();
+            RPiTests.TestI2C();
+
             // Test Low Pass Filter Response
             IFilter<double> AverageTest = new Average<double>(5);
             
