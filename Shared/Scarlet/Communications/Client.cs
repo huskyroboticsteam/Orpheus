@@ -13,6 +13,8 @@ namespace Scarlet.Communications
     public static class Client
     {
 
+        public static string Name;
+
         /// <summary>
         /// Starts a Client process.
         /// </summary>
