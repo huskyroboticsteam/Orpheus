@@ -227,10 +227,7 @@ namespace Scarlet.Communications
         /// handling connection retries
         /// </summary>
         /// <returns></returns>
-        private static Thread RetryConnectionThreadFactory()
-        {
-            return new Thread(new ThreadStart(RetryConnecting));
-        }
+        private static Thread RetryConnectionThreadFactory() { return new Thread(new ThreadStart(RetryConnecting)); }
 
         #endregion
 
@@ -249,12 +246,13 @@ namespace Scarlet.Communications
             // While we need to continue receiving
             while (!StopProcesses)
             {
+                // Sleep for the operation period
+                Thread.Sleep(OperationPeriod);
+
                 // Checks if the client is connected and if
                 // the server has available data
-
                 if (Socket.Available > 0)
                 {
-                    Thread.Sleep(OperationPeriod);
                     // Buffer for the newly received data
                     byte[] ReceiveBuffer = new byte[ReceiveBufferSize];
                     try
@@ -294,6 +292,8 @@ namespace Scarlet.Communications
             // While we need to continue the processing
             while (!StopProcesses)
             {
+                // Sleep for the operation period
+                Thread.Sleep(OperationPeriod);
                 // Whether or not there are packets in the queue
                 bool HasPackets;
                 // Determines the length of the queue
@@ -344,6 +344,8 @@ namespace Scarlet.Communications
         /// <returns>Success of packet sending.</returns>
         public static bool SendNow(Packet SendPacket)
         {
+            // Sleep for the operation period
+            Thread.Sleep(OperationPeriod);
             // Check initialization status of Client
             if (!Initialized) { throw new InvalidOperationException("Cannot use client before initialization. Call Client.Start();"); }
             // Checks the connection status of client
@@ -420,7 +422,11 @@ namespace Scarlet.Communications
                         }
                     }
                     lock (SendQueue) { SendQueue.Dequeue(); }
+
                 }
+
+                // Sleep for the operation period
+                Thread.Sleep(OperationPeriod);
             }
         }
 
