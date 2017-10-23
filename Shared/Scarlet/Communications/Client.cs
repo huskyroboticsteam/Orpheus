@@ -81,7 +81,7 @@ namespace Scarlet.Communications
                 // Initialize (but do not start the threads)
                 SendThread = new Thread(new ThreadStart(SendPackets));
                 ProcessThread = new Thread(new ThreadStart(ProcessPackets));
-                RetryConnection = RetyConnectionThreadFactory();
+                RetryConnection = RetryConnectionThreadFactory();
                 ReceiveThreadTCP = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
                 ReceiveThreadUDP = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
 
@@ -140,7 +140,7 @@ namespace Scarlet.Communications
             if (IsConnected && RetryConnection.IsAlive) { RetryConnection.Join(); }
             else if (!IsConnected)
             {
-                RetryConnection = RetyConnectionThreadFactory();
+                RetryConnection = RetryConnectionThreadFactory();
                 RetryConnection.Start();
                 Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Disconnected from server... Retrying...");
             }
@@ -227,7 +227,7 @@ namespace Scarlet.Communications
         /// handling connection retries
         /// </summary>
         /// <returns></returns>
-        private static Thread RetyConnectionThreadFactory()
+        private static Thread RetryConnectionThreadFactory()
         {
             return new Thread(new ThreadStart(RetryConnecting));
         }
