@@ -216,10 +216,10 @@ namespace Scarlet.Communications
         /// </summary>
         private static void StartThreads()
         {
-            SendThread.Start();
-            ProcessThread.Start();
-            ReceiveThreadTCP.Start(ServerTCP.Client);
-            ReceiveThreadUDP.Start(ServerUDP.Client);
+            SendThread.Start();                         // Start sending packets
+            ProcessThread.Start();                      // Begin processing packets
+            ReceiveThreadTCP.Start(ServerTCP.Client);   // Start receiving on the TCP socket
+            ReceiveThreadUDP.Start(ServerUDP.Client);   // Start receiving on the UDP socket
         }
 
         /// <summary>
@@ -264,14 +264,20 @@ namespace Scarlet.Communications
                         Packet Received = new Packet(new Message(ReceiveBuffer.Take(Size).ToArray()), Socket.ProtocolType == ProtocolType.Udp);
                         // Queues the packet for processing
                         lock (ReceiveQueue) { ReceiveQueue.Enqueue(Received); }
+                        // Check if the client is storing packets
                         if (StorePackets)
                         {
+                            // Lock the packet store
+                            // Add the received packet into the store
                             lock (ReceivedPackets) { ReceivedPackets.Add(Received); }
                         }
+                        // Set the state of client to have not detected a disconnect or network fault
                         HasDetectedDisconnect = false;
                     }
-                    catch (Exception Exception)
+                    catch (Exception Exception) // Catch any exception
                     {
+                        // Iff the client is connected and has not detected a disconnect or network fault, output the fault to log
+                        // (The iff check is only there so we don't bog the console)
                         if (IsConnected && !HasDetectedDisconnect)
                         {
                             Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Failed to receive from socket. Check network connectivity.");
@@ -300,7 +306,8 @@ namespace Scarlet.Communications
                 lock (ReceiveQueue) { HasPackets = ReceiveQueue.Count != 0; }
                 if (HasPackets)
                 {
-                    // Grabs the packet and sends it the parse handler
+                    // Locks the receive queue, grabs the receive queue packet
+                    // and parses the message
                     Packet Processing;
                     lock (ReceiveQueue) { Processing = ReceiveQueue.Dequeue(); }
                     Parse.ParseMessage(Processing);
@@ -351,6 +358,9 @@ namespace Scarlet.Communications
             // Checks the connection status of client
             if (IsConnected)
             {
+                // Check if the Client is storing packets
+                // If so, lock that packet store and add
+                // the packet into the list
                 if (StorePackets)
                 {
                     lock (SentPackets) { SentPackets.Add(SendPacket); }
@@ -388,11 +398,22 @@ namespace Scarlet.Communications
         /// <returns>The success of the TCP transmission</returns>
         private static bool SendTCPNow(Packet TCPPacket)
         {
+            // Get the packet's raw data
             byte[] Data = TCPPacket.Data.GetRawData();
+            // Try to send the TCP data to the client
             try { ServerTCP.Client.Send(Data); }
-            catch { HasDetectedDisconnect = true; return false; }
+            catch (Exception Exception) // Catch any exception, but return that the transmission has failed
+            {
+                // Iff the client has not detected a possible disconnect log the exception
+                if (!HasDetectedDisconnect) { Log.Exception(Log.Source.NETWORK, Exception); }
+                // Reset the state of client to having detected a disconnect or network fault
+                HasDetectedDisconnect = true;
+                // Return the send process failed
+                return false;
+            }
+            // (Re)set the state of client to have not detected a disconnect or network fault
             HasDetectedDisconnect = false;
-            return true;
+            return true; // Return that the send process was successful
         }
 
         /// <summary>
@@ -403,25 +424,28 @@ namespace Scarlet.Communications
         {
             while (!StopProcesses)
             {
-                bool HasPackets;
+                bool HasPackets; // Stores whether or not the send queue has packets
                 lock (SendQueue) { HasPackets = SendQueue.Count != 0; }
+                // Determine if there are packets in the queue, if so, send them
                 if (HasPackets)
                 {
-                    Packet ToSend;
+                    Packet ToSend; // Packet for sending
                     lock (SendQueue) { ToSend = (Packet)(SendQueue.Peek().Clone()); }
+                    // Ensure that the endpoint to send to is not null
+                    ToSend.Endpoint = ToSend.Endpoint ?? "Server";
                     try
                     {
-                        SendNow(ToSend);
+                        SendNow(ToSend); // Try to send the packet
                     }
                     catch (Exception Exception)
                     {
-                        if (IsConnected)
+                        if (IsConnected) // Log an exception iff the client is supposedly connected (so we don't bog down the console)
                         {
                             Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Failed to send packet. Check connection status.");
                             Log.Exception(Log.Source.NETWORK, Exception);
                         }
                     }
-                    lock (SendQueue) { SendQueue.Dequeue(); }
+                    lock (SendQueue) { SendQueue.Dequeue(); } // Dequeue the send packet
 
                 }
 
