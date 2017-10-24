@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.IO;
 using System.Collections;
+using System.Diagnostics;
 
 namespace Scarlet.Communications
 {
@@ -373,8 +374,8 @@ namespace Scarlet.Communications
         }
 
         /// <summary>
-        /// Assumes IsConnected is true,
-        /// sends a packet to the Server UDP
+        /// Assumes IsConnected is true.
+        /// Sends a packet to the Server UDP
         /// port.
         /// </summary>
         /// <param name="UDPPacket">The Packet to send via UDP</param>
@@ -390,8 +391,8 @@ namespace Scarlet.Communications
         }
 
         /// <summary>
-        /// Assumes IsConnected is true,
-        /// sends a packet to the Server TCP
+        /// Assumes IsConnected is true.
+        /// Sends a packet to the Server TCP
         /// port.
         /// </summary>
         /// <param name="TCPPacket">The Packet to send via TCP</param>
@@ -430,9 +431,16 @@ namespace Scarlet.Communications
                 if (HasPackets)
                 {
                     Packet ToSend; // Packet for sending
-                    lock (SendQueue) { ToSend = (Packet)(SendQueue.Peek().Clone()); }
-                    // Ensure that the endpoint to send to is not null
-                    ToSend.Endpoint = ToSend.Endpoint ?? "Server";
+                    // Ensures that the packet has a non-null endpoint before clone
+                    lock (SendQueue)
+                    {
+                        // Temporarily store the object in ToSend
+                        ToSend = SendQueue.Peek();
+                        // Check that the packet endpoint is not null, set to "Server" otherwise
+                        ToSend.Endpoint = ToSend.Endpoint ?? "Server";
+                        // Clone the packet so that we do not change the fields of the given packet (other than the Endpoint)
+                        ToSend = (Packet)ToSend.Clone();
+                    }
                     try
                     {
                         SendNow(ToSend); // Try to send the packet
@@ -521,6 +529,7 @@ namespace Scarlet.Communications
         /// </summary>
         /// <returns>The length of the send queue</returns>
         public static int GetSendQueueCount() { return SendQueue.Count; }
+
         #endregion
 
     }
