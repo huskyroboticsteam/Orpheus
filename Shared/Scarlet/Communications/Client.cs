@@ -22,6 +22,8 @@ namespace Scarlet.Communications
     public static class Client
     {
 
+        #region Private Variables
+
         private static IPEndPoint ServerEndpointTCP; // Endpoints for TCP and UDP
         private static IPEndPoint ServerEndpointUDP;
         private static UdpClient ServerUDP; // TCP and UDP Clients
@@ -39,6 +41,8 @@ namespace Scarlet.Communications
         private static bool Initialized; // Whether or not the client is initialized
         private static volatile bool StopProcesses; // If true, stops all threading processes
         private static bool HasDetectedDisconnect; // To be set if there is a send or receive error that would likely be caused by a disconnect.
+        
+        #endregion
 
         public static string Name { get; private set; } // Name of the client.
         public static bool IsConnected { get; private set; } // Whether or not the client and server are connected
@@ -158,14 +162,14 @@ namespace Scarlet.Communications
             {
                 // Initialized the Client connections
                 // (retries the connection establishment)
-                // Mainly used for TCP.
                 try
                 {
                     // Both these commands are allowed to fail
                     // Initialize the TCP connection
                     // We only need to initialize the
-                    // TCP connection if the UDP connection
-                    // has ever began
+                    // TCP connection if the TCP connection
+                    // has ever began, otherwise server
+                    // will open a TCP socket
                     InitializeTCPClient();
                     // Send the name of the client
                     // on the TCP and UDP bus
@@ -209,6 +213,9 @@ namespace Scarlet.Communications
             // Initialize and connect to the UDP and TCP clients
             ServerTCP = new TcpClient();
             ServerTCP.Connect(ServerEndpointTCP);
+            // These parameters help avoid double-buffering
+            ServerTCP.NoDelay = true;                           // Sets the TCP Client to have send delay (i.e. stores no overflow bits in the buffer)
+            ServerTCP.ReceiveBufferSize = ReceiveBufferSize;    // Sets the receive buffer size to the max buffer size
         }
 
         /// <summary>
@@ -259,8 +266,10 @@ namespace Scarlet.Communications
                     try
                     {
                         // Receives data from the server, and stored the length 
-                        // of the received data.
+                        // of the received data in bytes.
                         int Size = Socket.Receive(ReceiveBuffer, ReceiveBuffer.Length, SocketFlags.None);
+                        // Check if data has correct header
+                        if (Size < 4) { Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Incoming Packet is Corrupt"); }
                         // Parses the data into a message
                         Packet Received = new Packet(new Message(ReceiveBuffer.Take(Size).ToArray()), Socket.ProtocolType == ProtocolType.Udp);
                         // Queues the packet for processing
@@ -401,6 +410,8 @@ namespace Scarlet.Communications
         {
             // Get the packet's raw data
             byte[] Data = TCPPacket.Data.GetRawData();
+            // Set the TCP Send buffer to the size of the data to avoid double buffering
+            ServerTCP.SendBufferSize = Data.Length;
             // Try to send the TCP data to the client
             try { ServerTCP.Client.Send(Data); }
             catch (Exception Exception) // Catch any exception, but return that the transmission has failed
