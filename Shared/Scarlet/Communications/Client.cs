@@ -141,13 +141,16 @@ namespace Scarlet.Communications
         private static void ConnectionChange(object Sender, ConnectionStatusChanged Args)
         {
             // Need to detect if this is the first time we have connected or not
-            bool FirstConnectionInvoke = !IsConnected;
+            bool FirstConnectionInvoke = IsConnected;
             // Changed IsConnected state (unless the first time called...)
             FirstConnectionInvoke &= Args.StatusConnected;
             // If it is not, let's print the status otherwise, invoke the connection change
-            if (!FirstConnectionInvoke) { ConnectionAliveOutput(true); }
+            if (!FirstConnectionInvoke && Args.StatusConnected) { ConnectionAliveOutput(true); }
             else { ClientConnectionChanged?.Invoke(Name, Args); }
 
+            // Set the connection state of Client
+            IsConnected = Args.StatusConnected;
+            
             // Kill the reconnect thread or try to connect
             if (IsConnected && RetryConnection.IsAlive) { RetryConnection.Join(); }
             else if (!IsConnected)
@@ -296,7 +299,8 @@ namespace Scarlet.Communications
                         // Check if data has correct header
                         if (Size < 4) { Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Incoming Packet is Corrupt"); }
                         // Parses the data into a message
-                        Packet Received = new Packet(new Message(ReceiveBuffer.Take(Size).ToArray()), Socket.ProtocolType == ProtocolType.Udp);
+                        ReceiveBuffer = ReceiveBuffer.Take(Size).ToArray();
+                        Packet Received = Packet.FromBytes(ReceiveBuffer, Socket.ProtocolType);
                         // Queues the packet for processing
                         lock (ReceiveQueue) { ReceiveQueue.Enqueue(Received); }
                         // Check if the client is storing packets
