@@ -41,14 +41,14 @@ namespace Scarlet.Communications
         private static bool Initialized; // Whether or not the client is initialized
         private static volatile bool StopProcesses; // If true, stops all threading processes
         private static bool HasDetectedDisconnect; // To be set if there is a send or receive error that would likely be caused by a disconnect.
-        
+
         #endregion
 
         public static string Name { get; private set; } // Name of the client.
         public static bool IsConnected { get; private set; } // Whether or not the client and server are connected
         public static List<Packet> SentPackets { get; private set; } // Storage for send packets.
         public static List<Packet> ReceivedPackets { get; private set; } // Storage for received packets.
-        public static event EventHandler<ConnectionStatusChanged> ClientConnectionChanged;
+        public static event EventHandler<ConnectionStatusChanged> ClientConnectionChanged; // Invoked when the Client detects a connection change
         public static bool StorePackets; // Whether or not the client stores packets
 
         /// <summary>
@@ -99,6 +99,11 @@ namespace Scarlet.Communications
                     // We just need to get to the point where the watchdog
                     // takes control of this.
                     IsConnected = true;
+                    // Print the connection status to the console...
+                    ConnectionAliveOutput(true);
+                    // Invoke the Client event for a connection change using the known endpoint "Server" per the Client specification
+                    ConnectionStatusChanged Event = new ConnectionStatusChanged() { StatusConnected = true, StatusEndpoint = "Server" };
+                    ClientConnectionChanged?.Invoke(Name, Event);
                 }
                 catch (Exception Exception)
                 {
@@ -123,7 +128,6 @@ namespace Scarlet.Communications
                 // Set the state of client to initialized.
                 Initialized = true;
             }
-
         }
 
         #region Internal
@@ -136,19 +140,40 @@ namespace Scarlet.Communications
         /// <param name="Args">A ConnectionStatusChanged object containing the new status of the Client.</param>
         private static void ConnectionChange(object Sender, ConnectionStatusChanged Args)
         {
-            // Trigger Client internal event
-            ClientConnectionChanged?.Invoke(Name, Args);
-            // Changed IsConnected state
-            IsConnected = Args.StatusConnected;
-            // Kill the reconnect thread or try to reconnect
-            if (IsConnected) { Log.Output(Log.Severity.INFO, Log.Source.NETWORK, "Server Connected..."); }
+            // Need to detect if this is the first time we have connected or not
+            bool FirstConnectionInvoke = !IsConnected;
+            // Changed IsConnected state (unless the first time called...)
+            FirstConnectionInvoke &= Args.StatusConnected;
+            // If it is not, let's print the status otherwise, invoke the connection change
+            if (!FirstConnectionInvoke) { ConnectionAliveOutput(true); }
+            else { ClientConnectionChanged?.Invoke(Name, Args); }
+
+            // Kill the reconnect thread or try to connect
             if (IsConnected && RetryConnection.IsAlive) { RetryConnection.Join(); }
             else if (!IsConnected)
             {
+                // Get a new thread from the factory and start retrying the connection
+                // Using a factory because you cannot restart a thread
                 RetryConnection = RetryConnectionThreadFactory();
                 RetryConnection.Start();
-                Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Disconnected from server... Retrying...");
+                // Output the current connection status (disconnected) to the console
+                ConnectionAliveOutput(false);
             }
+        }
+
+        /// <summary>
+        /// Logs to the console the appropriate information 
+        /// if the connection is alive or dead. 
+        /// * Will tell the console that the connection will
+        /// be retried if the connection is not alive.
+        /// </summary>
+        /// <param name="IsAlive">Whether or not the connection is now alive</param>
+        private static void ConnectionAliveOutput(bool IsAlive)
+        {
+            // Tell the console that the server is connected if the connection is alive
+            // Otherwise tell the console that it is disconnected and is retrying to connect.
+            if (IsAlive) { Log.Output(Log.Severity.INFO, Log.Source.NETWORK, "Server Connected..."); }
+            else { Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Disconnected from server... Retrying..."); }
         }
 
         /// <summary>

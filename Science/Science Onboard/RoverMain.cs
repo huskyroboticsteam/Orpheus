@@ -35,14 +35,11 @@ namespace Science
             Log.Begin();
             Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Science Station - Rover Side");
 
-            // Test Low Pass Filter Response
-            IFilter<double> AverageTest = new Average<double>(5);
-            
-            for(int i = 1; i <= 16; i++)
-            {
-                AverageTest.Feed(i*i);
-            }
-            
+            Client.Start("192.168.1.13", 10765, 11765, "TestClient");
+            Packet TestPacket = new Packet(0x30, false);
+            TestPacket.AppendData(new byte[] { 0xC3 });
+            Client.SendNow(TestPacket);
+
             while (Console.KeyAvailable) { Console.ReadKey(); }
             Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Press any key to exit.");
             Console.ReadKey();
