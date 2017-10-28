@@ -35,7 +35,7 @@ namespace Science
             Log.Begin();
             Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Science Station - Rover Side");
 
-            Client.Start("192.168.1.13", 10765, 11765, "TestClient");
+            Client.Start(IP, PortTCP, PortUDP, "TestClient");
             Packet TestPacket = new Packet(0x30, false);
             TestPacket.AppendData(new byte[] { 0xC3 });
             Client.SendNow(TestPacket);
