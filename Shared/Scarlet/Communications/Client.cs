@@ -122,7 +122,6 @@ namespace Scarlet.Communications
         /// <param name="Args">A ConnectionStatusChanged object containing the new status of the Client.</param>
         private static void ConnectionChange(object Sender, ConnectionStatusChanged Args)
         {
-            Log.ForceOutput(Log.Severity.DEBUG, Log.Source.NETWORK, "Connection Changed...");
             // Whether or not the connection has changed state (this should usually be true, unless connecting for the first time)
             bool ChangedState = Args.StatusConnected ^ IsConnected;
             // Set the connection state of Client
@@ -338,6 +337,8 @@ namespace Scarlet.Communications
                         // Parses the data into a message
                         ReceiveBuffer = ReceiveBuffer.Take(Size).ToArray();
                         Packet Received = Packet.FromBytes(ReceiveBuffer, Socket.ProtocolType);
+                        // Set the packet endpoint to "Server", because that is where it originated
+                        Received.Endpoint = "Server";
                         // Queues the packet for processing
                         lock (ReceiveQueue) { ReceiveQueue.Enqueue(Received); }
                         // Check if the client is storing packets
@@ -345,15 +346,15 @@ namespace Scarlet.Communications
                         {
                             // Lock the packet store
                             // Add the received packet into the store
-                            lock (ReceivedPackets) { ReceivedPackets.Add(Received); }
+                            lock (ReceivedPackets) { ReceivedPackets.Add((Packet)Received.Clone()); }
                         }
                         // Set the state of client to have not detected a disconnect or network fault
                         HasDetectedDisconnect = false;
                     }
                     catch (Exception Exception) // Catch any exception
                     {
-                        // Iff the client is connected and has not detected a disconnect or network fault, output the fault to log
-                        // (The iff check is only there so we don't bog the console)
+                        // If the client is connected and has not detected a disconnect or network fault, output the fault to log
+                        // (The if check is only there so we don't bog the console)
                         if (IsConnected && !HasDetectedDisconnect)
                         {
                             Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Failed to receive from socket. Check network connectivity.");
@@ -386,6 +387,7 @@ namespace Scarlet.Communications
                     // and parses the message
                     Packet Processing;
                     lock (ReceiveQueue) { Processing = ReceiveQueue.Dequeue(); }
+                    if (Processing.Endpoint == null) { Processing.Endpoint = "Server"; }
                     Parse.ParseMessage(Processing);
                 }
             }
@@ -410,8 +412,10 @@ namespace Scarlet.Communications
             // If we are not stopping
             if (!StopProcesses)
             {
-                // Add packet to the send queue
-                lock (SendQueue) { SendQueue.Enqueue(SendPacket); }
+                // Ensure that cloning the packet will not try to clone a null string
+                if (SendPacket.Endpoint == null) { SendPacket.Endpoint = "Server"; }
+                // Add cloned packet to the send queue
+                lock (SendQueue) { SendQueue.Enqueue((Packet)SendPacket.Clone()); }
             }
             // Returns true, because the TCP data will keep getting retried until it succeeds
             // and we must assume that UDP packets are successful since there is no way to 
@@ -427,8 +431,6 @@ namespace Scarlet.Communications
         /// <returns>Success of packet sending.</returns>
         public static bool SendNow(Packet SendPacket)
         {
-            // Sleep for the operation period
-            Thread.Sleep(OperationPeriod);
             // Check initialization status of Client
             if (!Initialized) { throw new InvalidOperationException("Cannot use client before initialization. Call Client.Start();"); }
             // Checks the connection status of client
@@ -573,10 +575,13 @@ namespace Scarlet.Communications
         public static void Stop()
         {
             StopProcesses = true;
-            SendThread.Join();
-            ProcessThread.Join();
-            ReceiveThreadTCP.Join();
-            ReceiveThreadUDP.Join();
+            if (ThreadsStarted)
+            {
+                SendThread.Join();
+                ProcessThread.Join();
+                ReceiveThreadTCP.Join();
+                ReceiveThreadUDP.Join();
+            }
             Initialized = false;
         }
 
