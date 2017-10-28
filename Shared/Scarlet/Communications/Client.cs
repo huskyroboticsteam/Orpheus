@@ -35,12 +35,14 @@ namespace Scarlet.Communications
         private static Thread SendThread, ProcessThread; // Threads for sending and parsing/processing
         private static Thread ReceiveThreadUDP, ReceiveThreadTCP; // Threads for receiving on TCP and UDP
         private static Thread RetryConnection; // Retries Server connection after detecting disconnect. Only runs in disconnected state
+        private static Thread RetryStartup; // Retries Client startup to establish connection with the Server
 
         private static int ReceiveBufferSize; // Size of the receive buffer. Change this in Start() to receive larger packets
         private static int OperationPeriod; // The operation period (the higher this is, the longer the wait in between receiving/sending packets)
         private static bool Initialized; // Whether or not the client is initialized
         private static volatile bool StopProcesses; // If true, stops all threading processes
         private static bool HasDetectedDisconnect; // To be set if there is a send or receive error that would likely be caused by a disconnect.
+        private static bool ThreadsStarted; // Whether or not the send/receive/process threads have started
 
         #endregion
 
@@ -75,6 +77,12 @@ namespace Scarlet.Communications
             ServerEndpointUDP = new IPEndPoint(ServerIPA, PortUDP);
             if (!Initialized)
             {
+                // Setup Watchdog
+                // Client watchdog manager is automatically started
+                // when it receives the first watchdog from the server.
+                // Subscribe to the watchdog manager
+                WatchdogManager.ConnectionChanged += ConnectionChange;
+
                 // Initialize the send and receive queues
                 SendQueue = new Queue<Packet>();
                 ReceiveQueue = new Queue<Packet>();
@@ -90,40 +98,14 @@ namespace Scarlet.Communications
                 ReceiveThreadTCP = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
                 ReceiveThreadUDP = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
 
-                try
+                // Try to startup the client
+                try { Startup(); }
+                catch // If it can't, trigger a connection change event to false
                 {
-                    // Initialize the TCP and UDP clients.
-                    InitializeClients();
-                    // Set the Connection status of the Client.
-                    // This should be the only time we manually set this. 
-                    // We just need to get to the point where the watchdog
-                    // takes control of this.
-                    IsConnected = true;
-                    // Print the connection status to the console...
-                    ConnectionAliveOutput(true);
-                    // Invoke the Client event for a connection change using the known endpoint "Server" per the Client specification
-                    ConnectionStatusChanged Event = new ConnectionStatusChanged() { StatusConnected = true, StatusEndpoint = "Server" };
-                    ClientConnectionChanged?.Invoke(Name, Event);
+                    // Invoke a Client event for a connection change (to disconnected) using "Server", known per the Client specification
+                    ConnectionStatusChanged Event = new ConnectionStatusChanged() { StatusConnected = false, StatusEndpoint = "Server" };
+                    ConnectionChange(Name, Event);
                 }
-                catch (Exception Exception)
-                {
-                    Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Could not connect to TCP and UDP Servers. Failed to intitialize Client.");
-                    Log.Exception(Log.Source.NETWORK, Exception);
-                    return; // Do not let the Client continue through initialization if it did not see the server.
-                }
-
-                // Setup Watchdog
-                // Client watchdog manager is automatically started
-                // when it receives the first watchdog from the server.
-                // Subscribe to the watchdog manager
-                WatchdogManager.ConnectionChanged += ConnectionChange;
-
-                // Send names to the server
-                try { SendNames(); }
-                catch { throw new InvalidOperationException("Could not begin communication with Server."); }
-
-                // Start all primary thread procedures
-                StartThreads();
 
                 // Set the state of client to initialized.
                 Initialized = true;
@@ -140,26 +122,37 @@ namespace Scarlet.Communications
         /// <param name="Args">A ConnectionStatusChanged object containing the new status of the Client.</param>
         private static void ConnectionChange(object Sender, ConnectionStatusChanged Args)
         {
-            // Need to detect if this is the first time we have connected or not
-            bool FirstConnectionInvoke = IsConnected;
-            // Changed IsConnected state (unless the first time called...)
-            FirstConnectionInvoke &= Args.StatusConnected;
-            // If it is not, let's print the status otherwise, invoke the connection change
-            if (!FirstConnectionInvoke && Args.StatusConnected) { ConnectionAliveOutput(true); }
-            else { ClientConnectionChanged?.Invoke(Name, Args); }
-
+            Log.ForceOutput(Log.Severity.DEBUG, Log.Source.NETWORK, "Connection Changed...");
+            // Whether or not the connection has changed state (this should usually be true, unless connecting for the first time)
+            bool ChangedState = Args.StatusConnected ^ IsConnected;
             // Set the connection state of Client
             IsConnected = Args.StatusConnected;
-            
-            // Kill the reconnect thread or try to connect
-            if (IsConnected && RetryConnection.IsAlive) { RetryConnection.Join(); }
-            else if (!IsConnected)
+            // Invoke a ClientConnectionChanged event (for end-user connection subscribers)
+            if (ChangedState) { ClientConnectionChanged?.Invoke(Sender, Args); }
+            // Outut the state if the state has changed from false to true
+            if (ChangedState && IsConnected) { ConnectionAliveOutput(true); }
+            // If the threads are still alive, then join the current thread
+            if (RetryStartup != null && RetryStartup.IsAlive) { RetryStartup.Join(); }
+            if (RetryConnection != null && RetryConnection.IsAlive) { RetryConnection.Join(); }
+            // Determine if we are connecting or reconnecting
+            if (!IsConnected && ThreadsStarted)
             {
+                // Output the current connection status (disconnected) to the console
+                ConnectionAliveOutput(false);
+                // If the thread is alive, then join the current connection thread
+                if (RetryConnection.IsAlive) { RetryConnection.Join(); }
                 // Get a new thread from the factory and start retrying the connection
                 // Using a factory because you cannot restart a thread
                 RetryConnection = RetryConnectionThreadFactory();
                 RetryConnection.Start();
-                // Output the current connection status (disconnected) to the console
+            }
+            else if (!IsConnected && !ThreadsStarted)
+            {
+                // Get a new thread from the thread factory
+                RetryStartup = RetryStartupThreadFactory();
+                // Start the retry thread
+                RetryStartup.Start();
+                // Output the current connectionstatus (disconnected) to the console
                 ConnectionAliveOutput(false);
             }
         }
@@ -177,6 +170,25 @@ namespace Scarlet.Communications
             // Otherwise tell the console that it is disconnected and is retrying to connect.
             if (IsAlive) { Log.Output(Log.Severity.INFO, Log.Source.NETWORK, "Server Connected..."); }
             else { Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Disconnected from server... Retrying..."); }
+        }
+
+        /// <summary>
+        /// Starts up the Client
+        /// </summary>
+        private static void Startup()
+        {
+            // Initialize the TCP and UDP clients
+            try { InitializeClients(); }
+            catch { throw new Exception("Could not initialize TCP and UDP client communication with server."); }
+            // Send names to the server
+            try { SendNames(); }
+            catch { throw new InvalidOperationException("Could not begin communication with Server."); }
+            // Start all primary thread procedures
+            StartThreads();
+            ThreadsStarted = true;
+            // Invoke the Client event for a connection change using the known endpoint "Server" per the Client specification
+            ConnectionStatusChanged Event = new ConnectionStatusChanged() { StatusConnected = true, StatusEndpoint = "Server" };
+            ConnectionChange(Name, Event);
         }
 
         /// <summary>
@@ -206,6 +218,26 @@ namespace Scarlet.Communications
                 catch { }
                 // Sleep longer than the operation period to reconnect
                 // We do not need to reconnect with that much speed.
+                Thread.Sleep(Constants.WATCHDOG_WAIT);
+            }
+        }
+
+        /// <summary>
+        /// Retry Startup until connection is established
+        /// </summary>
+        private static void RetryStart()
+        {
+            // While the Client is not connected
+            while (!IsConnected)
+            {
+                // Try starting up the client
+                // Startup is allowed to fail
+                // because if we do not have 
+                // a valid connection, then
+                // we will get an exception
+                try { Startup(); }
+                catch { }
+                // Wait some amount of time
                 Thread.Sleep(Constants.WATCHDOG_WAIT);
             }
         }
@@ -262,8 +294,14 @@ namespace Scarlet.Communications
         /// Creates a new thread for
         /// handling connection retries
         /// </summary>
-        /// <returns></returns>
+        /// <returns>New RetryConnecting Thread</returns>
         private static Thread RetryConnectionThreadFactory() { return new Thread(new ThreadStart(RetryConnecting)); }
+        /// <summary>
+        /// Creates a new thread for
+        /// handling startup retries
+        /// </summary>
+        /// <returns>New RetryStart Thread</returns>
+        private static Thread RetryStartupThreadFactory() { return new Thread(new ThreadStart(RetryStart)); }
 
         #endregion
 
@@ -284,7 +322,6 @@ namespace Scarlet.Communications
             {
                 // Sleep for the operation period
                 Thread.Sleep(OperationPeriod);
-
                 // Checks if the client is connected and if
                 // the server has available data
                 if (Socket.Available > 0)
@@ -395,19 +432,8 @@ namespace Scarlet.Communications
             // Check initialization status of Client
             if (!Initialized) { throw new InvalidOperationException("Cannot use client before initialization. Call Client.Start();"); }
             // Checks the connection status of client
-            if (IsConnected)
-            {
-                // Check if the Client is storing packets
-                // If so, lock that packet store and add
-                // the packet into the list
-                if (StorePackets)
-                {
-                    lock (SentPackets) { SentPackets.Add(SendPacket); }
-                }
-                // Chooses the correct send method for the type of packet (TCP/UDP)
-                if (SendPacket.IsUDP) { return SendUDPNow(SendPacket); }
-                else { return SendTCPNow(SendPacket); }
-            }
+            // And sends the packet if a connection is existing
+            if (IsConnected) { return SendRegardless(SendPacket); }
             else { return false; }
         }
 
@@ -517,21 +543,21 @@ namespace Scarlet.Communications
             // established connection
             if (SendPacket.IsUDP || IsConnected)
             {
-                // Temporarily store the IsConnected variable
-                bool Temp = IsConnected;
-                // Set the state of Client to Connected
-                IsConnected = true;
-                // Send the packet
-                bool Sent = SendNow(SendPacket);
-                // Reset the state of Client
-                IsConnected = Temp;
-                // Return the success of the send process
-                return Sent;
+                // Check if the Client is storing packets
+                // If so, lock that packet store and add
+                // the packet into the list
+                if (StorePackets)
+                {
+                    lock (SentPackets) { SentPackets.Add(SendPacket); }
+                }
+                // Chooses the correct send method for the type of packet (TCP/UDP)
+                if (SendPacket.IsUDP) { return SendUDPNow(SendPacket); }
+                else { return SendTCPNow(SendPacket); }
             }
             else
             {
                 // Cannot send a TCP message without an established connection
-                throw new InvalidOperationException("Must have a known, established connection to send a TCP packet");
+                throw new InvalidOperationException("Must have a known, established connection to send a TCP packet.");
             }
         }
 
