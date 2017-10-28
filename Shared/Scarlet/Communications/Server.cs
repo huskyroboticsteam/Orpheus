@@ -150,17 +150,7 @@ namespace Scarlet.Communications
                 else
                 {
                     ClientName = null;
-                    try
-                    {
-                        ClientName = UtilData.ToString(DataBuffer.Take(DataSize).ToArray());
-                    }
-                    catch
-                    {
-                        if (DataBuffer.Length < 5 || (DataBuffer.Length >= 5 && DataBuffer[4] != Constants.WATCHDOG_PING))
-                        {
-                            Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Unknown Packet from unknown client initialization...");
-                        }
-                    }
+                    try { ClientName = UtilData.ToString(DataBuffer.Take(DataSize).ToArray()); } catch { }
                     if (ClientName != null && ClientName.Length > 0)
                     {
                         Log.Output(Log.Severity.INFO, Log.Source.NETWORK, "TCP Client connected with name \"" + ClientName + "\".");
@@ -180,7 +170,6 @@ namespace Scarlet.Communications
                                     Connected = true
                                 };
                                 Clients.Add(ClientName, NewClient);
-                                WatchdogManager.AddWatchdog(ClientName);
                             }
                         }
                         lock (SendQueues)
@@ -298,18 +287,7 @@ namespace Scarlet.Communications
             {
                 if (ClientName == null) // New client
                 {
-                    ClientName = null;
-                    try
-                    {
-                        ClientName = UtilData.ToString(Data);
-                    }
-                    catch
-                    {
-                        if (Data.Length < 5 || (Data.Length >= 5 && Data[4] != Constants.WATCHDOG_PING))
-                        {
-                            Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Unknown Packet from unknown client initialization...");
-                        }
-                    }
+                    try { ClientName = UtilData.ToString(Data); } catch { }
                     if (ClientName != null && ClientName.Length > 0)
                     {
                         Log.Output(Log.Severity.INFO, Log.Source.NETWORK, "UDP Client connected with name \"" + ClientName + "\".");
