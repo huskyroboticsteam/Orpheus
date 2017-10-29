@@ -108,9 +108,9 @@ namespace Scarlet.Communications
         /// <summary>
         /// Adds a watchdog endpoint.
         /// Useful for servers, cannot use with Client Watchdogs. 
-        /// Add client endpoint, 
+        /// Creates a new Watchdog for send-receive
         /// </summary>
-        /// <param name="Endpoint"></param>
+        /// <param name="Endpoint">The endpoint to add</param>
         internal static void AddWatchdog(string Endpoint)
         {
             // Check if a client attempts to add a watchdog
