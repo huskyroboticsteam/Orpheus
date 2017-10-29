@@ -26,9 +26,6 @@ namespace Scarlet.Communications
         private static Packet WatchdogPacket;
         // A dictionary of watchdog endpoints
         private static Dictionary<string, Watchdog> Watchdogs;
-        // A list of the watchdogs (to avoid multi-thread editing) 
-        // TODO: Find a better solution than a new List
-        private static List<string> WatchdogKeys;
         // The event to fire when a connection has changed
         internal static event EventHandler<ConnectionStatusChanged> ConnectionChanged;
 
@@ -52,12 +49,11 @@ namespace Scarlet.Communications
                 WatchdogManager.IsClient = IsClient;
                 // Initialize data structures
                 WatchdogManager.Watchdogs = new Dictionary<string, Watchdog>();
-                WatchdogManager.WatchdogKeys = new List<string>();
                 // Construct the watchdog packet (UDP)
                 WatchdogManager.WatchdogPacket = new Packet(Constants.WATCHDOG_PING, true);
                 WatchdogManager.WatchdogPacket.AppendData(Utilities.UtilData.ToBytes(MyName));
                 // If Watchdog sender is a client, solely add the server to the watchdogs
-                if (IsClient) { Watchdogs.Add("Server", new Watchdog("Server")); WatchdogKeys.Add("Server"); }
+                if (IsClient) { Watchdogs.Add("Server", new Watchdog("Server")); }
                 // Start the send thread
                 new Thread(new ThreadStart(Send)).Start();
                 // Set the state of WatchdogManager to be started
@@ -91,15 +87,19 @@ namespace Scarlet.Communications
                 if (IsClient) { Client.SendRegardless(WatchdogPacket); } 
                 else
                 {
+                    string[] Keys; // Stores the keys of the Watchdogs dictionary
                     // Lock the watchdog keys on this thread
-                    lock (WatchdogKeys)
+                    lock (Watchdogs)
                     {
-                        // Loop over the endpoints and send the watchdogs with the server
-                        foreach (string EP in WatchdogKeys.ToArray())
-                        {
-                            WatchdogPacket.Endpoint = EP;
-                            Server.SendNow(WatchdogPacket);
-                        }
+                        // Copy the keys from the watchdog dictionary into a new array
+                        Keys = new string[Watchdogs.Count];
+                        Watchdogs.Keys.CopyTo(Keys, 0);
+                    }
+                    // Loop over the endpoints and send the watchdogs with the server
+                    foreach (string EP in Keys)
+                    {
+                        WatchdogPacket.Endpoint = EP;
+                        Server.SendNow(WatchdogPacket);
                     }
                 }
             }
@@ -123,7 +123,6 @@ namespace Scarlet.Communications
             if (!Watchdogs.ContainsKey(Endpoint))
             {
                 Watchdogs.Add(Endpoint, new Watchdog(Endpoint));
-                WatchdogKeys.Add(Endpoint);
             }
         }
 
@@ -138,7 +137,6 @@ namespace Scarlet.Communications
             if (IsClient) { throw new InvalidOperationException("Clients cannot remove watchdogs"); }
             // Remove the watchdogs from the data structures
             lock (Watchdogs) { Watchdogs.Remove(Endpoint); }
-            lock (WatchdogKeys) { WatchdogKeys.Remove(Endpoint); }
         }
 
         /// <summary>
