@@ -149,7 +149,8 @@ namespace Scarlet.Communications
                 }
                 else
                 {
-                    ClientName = UtilData.ToString(DataBuffer.Take(DataSize).ToArray());
+                    ClientName = null;
+                    try { ClientName = UtilData.ToString(DataBuffer.Take(DataSize).ToArray()); } catch { }
                     if (ClientName != null && ClientName.Length > 0)
                     {
                         Log.Output(Log.Severity.INFO, Log.Source.NETWORK, "TCP Client connected with name \"" + ClientName + "\".");
@@ -286,7 +287,7 @@ namespace Scarlet.Communications
             {
                 if (ClientName == null) // New client
                 {
-                    ClientName = UtilData.ToString(Data);
+                    try { ClientName = UtilData.ToString(Data); } catch { }
                     if (ClientName != null && ClientName.Length > 0)
                     {
                         Log.Output(Log.Severity.INFO, Log.Source.NETWORK, "UDP Client connected with name \"" + ClientName + "\".");
@@ -449,6 +450,7 @@ namespace Scarlet.Communications
             }
             if (!Clients.ContainsKey(ToSend.Endpoint))
             {
+                WatchdogManager.RemoveWatchdog(ToSend.Endpoint);
                 Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Tried to send packet to unknown client. Dropping.");
                 return;
             }

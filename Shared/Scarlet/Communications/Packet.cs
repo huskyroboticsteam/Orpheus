@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Net;
 using Scarlet.Utilities;
+using System.Net.Sockets;
+using System.Linq;
 
 namespace Scarlet.Communications
 {
@@ -86,6 +88,19 @@ namespace Scarlet.Communications
             Clone.Data = this.Data != null ? (Message)this.Data.Clone() : null;
             Clone.Endpoint = string.Copy(this.Endpoint);
             return Clone;
+        }
+
+        /// <summary>
+        /// Returns a packet from given bytes and
+        /// a protocol type for the packet.
+        /// </summary>
+        /// <param name="PacketBytes">Raw bytes of packet data.</param>
+        /// <param name="Protocol">Protocol</param>
+        /// <returns></returns>
+        internal static Packet FromBytes(byte[] PacketBytes, ProtocolType Protocol)
+        {
+            // Construct a new packet given the incoming bytes and return it
+            return new Packet(new Message(PacketBytes), Protocol == ProtocolType.Udp);
         }
     }
 }

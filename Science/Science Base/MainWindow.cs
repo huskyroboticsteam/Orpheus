@@ -39,14 +39,17 @@ namespace Science_Base
         {
             try
             {
-                byte[] Timestamp = UtilMain.StringToBytes(this.TimestampTextbox.Text).Reverse().ToArray();
-                byte ID = UtilMain.StringToBytes(this.IDTextbox.Text)[0];
-                byte[] Data = InterpretInput(this.DataTextbox.Text.ToCharArray());
-                Packet Pack = new Packet(ID, false, ClientSelector.Items[0].ToString());
-                Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Sending packet with data length: " + Data.Length);
-                Pack.AppendData(Data);
-                Server.Send(Pack);
-                Log.Output(Log.Severity.INFO, Log.Source.GUI, "Sending custom packet: " + Pack.ToString());
+                for(int i = 0; i < 100; i++)
+                {
+                    byte[] Timestamp = UtilMain.StringToBytes(this.TimestampTextbox.Text).Reverse().ToArray();
+                    byte ID = UtilMain.StringToBytes(this.IDTextbox.Text)[0];
+                    byte[] Data = InterpretInput(this.DataTextbox.Text.ToCharArray());
+                    Packet Pack = new Packet(ID, this.SendAsUDP.Checked, this.ClientSelector.SelectedItem.ToString());
+                    Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Sending packet with data length: " + Data.Length);
+                    Pack.AppendData(Data);
+                    Server.Send(Pack);
+                    Log.Output(Log.Severity.INFO, Log.Source.GUI, "Sending custom packet: " + Pack.ToString());
+                }
             }
             catch(Exception Exc)
             {
@@ -140,8 +143,11 @@ namespace Science_Base
 
         public void UpdateClientList(object Sender, EventArgs Event)
         {
-            this.ClientSelector.Items.Clear();
-            this.ClientSelector.Items.AddRange(Server.GetClients().ToArray());
+            Invoke((MethodInvoker)delegate
+            {
+                this.ClientSelector.Items.Clear();
+                this.ClientSelector.Items.AddRange(Server.GetClients().ToArray());
+            });
         }
     }
 }

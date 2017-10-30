@@ -42,7 +42,6 @@
             this.IDTextbox = new DarkUI.Controls.DarkTextBox();
             this.DataTextbox = new DarkUI.Controls.DarkTextBox();
             this.DataTitle = new DarkUI.Controls.DarkLabel();
-            this.SendPacketBtn = new DarkUI.Controls.DarkButton();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.UseCurrentTime = new DarkUI.Controls.DarkCheckBox();
             this.TimestampTextbox = new DarkUI.Controls.DarkTextBox();
@@ -50,6 +49,9 @@
             this.InterpretationID = new DarkUI.Controls.DarkLabel();
             this.InterpretationData = new DarkUI.Controls.DarkLabel();
             this.PacketConstructStatus = new DarkUI.Controls.DarkLabel();
+            this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
+            this.SendPacketBtn = new DarkUI.Controls.DarkButton();
+            this.ClientSelector = new System.Windows.Forms.ComboBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             this.StatsPacketQueueOut = new DarkUI.Controls.DarkLabel();
@@ -57,8 +59,7 @@
             this.EmergencyStopBtn = new System.Windows.Forms.Button();
             this.SecTimer = new System.Windows.Forms.Timer(this.components);
             this.UIUpdate = new System.Windows.Forms.Timer(this.components);
-            this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
-            this.ClientSelector = new System.Windows.Forms.ComboBox();
+            this.SendAsUDP = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.Debugging.SuspendLayout();
@@ -66,9 +67,9 @@
             this.PacketGenBox.SuspendLayout();
             this.PacketGenLayout.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
+            this.tableLayoutPanel3.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
-            this.tableLayoutPanel3.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -165,7 +166,7 @@
             this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15F));
             this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 65F));
-            this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 150F));
+            this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 151F));
             this.PacketGenLayout.Controls.Add(this.TimestampTitle, 0, 0);
             this.PacketGenLayout.Controls.Add(this.IDTitle, 1, 0);
             this.PacketGenLayout.Controls.Add(this.IDTextbox, 1, 1);
@@ -177,6 +178,7 @@
             this.PacketGenLayout.Controls.Add(this.InterpretationData, 2, 2);
             this.PacketGenLayout.Controls.Add(this.PacketConstructStatus, 3, 2);
             this.PacketGenLayout.Controls.Add(this.tableLayoutPanel3, 3, 1);
+            this.PacketGenLayout.Controls.Add(this.SendAsUDP, 3, 0);
             this.PacketGenLayout.Dock = System.Windows.Forms.DockStyle.Fill;
             this.PacketGenLayout.Location = new System.Drawing.Point(3, 16);
             this.PacketGenLayout.Margin = new System.Windows.Forms.Padding(0);
@@ -195,7 +197,7 @@
             this.TimestampTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.TimestampTitle.Location = new System.Drawing.Point(3, 0);
             this.TimestampTitle.Name = "TimestampTitle";
-            this.TimestampTitle.Size = new System.Drawing.Size(116, 13);
+            this.TimestampTitle.Size = new System.Drawing.Size(115, 17);
             this.TimestampTitle.TabIndex = 0;
             this.TimestampTitle.Text = "Timestamp";
             // 
@@ -204,9 +206,9 @@
             this.IDTitle.AutoSize = true;
             this.IDTitle.Dock = System.Windows.Forms.DockStyle.Fill;
             this.IDTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.IDTitle.Location = new System.Drawing.Point(125, 0);
+            this.IDTitle.Location = new System.Drawing.Point(124, 0);
             this.IDTitle.Name = "IDTitle";
-            this.IDTitle.Size = new System.Drawing.Size(85, 13);
+            this.IDTitle.Size = new System.Drawing.Size(85, 17);
             this.IDTitle.TabIndex = 2;
             this.IDTitle.Text = "ID";
             // 
@@ -217,7 +219,7 @@
             this.IDTextbox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.IDTextbox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.IDTextbox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.IDTextbox.Location = new System.Drawing.Point(125, 16);
+            this.IDTextbox.Location = new System.Drawing.Point(124, 20);
             this.IDTextbox.Name = "IDTextbox";
             this.IDTextbox.Size = new System.Drawing.Size(85, 20);
             this.IDTextbox.TabIndex = 3;
@@ -230,9 +232,9 @@
             this.DataTextbox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.DataTextbox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.DataTextbox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.DataTextbox.Location = new System.Drawing.Point(216, 16);
+            this.DataTextbox.Location = new System.Drawing.Point(215, 20);
             this.DataTextbox.Name = "DataTextbox";
-            this.DataTextbox.Size = new System.Drawing.Size(390, 20);
+            this.DataTextbox.Size = new System.Drawing.Size(389, 20);
             this.DataTextbox.TabIndex = 4;
             this.DataTextbox.TextChanged += new System.EventHandler(this.DataTextbox_TextChanged);
             // 
@@ -241,23 +243,11 @@
             this.DataTitle.AutoSize = true;
             this.DataTitle.Dock = System.Windows.Forms.DockStyle.Fill;
             this.DataTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.DataTitle.Location = new System.Drawing.Point(216, 0);
+            this.DataTitle.Location = new System.Drawing.Point(215, 0);
             this.DataTitle.Name = "DataTitle";
-            this.DataTitle.Size = new System.Drawing.Size(390, 13);
+            this.DataTitle.Size = new System.Drawing.Size(389, 17);
             this.DataTitle.TabIndex = 5;
             this.DataTitle.Text = "Data";
-            // 
-            // SendPacketBtn
-            // 
-            this.SendPacketBtn.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.SendPacketBtn.Location = new System.Drawing.Point(3, 37);
-            this.SendPacketBtn.Name = "SendPacketBtn";
-            this.SendPacketBtn.Padding = new System.Windows.Forms.Padding(5);
-            this.SendPacketBtn.Size = new System.Drawing.Size(145, 25);
-            this.SendPacketBtn.TabIndex = 5;
-            this.SendPacketBtn.Text = "Send";
-            this.SendPacketBtn.Click += new System.EventHandler(this.SendPacketBtn_Click);
             // 
             // tableLayoutPanel2
             // 
@@ -266,13 +256,13 @@
             this.tableLayoutPanel2.Controls.Add(this.UseCurrentTime, 0, 1);
             this.tableLayoutPanel2.Controls.Add(this.TimestampTextbox, 0, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 13);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 17);
             this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 2;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(122, 69);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(121, 65);
             this.tableLayoutPanel2.TabIndex = 7;
             // 
             // UseCurrentTime
@@ -294,7 +284,7 @@
             this.TimestampTextbox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.TimestampTextbox.Location = new System.Drawing.Point(3, 3);
             this.TimestampTextbox.Name = "TimestampTextbox";
-            this.TimestampTextbox.Size = new System.Drawing.Size(116, 20);
+            this.TimestampTextbox.Size = new System.Drawing.Size(115, 20);
             this.TimestampTextbox.TabIndex = 2;
             this.TimestampTextbox.TextChanged += new System.EventHandler(this.TimestampTextbox_TextChanged);
             // 
@@ -305,7 +295,7 @@
             this.InterpretationTimestamp.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.InterpretationTimestamp.Location = new System.Drawing.Point(3, 82);
             this.InterpretationTimestamp.Name = "InterpretationTimestamp";
-            this.InterpretationTimestamp.Size = new System.Drawing.Size(116, 13);
+            this.InterpretationTimestamp.Size = new System.Drawing.Size(115, 13);
             this.InterpretationTimestamp.TabIndex = 8;
             this.InterpretationTimestamp.Text = "Unknown";
             // 
@@ -314,7 +304,7 @@
             this.InterpretationID.AutoSize = true;
             this.InterpretationID.Dock = System.Windows.Forms.DockStyle.Fill;
             this.InterpretationID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.InterpretationID.Location = new System.Drawing.Point(125, 82);
+            this.InterpretationID.Location = new System.Drawing.Point(124, 82);
             this.InterpretationID.Name = "InterpretationID";
             this.InterpretationID.Size = new System.Drawing.Size(85, 13);
             this.InterpretationID.TabIndex = 9;
@@ -325,9 +315,9 @@
             this.InterpretationData.AutoSize = true;
             this.InterpretationData.Dock = System.Windows.Forms.DockStyle.Fill;
             this.InterpretationData.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.InterpretationData.Location = new System.Drawing.Point(216, 82);
+            this.InterpretationData.Location = new System.Drawing.Point(215, 82);
             this.InterpretationData.Name = "InterpretationData";
-            this.InterpretationData.Size = new System.Drawing.Size(390, 13);
+            this.InterpretationData.Size = new System.Drawing.Size(389, 13);
             this.InterpretationData.TabIndex = 10;
             this.InterpretationData.Text = "Unknown";
             // 
@@ -336,11 +326,50 @@
             this.PacketConstructStatus.AutoSize = true;
             this.PacketConstructStatus.Dock = System.Windows.Forms.DockStyle.Fill;
             this.PacketConstructStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.PacketConstructStatus.Location = new System.Drawing.Point(612, 82);
+            this.PacketConstructStatus.Location = new System.Drawing.Point(610, 82);
             this.PacketConstructStatus.Name = "PacketConstructStatus";
-            this.PacketConstructStatus.Size = new System.Drawing.Size(145, 13);
+            this.PacketConstructStatus.Size = new System.Drawing.Size(147, 13);
             this.PacketConstructStatus.TabIndex = 11;
             this.PacketConstructStatus.Text = "Unknown";
+            // 
+            // tableLayoutPanel3
+            // 
+            this.tableLayoutPanel3.ColumnCount = 1;
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel3.Controls.Add(this.SendPacketBtn, 0, 1);
+            this.tableLayoutPanel3.Controls.Add(this.ClientSelector, 0, 0);
+            this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(607, 17);
+            this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
+            this.tableLayoutPanel3.RowCount = 2;
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(153, 65);
+            this.tableLayoutPanel3.TabIndex = 12;
+            // 
+            // SendPacketBtn
+            // 
+            this.SendPacketBtn.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.SendPacketBtn.Location = new System.Drawing.Point(3, 35);
+            this.SendPacketBtn.Name = "SendPacketBtn";
+            this.SendPacketBtn.Padding = new System.Windows.Forms.Padding(5);
+            this.SendPacketBtn.Size = new System.Drawing.Size(147, 25);
+            this.SendPacketBtn.TabIndex = 5;
+            this.SendPacketBtn.Text = "Send";
+            this.SendPacketBtn.Click += new System.EventHandler(this.SendPacketBtn_Click);
+            // 
+            // ClientSelector
+            // 
+            this.ClientSelector.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ClientSelector.FormattingEnabled = true;
+            this.ClientSelector.Location = new System.Drawing.Point(3, 3);
+            this.ClientSelector.Name = "ClientSelector";
+            this.ClientSelector.Size = new System.Drawing.Size(147, 21);
+            this.ClientSelector.TabIndex = 6;
             // 
             // groupBox1
             // 
@@ -424,32 +453,18 @@
             this.UIUpdate.Interval = 33;
             this.UIUpdate.Tick += new System.EventHandler(this.UIUpdate_Tick);
             // 
-            // tableLayoutPanel3
+            // SendAsUDP
             // 
-            this.tableLayoutPanel3.ColumnCount = 1;
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel3.Controls.Add(this.SendPacketBtn, 0, 1);
-            this.tableLayoutPanel3.Controls.Add(this.ClientSelector, 0, 0);
-            this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(609, 13);
-            this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(0);
-            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
-            this.tableLayoutPanel3.RowCount = 2;
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(151, 69);
-            this.tableLayoutPanel3.TabIndex = 12;
-            // 
-            // ClientSelector
-            // 
-            this.ClientSelector.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.ClientSelector.FormattingEnabled = true;
-            this.ClientSelector.Location = new System.Drawing.Point(3, 3);
-            this.ClientSelector.Name = "ClientSelector";
-            this.ClientSelector.Size = new System.Drawing.Size(145, 21);
-            this.ClientSelector.TabIndex = 6;
+            this.SendAsUDP.AutoSize = true;
+            this.SendAsUDP.Checked = true;
+            this.SendAsUDP.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.SendAsUDP.Location = new System.Drawing.Point(610, 0);
+            this.SendAsUDP.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.SendAsUDP.Name = "SendAsUDP";
+            this.SendAsUDP.Size = new System.Drawing.Size(49, 17);
+            this.SendAsUDP.TabIndex = 13;
+            this.SendAsUDP.Text = "UDP";
+            this.SendAsUDP.UseVisualStyleBackColor = true;
             // 
             // MainWindow
             // 
@@ -471,10 +486,10 @@
             this.PacketGenLayout.PerformLayout();
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
+            this.tableLayoutPanel3.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.tableLayoutPanel4.ResumeLayout(false);
             this.tableLayoutPanel4.PerformLayout();
-            this.tableLayoutPanel3.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -510,5 +525,6 @@
         private DarkUI.Controls.DarkLabel StatsPacketQueueIn;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
         private System.Windows.Forms.ComboBox ClientSelector;
+        private System.Windows.Forms.CheckBox SendAsUDP;
     }
 }
