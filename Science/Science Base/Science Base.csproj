@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AGauge">
+      <HintPath>..\Libraries\AGauge.dll</HintPath>
+    </Reference>
     <Reference Include="DarkUI">
       <HintPath>..\Libraries\DarkUI.dll</HintPath>
     </Reference>

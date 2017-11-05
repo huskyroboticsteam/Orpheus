@@ -1,12 +1,14 @@
 ﻿using System;
 using Scarlet.Components;
 using Scarlet.Components.Motors;
+using Scarlet.IO;
+using Scarlet.IO.BeagleBone;
 
 namespace Science.Systems
 {
     public class Drill : ISubsystem
     {
-        private const float MOTOR_MAX_SPEED = 1.0F;
+        private const float MOTOR_MAX_SPEED = 0.1F;
 
         private bool P_DoorOpen;
         public bool DoorOpen
@@ -24,8 +26,12 @@ namespace Science.Systems
 
         public Drill()
         {
-            //this.MotorCtrl = new TalonMC(null, MOTOR_MAX_SPEED); // TODO: Provide actual IPWMOuput.
-            //this.DoorServo = new Servo(null); // TODO: Provide actual IPWMOuput.
+            BBBPinManager.AddMappingPWM(BBBPin.P8_19); // Drill Motor
+            BBBPinManager.AddMappingPWM(BBBPin.P9_21); // Door Servo
+            IPWMOutput MotorPWM = PWMBBB.PWMDevice2.OutputA;
+            IPWMOutput ServoPWM = PWMBBB.PWMDevice0.OutputB;
+            this.MotorCtrl = new TalonMC(MotorPWM, MOTOR_MAX_SPEED);
+            this.DoorServo = new Servo(ServoPWM);
         }
 
         public void EmergencyStop()
@@ -39,16 +45,15 @@ namespace Science.Systems
             
         }
 
-        public void Initialize()
-        {
-            this.DoorOpen = false;
-        }
-
         public void UpdateState()
         {
             this.MotorCtrl.UpdateState();
             this.DoorServo.UpdateState();
         }
 
+        public void Initialize()
+        {
+            
+        }
     }
 }
