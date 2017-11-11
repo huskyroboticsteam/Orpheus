@@ -84,7 +84,6 @@ namespace Science.Systems
         {
             this.Limit.UpdateState();
             this.Encoder.UpdateState();
-            this.MotorCtrl.UpdateState();
             if (!this.InitDone)
             {
                 Log.Output(Log.Severity.WARNING, Log.Source.SUBSYSTEM, "Turntable has not been initialized yet.");

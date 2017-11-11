@@ -85,7 +85,7 @@ namespace Science.Systems
         /// </summary>
         public void GotoTop()
         {
-            this.MotorCtrl.TargetSpeed = MOTOR_MAX_SPEED;
+            this.MotorCtrl.SetSpeed(MOTOR_MAX_SPEED);
         }
 
         /// <summary>
@@ -129,7 +129,6 @@ namespace Science.Systems
         {
             this.Limit.UpdateState();
             this.Encoder.UpdateState();
-            this.MotorCtrl.UpdateState();
             if (!this.InitDone)
             {
                 Log.Output(Log.Severity.WARNING, Log.Source.SUBSYSTEM, "Rail has not been initialized yet.");

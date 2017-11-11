@@ -16,7 +16,7 @@ namespace Science.Systems
             get { return this.P_DoorOpen; }
             set
             {
-                this.DoorServo.TargetPosition = value ? 300 : 0;
+                this.DoorServo.SetPosition(value ? 300 : 0);
                 this.P_DoorOpen = value;
             }
         }
@@ -47,8 +47,6 @@ namespace Science.Systems
 
         public void UpdateState()
         {
-            this.MotorCtrl.UpdateState();
-            this.DoorServo.UpdateState();
         }
 
         public void Initialize()

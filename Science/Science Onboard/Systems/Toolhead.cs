@@ -64,7 +64,6 @@ namespace Science.Systems
         {
             this.Pot.UpdateState();
             // TODO: Calculate and set motor speed.
-            this.MotorCtrl.UpdateState();
         }
     }
 }
