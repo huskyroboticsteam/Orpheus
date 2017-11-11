@@ -3,20 +3,10 @@ using System;
 
 namespace Scarlet.Components.Motors
 {
-    public class Servo : IMotor
+    public class Servo : IServo
     {
         private readonly IPWMOutput PWMOut;
         public int Position { get; private set; }
-        private int P_TargetPosition;
-        public int TargetPosition
-        {
-            get { return this.P_TargetPosition; }
-            set
-            {
-                this.P_TargetPosition = value % 360;
-                this.UpdateState();
-            }
-        }
 
         public Servo(IPWMOutput PWMOut)
         {
@@ -29,16 +19,13 @@ namespace Scarlet.Components.Motors
             
         }
 
-        public void Stop()
-        {
-            this.TargetPosition = this.Position;
-            this.UpdateState();
-        }
+        public void Stop() { SetPosition(this.Position); }
 
-        public void UpdateState()
+        public void SetPosition(int NewPosition)
         {
-            if (this.Position == this.TargetPosition) { return; }
+            if (this.Position == NewPosition) { return; }
             // TODO: Do filtering (move Position towards TargetPosition) and output new Position via PWM.
+            this.Position = NewPosition;
         }
     }
 }
