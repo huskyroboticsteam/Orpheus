@@ -77,8 +77,7 @@ namespace Science
             IFilter<float> MotorFilter = new Average<float>(5);
             TalonMC Motor = new TalonMC(MotorOut, 1F, MotorFilter);
             Log.SetSingleOutputLevel(Log.Source.MOTORS, Log.Severity.DEBUG);
-            Motor.TargetSpeed = 0.2F;
-            Motor.UpdateState();
+            Motor.SetSpeed(0.2f);
             /*while (true)
             {
                 Log.Output(Log.Severity.DEBUG, Log.Source.MOTORS, "Outputs: " + Motor.TargetSpeed + ", " + ((PWMOutputBBB)MotorOut).GetOutput() + ", " + ((PWMOutputBBB)MotorOut).GetFrequency());
@@ -88,8 +87,7 @@ namespace Science
             int Cycle = 0;
             while (true)
             {
-                Motor.TargetSpeed = ((Cycle / 10) % 2 == 0) ? 1 : -1;
-                Motor.UpdateState();
+                Motor.SetSpeed(((Cycle / 10) % 2 == 0) ? 1 : -1);
                 Thread.Sleep(25);
                 Cycle += 1;
             }

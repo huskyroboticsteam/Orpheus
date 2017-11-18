@@ -60,6 +60,7 @@
     <Compile Include="Components\ICamera.cs" />
     <Compile Include="Components\IMotor.cs" />
     <Compile Include="Components\ISensor.cs" />
+    <Compile Include="Components\IServo.cs" />
     <Compile Include="Components\ISubsystem.cs" />
     <Compile Include="Components\Motors\Servo.cs" />
     <Compile Include="Components\Motors\TalonMC.cs" />

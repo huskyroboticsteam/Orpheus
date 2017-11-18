@@ -3,6 +3,8 @@ using System.Timers;
 using Scarlet.Components;
 using Scarlet.Components.Motors;
 using Scarlet.Components.Sensors;
+using Scarlet.IO;
+using Scarlet.IO.BeagleBone;
 using Scarlet.Utilities;
 
 namespace Science.Systems
@@ -25,12 +27,15 @@ namespace Science.Systems
         /// </summary>
         public Rail()
         {
-            // TODO: Set these to actual pins.
-            //this.MotorCtrl = new TalonMC(null, MOTOR_MAX_SPEED); // TODO: Provide actual IPWMOuput.
-            //this.Limit = new LimitSwitch(null, false); // TODO: Provide actual output.
+            BBBPinManager.AddMappingPWM(BBBPin.P8_13); // Linear Actuator
+            BBBPinManager.AddMappingGPIO(BBBPin.P8_12, false, ResistorState.PULL_UP); // Limit Switch
+            IPWMOutput MotorPWM = PWMBBB.PWMDevice2.OutputB;
+            IDigitalIn LimitSw = new DigitalInBBB(BBBPin.P8_12);
+            this.MotorCtrl = new TalonMC(MotorPWM, MOTOR_MAX_SPEED);
+            this.Limit = new LimitSwitch(LimitSw, false);
             //this.Encoder = new Encoder(2, 3, 80);
 
-            //this.Limit.SwitchToggle += this.EventTriggered;
+            this.Limit.SwitchToggle += this.EventTriggered;
             //this.Encoder.Turned += this.EventTriggered;
         }
 
@@ -80,7 +85,7 @@ namespace Science.Systems
         /// </summary>
         public void GotoTop()
         {
-            this.MotorCtrl.TargetSpeed = MOTOR_MAX_SPEED;
+            this.MotorCtrl.SetSpeed(MOTOR_MAX_SPEED);
         }
 
         /// <summary>
@@ -124,7 +129,6 @@ namespace Science.Systems
         {
             this.Limit.UpdateState();
             this.Encoder.UpdateState();
-            this.MotorCtrl.UpdateState();
             if (!this.InitDone)
             {
                 Log.Output(Log.Severity.WARNING, Log.Source.SUBSYSTEM, "Rail has not been initialized yet.");

@@ -7,10 +7,10 @@ using Scarlet.Science;
 
 namespace Science_Base
 {
-	class BaseMain
-	{
-		static void Main(string[] args)
-		{
+    class BaseMain
+    {
+        static void Main(string[] args)
+        {
             Log.SetGlobalOutputLevel(Log.Severity.INFO);
             Log.SetSingleOutputLevel(Log.Source.NETWORK, Log.Severity.DEBUG);
             Log.ErrorCodes = ScienceErrors.ERROR_CODES;
@@ -18,12 +18,22 @@ namespace Science_Base
             Log.Begin();
             Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Science Station - Base Side");
 
-            Server.Start(10765, 11765);
+            byte[] StrB = UtilData.ToBytes("Erza-{}'");
+            byte[] Fail = new byte[] { 0x8C };
+            bool Success = UtilData.TryToString(Fail, out string Str);
+            if (Success)
+            {
+                Console.WriteLine(Str);
+            }
+            else
+            {
+                Console.WriteLine(UtilMain.BytesToNiceString(StrB, true));
+            }
 
             MainWindow Main = new MainWindow();
             Application.EnableVisualStyles();
             Server.ClientConnectionChange += Main.UpdateClientList;
             Application.Run(Main);
-		}
-	}
+        }
+    }
 }

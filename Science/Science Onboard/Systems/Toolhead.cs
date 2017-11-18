@@ -2,6 +2,8 @@
 using Scarlet.Components;
 using Scarlet.Components.Motors;
 using Scarlet.Components.Sensors;
+using Scarlet.IO;
+using Scarlet.IO.BeagleBone;
 
 namespace Science.Systems
 {
@@ -16,8 +18,9 @@ namespace Science.Systems
 
         public Toolhead()
         {
-            // TODO: Set these to actual pins.
-            //this.MotorCtrl = new TalonMC(null, MOTOR_MAX_SPEED);
+            BBBPinManager.AddMappingPWM(BBBPin.P9_16);
+            IPWMOutput MotorOut = PWMBBB.PWMDevice1.OutputB;
+            this.MotorCtrl = new TalonMC(MotorOut, MOTOR_MAX_SPEED);
             //this.Pot = new Potentiometer(null, 300);
 
             //this.Pot.Turned += this.EventTriggered;
@@ -61,7 +64,6 @@ namespace Science.Systems
         {
             this.Pot.UpdateState();
             // TODO: Calculate and set motor speed.
-            this.MotorCtrl.UpdateState();
         }
     }
 }

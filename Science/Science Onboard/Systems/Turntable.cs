@@ -3,6 +3,8 @@ using System.Timers;
 using Scarlet.Components;
 using Scarlet.Components.Motors;
 using Scarlet.Components.Sensors;
+using Scarlet.IO;
+using Scarlet.IO.BeagleBone;
 using Scarlet.Utilities;
 
 namespace Science.Systems
@@ -22,12 +24,15 @@ namespace Science.Systems
 
         public Turntable()
         {
-            // TODO: Set these to actual pins.
-            //this.MotorCtrl = new TalonMC(null, MOTOR_MAX_SPEED); // TODO: Provide actual IPWMOuput.
-            //this.Limit = new LimitSwitch(null, false); // TODO: Provide actual output.
+            BBBPinManager.AddMappingPWM(BBBPin.P9_14);
+            BBBPinManager.AddMappingGPIO(BBBPin.P8_08, false, ResistorState.PULL_UP);
+            IPWMOutput MotorOut = PWMBBB.PWMDevice1.OutputA;
+            IDigitalIn LimitSw = new DigitalInBBB(BBBPin.P8_08);
+            this.MotorCtrl = new TalonMC(MotorOut, MOTOR_MAX_SPEED);
+            this.Limit = new LimitSwitch(LimitSw, false);
             //this.Encoder = new Encoder(6, 7, 420);
 
-            //this.Limit.SwitchToggle += this.EventTriggered;
+            this.Limit.SwitchToggle += this.EventTriggered;
             //this.Encoder.Turned += this.EventTriggered;
         }
 
@@ -79,7 +84,6 @@ namespace Science.Systems
         {
             this.Limit.UpdateState();
             this.Encoder.UpdateState();
-            this.MotorCtrl.UpdateState();
             if (!this.InitDone)
             {
                 Log.Output(Log.Severity.WARNING, Log.Source.SUBSYSTEM, "Turntable has not been initialized yet.");

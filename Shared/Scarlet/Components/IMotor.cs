@@ -5,7 +5,7 @@ namespace Scarlet.Components
     public interface IMotor
     {
         /// <summary>Updates the state of the motor, changing the speed if relevant.</summary>
-        void UpdateState();
+        void SetSpeed(float Speed);
 
         /// <summary>Stops to motor immediately.</summary>
         void Stop();

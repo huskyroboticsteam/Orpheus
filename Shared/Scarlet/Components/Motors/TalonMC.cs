@@ -12,18 +12,7 @@ namespace Scarlet.Components.Motors
         private readonly float MaxSpeed;
 
         private bool Stopped;
-        private float P_TargetSpeed;
-        public float TargetSpeed
-        {
-            get { return this.P_TargetSpeed; }
-            set
-            {
-                this.Stopped = false;
-                this.P_TargetSpeed = value;
-                if (value > this.MaxSpeed) { this.P_TargetSpeed = this.MaxSpeed; }
-                if (value * -1 > this.MaxSpeed) { this.P_TargetSpeed = this.MaxSpeed * -1; }
-            }
-        }
+        public float TargetSpeed { get; private set; }
 
         public TalonMC(IPWMOutput PWMOut, float MaxSpeed, IFilter<float> SpeedFilter = null)
         {
@@ -44,23 +33,23 @@ namespace Scarlet.Components.Motors
         {
             this.TargetSpeed = 0;
             this.Stopped = true;
-            this.UpdateState();
+            this.SetSpeed(0);
         }
 
-        public void UpdateState()
+        public void SetSpeed(float Speed)
         {
-            float SetSpeed = this.TargetSpeed;
+            float NewSpeed = Speed;
             if (this.Filter != null)
             {
                 this.Filter.Feed(this.TargetSpeed);
-                SetSpeed = this.Filter.GetOutput();
+                NewSpeed = this.Filter.GetOutput();
             }
-            if (this.Stopped) { SetSpeed = 0; }
-            if (SetSpeed > this.MaxSpeed) { SetSpeed = this.MaxSpeed; }
-            if (SetSpeed * -1 > this.MaxSpeed) { SetSpeed = this.MaxSpeed * -1; }
+            if (this.Stopped) { NewSpeed = 0; }
+            if (NewSpeed > this.MaxSpeed) { NewSpeed = this.MaxSpeed; }
+            if (NewSpeed * -1 > this.MaxSpeed) { NewSpeed = this.MaxSpeed * -1; }
 
             //Log.Output(Log.Severity.DEBUG, Log.Source.MOTORS, "Target: " + this.TargetSpeed + ", Filtered: " + SetSpeed);
-            this.PWMOut.SetOutput((SetSpeed / 2) + 0.5F);
+            this.PWMOut.SetOutput((NewSpeed / 2) + 0.5F);
         }
     }
 }
