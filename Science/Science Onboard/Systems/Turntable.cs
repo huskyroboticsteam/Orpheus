@@ -16,7 +16,7 @@ namespace Science.Systems
 
         private bool Initializing, InitDone;
         private int CurrentAngle;
-        public int TargetAngle;
+        public int TargetAngle { get; set; }
 
         private TalonMC MotorCtrl;
         private LimitSwitch Limit;
@@ -90,7 +90,7 @@ namespace Science.Systems
             }
             this.Limit.UpdateState();
             //this.Encoder.UpdateState();
-            Log.Output(Log.Severity.DEBUG, Log.Source.SUBSYSTEM, "Turntable: Current Angle: " + this.CurrentAngle + ", Target: " + this.TargetAngle + ", Outputting " + (float)Math.Sin(this.Cycle / 50.000)*0.3F);
+            Log.Output(Log.Severity.DEBUG, Log.Source.SUBSYSTEM, "Turntable: Current Angle: " + this.CurrentAngle + ", Target: " + this.TargetAngle);
             this.MotorCtrl.SetSpeed((this.TargetAngle > this.CurrentAngle) ? -0.1F : 0.1F);
         }
     }

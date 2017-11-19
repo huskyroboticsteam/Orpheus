@@ -25,9 +25,9 @@ namespace Science
         /// <summary>
         /// Prepares all systems for use by zeroing them. This takes a while.
         /// </summary>
-        public void InitializeSystems()
+        public void InitializeSystems(BBBPinManager.ApplicationMode AppMode)
         {
-            BBBPinManager.ApplyPinSettings(BBBPinManager.ApplicationMode.APPLY_IF_NONE);
+            BBBPinManager.ApplyPinSettings(AppMode);
             this.RailController.Initialize();
             this.TurntableController.Initialize();
             this.ToolheadController.Initialize();
