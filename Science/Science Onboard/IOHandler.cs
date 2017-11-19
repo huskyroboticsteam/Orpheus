@@ -1,4 +1,5 @@
 ﻿using Scarlet.Components;
+using Scarlet.IO.BeagleBone;
 using Science.Systems;
 
 namespace Science
@@ -26,6 +27,7 @@ namespace Science
         /// </summary>
         public void InitializeSystems()
         {
+            BBBPinManager.ApplyPinSettings(BBBPinManager.ApplicationMode.APPLY_IF_NONE);
             this.RailController.Initialize();
             this.TurntableController.Initialize();
             this.ToolheadController.Initialize();
@@ -41,6 +43,14 @@ namespace Science
             this.TurntableController.EmergencyStop();
             this.ToolheadController.EmergencyStop();
             this.DrillController.EmergencyStop();
+        }
+
+        public void UpdateStates()
+        {
+            this.RailController.UpdateState();
+            this.TurntableController.UpdateState();
+            this.ToolheadController.UpdateState();
+            this.DrillController.UpdateState();
         }
     }
 }

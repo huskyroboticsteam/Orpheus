@@ -21,17 +21,13 @@ namespace Science.Systems
             }
         }
 
-        private readonly TalonMC MotorCtrl;
-        private readonly Servo DoorServo;
+        private TalonMC MotorCtrl;
+        private Servo DoorServo;
 
         public Drill()
         {
             BBBPinManager.AddMappingPWM(BBBPin.P8_19); // Drill Motor
             BBBPinManager.AddMappingPWM(BBBPin.P9_21); // Door Servo
-            IPWMOutput MotorPWM = PWMBBB.PWMDevice2.OutputA;
-            IPWMOutput ServoPWM = PWMBBB.PWMDevice0.OutputB;
-            this.MotorCtrl = new TalonMC(MotorPWM, MOTOR_MAX_SPEED);
-            this.DoorServo = new Servo(ServoPWM);
         }
 
         public void EmergencyStop()
@@ -51,7 +47,10 @@ namespace Science.Systems
 
         public void Initialize()
         {
-            
+            IPWMOutput MotorPWM = PWMBBB.PWMDevice2.OutputA;
+            IPWMOutput ServoPWM = PWMBBB.PWMDevice0.OutputB;
+            this.MotorCtrl = new TalonMC(MotorPWM, MOTOR_MAX_SPEED);
+            this.DoorServo = new Servo(ServoPWM);
         }
     }
 }

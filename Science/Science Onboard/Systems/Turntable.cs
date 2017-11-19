@@ -12,28 +12,20 @@ namespace Science.Systems
     class Turntable : ISubsystem
     {
         private const float MOTOR_MAX_SPEED = 0.30F;
-        private const int INIT_TIMEOUT = 5000;
+        private const int INIT_TIMEOUT = 20000;
 
         private bool Initializing, InitDone;
         private int CurrentAngle;
         public int TargetAngle;
 
-        private readonly TalonMC MotorCtrl;
-        private readonly LimitSwitch Limit;
-        private readonly Encoder Encoder;
+        private TalonMC MotorCtrl;
+        private LimitSwitch Limit;
+        private Encoder Encoder;
 
         public Turntable()
         {
             BBBPinManager.AddMappingPWM(BBBPin.P9_14);
-            BBBPinManager.AddMappingGPIO(BBBPin.P8_08, false, ResistorState.PULL_UP);
-            IPWMOutput MotorOut = PWMBBB.PWMDevice1.OutputA;
-            IDigitalIn LimitSw = new DigitalInBBB(BBBPin.P8_08);
-            this.MotorCtrl = new TalonMC(MotorOut, MOTOR_MAX_SPEED);
-            this.Limit = new LimitSwitch(LimitSw, false);
-            //this.Encoder = new Encoder(6, 7, 420);
-
-            this.Limit.SwitchToggle += this.EventTriggered;
-            //this.Encoder.Turned += this.EventTriggered;
+            BBBPinManager.AddMappingGPIO(BBBPin.P8_12, false, ResistorState.PULL_UP);
         }
 
         public void EventTriggered(object Sender, EventArgs Event)
@@ -65,7 +57,16 @@ namespace Science.Systems
         public void Initialize()
         {
             this.Initializing = true;
-            
+
+            IPWMOutput MotorOut = PWMBBB.PWMDevice1.OutputA;
+            IDigitalIn LimitSw = new DigitalInBBB(BBBPin.P8_12);
+            this.MotorCtrl = new TalonMC(MotorOut, MOTOR_MAX_SPEED);
+            this.Limit = new LimitSwitch(LimitSw, false);
+            //this.Encoder = new Encoder(6, 7, 420);
+
+            this.Limit.SwitchToggle += this.EventTriggered;
+            //this.Encoder.Turned += this.EventTriggered;
+
             Timer TimeoutTrigger = new Timer() { Interval = INIT_TIMEOUT, AutoReset = false };
             TimeoutTrigger.Elapsed += this.EventTriggered;
             TimeoutTrigger.Enabled = true;
@@ -82,14 +83,15 @@ namespace Science.Systems
 
         public void UpdateState()
         {
-            this.Limit.UpdateState();
-            this.Encoder.UpdateState();
             if (!this.InitDone)
             {
                 Log.Output(Log.Severity.WARNING, Log.Source.SUBSYSTEM, "Turntable has not been initialized yet.");
-                return;
+                //return;
             }
-            // TODO: Send commands to Talon.
+            this.Limit.UpdateState();
+            //this.Encoder.UpdateState();
+            Log.Output(Log.Severity.DEBUG, Log.Source.SUBSYSTEM, "Turntable: Current Angle: " + this.CurrentAngle + ", Target: " + this.TargetAngle + ", Outputting " + (float)Math.Sin(this.Cycle / 50.000)*0.3F);
+            this.MotorCtrl.SetSpeed((this.TargetAngle > this.CurrentAngle) ? -0.1F : 0.1F);
         }
     }
 }

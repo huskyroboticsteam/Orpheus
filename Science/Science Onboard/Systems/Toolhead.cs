@@ -13,17 +13,12 @@ namespace Science.Systems
 
         private int Angle;
 
-        private readonly TalonMC MotorCtrl;
-        private readonly Potentiometer Pot;
+        private TalonMC MotorCtrl;
+        private Potentiometer Pot;
 
         public Toolhead()
         {
             BBBPinManager.AddMappingPWM(BBBPin.P9_16);
-            IPWMOutput MotorOut = PWMBBB.PWMDevice1.OutputB;
-            this.MotorCtrl = new TalonMC(MotorOut, MOTOR_MAX_SPEED);
-            //this.Pot = new Potentiometer(null, 300);
-
-            //this.Pot.Turned += this.EventTriggered;
         }
 
         public void EmergencyStop()
@@ -42,6 +37,12 @@ namespace Science.Systems
 
         public void Initialize()
         {
+            IPWMOutput MotorOut = PWMBBB.PWMDevice1.OutputB;
+            this.MotorCtrl = new TalonMC(MotorOut, MOTOR_MAX_SPEED);
+            //this.Pot = new Potentiometer(null, 300);
+
+            //this.Pot.Turned += this.EventTriggered;
+
             this.GotoDrill();
         }
 
@@ -62,7 +63,7 @@ namespace Science.Systems
 
         public void UpdateState()
         {
-            this.Pot.UpdateState();
+            //this.Pot.UpdateState();
             // TODO: Calculate and set motor speed.
         }
     }

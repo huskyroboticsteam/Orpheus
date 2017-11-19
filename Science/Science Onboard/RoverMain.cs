@@ -13,6 +13,7 @@ using Scarlet.IO.BeagleBone;
 using Scarlet.IO.RaspberryPi;
 using Scarlet.Science;
 using Scarlet.Utilities;
+using Science.Systems;
 
 namespace Science
 {
@@ -28,7 +29,7 @@ namespace Science
 		{
             ParseArgs(Args);
             StateStore.Start("SciRover");
-            Log.SetGlobalOutputLevel(Log.Severity.INFO);
+            Log.SetGlobalOutputLevel(Log.Severity.DEBUG);
             //Log.SetSingleOutputLevel(Log.Source.NETWORK, Log.Severity.DEBUG);
             Log.ErrorCodes = ScienceErrors.ERROR_CODES;
             Log.SystemNames = ScienceErrors.SYSTEMS;
@@ -37,9 +38,18 @@ namespace Science
             Client.Start(IP, PortTCP, PortUDP, "SciRover");
 
             BeagleBone.Initialize(SystemMode.DEFAULT, true);
-            
+            IOHandler = new IOHandler();
+            IOHandler.InitializeSystems();
+            ((Turntable)IOHandler.TurntableController).TargetAngle = 50;
 
             while (Console.KeyAvailable) { Console.ReadKey(); } // Clear previous keypresses
+
+            while (!Console.KeyAvailable)
+            {
+                IOHandler.UpdateStates();
+                Thread.Sleep(20);
+            }
+
             Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Press any key to exit.");
             Console.ReadKey();
             Environment.Exit(0);

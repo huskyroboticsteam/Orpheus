@@ -18,9 +18,9 @@ namespace Science.Systems
         private int Height;
         public int TargetHeight;
 
-        private readonly TalonMC MotorCtrl;
-        private readonly LimitSwitch Limit;
-        private readonly Encoder Encoder;
+        private TalonMC MotorCtrl;
+        private LimitSwitch Limit;
+        private Encoder Encoder;
 
         /// <summary>
         /// Handles moving the linear rail up and down for the various experiments.
@@ -28,15 +28,7 @@ namespace Science.Systems
         public Rail()
         {
             BBBPinManager.AddMappingPWM(BBBPin.P8_13); // Linear Actuator
-            BBBPinManager.AddMappingGPIO(BBBPin.P8_12, false, ResistorState.PULL_UP); // Limit Switch
-            IPWMOutput MotorPWM = PWMBBB.PWMDevice2.OutputB;
-            IDigitalIn LimitSw = new DigitalInBBB(BBBPin.P8_12);
-            this.MotorCtrl = new TalonMC(MotorPWM, MOTOR_MAX_SPEED);
-            this.Limit = new LimitSwitch(LimitSw, false);
-            //this.Encoder = new Encoder(2, 3, 80);
-
-            this.Limit.SwitchToggle += this.EventTriggered;
-            //this.Encoder.Turned += this.EventTriggered;
+            BBBPinManager.AddMappingGPIO(BBBPin.P8_08, false, ResistorState.PULL_UP); // Limit Switch
         }
 
         public void EventTriggered(object Sender, EventArgs Event)
@@ -73,6 +65,15 @@ namespace Science.Systems
         { // TODO: What happens when it is already at the top? This likely won't toggle the switch...
 
             this.Initializing = true;
+
+            IPWMOutput MotorPWM = PWMBBB.PWMDevice2.OutputB;
+            IDigitalIn LimitSw = new DigitalInBBB(BBBPin.P8_08);
+            this.MotorCtrl = new TalonMC(MotorPWM, MOTOR_MAX_SPEED);
+            this.Limit = new LimitSwitch(LimitSw, false);
+            //this.Encoder = new Encoder(2, 3, 80);
+
+            this.Limit.SwitchToggle += this.EventTriggered;
+            //this.Encoder.Turned += this.EventTriggered;
 
             Timer TimeoutTrigger = new Timer() { Interval = INIT_TIMEOUT, AutoReset = false };
             TimeoutTrigger.Elapsed += this.EventTriggered;
@@ -128,7 +129,7 @@ namespace Science.Systems
         public void UpdateState()
         {
             this.Limit.UpdateState();
-            this.Encoder.UpdateState();
+            //this.Encoder.UpdateState();
             if (!this.InitDone)
             {
                 Log.Output(Log.Severity.WARNING, Log.Source.SUBSYSTEM, "Rail has not been initialized yet.");
