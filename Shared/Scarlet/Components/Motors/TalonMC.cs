@@ -45,10 +45,17 @@ namespace Scarlet.Components.Motors
                 NewSpeed = this.Filter.GetOutput();
             }
             if (this.Stopped) { NewSpeed = 0; }
-            if (NewSpeed > this.MaxSpeed) { NewSpeed = this.MaxSpeed; }
-            if (NewSpeed * -1 > this.MaxSpeed) { NewSpeed = this.MaxSpeed * -1; }
-
-            //Log.Output(Log.Severity.DEBUG, Log.Source.MOTORS, "Target: " + this.TargetSpeed + ", Filtered: " + SetSpeed);
+            if (NewSpeed > this.MaxSpeed)
+            {
+                NewSpeed = this.MaxSpeed;
+                Log.Output(Log.Severity.DEBUG, Log.Source.MOTORS, "Motor max speed exceeded. Capping.");
+            }
+            if (NewSpeed * -1 > this.MaxSpeed)
+            {
+                NewSpeed = this.MaxSpeed * -1;
+                Log.Output(Log.Severity.DEBUG, Log.Source.MOTORS, "Motor max speed exceeded. Capping.");
+            }
+            Log.Output(Log.Severity.DEBUG, Log.Source.MOTORS, "Target: " + this.TargetSpeed + ", Filtered: " + NewSpeed);
             this.PWMOut.SetOutput((NewSpeed / 2) + 0.5F);
         }
     }
