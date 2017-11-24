@@ -23,7 +23,8 @@ namespace Science
         private static string IP = Constants.DEFAULT_SERVER_IP;
         private static int PortTCP = Constants.DEFAULT_PORT_TCP;
         private static int PortUDP = Constants.DEFAULT_PORT_UDP;
-        public static BBBPinManager.ApplicationMode ApplyDevTree = BBBPinManager.ApplicationMode.APPLY_IF_NONE;
+        private static BBBPinManager.ApplicationMode ApplyDevTree = BBBPinManager.ApplicationMode.APPLY_IF_NONE;
+        private static Log.Severity LogLevel = Log.Severity.INFO;
 
         static void Main(string[] Args)
 		{
@@ -36,22 +37,20 @@ namespace Science
             Log.Begin();
             Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Science Station - Rover Side");
             Client.Start(IP, PortTCP, PortUDP, "SciRover");
-
             BeagleBone.Initialize(SystemMode.DEFAULT, true);
+
             IOHandler = new IOHandler();
-            IOHandler.InitializeSystems();
+            IOHandler.InitializeSystems(ApplyDevTree);
             ((Turntable)IOHandler.TurntableController).TargetAngle = 50;
 
             while (Console.KeyAvailable) { Console.ReadKey(); } // Clear previous keypresses
+            Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Press any key to exit.");
 
             while (!Console.KeyAvailable)
             {
                 IOHandler.UpdateStates();
                 Thread.Sleep(20);
             }
-
-            Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Press any key to exit.");
-            Console.ReadKey();
             Environment.Exit(0);
 		}
 
@@ -65,15 +64,25 @@ namespace Science
                     if (Args[i] == "-s" || Args[i] == "--server") { IP = Args[i + 1]; i++; }
                     if (Args[i] == "-pt" || Args[i] == "--port-tcp") { PortTCP = int.Parse(Args[i + 1]); i++; }
                     if (Args[i] == "-pu" || Args[i] == "--port-udp") { PortUDP = int.Parse(Args[i + 1]); i++; }
+                    if (Args[i] == "-l" || Args[i] == "--log")
+                    {
+                        if (Args[i + 1].Equals("DEBUG", StringComparison.OrdinalIgnoreCase)) { LogLevel = Log.Severity.DEBUG; i++; }
+                        else if (Args[i + 1].Equals("INFO", StringComparison.OrdinalIgnoreCase)) { LogLevel = Log.Severity.INFO; i++; }
+                        else if (Args[i + 1].Equals("WARNING", StringComparison.OrdinalIgnoreCase)) { LogLevel = Log.Severity.WARNING; i++; }
+                        else { Console.WriteLine("Unknown log level specified. Use 'DEBUG', 'INFO', or 'WARNING'."); i++; }
+                    }
                 }
                 // Single-part arguments
                 if(Args[i] == "-?" || Args[i] == "/?" || Args[i] == "-h" || Args[i] == "/h" || Args[i] == "help" || Args[i] == "-help" || Args[i] == "--help")
                 {
                     Console.WriteLine("Command-line paramters:");
                     Console.WriteLine("  -?|/?|-h|/h|help|-help|--help : Outputs this text.");
+                    Console.WriteLine("  -l|--log <Level> : Sets the default log level to 'DEBUG', 'INFO', or 'WARNING'.");
+                    Console.WriteLine(" Networking:");
                     Console.WriteLine("  -s|--server <IP> : Connects to the given server instead of the default.");
                     Console.WriteLine("  -pt|--port-tcp <Port> : Connects to the server via TCP using the given port instead of the default.");
                     Console.WriteLine("  -pu|--port-udp <Port> : Connects to the server via UDP using the given port instead of the default.");
+                    Console.WriteLine(" Device Tree (BBB):");
                     Console.WriteLine("  --no-dt : Do not attempt to remove/add device tree overlays.");
                     Console.WriteLine("  --replace-dt : Remove all Scarlet DT overlays, then apply the new one. DANGEROUS!");
                     Console.WriteLine("  --add-dt : Add device tree overlay even if there is one already.");

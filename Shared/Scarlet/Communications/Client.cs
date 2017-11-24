@@ -24,6 +24,8 @@ namespace Scarlet.Communications
 
         #region Private Variables
 
+        private const int TCP_CONNECTION_TIMEOUT = 2000; // Timeout (in ms) for TcpClient.BeginConnect()
+
         private static IPEndPoint ServerEndpointTCP; // Endpoints for TCP and UDP
         private static IPEndPoint ServerEndpointUDP;
         private static UdpClient ServerUDP; // TCP and UDP Clients
@@ -40,6 +42,7 @@ namespace Scarlet.Communications
         private static int ReceiveBufferSize; // Size of the receive buffer. Change this in Start() to receive larger packets
         private static int OperationPeriod; // The operation period (the higher this is, the longer the wait in between receiving/sending packets)
         private static bool Initialized; // Whether or not the client is initialized
+        private static bool StartedUp; // Whether or not the client has started (different from Initialized, because Initialize() invokes the startup prcoess)
         private static volatile bool StopProcesses; // If true, stops all threading processes
         private static bool HasDetectedDisconnect; // To be set if there is a send or receive error that would likely be caused by a disconnect.
         private static bool ThreadsStarted; // Whether or not the send/receive/process threads have started
@@ -98,15 +101,8 @@ namespace Scarlet.Communications
                 ReceiveThreadTCP = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
                 ReceiveThreadUDP = new Thread(new ParameterizedThreadStart(ReceiveFromSocket));
 
-                // Try to startup the client
-                try { Startup(); }
-                catch // If it can't, trigger a connection change event to false
-                {
-                    // Invoke a Client event for a connection change (to disconnected) using "Server", known per the Client specification
-                    ConnectionStatusChanged Event = new ConnectionStatusChanged() { StatusConnected = false, StatusEndpoint = "Server" };
-                    ConnectionChange(Name, Event);
-                }
-
+                // Initialize client for the first time on a new thread so that it doesn't block
+                new Thread(new ThreadStart(InitialStartup)).Start();
                 // Set the state of client to initialized.
                 Initialized = true;
             }
@@ -191,6 +187,24 @@ namespace Scarlet.Communications
         }
 
         /// <summary>
+        /// Initializes the client for the FIRST time.
+        /// Only call this method once.
+        /// </summary>
+        private static void InitialStartup()
+        {
+            if (StartedUp) { return; }
+            // Try to startup the client
+            try { Startup(); }
+            catch // If it can't, trigger a connection change event to false
+            {
+                // Invoke a Client event for a connection change (to disconnected) using "Server", known per the Client specification
+                ConnectionStatusChanged Event = new ConnectionStatusChanged() { StatusConnected = false, StatusEndpoint = "Server" };
+                ConnectionChange(Name, Event);
+            }
+            StartedUp = true;
+        }
+
+        /// <summary>
         /// Retries sending names to the
         /// server until the Watchdog Manager finds 
         /// watchdog ping again.
@@ -271,7 +285,12 @@ namespace Scarlet.Communications
         {
             // Initialize and connect to the UDP and TCP clients
             ServerTCP = new TcpClient();
-            ServerTCP.Connect(ServerEndpointTCP);
+            // Begin connection process
+            IAsyncResult TCPConnection = ServerTCP.BeginConnect(ServerEndpointTCP.Address, ServerEndpointTCP.Port, null, null);
+            // Wait for timeout period
+            bool Success = TCPConnection.AsyncWaitHandle.WaitOne(TCP_CONNECTION_TIMEOUT);
+            // Throw an exception if it could not connect in the given timeout
+            if (!Success) { ServerTCP.Close(); throw new SocketException(); }
             // These parameters help avoid double-buffering
             ServerTCP.NoDelay = true;                           // Sets the TCP Client to have send delay (i.e. stores no overflow bits in the buffer)
             ServerTCP.ReceiveBufferSize = ReceiveBufferSize;    // Sets the receive buffer size to the max buffer size
@@ -450,6 +469,9 @@ namespace Scarlet.Communications
         {
             // Sends the data as a byte array
             byte[] Data = UDPPacket.Data.GetRawData();
+            // Update the timestamp if it doesn't exist
+            if (UDPPacket.Data.Timestamp == null) { UDPPacket.UpdateTimestamp(); }
+            // Send the UDP data
             ServerUDP.Send(Data, Data.Length);
             // Returns true always, because there is no way to detect if a UDP
             // message is received
@@ -469,11 +491,13 @@ namespace Scarlet.Communications
             byte[] Data = TCPPacket.Data.GetRawData();
             // Set the TCP Send buffer to the size of the data to avoid double buffering
             ServerTCP.SendBufferSize = Data.Length;
+            // Update the timestamp if it doesn't exist
+            if (TCPPacket.Data.Timestamp == null) { TCPPacket.UpdateTimestamp(); }
             // Try to send the TCP data to the client
             try { ServerTCP.Client.Send(Data); }
             catch (Exception Exception) // Catch any exception, but return that the transmission has failed
             {
-                // Iff the client has not detected a possible disconnect log the exception
+                // If the client has not detected a possible disconnect log the exception
                 if (!HasDetectedDisconnect) { Log.Exception(Log.Source.NETWORK, Exception); }
                 // Reset the state of client to having detected a disconnect or network fault
                 HasDetectedDisconnect = true;
@@ -515,7 +539,7 @@ namespace Scarlet.Communications
                     }
                     catch (Exception Exception)
                     {
-                        if (IsConnected) // Log an exception iff the client is supposedly connected (so we don't bog down the console)
+                        if (IsConnected) // Log an exception if the client is supposedly connected (so we don't bog down the console)
                         {
                             Log.Output(Log.Severity.ERROR, Log.Source.NETWORK, "Failed to send packet. Check connection status.");
                             Log.Exception(Log.Source.NETWORK, Exception);
