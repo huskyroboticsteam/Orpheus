@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.16
+VisualStudioVersion = 15.0.26730.15
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Science Onboard", "Science Onboard\Science Onboard.csproj", "{D33A5CED-F246-4423-B237-DBE217B208DB}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -18,7 +18,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Science Library", "Science 
 		{EB8D6FE6-E3DD-4049-89A2-F636C6D70477} = {EB8D6FE6-E3DD-4049-89A2-F636C6D70477}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scarlet", "..\shared\Scarlet\Scarlet.csproj", "{EB8D6FE6-E3DD-4049-89A2-F636C6D70477}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scarlet", "..\..\Scarlet\Scarlet.csproj", "{EB8D6FE6-E3DD-4049-89A2-F636C6D70477}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
