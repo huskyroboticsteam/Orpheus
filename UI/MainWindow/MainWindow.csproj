@@ -55,6 +55,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="MockObservableMap.cs" />
+    <Compile Include="ProportionToDegree.cs" />
     <Compile Include="RoverView.xaml.cs">
       <DependentUpon>RoverView.xaml</DependentUpon>
     </Compile>

@@ -3,13 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:HuskyRoboticsUI"
+        xmlns:local="clr-namespace:HuskyRobotics.UI"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
-    <StackPanel>
-        <Label Content="Hello"/>
-        <Label Content="{Binding Properties[test].Value}"/>
-        <Label Content="{Binding Properties.Count}"/>
-        <Label Content="Hello"/>
-    </StackPanel>
+    <Grid>
+        <local:RoverView></local:RoverView>
+    </Grid>
 </Window>

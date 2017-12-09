@@ -11,6 +11,7 @@ namespace HuskyRobotics.UI
     public class MockObservableMap : ObservableMap<float>
     {
         private IList<string> fields = new List<string> {
+            "chasis/steeringAngle",
             "chasis/wheel1/steeringAngle",
             "chasis/wheel2/steeringAngle",
             "chasis/wheel3/steeringAngle",
@@ -35,7 +36,7 @@ namespace HuskyRobotics.UI
             var rad = new Random();
             foreach (string field in fields) {
                 var currentValue = ContainsKey(field) ? GetValue(field) : rad.NextDouble();
-                var newValue = Math.Min(Math.Max(currentValue + (rad.NextDouble() - .5) * .05, 0), 1);
+                var newValue = Math.Min(Math.Max(currentValue + (rad.NextDouble() - .5) * .1, 0), 1);
                 PutValue(field, (float) newValue);
             }
         }
