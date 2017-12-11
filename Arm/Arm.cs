@@ -5,6 +5,21 @@ using System.Drawing;
 
 namespace UseArm
 {
+
+    /*
+     * Basic arm construction:
+     * Arm a = new Arm((0, 0, -1.5f, 1.5f, 0, 0, 3), (0.78f, 3), (0, 0, -0.5f, 0.5f, 0, 0, 3), (0, 3));
+     * Creates an arm with 4 parts.
+     * First part: Cannot roll and cannot yaw. Goes between about -Pi / 2 and Pi / 2 in pitch. Length 3.
+     * Second part: Cannot roll and cannot yaw. Fixed at about Pi / 4 to the horizontal. Length 3.
+     * Third part: Cannot roll and cannot yaw. Goes between about -Pi / 6 and Pi / 6 in pitch. Length 3.
+     * Fourth part: Cannot roll and cannot yaw. Fixed parallel to the horizontal. Length 3. 
+     * 
+     * To move the arm somewhere. call MoveTo(X, Y, Z).
+     * To see what arm segment i should be turned to, check CurrentRolls[i], CurrentPitches[i],
+     * and CurrentYaws[i].
+     */
+
     public struct ArmPart
     {
         /*
@@ -55,6 +70,7 @@ namespace UseArm
             FixedAngle = 0.0f;
         }
 
+        // FixedAngle makes Yaw constant
         public ArmPart(float FixedAngle, float Length)
         {
             this.MinRoll = 0.0f;
@@ -104,52 +120,55 @@ namespace UseArm
 
     public class Arm
     {
-        ArmPart[] Params;
-        public float[] CurrentPitches { get; private set; }
         public float[] CurrentRolls { get; private set; }
+        public float[] CurrentPitches { get; private set; }
         public float[] CurrentYaws { get; private set; }
 
-        private float[] TempPitches;
+        private ArmPart[] Params;
+
         private float[] TempRolls;
+        private float[] TempPitches;
         private float[] TempYaws;
 
-        private float[] PitchSums;
         private float[] RollSums;
+        private float[] PitchSums;
         private float[] YawSums;
 
-        private (float, float) TransformPoint(float X, float Y)
+        //Takes an array of ArmParts (which can be conveniently constructed
+        //using tuples) and initializes the Arm. Following this constructor,
+        //CurrentPitches, CurrentRolls, and CurrentYaws will be initialized
+        //to random values close to 0. Randomization is needed because of 
+        //everything is 0, gradients will be 0 and nothing will be updated.
+        //This is a common technique in machine learning, particularly 
+        //neural networks.
+        public Arm(params ArmPart[] Parameters)
         {
-            const float SCALE = 10.0f;
-            const float CX = 100.0f;
-            const float CY = 100.0f;
-            return (X * SCALE + CX, 300 - (Y * SCALE + CY));
-        }
+            this.Params = Parameters;
+            this.CurrentRolls = new float[Parameters.Length];
+            this.CurrentPitches = new float[Parameters.Length];
+            this.CurrentYaws = new float[Parameters.Length];
 
-        //Draw is 2D and uses only Pitch
-        public void Draw(Graphics g)
-        {
-            float PrevX = 0;
-            float PrevY = 0;
-            float X = 0;
-            float Y = 0;
-            float AngleSum = 0.0f;
-            for (int i = 0; i < CurrentPitches.Length; i++)
+            Random r = new Random();
+            for (int i = 0; i < Params.Length; i++)
             {
-                AngleSum += CurrentPitches[i];
-                X += (float)(Params[i].Length * Math.Cos(AngleSum));
-                Y += (float)(Params[i].Length * Math.Sin(AngleSum));
-                var Trans1 = TransformPoint(PrevX, PrevY);
-                g.FillEllipse(Brushes.DarkRed, Trans1.Item1 - 3, Trans1.Item2 - 3, 6, 6);
-                var Trans2 = TransformPoint(X, Y);
-                g.DrawLine(Pens.Red, Trans1.Item1, Trans1.Item2, Trans2.Item1, Trans2.Item2);
-                PrevX = X;
-                PrevY = Y;
+                CurrentRolls[i] = (float)r.NextDouble() * 0.00001f;
+                CurrentPitches[i] = (float)r.NextDouble() * 0.00001f;
+                CurrentYaws[i] = (float)r.NextDouble() * 0.00001f;
             }
-            var Trans = TransformPoint(PrevX, PrevY);
-            g.FillEllipse(Brushes.DarkRed, Trans.Item1 - 3, Trans.Item2 - 3, 6, 6);
+
+            this.RollSums = new float[Parameters.Length];
+            this.PitchSums = new float[Parameters.Length];
+            this.YawSums = new float[Parameters.Length];
+
+            this.TempRolls = new float[Parameters.Length];
+            this.TempPitches = new float[Parameters.Length];
+            this.TempYaws = new float[Parameters.Length];
         }
 
-        private (float X, float Y, float Z) ForwardKinematics()
+
+        //Calculates the current position of the endpoint of the arm. Fills in
+        //the angle sum arrays which will be used for calculating gradient. 
+        private (float X, float Y, float Z) CalculatePosition()
         {
             float X = 0.0f;
             float Y = 0.0f;
@@ -174,6 +193,8 @@ namespace UseArm
             return (X, Y, Z);
         }
 
+        //Takes the target position, the current position, and the arm part
+        //whose gradient should be calculated. 
         private (float, float, float) CalcGrad(float TX, float TY, float TZ, float X, float Y, float Z, int i)
         {
             float RollY = 0.0f;
@@ -199,6 +220,8 @@ namespace UseArm
                     2 * YawX * (TX - X) - 2 * YawZ * (TZ - Z));
         }
 
+        //Takes an angle in radians and ensures it is between
+        //0 and 2 * PI
         private static float EnsureStandardForm(float Angle)
         {
             while (Angle < 0)
@@ -206,6 +229,9 @@ namespace UseArm
             return Angle % (float)(2 * Math.PI);
         }
 
+        //Moves the arm to the target X, Y, and Z. The angles of each
+        //arm part will be stored in CurrentRoll, CurrentPitch, and 
+        //CurrentYaw. 
         public void MoveTo(float X, float Y, float Z)
         {
             const float LearningRate = 0.0001f;
@@ -214,7 +240,7 @@ namespace UseArm
             {
                 if (Params[j].Fixed)
                 {
-                    var (CurX, CurY, CurZ) = ForwardKinematics();
+                    var (CurX, CurY, CurZ) = CalculatePosition();
                     float PrevSum = j > 0 ? PitchSums[j - 1] : 0;
                     CurrentPitches[j] = EnsureStandardForm((Params[j].FixedAngle - PrevSum));
                 }
@@ -222,7 +248,7 @@ namespace UseArm
                 {
                     for (int i = 0; i < Iterations; i++)
                     {
-                        var (CurX, CurY, CurZ) = ForwardKinematics();
+                        var (CurX, CurY, CurZ) = CalculatePosition();
                         //float Cost = (CurX - X) * (CurX - X) + (CurY - Y) * (CurY - Y) + (CurZ - Z) * (CurZ - Z);
                         var (GradRoll, GradPitch, GradYaw) = CalcGrad(X, Y, Z, CurX, CurY, CurZ, j);
 
@@ -233,12 +259,6 @@ namespace UseArm
                         TempRolls[j] = CurrentRolls[j] - GradRoll;
                         TempPitches[j] = CurrentPitches[j] - GradPitch;
                         TempYaws[j] = CurrentYaws[j] - GradYaw;
-
-                        /*
-                        Console.WriteLine("GradRoll:  " + GradRoll);
-                        Console.WriteLine("GradPitch: " + GradPitch);
-                        Console.WriteLine("GradYaw:   " + GradYaw);
-                        */
 
                         float[] tmp = CurrentRolls;
                         CurrentRolls = TempRolls;
@@ -256,35 +276,7 @@ namespace UseArm
                 CurrentRolls[j] = Math.Max(Math.Min(CurrentRolls[j], Params[j].MaxRoll), Params[j].MinRoll);
                 CurrentPitches[j] = Math.Max(Math.Min(CurrentPitches[j], Params[j].MaxPitch), Params[j].MinPitch);
                 CurrentYaws[j] = Math.Max(Math.Min(CurrentYaws[j], Params[j].MaxYaw), Params[j].MinYaw);
-
-                for (int k = 0; k < CurrentRolls.Length; k++)
-                    Console.WriteLine($"({CurrentRolls[k]}, {CurrentPitches[k]}, {CurrentYaws[k]})");
-                Console.WriteLine();
             }
-        }
-
-        public Arm(params ArmPart[] Parameters)
-        {
-            this.Params = Parameters;
-            this.CurrentRolls = new float[Parameters.Length];
-            this.CurrentPitches = new float[Parameters.Length];
-            this.CurrentYaws = new float[Parameters.Length];
-
-            Random r = new Random();
-            for (int i = 0; i < Params.Length; i++)
-            {
-                CurrentRolls[i] = (float)r.NextDouble() * 0.00001f;
-                CurrentPitches[i] = (float)r.NextDouble() * 0.00001f;
-                CurrentYaws[i] = (float)r.NextDouble() * 0.00001f;
-            }
-
-            this.RollSums = new float[Parameters.Length];
-            this.PitchSums = new float[Parameters.Length];
-            this.YawSums = new float[Parameters.Length];
-
-            this.TempRolls = new float[Parameters.Length];
-            this.TempPitches = new float[Parameters.Length];
-            this.TempYaws = new float[Parameters.Length];
         }
     }
 }
