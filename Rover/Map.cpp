@@ -1,21 +1,26 @@
-#include <vector>
+#include "Map.h"
+#include <queue>
+#include <cmath>
 
-namespace RoverPathfinding
+void RoverPathFinding::Map::AddObstacle(float lat, float lng)
 {
-    namespace
-    {
-	struct edge
-	{
-	    float to;
-	    float from;
-	};
-    }
+}
 
-    class Map
+static std::pair<float, float> lat_long_offset(float lat, float lng, float dx, float dy)
+{
+    #define PI 3.14159265359
+    #define R_EARTH 
+    #undef PI    
+}
+
+std::vector<std::pair<float, float> > RoverPathFinding::Map::ShortestPathTo(float cur_lat, float cur_long,
+									    float tar_lat, float tar_long)
+{
+    std::vector<edge> edges;
+    std::vector<std::pair<float, float> > nodes;
+    for(auto obst : obstacles)
     {
-    public:
 	
-    private:
-	std::vector<edge> edges;
-    };
+    }
+//    std::priority_queue<
 }
