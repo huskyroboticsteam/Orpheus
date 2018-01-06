@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Utilities
+namespace HuskyRobotics.Utilities
 {
     public class MapConversion
     {
