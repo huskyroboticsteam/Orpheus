@@ -32,7 +32,8 @@ namespace HuskyRobotics.Utilities
             if (dictionary.ContainsKey(key))
             {
                 dictionary[key].Value = value;
-            } else
+            }
+            else
             {
                 dictionary[key] = new MeasuredValue<T>(value);
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Count"));
