@@ -46,6 +46,5 @@ namespace RoverPathfinding
 
 	std::vector<node> nodes;
 	std::vector<obstacle> obstacles;
-	std::vector<int> safety_nodes;
     };
 }
