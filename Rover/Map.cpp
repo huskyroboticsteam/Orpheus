@@ -261,10 +261,7 @@ std::vector<std::pair<float, float> > RoverPathfinding::Map::ShortestPathTo(floa
 	    }
 	}
     }
-
-    node *arr = &nodes[0];
-    int size = nodes.size();
-    nodes[0].prev = -1;
+    
     std::vector<std::pair<float, float> > result;
     int i = 1;
     while(i != 0)
