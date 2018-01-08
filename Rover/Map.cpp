@@ -118,71 +118,67 @@ bool RoverPathfinding::Map::within_radius(point p1, point p2, float R)
     return(dist_sq(p1, p2) <= R * R);
 }
 
-void RoverPathfinding::Map::add_edge(node *n1, node *n2)
+void RoverPathfinding::Map::add_edge(int n1, int n2)
 {
-    float dist = dist_sq(n1->coord, n2->coord);
+    float dist = dist_sq(nodes[n1].coord, nodes[n2].coord);
     
-    auto n1_to_n2 = std::make_pair(n2->id, dist);
-    n1->connection.push_back(n1_to_n2);
+    auto n1_to_n2 = std::make_pair(n2, dist);
+    nodes[n1].connection.push_back(n1_to_n2);
 
-    auto n2_to_n1 = std::make_pair(n1->id, dist);
-    n2->connection.push_back(n2_to_n1);   
+    auto n2_to_n1 = std::make_pair(n1, dist);
+    nodes[n2].connection.push_back(n2_to_n1);   
 }
 
-RoverPathfinding::node *RoverPathfinding::Map::create_node(std::vector<node> &nodes, point coord)
+int RoverPathfinding::Map::create_node(point coord)
 {
     node n;
-    n.id = node_count++;
     n.prev = -1;
     n.dist_to = INFINITY;
     n.coord = coord;
-    nodes[n.id] = n;
-    return(&nodes[n.id]);
+    nodes.push_back(n);
+    return(nodes.size() - 1);
 }
 
 std::vector<RoverPathfinding::node> RoverPathfinding::Map::build_graph(point cur, point tar)
 {
-    std::vector<node> nodes(256);
-    std::queue<node *> q;
-    node_count = 0;
+    std::queue<int> q;
     
     node start;
-    start.id = node_count++;;
-    start.prev = -1;
-    start.dist_to = 0.0f;
-    start.coord = cur;
-    nodes[start.id] = start;
+    for(auto &n : nodes)
+    {
+	n.dist_to = INFINITY;
+	n.connection.clear();
+    }
 
-    node end;
-    end.id = node_count++;
-    end.prev = -1;
-    end.dist_to = INFINITY;
-    end.coord = tar;
-    nodes[end.id] = end;
+    nodes[0].prev = -1;
+    nodes[0].dist_to = 0.0f;
+    nodes[0].coord = cur;
+
+    nodes[1].coord = tar;
 
     if(obstacles.empty())
     {
-	add_edge(&nodes[0], &nodes[1]);
+	add_edge(0, 1);
 	return(nodes);
     }
 
-    q.push(&nodes[0]);
+    q.push(0);
     while(!q.empty())
     {
-	node *curr_node = q.front();
+	int curr_node = q.front();
 	q.pop();
 	for(auto obst : obstacles)
 	{
-	    if(segments_intersect(curr_node->coord, obst.coord1, tar, obst.coord2))
+	    if(segments_intersect(nodes[curr_node].coord, obst.coord1, tar, obst.coord2))
 	    {
 		//TODO(sasha): make R a constant - the following few lines are just a hack
 		//             to get R to be in lat/lng units
-		auto offset = lat_long_offset(curr_node->coord.first, curr_node->coord.second, 0.5f, 0.0f);
-		auto diff = std::make_pair(offset.first - curr_node->coord.first, offset.second - curr_node->coord.second);
+		auto offset = lat_long_offset(nodes[curr_node].coord.first, nodes[curr_node].coord.second, 0.5f, 0.0f);
+		auto diff = std::make_pair(offset.first - nodes[curr_node].coord.first, offset.second - nodes[curr_node].coord.second);
 		float R = sqrt(diff.first * diff.first + diff.second * diff.second);
 		//</hack>
 		
-		node *n1, *n2;
+		int n1, n2; 
 		if(!obst.marked)
 		{
 		    obst.marked = true;
@@ -193,40 +189,36 @@ std::vector<RoverPathfinding::node> RoverPathfinding::Map::build_graph(point cur
 
 		    //TODO(sasha): if this is too slow, use a partitioning scheme to only check against
 		    //             nodes in the vicinity
-		    for(int safety : this->safety_nodes)
+		    for(int safety = 2; safety < nodes.size(); safety++)
 		    {
 			node &n = nodes[safety];
 			if(within_radius(n.coord, new_points.first, R))
 			{
 			    create_n1 = false;
-			    n1 = &n;
+			    n1 = safety;
 			}
 			if(within_radius(n.coord, new_points.second, R))
 			{
 			    create_n2 = false;
-			    n2 = &n;
+			    n2 = safety;
 			}
 		    }
 
 		    if(create_n1)
-		    {
-			n1 = create_node(nodes, new_points.first);
-			this->safety_nodes.push_back(n1->id);
-		    }
+			n1 = create_node(new_points.first);
 		    add_edge(curr_node, n1);
 
 		    if(create_n2)
-		    {
-			n2 = create_node(nodes, new_points.second);
-			this->safety_nodes.push_back(n2->id);
-		    }
+			n2 = create_node(new_points.second);
+		    
 		    add_edge(curr_node, n2);
-		    obst.safety_nodes = std::make_pair(n1->id, n2->id);
+		    
+		    obst.safety_nodes = std::make_pair(n1, n2);
 		}
 		else
 		{
-		    n1 = &nodes[obst.safety_nodes.first];
-		    n2 = &nodes[obst.safety_nodes.second];
+		    n1 = obst.safety_nodes.first;
+		    n2 = obst.safety_nodes.second;
 		    add_edge(curr_node, n1);
 		    add_edge(curr_node, n2);
 		}
@@ -236,7 +228,7 @@ std::vector<RoverPathfinding::node> RoverPathfinding::Map::build_graph(point cur
 	    }
 	    else
 	    {
-		add_edge(curr_node, &nodes[1]);
+		add_edge(curr_node, 1);
 	    }
 	}
     }
@@ -250,22 +242,22 @@ std::vector<std::pair<float, float> > RoverPathfinding::Map::ShortestPathTo(floa
     auto cur = std::make_pair(cur_lat, cur_lng);
     auto tar = std::make_pair(tar_lat, tar_lng);
     std::vector<node> nodes = build_graph(cur, tar);
-    auto cmp = [](node *l, node *r) { return l->dist_to < r->dist_to; };
-    std::priority_queue<node *, std::vector<node *>, decltype(cmp)> q(cmp);
-    q.push(&nodes[0]);
+    auto cmp = [nodes](int l, int r) { return nodes[l].dist_to < nodes[r].dist_to; };
+    std::priority_queue<int, std::vector<int>, decltype(cmp)> q(cmp);
+    q.push(0);
     while(!q.empty())
     {
-	node *n = q.top();
+	int n = q.top();
 	q.pop();
 
-	for(auto &edge : n->connection)
+	for(auto &edge : nodes[n].connection)
 	{
-	    float dist = n->dist_to + edge.second;
+	    float dist = nodes[n].dist_to + edge.second;
 	    if(dist < nodes[edge.first].dist_to)
 	    {
-		nodes[edge.first].prev = n->id;
+		nodes[edge.first].prev = n;
 		nodes[edge.first].dist_to = dist;
-		q.push(&nodes[edge.first]);
+		q.push(edge.first);
 	    }
 	}
     }
