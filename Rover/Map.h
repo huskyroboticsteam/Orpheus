@@ -10,6 +10,8 @@ namespace RoverPathfinding
 	struct node
 	{
 	    int id;
+	    int prev;
+	    float dist_to;
 	    std::pair<float, float> coord;
 	    std::vector<std::pair<int, float> > connection;
 	};

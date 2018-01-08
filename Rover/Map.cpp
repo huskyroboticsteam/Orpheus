@@ -1,6 +1,7 @@
 #include "Map.h"
 #include <queue>
 #include <cmath>
+#include <algorithm>
 
 void RoverPathfinding::Map::AddObstacle(point coord1, point coord2)
 {
@@ -16,7 +17,7 @@ std::pair<float, float> lat_long_offset(float lat, float lng, float dx, float dy
 #define PI 3.14159265359
 #define R_EARTH 
 #undef PI
-    return(std::make_pair(0, 0));
+    return(std::make_pair(lat + dx, lat + dy));
 }
 
 
@@ -129,6 +130,8 @@ RoverPathfinding::node &RoverPathfinding::create_node(std::vector<node> &nodes, 
 {
     node n;
     n.id = nodes.size();
+    n.prev = -1;
+    n.dist_to = INFINITY;
     n.coord = coord;
     nodes.push_back(n);
     return(nodes[n.id]);
@@ -141,12 +144,16 @@ std::vector<RoverPathfinding::node> RoverPathfinding::Map::build_graph(point cur
     
     node start;
     start.id = 0;
+    start.prev = -1;
+    start.dist_to = 0.0f;
     start.coord = cur;
     nodes.push_back(start);
     q.push(&nodes[0]);
 
     node end;
     end.id = 1;
+    end.prev = -1;
+    end.dist_to = INFINITY;
     end.coord = tar;
     nodes.push_back(end);
     
@@ -226,12 +233,41 @@ std::vector<RoverPathfinding::node> RoverPathfinding::Map::build_graph(point cur
     return(nodes);
 }
 
+//TODO(sasha): Find heuristics and upgrade to A*
 std::vector<std::pair<float, float> > RoverPathfinding::Map::ShortestPathTo(float cur_lat, float cur_lng,
 									    float tar_lat, float tar_lng)
 {
     auto cur = std::make_pair(cur_lat, cur_lng);
     auto tar = std::make_pair(tar_lat, tar_lng);
     std::vector<node> nodes = build_graph(cur, tar);
+    auto cmp = [](node *l, node *r) { return l->dist_to < r->dist_to; };
+    std::priority_queue<node *, std::vector<node *>, decltype(cmp)> q(cmp);
+    q.push(&nodes[0]);
+    while(!q.empty())
+    {
+	node *n = q.top();
+	q.pop();
+
+	for(auto &edge : n->connection)
+	{
+	    float dist = n->dist_to + edge.second;
+	    if(dist < nodes[edge.first].dist_to)
+	    {
+		edge.second = dist;
+		nodes[edge.first].prev = n->id;
+		q.push(&nodes[edge.first]);
+	    }
+	}
+    }
+
     std::vector<std::pair<float, float> > result;
+    int i = 1;
+    while(i != 0)
+    {
+	node &n = nodes[i];
+	result.push_back(n.coord);
+	i = n.prev;
+    }
+    std::reverse(result.begin(), result.end());
     return(result);
 }
