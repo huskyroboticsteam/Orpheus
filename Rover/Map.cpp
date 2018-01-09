@@ -34,7 +34,8 @@ RoverPathfinding::point RoverPathfinding::Map::lat_long_offset(float lat1, float
 //start, end, circle, and R are in lat/long coordinates
 bool RoverPathfinding::Map::segment_circle_intersection(point start,
 							point end,
-							point circle)
+							point circle,
+							float R)
 {
 
     //TODO(sasha): make R a constant - the following few lines are just a hack
