@@ -20,7 +20,8 @@ namespace RoverPathfinding
 	    bool marked;
 	    std::pair<float, float> coord1;
 	    std::pair<float, float> coord2;
-	    std::pair<int, int> safety_nodes;
+	    std::pair<int, int> side_safety_nodes;
+	    int center_safety_node;
 	};
     }
 
@@ -40,7 +41,9 @@ namespace RoverPathfinding
 	int orientation(point p, point q, point r);
 	bool on_segment(point p, point q, point r);
 	bool segments_intersect(point p1, point p2, point q1, point q2);
+	point lat_long_offset(float lat1, float lon1, float brng, float dist);
 	std::pair<point, point> add_length_to_line_segment(point p, point q, float length);
+	point center_point_with_radius(point cur, point p, point q, float R);
 	float dist_sq(point p1, point p2);
 	bool within_radius(point p1, point p2, float R);
 
