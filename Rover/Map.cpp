@@ -38,13 +38,6 @@ bool RoverPathfinding::Map::segment_circle_intersection(point start,
 							float R)
 {
 
-    //TODO(sasha): make R a constant - the following few lines are just a hack
-    //             to get R to be in lat/lng units
-    auto offset = lat_long_offset(circle.first, circle.second, 0.5f, 0.0f);
-    auto diff = std::make_pair(offset.first - circle.first, offset.second - circle.second);
-    float R = sqrt(diff.first * diff.first + diff.second * diff.second);
-    //</hack>
-    
     auto direction = std::make_pair(end.first - start.first,
 				    end.second - start.second);
     auto center_to_start = std::make_pair(start.first - circle.first,
@@ -108,6 +101,30 @@ bool RoverPathfinding::Map::segments_intersect(point p1, point p2, point q1, poi
 	return(true);
  
     return(false);
+}
+
+RoverPathfinding::point RoverPathfinding::Map::intersection(RoverPathfinding::point A, RoverPathfinding::point B, RoverPathfinding::point C, RoverPathfinding::point D)
+{
+    // Line AB represented as a1x + b1y = c1
+    float a1 = B.second - A.second;
+    float b1 = A.first - B.first;
+    float c1 = a1*(A.first) + b1*(A.second);
+ 
+    // Line CD represented as a2x + b2y = c2
+    float a2 = D.second - C.second;
+    float b2 = C.first - D.first;
+    float c2 = a2*(C.first)+ b2*(C.second);
+ 
+    float determinant = a1*b2 - a2*b1;
+
+    // The lines are parallel. This is simplified
+    // by returning a pair of FLT_MAX
+    if (-1e-7 <= determinant && determinant <= 1e-7)
+        return(std::make_pair(INFINITY, INFINITY));
+    
+    float x = (b2*c1 - b1*c2)/determinant;
+    float y = (a1*c2 - a2*c1)/determinant;
+    return(std::make_pair(x, y));
 }
 
 std::pair<RoverPathfinding::point, RoverPathfinding::point> RoverPathfinding::Map::add_length_to_line_segment(point p, point q, float length)
@@ -212,65 +229,79 @@ std::vector<RoverPathfinding::node> RoverPathfinding::Map::build_graph(point cur
 	int curr_node = q.front();
 	q.pop();
 	bool destination_blocked = false;
-	for(auto &obst : obstacles)
+	int closest_obst;
+	float min_dist = INFINITY;
+	for(int i = 0; i < obstacles.size(); i++)
 	{
+	    auto &obst = obstacles[i];
 	    if(segments_intersect(nodes[curr_node].coord, obst.coord1, tar, obst.coord2))
 	    {
 		destination_blocked = true;
-		int n1, n2; 
-		if(!obst.marked)
+		point inters = intersection(nodes[curr_node].coord, tar, obst.coord1, obst.coord2);
+		float dist = dist_sq(nodes[curr_node].coord, inters);
+		if(dist < min_dist)
 		{
-		    obst.marked = true;
-		    auto new_points = add_length_to_line_segment(obst.coord1, obst.coord2, R);
-		    
-		    bool create_n1 = true;
-		    bool create_n2 = true;
-
-		    //TODO(sasha): if this is too slow, use a partitioning scheme to only check against
-		    //             nodes in the vicinity
-		    for(int safety = 2; safety < nodes.size(); safety++)
-		    {
-			node &n = nodes[safety];
-			if(within_radius(n.coord, new_points.first, R))
-			{
-			    create_n1 = false;
-			    n1 = safety;
-			}
-			if(within_radius(n.coord, new_points.second, R))
-			{
-			    create_n2 = false;
-			    n2 = safety;
-			}
-		    }
-
-		    if(create_n1)
-			n1 = create_node(new_points.first);
-
-		    if(create_n2)
-			n2 = create_node(new_points.second);		   
-		    
-		    obst.side_safety_nodes = std::make_pair(n1, n2);
-
-		    point center_coord = center_point_with_radius(nodes[curr_node].coord, new_points.first, new_points.second, R);
-		    obst.center_safety_node = create_node(center_coord);
-		    add_edge(curr_node, obst.center_safety_node);
-		    add_edge(n1, obst.center_safety_node);
-		    add_edge(n2, obst.center_safety_node);
+		    min_dist = dist;
+		    closest_obst = i;
 		}
-		else
-		{
-		    n1 = obst.side_safety_nodes.first;
-		    n2 = obst.side_safety_nodes.second;
-		}
-
-		add_edge(curr_node, n1);
-		add_edge(curr_node, n2);
-
-		q.push(n1);
-		q.push(n2);
-	    }
+	    }	    
 	}
-	if(!destination_blocked)
+	if(destination_blocked)
+	{
+	    auto &obst = obstacles[closest_obst];
+	    int n1, n2; 
+	    if(!obst.marked)
+	    {
+		obst.marked = true;
+		auto new_points = add_length_to_line_segment(obst.coord1, obst.coord2, R);
+		    
+		bool create_n1 = true;
+		bool create_n2 = true;
+
+		//TODO(sasha): if this is too slow, use a partitioning scheme to only check against
+		//             nodes in the vicinity
+		for(int safety = 2; safety < nodes.size(); safety++)
+		{
+		    node &n = nodes[safety];
+		    if(within_radius(n.coord, new_points.first, R))
+		    {
+			create_n1 = false;
+			n1 = safety;
+		    }
+		    if(within_radius(n.coord, new_points.second, R))
+		    {
+			create_n2 = false;
+			n2 = safety;
+		    }
+		}
+
+		if(create_n1)
+		    n1 = create_node(new_points.first);
+
+		if(create_n2)
+		    n2 = create_node(new_points.second);		   
+		    
+		obst.side_safety_nodes = std::make_pair(n1, n2);
+
+		point center_coord = center_point_with_radius(nodes[curr_node].coord, new_points.first, new_points.second, R);
+		obst.center_safety_node = create_node(center_coord);
+		add_edge(curr_node, obst.center_safety_node);
+		add_edge(n1, obst.center_safety_node);
+		add_edge(n2, obst.center_safety_node);
+	    }
+	    else
+	    {
+		n1 = obst.side_safety_nodes.first;
+		n2 = obst.side_safety_nodes.second;
+	    }
+
+	    add_edge(curr_node, n1);
+	    add_edge(curr_node, n2);
+
+	    q.push(n1);
+	    q.push(n2);
+	}
+	else
 	{
 	    add_edge(curr_node, 1);
 	}		    
@@ -286,6 +317,7 @@ std::vector<std::pair<float, float> > RoverPathfinding::Map::ShortestPathTo(floa
     auto tar = std::make_pair(tar_lat, tar_lng);
     std::vector<node> nodes = build_graph(cur, tar);
 
+#if 0
     for(int i = 0; i < nodes.size(); i++)
     {
 	std::cout << "Node " << i << " at (" << nodes[i].coord.first << ", " << nodes[i].coord.second << ") connected to: " << std::endl << '\t';
@@ -293,6 +325,7 @@ std::vector<std::pair<float, float> > RoverPathfinding::Map::ShortestPathTo(floa
 	    std::cout << con.first << ' ';
 	std::cout << std::endl;
     }
+#endif
     
     auto cmp = [nodes](int l, int r) { return nodes[l].dist_to < nodes[r].dist_to; };
     std::priority_queue<int, std::vector<int>, decltype(cmp)> q(cmp);

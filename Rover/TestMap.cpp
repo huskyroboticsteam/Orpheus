@@ -6,6 +6,7 @@ int main(void)
 {
     RoverPathfinding::Map m;
     m.AddObstacle(std::make_pair(-4.0f, 5.0f), std::make_pair(4.0f, 5.0f));
+    m.AddObstacle(std::make_pair(-4.0f, 6.0f), std::make_pair(4.0f, 6.0f));
     m.AddObstacle(std::make_pair(1.0f, 7.0f), std::make_pair(3.0f, 10.0f));
 //    m.AddObstacle(std::make_pair(-1.0f, 7.0f), std::make_pair(-3.0f, 10.0f));
     
