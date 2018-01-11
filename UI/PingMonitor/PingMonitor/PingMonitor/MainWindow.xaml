@@ -1,0 +1,28 @@
+﻿<Window x:Class="PingMonitor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PingMonitor"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525">
+    <!-- I'm using DockPanels here simply because I like them, other layouts work fine -->
+    <DockPanel>
+        <DockPanel DockPanel.Dock="Top">
+            <Button Content="Add Address" Click="AddAddress" DockPanel.Dock="Right" />
+            <TextBox Name="AddressInput" KeyDown="AddressInput_KeyDown" />
+            <!-- DockPanels will stretch out the last item in them -->
+        </DockPanel>
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Margin="4">
+            <TextBlock Text="Connections: " />
+            <TextBlock Text="{Binding PingResults.Count}" />
+        </StackPanel>
+        <!-- DataGrid will generate columns based on the properties of it's rows by default -->
+        <DataGrid ItemsSource="{Binding PingResults}" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Address}" Header="Address" />
+                <DataGridTextColumn Binding="{Binding ResponseTimeMs}" Header="Response Time (ms)" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
+</Window>
