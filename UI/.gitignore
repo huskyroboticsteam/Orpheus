@@ -1,3 +1,4 @@
+#macOS system files
 **/.DS_Store
 
 # Science: Visual Studio
@@ -6,6 +7,9 @@
 *.suo
 **/.vs
 *.pdb
+
+#Don't include library binaries
+/Libraries/
 
 # Scarlet: Logs
 **/Logs
