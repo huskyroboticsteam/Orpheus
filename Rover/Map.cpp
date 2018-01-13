@@ -3,6 +3,9 @@
 #include <cmath>
 #include <algorithm>
 
+#define R_EARTH 6371.0088 // in km
+#define PI 3.14159265359
+
 void RoverPathfinding::Map::AddObstacle(point coord1, point coord2)
 {
     obstacle o;
@@ -12,30 +15,37 @@ void RoverPathfinding::Map::AddObstacle(point coord1, point coord2)
     obstacles.push_back(o);
 }
 
+
+float deg_to_rad(float deg)
+{
+    return(deg * PI / 180.0f);
+}
+
+float rad_to_deg(float rad)
+{
+    return(rad * 180.0f / PI);
+}
+
 // given lat, long, bearing (in degrees), and distance (in km), returns a new point
 RoverPathfinding::point RoverPathfinding::Map::lat_long_offset(float lat1, float lon1, float brng, float dist)
 {
     dist /= 1000.0f;
-#define PI 3.14159265359
-#define R_EARTH 6371.0088 // in km
-    lat1 = lat1 * (PI / 180); // into radians
-    lon1 = lon1 * (PI / 180); // rad
-    brng = brng * (PI / 180); // rad    
+
+    lat1 = deg_to_rad(lat1);
+    lon1 = deg_to_rad(lon1);
+    brng = deg_to_rad(brng);
     float lat2 = asin(sin(lat1) * cos(dist / R_EARTH) + cos(lat1) * sin(dist / R_EARTH) * cos(brng));
     float lon2 = lon1 + atan2(sin(brng) * sin(dist / R_EARTH) * cos(lat1), cos(dist / R_EARTH) - sin(lat1) * sin(lat2));
-    lat2 = lat2 * (180 / PI); // into degrees
-    lon2 = lon2 * (180 / PI); // deg
-#undef PI
-#undef R_EARTH
+    lat2 = rad_to_deg(lat2);
+    lon2 = rad_to_deg(lon2);
     return(std::make_pair(lat2, lon2));
-
 }
 
 //start, end, circle, and R are in lat/long coordinates
-bool RoverPathfinding::Map::segment_circle_intersection(point start,
-							point end,
-							point circle,
-							float R)
+bool RoverPathfinding::Map::segment_intersects_circle(point start,
+						      point end,
+						      point circle,
+						      float R)
 {
 
     auto direction = std::make_pair(end.first - start.first,
@@ -59,6 +69,9 @@ bool RoverPathfinding::Map::segment_circle_intersection(point start,
     return((0 <= t1 && t1 <= 1.0f) || (0 <= t2 && t2 <= 1.0f));	
 }
 
+#define COLINEAR 0
+#define CLOCKWISE 1
+#define COUNTERCLOCKWISE 2
 //Returns 0 if p, q, and r are colinear.
 //Returns 1 if pq, qr, and rp are clockwise
 //Returns 2 if pq, qr, and rp are counterclockwise
@@ -67,11 +80,12 @@ int RoverPathfinding::Map::orientation(point p, point q, point r)
     float v = (q.second - p.second) * (r.first - q.first) -
 	(q.first - p.first) * (r.second - q.second);
     if(-1e-7 <= v && v <= 1e-7)
-	return 0;
+	return COLINEAR;
 
-    return((v > 0.0f) ? 1 : 2);
+    return((v > 0.0f) ? CLOCKWISE : COUNTERCLOCKWISE);
 }
 
+//Tells if r is on segment pq
 bool RoverPathfinding::Map::on_segment(point p, point q, point r)
 {
     return(q.first <= std::max(p.first, r.first) && q.first >= std::min(p.first, r.first) &&
@@ -130,15 +144,16 @@ RoverPathfinding::point RoverPathfinding::Map::intersection(RoverPathfinding::po
 std::pair<RoverPathfinding::point, RoverPathfinding::point> RoverPathfinding::Map::add_length_to_line_segment(point p, point q, float length)
 {
     point pq = std::make_pair(q.first - p.first, q.second - p.second); //vector
-    float len = sqrt(pq.first * pq.first + pq.second * pq.second);
-    pq.first = length * pq.first / len;
-    pq.second = length * pq.second / len;
+    float pq_len = sqrt(pq.first * pq.first + pq.second * pq.second);
+    pq.first = length * pq.first / pq_len;
+    pq.second = length * pq.second / pq_len;
 
     point p1 = std::make_pair(q.first + pq.first, q.second + pq.second);
     point p2 = std::make_pair(p.first - pq.first, p.second - pq.second);
     return(std::make_pair(p1, p2));   
 }
 
+//Returns a point in the center of segment pq and then moves it R towards cur
 RoverPathfinding::point RoverPathfinding::Map::center_point_with_radius(RoverPathfinding::point cur, RoverPathfinding::point p, RoverPathfinding::point q, float R)
 {
     point vec = std::make_pair(-p.second + q.second, p.first - q.first);
@@ -147,12 +162,12 @@ RoverPathfinding::point RoverPathfinding::Map::center_point_with_radius(RoverPat
     vec.second = vec.second * R / len;
     point result = std::make_pair((p.first + q.first) / 2.0f, (p.second + q.second) / 2.0f);
     int o = orientation(cur, p, q);
-    if(o == 1)
+    if(o == CLOCKWISE)
     {
 	result.first += vec.first;
 	result.second += vec.second;
     }
-    else //o is 2
+    else //o is COUNTERCLOCKWISE
     {
 	result.first -= vec.first;
 	result.second -= vec.second;
@@ -193,8 +208,6 @@ int RoverPathfinding::Map::create_node(point coord)
 
 std::vector<RoverPathfinding::node> RoverPathfinding::Map::build_graph(point cur, point tar)
 {
-    std::queue<int> q;
-
     //TODO(sasha): make R a constant - the following few lines are just a hack
     //             to get R to be in lat/lng units
 #define R_METERS 0.5f
@@ -223,11 +236,12 @@ std::vector<RoverPathfinding::node> RoverPathfinding::Map::build_graph(point cur
 	return(nodes);
     }
 
-    q.push(0);
-    while(!q.empty())
+    std::queue<int> unprocessed_nodes;
+    unprocessed_nodes.push(0);
+    while(!unprocessed_nodes.empty())
     {
-	int curr_node = q.front();
-	q.pop();
+	int curr_node = unprocessed_nodes.front();
+	unprocessed_nodes.pop();
 	bool destination_blocked = false;
 	int closest_obst;
 	float min_dist = INFINITY;
@@ -298,8 +312,8 @@ std::vector<RoverPathfinding::node> RoverPathfinding::Map::build_graph(point cur
 	    add_edge(curr_node, n1);
 	    add_edge(curr_node, n2);
 
-	    q.push(n1);
-	    q.push(n2);
+	    unprocessed_nodes.push(n1);
+	    unprocessed_nodes.push(n2);
 	}
 	else
 	{
