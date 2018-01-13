@@ -1,10 +1,7 @@
 ﻿using HuskyRobotics.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace HuskyRobotics.UI
 {
@@ -22,25 +19,23 @@ namespace HuskyRobotics.UI
 
         public MockObservableMap()
         {
-            updateValues();
-            updater = new Timer(updateValues, null, 400, 400);
+            UpdateValues();
+            updater = new Timer(UpdateValues, null, 400, 400);
         }
         
-        private void updateValues()
+        private void UpdateValues()
         {
-            updateValues(null);
+            UpdateValues(null);
         }
 
-        private void updateValues(object state)
+        private void UpdateValues(object state) 
         {
-            var rad = new Random();
+            Random rad = new Random();
             foreach (string field in fields) {
                 var currentValue = ContainsKey(field) ? GetValue(field) : rad.NextDouble();
                 var newValue = Math.Min(Math.Max(currentValue + (rad.NextDouble() - .5) * .1, 0), 1);
-                PutValue(field, (float) newValue);
+                PutValue(field, (float)newValue);
             }
         }
-
-
     }
 }
