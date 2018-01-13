@@ -41,7 +41,7 @@ namespace HuskyRobotics.UI
             {
                 var process = new Process();
                 process.StartInfo.FileName = puttyPath;
-                process.StartInfo.Arguments = "-ssh ethshea@attu.cs.washington.edu";
+                process.StartInfo.Arguments = "-ssh root@192.168.0.50";
                 process.Start();
             } else
             {
