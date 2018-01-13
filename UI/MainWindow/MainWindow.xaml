@@ -5,8 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HuskyRobotics.UI"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        <local:RoverView></local:RoverView>
-    </Grid>
+        Title="MainWindow" Height="800" Width="1200">
+    <DockPanel>
+        <Button Content="Connect with PuTTY" Click="Button_Click"></Button>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <local:RoverView Grid.Row="0" Grid.Column="1"></local:RoverView>
+        </Grid>
+    </DockPanel>
 </Window>
