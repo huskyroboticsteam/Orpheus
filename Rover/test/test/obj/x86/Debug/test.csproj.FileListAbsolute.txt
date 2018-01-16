@@ -1,0 +1,5 @@
+/Users/jeremyl/Projects/test/test/bin/Debug/test.exe
+/Users/jeremyl/Projects/test/test/bin/Debug/test.pdb
+/Users/jeremyl/Projects/test/test/obj/x86/Debug/test.csproj.CoreCompileInputs.cache
+/Users/jeremyl/Projects/test/test/obj/x86/Debug/test.exe
+/Users/jeremyl/Projects/test/test/obj/x86/Debug/test.pdb
