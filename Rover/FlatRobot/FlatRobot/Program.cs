@@ -59,8 +59,8 @@ namespace FlatRobot
             CytronMD30C[] Motor = new CytronMD30C[2];
 
             //if there are 4 motor controllers
-            Motor[0] = new CytronMD30C(OutA, (float).5);
-            Motor[1] = new CytronMD30C(OutB, (float).5);
+            Motor[0] = new CytronMD30C(OutA, Motor1Output, (float).5);
+            Motor[1] = new CytronMD30C(OutB, Motor2Output, (float).5);
             // Motor[2] = new TalonMC(OutC, (float).5);
             // Motor[3] = new TalonMC(OutD, (float).5);
 
@@ -77,22 +77,9 @@ namespace FlatRobot
                 {
                     Console.WriteLine("NOT CONNECTED");
                 }
-                if (State.ThumbSticks.Left.Y <= .05 && State.ThumbSticks.Left.Y >= -.05)
-                {
-                    Motor[0].SetSpeed((float)0.0);
-                }
-                else
-                {
-                    Motor[0].SetSpeed((float)((State.ThumbSticks.Left.Y) * 1.0f));
-                }
-                if (State.ThumbSticks.Right.Y <= .05 && State.ThumbSticks.Right.Y >= -.05)
-                {
-                    Motor[1].SetSpeed((float)0.0);
-                }
-                else
-                {
-                    Motor[1].SetSpeed((float)((State.ThumbSticks.Right.Y) * 1.0f));
-                }
+                Motor[0].SetSpeed((float)((State.ThumbSticks.Right.Y) * 1.0f));
+                Motor[1].SetSpeed((float)((State.ThumbSticks.Left.Y) * 1.0f));
+                   
             } while (State.Buttons.Start != ButtonState.Pressed);
 
         }

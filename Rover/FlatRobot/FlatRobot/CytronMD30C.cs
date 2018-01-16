@@ -10,17 +10,21 @@ namespace Scarlet.Components.Motors
         private IFilter<float> Filter;
         private readonly IPWMOutput PWMOut;
         private readonly float MaxSpeed;
+        private readonly IDigitalOut GPIOOut;
 
         private bool Stopped;
         public float TargetSpeed { get; private set; }
 
-        public CytronMD30C(IPWMOutput PWMOut, float MaxSpeed, IFilter<float> SpeedFilter = null)
+
+        public CytronMD30C(IPWMOutput PWMOut, IDigitalOut GPIOOut, float MaxSpeed, IFilter<float> SpeedFilter = null)
         {
             this.PWMOut = PWMOut;
             this.MaxSpeed = MaxSpeed;
             this.Filter = SpeedFilter;
             this.PWMOut.SetFrequency(10000);
             this.PWMOut.SetEnabled(true);
+            this.GPIOOut = GPIOOut;
+            this.GPIOOut.SetOutput(false);
         }
 
         public void EventTriggered(object Sender, EventArgs Event)
@@ -57,7 +61,8 @@ namespace Scarlet.Components.Motors
             if (NewSpeed * -1 > this.MaxSpeed) { NewSpeed = this.MaxSpeed * -1; }
 
             //Log.Output(Log.Severity.DEBUG, Log.Source.MOTORS, "Target: " + this.TargetSpeed + ", Filtered: " + SetSpeed);
-            this.PWMOut.SetOutput((NewSpeed / 2) + 0.5F);
+            this.PWMOut.SetOutput(Math.Abs(NewSpeed));
+            this.GPIOOut.SetOutput(Math.Sign(NewSpeed) < 0);
         }
     }
 }
