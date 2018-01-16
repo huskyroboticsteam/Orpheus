@@ -77,9 +77,22 @@ namespace FlatRobot
                 {
                     Console.WriteLine("NOT CONNECTED");
                 }
-
-                Motor[0].SetSpeed((float) ((State.ThumbSticks.Left.Y) * 1.0f));
-                Motor[1].SetSpeed((float) ((State.ThumbSticks.Right.Y) * 1.0f));
+                if (State.ThumbSticks.Left.Y <= .05 || State.ThumbSticks.Left.Y >= -.05)
+                {
+                    Motor[0].SetSpeed(0.0);
+                }
+                else
+                {
+                    Motor[0].SetSpeed((float)((State.ThumbSticks.Left.Y) * 1.0f));
+                }
+                if (State.ThumbSticks.Right.Y <= .05 || State.ThumbSticks.Right.Y >= -.05)
+                {
+                    Motor[1].SetSpeed(0.0);
+                }
+                else
+                {
+                    Motor[1].SetSpeed((float)((State.ThumbSticks.Right.Y) * 1.0f));
+                }
             } while (State.Buttons.Start != ButtonState.Pressed);
 
         }
