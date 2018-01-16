@@ -40,7 +40,7 @@ namespace FlatRobot
 
             BBBPinManager.ApplyPinSettings(BBBPinManager.ApplicationMode.APPLY_IF_NONE);
 
-            //if there are 4 motor controllers
+            //if there are 2 motor controllers
             IPWMOutput OutA = PWMBBB.PWMDevice1.OutputA;
             IPWMOutput OutB = PWMBBB.PWMDevice1.OutputA;
             // IPWMOutput OutC = PWMBBB.PWMDevice1.OutputA;
@@ -55,11 +55,11 @@ namespace FlatRobot
             //                           which they are doing correctly in the line right above.)
             OutA.SetOutput(0.45F);
             OutA.SetEnabled(true);
-            TalonMC[] Motor = new TalonMC[1];
+            CytronMD30C[] Motor = new CytronMD30C[2];
 
             //if there are 4 motor controllers
-            Motor[0] = new TalonMC(OutA, (float).5);
-            Motor[1] = new TalonMC(OutB, (float).5);
+            Motor[0] = new CytronMD30C(OutA, (float).5);
+            Motor[1] = new CytronMD30C(OutB, (float).5);
             // Motor[2] = new TalonMC(OutC, (float).5);
             // Motor[3] = new TalonMC(OutD, (float).5);
 
