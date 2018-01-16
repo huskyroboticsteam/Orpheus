@@ -9,3 +9,12 @@
 /Users/jeremyl/Projects/FlatRobot/FlatRobot/obj/x86/Debug/FlatRobot.csproj.CoreCompileInputs.cache
 /Users/jeremyl/Projects/FlatRobot/FlatRobot/obj/x86/Debug/FlatRobot.exe
 /Users/jeremyl/Projects/FlatRobot/FlatRobot/obj/x86/Debug/FlatRobot.pdb
+/Users/jeremyl/2017-18/Rover/FlatRobot/FlatRobot/bin/Debug/FlatRobot.exe
+/Users/jeremyl/2017-18/Rover/FlatRobot/FlatRobot/bin/Debug/FlatRobot.pdb
+/Users/jeremyl/2017-18/Rover/FlatRobot/FlatRobot/bin/Debug/OpenTK.dll
+/Users/jeremyl/2017-18/Rover/FlatRobot/FlatRobot/bin/Debug/Scarlet.pdb
+/Users/jeremyl/2017-18/Rover/FlatRobot/FlatRobot/bin/Debug/OpenTK.xml
+/Users/jeremyl/2017-18/Rover/FlatRobot/FlatRobot/obj/x86/Debug/FlatRobot.csprojResolveAssemblyReference.cache
+/Users/jeremyl/2017-18/Rover/FlatRobot/FlatRobot/obj/x86/Debug/FlatRobot.csproj.CoreCompileInputs.cache
+/Users/jeremyl/2017-18/Rover/FlatRobot/FlatRobot/obj/x86/Debug/FlatRobot.exe
+/Users/jeremyl/2017-18/Rover/FlatRobot/FlatRobot/obj/x86/Debug/FlatRobot.pdb

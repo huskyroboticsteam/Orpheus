@@ -33,12 +33,11 @@ namespace FlatRobot
             BBBPinManager.AddMappingGPIO(BBBPin.P9_15, true, ResistorState.NONE, true);
             BBBPinManager.AddMappingGPIO(BBBPin.P9_25, true, ResistorState.NONE, true);
 
+            BBBPinManager.ApplyPinSettings(BBBPinManager.ApplicationMode.APPLY_IF_NONE);
+
             //creates output for the two motors for the flat boi
             IDigitalOut Motor1Output = new DigitalOutBBB(BBBPin.P9_15);
             IDigitalOut Motor2Output = new DigitalOutBBB(BBBPin.P9_25);
-
-
-            BBBPinManager.ApplyPinSettings(BBBPinManager.ApplicationMode.APPLY_IF_NONE);
 
             //if there are 2 motor controllers
             IPWMOutput OutA = PWMBBB.PWMDevice1.OutputA;

@@ -19,7 +19,7 @@ namespace Scarlet.Components.Motors
             this.PWMOut = PWMOut;
             this.MaxSpeed = MaxSpeed;
             this.Filter = SpeedFilter;
-            this.PWMOut.SetFrequency(333);
+            this.PWMOut.SetFrequency(10000);
             this.PWMOut.SetEnabled(true);
         }
 
