@@ -1,0 +1,11 @@
+/Users/jeremyl/Projects/FlatRobot/FlatRobot/bin/Debug/FlatRobot.exe
+/Users/jeremyl/Projects/FlatRobot/FlatRobot/bin/Debug/FlatRobot.pdb
+/Users/jeremyl/Projects/FlatRobot/FlatRobot/bin/Debug/BBBCSIO.dll
+/Users/jeremyl/Projects/FlatRobot/FlatRobot/bin/Debug/OpenTK.dll
+/Users/jeremyl/Projects/FlatRobot/FlatRobot/bin/Debug/Scarlet.dll
+/Users/jeremyl/Projects/FlatRobot/FlatRobot/bin/Debug/Scarlet.pdb
+/Users/jeremyl/Projects/FlatRobot/FlatRobot/bin/Debug/OpenTK.xml
+/Users/jeremyl/Projects/FlatRobot/FlatRobot/obj/x86/Debug/FlatRobot.csprojResolveAssemblyReference.cache
+/Users/jeremyl/Projects/FlatRobot/FlatRobot/obj/x86/Debug/FlatRobot.csproj.CoreCompileInputs.cache
+/Users/jeremyl/Projects/FlatRobot/FlatRobot/obj/x86/Debug/FlatRobot.exe
+/Users/jeremyl/Projects/FlatRobot/FlatRobot/obj/x86/Debug/FlatRobot.pdb
