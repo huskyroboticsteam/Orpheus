@@ -77,7 +77,7 @@ namespace FlatRobot
                 {
                     Console.WriteLine("NOT CONNECTED");
                 }
-                if (State.ThumbSticks.Left.Y <= .05 || State.ThumbSticks.Left.Y >= -.05)
+                if (State.ThumbSticks.Left.Y <= .05 && State.ThumbSticks.Left.Y >= -.05)
                 {
                     Motor[0].SetSpeed((float)0.0);
                 }
@@ -85,7 +85,7 @@ namespace FlatRobot
                 {
                     Motor[0].SetSpeed((float)((State.ThumbSticks.Left.Y) * 1.0f));
                 }
-                if (State.ThumbSticks.Right.Y <= .05 || State.ThumbSticks.Right.Y >= -.05)
+                if (State.ThumbSticks.Right.Y <= .05 & State.ThumbSticks.Right.Y >= -.05)
                 {
                     Motor[1].SetSpeed((float)0.0);
                 }
