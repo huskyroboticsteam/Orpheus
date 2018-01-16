@@ -1,0 +1,5 @@
+*.suo
+*.pdb
+
+#Don't include library binaries
+/Libraries/
