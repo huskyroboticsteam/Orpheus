@@ -79,7 +79,7 @@ namespace FlatRobot
                 }
                 if (State.ThumbSticks.Left.Y <= .05 || State.ThumbSticks.Left.Y >= -.05)
                 {
-                    Motor[0].SetSpeed(0.0);
+                    Motor[0].SetSpeed((float)0.0);
                 }
                 else
                 {
@@ -87,7 +87,7 @@ namespace FlatRobot
                 }
                 if (State.ThumbSticks.Right.Y <= .05 || State.ThumbSticks.Right.Y >= -.05)
                 {
-                    Motor[1].SetSpeed(0.0);
+                    Motor[1].SetSpeed((float)0.0);
                 }
                 else
                 {
