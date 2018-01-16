@@ -3,11 +3,7 @@ Contains the code that will run on the base station computer, mainly the user in
 along with the server code that will communicate with rover to control it and receive 
 information from it.
 
-## Nathan
-- Brian
-- Sebastian
-
-## UI Does:
+## UI Functions
  - Navigation
  - Diagnostics
  - Video Feed
@@ -29,5 +25,13 @@ information from it.
  - See the encoders, BE the encoders
  - Same with arm
  
-## Video feeds are in seperate windows
+## Video Feeds
+ - separate windows
  - Always on top option
+ 
+## Required Libraries (include dll files)
+ - VLC Video player
+	- nVLC.Declarations
+	- nVLC.Implementation
+	- nVLC.LibVlcWrapper
+ - Nlog
