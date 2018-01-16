@@ -31,17 +31,17 @@ namespace FlatRobot
             BBBPinManager.AddMappingPWM(BBBPin.P9_14);
             BBBPinManager.AddMappingPWM(BBBPin.P9_16);
             BBBPinManager.AddMappingGPIO(BBBPin.P9_15, true, ResistorState.NONE, true);
-            BBBPinManager.AddMappingGPIO(BBBPin.P9_25, true, ResistorState.NONE, true);
+            BBBPinManager.AddMappingGPIO(BBBPin.P9_27, true, ResistorState.NONE, true);
 
             BBBPinManager.ApplyPinSettings(BBBPinManager.ApplicationMode.APPLY_IF_NONE);
 
             //creates output for the two motors for the flat boi
             IDigitalOut Motor1Output = new DigitalOutBBB(BBBPin.P9_15);
-            IDigitalOut Motor2Output = new DigitalOutBBB(BBBPin.P9_25);
+            IDigitalOut Motor2Output = new DigitalOutBBB(BBBPin.P9_27);
 
             //if there are 2 motor controllers
             IPWMOutput OutA = PWMBBB.PWMDevice1.OutputA;
-            IPWMOutput OutB = PWMBBB.PWMDevice1.OutputA;
+            IPWMOutput OutB = PWMBBB.PWMDevice1.OutputB;
             // IPWMOutput OutC = PWMBBB.PWMDevice1.OutputA;
             // IPWMOutput OutD = PWMBBB.PWMDevice1.OutputA;
 
@@ -54,6 +54,8 @@ namespace FlatRobot
             //                           which they are doing correctly in the line right above.)
             OutA.SetOutput(0.45F);
             OutA.SetEnabled(true);
+            OutB.SetOutput(0.45F);
+            OutB.SetEnabled(true);
             CytronMD30C[] Motor = new CytronMD30C[2];
 
             //if there are 4 motor controllers
