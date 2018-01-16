@@ -9,7 +9,7 @@ namespace FlatRobot
             return State.Triggers.Left <= Double.Epsilon && State.Triggers.Right <= Double.Epsilon;
         }
 
-        public static void Main(string[] args) {
+        public static void main(string[] args) {
 
             GamePadState State;
             do
