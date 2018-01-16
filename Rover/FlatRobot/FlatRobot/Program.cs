@@ -52,9 +52,9 @@ namespace FlatRobot
             PWMBBB.PWMDevice1.SetFrequency(10000); //5000 for talon motor, 10000 for cytron PWM 
             //OutA.SetFrequency(5000); (Frequency is not set at the per-output level on BBB, but by device, 
             //                           which they are doing correctly in the line right above.)
-            OutA.SetOutput(0.45F);
+            //OutA.SetOutput(0.45F);
             OutA.SetEnabled(true);
-            OutB.SetOutput(0.45F);
+            //OutB.SetOutput(0.45F);
             OutB.SetEnabled(true);
             CytronMD30C[] Motor = new CytronMD30C[2];
 
