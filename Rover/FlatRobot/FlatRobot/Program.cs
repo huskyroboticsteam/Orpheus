@@ -24,7 +24,9 @@ namespace FlatRobot
 
         public static void Main(string[] args)
         {
-            MAX_SPEED = float.Parse(args[1]);
+            if (!float.TryParse(args[1], out MAX_SPEED))
+                MAX_SPEED = 0.2f;
+            
             Console.WriteLine("Initializing");
             StateStore.Start("Evan and Jeremy");
             BeagleBone.Initialize(SystemMode.DEFAULT, true);
