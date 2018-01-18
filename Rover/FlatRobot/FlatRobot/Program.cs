@@ -74,14 +74,25 @@ namespace FlatRobot
                 if (State.IsConnected)
                 {
                     Console.WriteLine($"Left: {State.ThumbSticks.Left.Y}, Right: {State.ThumbSticks.Right.Y}");
+                    Console.WriteLine("Left Trigger" + State.Triggers.Left);
+                    Console.WriteLine("Right Trigger" + State.Triggers.Right);
                 }
                 else
                 {
                     Console.WriteLine("NOT CONNECTED");
                 }
-                driver.Move((float)(State.ThumbSticks.Left.X) * MAX_SPEED, (float)(State.ThumbSticks.Left.Y) * MAX_SPEED);
-                //Motor[0].SetSpeed((float)((State.ThumbSticks.Right.Y) * 1.0f));
-                //Motor[1].SetSpeed((float)((State.ThumbSticks.Left.Y) * 1.0f));
+
+                //GTA Drive
+                float GTASpeed = State.Triggers.Right - State.Triggers.Left;
+                float thumbstickX = State.ThumbSticks.Left.X;
+                driver.Move(thumbstickX * MAX_SPEED, GTASpeed * MAX_SPEED);
+
+                // One-Thumbstick Drive
+                // driver.Move((float)(State.ThumbSticks.Left.X) * MAX_SPEED, (float)(State.ThumbSticks.Left.Y) * MAX_SPEED);
+
+                // Tank Drive
+                // Motor[0].SetSpeed((float)((State.ThumbSticks.Right.Y) * 1.0f));
+                // Motor[1].SetSpeed((float)((State.ThumbSticks.Left.Y) * 1.0f));
                    
             } while (State.Buttons.Start != ButtonState.Pressed);
 
