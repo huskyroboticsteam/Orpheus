@@ -46,6 +46,7 @@
     <Compile Include="FlatBoi.cs" />
     <Compile Include="opentk.cs" />
     <Compile Include="CytronMD30C.cs" />
+    <Compile Include="Drive.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="OpenTK.dll.config" />
