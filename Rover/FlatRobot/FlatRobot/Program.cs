@@ -49,7 +49,7 @@ namespace FlatRobot
             Motor1Output.SetOutput(false);
             Motor2Output.SetOutput(false);
 
-            PWMBBB.PWMDevice1.SetFrequency(10000); //5000 for talon motor, 10000 for cytron PWM 
+            // PWMBBB.PWMDevice1.SetFrequency(10000); //5000 for talon motor, 10000 for cytron PWM 
             //OutA.SetFrequency(5000); (Frequency is not set at the per-output level on BBB, but by device, 
             //                           which they are doing correctly in the line right above.)
             //OutA.SetOutput(0.45F);
@@ -65,6 +65,7 @@ namespace FlatRobot
             // Motor[3] = new TalonMC(OutD, (float).5);
 
             GamePadState State;
+            Drive driver = new Drive(Motor[0], Motor[1]);
             do
             {
                 Console.WriteLine("Reading!");
@@ -77,8 +78,9 @@ namespace FlatRobot
                 {
                     Console.WriteLine("NOT CONNECTED");
                 }
-                Motor[0].SetSpeed((float)((State.ThumbSticks.Right.Y) * 1.0f));
-                Motor[1].SetSpeed((float)((State.ThumbSticks.Left.Y) * 1.0f));
+                driver.Move((float)(State.ThumbSticks.Left.X) * 0.5f, (float)(State.ThumbSticks.Left.Y) * 0.5f);
+                //Motor[0].SetSpeed((float)((State.ThumbSticks.Right.Y) * 1.0f));
+                //Motor[1].SetSpeed((float)((State.ThumbSticks.Left.Y) * 1.0f));
                    
             } while (State.Buttons.Start != ButtonState.Pressed);
 
