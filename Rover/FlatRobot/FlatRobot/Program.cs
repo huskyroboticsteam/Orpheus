@@ -15,7 +15,7 @@ namespace FlatRobot
 {
     public class BaseRotation
     {
-        const float MAX_SPEED = 0.2f;
+        static float MAX_SPEED = 0.2f;
 
         static bool ReceivingInput(GamePadState State)
         {
@@ -24,6 +24,7 @@ namespace FlatRobot
 
         public static void Main(string[] args)
         {
+            MAX_SPEED = float.Parse(args[1]);
             Console.WriteLine("Initializing");
             StateStore.Start("Evan and Jeremy");
             BeagleBone.Initialize(SystemMode.DEFAULT, true);
@@ -82,17 +83,25 @@ namespace FlatRobot
                     Console.WriteLine("NOT CONNECTED");
                 }
 
-                //GTA Drive
-                float GTASpeed = State.Triggers.Right - State.Triggers.Left;
-                float thumbstickX = State.ThumbSticks.Left.X;
-                driver.Move(thumbstickX * MAX_SPEED, GTASpeed * MAX_SPEED);
-
-                // One-Thumbstick Drive
-                // driver.Move((float)(State.ThumbSticks.Left.X) * MAX_SPEED, (float)(State.ThumbSticks.Left.Y) * MAX_SPEED);
-
-                // Tank Drive
-                // Motor[0].SetSpeed((float)((State.ThumbSticks.Right.Y) * 1.0f));
-                // Motor[1].SetSpeed((float)((State.ThumbSticks.Left.Y) * 1.0f));
+                switch (args[0].ToLower())
+                {
+                    case "gta":                
+                        //GTA Drive
+                        float GTASpeed = State.Triggers.Right - State.Triggers.Left;
+                        float thumbstickX = State.ThumbSticks.Left.X;
+                        driver.Move(thumbstickX * MAX_SPEED, GTASpeed * MAX_SPEED);
+                        break;                
+                    case "tank":
+                        // Tank Drive                        
+                        Motor[0].SetSpeed((float)((State.ThumbSticks.Right.Y) * 1.0f));
+                        Motor[1].SetSpeed((float)((State.ThumbSticks.Left.Y) * 1.0f));
+                        break;                        
+                    case "onepunch":
+                    default:
+                        // One-Thumbstick Drive
+                        driver.Move((float)(State.ThumbSticks.Left.X) * MAX_SPEED, (float)(State.ThumbSticks.Left.Y) * MAX_SPEED);
+                        break;
+            }
                    
             } while (State.Buttons.Start != ButtonState.Pressed);
 
