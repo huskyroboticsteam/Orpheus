@@ -12,7 +12,7 @@ using Scarlet.IO.BeagleBone;
 using OpenTK.Input;
 using Scarlet.Components.Motors;
 using Scarlet.Components;
-namespace ConsoleApp1
+namespace FlatRobot
 {
     class Drive
     {
@@ -27,6 +27,7 @@ namespace ConsoleApp1
         {
             Motors[0] = LeftMC;
             Motors[1] = RightMC;
+            FourWheel = false;
         }
         /// <summary>
         /// Constructs a drive object with four motor controllers.
@@ -41,6 +42,7 @@ namespace ConsoleApp1
             Motors[1] = FrontRightMC;
             Motors[2] = BackLeftMC;
             Motors[3] = BackRightMC;
+            FourWheel = true;
         }
         /// <summary>
         /// Drives in the direction of the given x,y vector components.
