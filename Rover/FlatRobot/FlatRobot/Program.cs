@@ -15,6 +15,7 @@ namespace FlatRobot
 {
     public class BaseRotation
     {
+        const float MAX_SPEED = 0.2f;
 
         static bool ReceivingInput(GamePadState State)
         {
@@ -59,8 +60,8 @@ namespace FlatRobot
             CytronMD30C[] Motor = new CytronMD30C[2];
 
             //if there are 4 motor controllers
-            Motor[0] = new CytronMD30C(OutA, Motor1Output, (float).5);
-            Motor[1] = new CytronMD30C(OutB, Motor2Output, (float).5);
+            Motor[0] = new CytronMD30C(OutA, Motor1Output, (float)MAX_SPEED);
+            Motor[1] = new CytronMD30C(OutB, Motor2Output, (float)MAX_SPEED);
             // Motor[2] = new TalonMC(OutC, (float).5);
             // Motor[3] = new TalonMC(OutD, (float).5);
 
@@ -78,7 +79,7 @@ namespace FlatRobot
                 {
                     Console.WriteLine("NOT CONNECTED");
                 }
-                driver.Move((float)(State.ThumbSticks.Left.X) * 0.5f, (float)(State.ThumbSticks.Left.Y) * 0.5f);
+                driver.Move((float)(State.ThumbSticks.Left.X) * MAX_SPEED, (float)(State.ThumbSticks.Left.Y) * MAX_SPEED);
                 //Motor[0].SetSpeed((float)((State.ThumbSticks.Right.Y) * 1.0f));
                 //Motor[1].SetSpeed((float)((State.ThumbSticks.Left.Y) * 1.0f));
                    
