@@ -52,8 +52,8 @@ namespace FlatRobot
         public void Move(float x, float y)
         {
             //algorithms to convert cartesian coordinate components to drive inputs.
-            float LeftSpeed = (float)((y / Math.Abs(y)) * (Math.Sqrt(Math.Pow(x, 2) + Math.Pow(x, 2)) - (x + Math.Abs(x) / 2)));
-            float RightSpeed = (float)((y / Math.Abs(y)) * (Math.Sqrt(Math.Pow(x, 2) + Math.Pow(x, 2)) - (x - Math.Abs(x) / 2)));
+            float LeftSpeed = (float) (y + x);  //(float)((y / Math.Abs(y)) * (Math.Sqrt(Math.Pow(x, 2) + Math.Pow(y, 2)) - (x + Math.Abs(x) / 2)));
+            float RightSpeed = (float) (y - x);   //(float)((y / Math.Abs(y)) * (Math.Sqrt(Math.Pow(x, 2) + Math.Pow(y, 2)) - (x - Math.Abs(x) / 2)));
             Motors[0].SetSpeed(LeftSpeed);
             Motors[1].SetSpeed(RightSpeed);
             if (FourWheel)
