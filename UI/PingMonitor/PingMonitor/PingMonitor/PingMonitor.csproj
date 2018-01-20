@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{BB653C08-22A9-4440-82F0-804067B83DFD}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>PingMonitor</RootNamespace>
-    <AssemblyName>PingMonitor</AssemblyName>
+    <RootNamespace>HuskyRobotics.UI</RootNamespace>
+    <AssemblyName>HuskyRobotics.UI.Monitor</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -66,9 +66,16 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="PingMonitor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="NetworkStatus.cs" />
+    <Compile Include="PingMonitor.xaml.cs">
+      <DependentUpon>PingMonitor.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PingResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
