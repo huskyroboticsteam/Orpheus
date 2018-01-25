@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace PingMonitor
+namespace HuskyRobotics.UI
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -22,27 +22,13 @@ namespace PingMonitor
     /// </summary>
     public partial class MainWindow : Window
     {
-        private NetworkStatus _netStatus = new NetworkStatus();
 
         public MainWindow()
         {
             InitializeComponent();
 
-            DataContext = _netStatus; // Tell WPF where to search for bindings
         }
 
-        public void AddAddress(object sender, RoutedEventArgs e)
-        {
-            _netStatus.PingResults.Add(new PingResult(AddressInput.Text));
-        }
 
-        private void AddressInput_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter)
-            {
-                AddAddress(sender, null);
-                AddressInput.Text = "";
-            }
-        }
     }
 }

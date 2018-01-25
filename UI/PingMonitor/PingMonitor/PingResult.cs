@@ -7,7 +7,7 @@ using System.Threading;
 using System.Net.NetworkInformation;
 using System.Net;
 
-namespace PingMonitor
+namespace HuskyRobotics.UI
 {
     public class PingResult : INotifyPropertyChanged
     {
