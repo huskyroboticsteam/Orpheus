@@ -32,7 +32,7 @@ namespace Science.Systems
         {
             if(Event is LimitSwitchToggle && this.Initializing) // We hit the end.
             {
-                this.MotorCtrl.Stop();
+                this.MotorCtrl.SetEnabled(false);
                 this.CurrentAngle = 0;
                 Log.Output(Log.Severity.DEBUG, Log.Source.MOTORS, "Turntable motor finished initializing.");
                 this.Initializing = false;
@@ -40,7 +40,7 @@ namespace Science.Systems
             }
             if(Event is ElapsedEventArgs && this.Initializing) // We timed out trying to initialize.
             {
-                this.MotorCtrl.Stop();
+                this.MotorCtrl.SetEnabled(false);
                 Log.Output(Log.Severity.ERROR, Log.Source.MOTORS, "Turntable motor timed out while attempting to initialize.");
                 this.Initializing = false;
             }
@@ -77,7 +77,7 @@ namespace Science.Systems
         public void EmergencyStop()
         {
             this.TargetAngle = this.CurrentAngle;
-            this.MotorCtrl.Stop();
+            this.MotorCtrl.SetEnabled(false);
             this.UpdateState();
         }
 

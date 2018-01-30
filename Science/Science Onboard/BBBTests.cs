@@ -93,7 +93,7 @@ namespace Science
             }
         }
 
-        internal static void TestPWMLow()
+        /*internal static void TestPWMLow()
         {
             BBBPinManager.AddMappingPWM(BBBPin.P9_14);
             BBBPinManager.ApplyPinSettings(RoverMain.ApplyDevTree);
@@ -119,7 +119,7 @@ namespace Science
                 Port.DutyPercent = 0;
                 Thread.Sleep(50);
             }
-        }
+        }*/
 
         internal static void TestI2C()
         {
@@ -161,6 +161,18 @@ namespace Science
             {
                 Log.Output(Log.Severity.DEBUG, Log.Source.HARDWAREIO, "ADC Input: " + Input.GetInput() + " (Raw: " + Input.GetRawInput() + ")");
                 Thread.Sleep(100);
+            }
+        }
+
+        internal static void TestUART()
+        {
+            BBBPinManager.AddMappingUART(BBBPin.P9_13);
+            BBBPinManager.ApplyPinSettings(RoverMain.ApplyDevTree);
+            IUARTBus Bus = UARTBBB.UARTBus4;
+            while(true)
+            {
+                Bus.Write(new byte[] { 0x45, 0x72, 0x7A, 0x61 });
+                Thread.Sleep(50);
             }
         }
 

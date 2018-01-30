@@ -1,4 +1,4 @@
-﻿namespace Scarlet.Science
+﻿namespace Science.Library
 {
     public static class PacketType
     {
