@@ -32,8 +32,8 @@ namespace Science.Systems
 
         public void EmergencyStop()
         {
-            this.MotorCtrl.Stop();
-            this.DoorServo.Stop();
+            this.MotorCtrl.SetEnabled(false);
+            this.DoorServo.SetEnabled(false);
         }
 
         public void EventTriggered(object Sender, EventArgs Event)

@@ -11,8 +11,8 @@ using Scarlet.Filters;
 using Scarlet.IO;
 using Scarlet.IO.BeagleBone;
 using Scarlet.IO.RaspberryPi;
-using Scarlet.Science;
 using Scarlet.Utilities;
+using Science.Library;
 using Science.Systems;
 
 namespace Science
@@ -20,10 +20,10 @@ namespace Science
 	class RoverMain
 	{
         public static IOHandler IOHandler { get; private set; }
-        private static string IP = Constants.DEFAULT_SERVER_IP;
-        private static int PortTCP = Constants.DEFAULT_PORT_TCP;
-        private static int PortUDP = Constants.DEFAULT_PORT_UDP;
-        private static BBBPinManager.ApplicationMode ApplyDevTree = BBBPinManager.ApplicationMode.APPLY_IF_NONE;
+        private static string IP = ScienceConstants.DEFAULT_SERVER_IP;
+        private static int PortTCP = ScienceConstants.DEFAULT_PORT_TCP;
+        private static int PortUDP = ScienceConstants.DEFAULT_PORT_UDP;
+        internal static BBBPinManager.ApplicationMode ApplyDevTree = BBBPinManager.ApplicationMode.APPLY_IF_NONE;
         private static Log.Severity LogLevel = Log.Severity.INFO;
 
         static void Main(string[] Args)
@@ -36,12 +36,14 @@ namespace Science
             Log.SystemNames = ScienceErrors.SYSTEMS;
             Log.Begin();
             Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Science Station - Rover Side");
-            Client.Start(IP, PortTCP, PortUDP, "SciRover");
+            //Client.Start(IP, PortTCP, PortUDP, "SciRover");
             BeagleBone.Initialize(SystemMode.DEFAULT, true);
 
-            IOHandler = new IOHandler();
+            BBBTests.TestUART();
+
+            /*IOHandler = new IOHandler();
             IOHandler.InitializeSystems(ApplyDevTree);
-            ((Turntable)IOHandler.TurntableController).TargetAngle = 50;
+            ((Turntable)IOHandler.TurntableController).TargetAngle = 50;*/
 
             while (Console.KeyAvailable) { Console.ReadKey(); } // Clear previous keypresses
             Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Press any key to exit.");

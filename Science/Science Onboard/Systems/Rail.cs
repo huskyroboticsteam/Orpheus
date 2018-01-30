@@ -35,7 +35,7 @@ namespace Science.Systems
         {
             if(Event is LimitSwitchToggle && this.Initializing) // We hit the end.
             {
-                this.MotorCtrl.Stop();
+                this.MotorCtrl.SetEnabled(false);
                 this.Height = 0;
                 Log.Output(Log.Severity.DEBUG, Log.Source.MOTORS, "Rail motor finished initializing.");
                 this.Initializing = false;
@@ -43,13 +43,13 @@ namespace Science.Systems
             }
             if(Event is ElapsedEventArgs && this.Initializing) // We timed out trying to initialize.
             {
-                this.MotorCtrl.Stop();
+                this.MotorCtrl.SetEnabled(false);
                 Log.Output(Log.Severity.ERROR, Log.Source.MOTORS, "Rail motor timed out while trying to initialize.");
                 this.Initializing = false;
             }
             if(Event is LimitSwitchToggle && !this.Initializing) // We hit the end during operation.
             {
-                this.MotorCtrl.Stop();
+                this.MotorCtrl.SetEnabled(false);
                 Log.Output(Log.Severity.WARNING, Log.Source.MOTORS, "Rail motor hit limit switch and was stopped for safety.");
             }
             if(Event is EncoderTurn)
@@ -119,7 +119,7 @@ namespace Science.Systems
         public void EmergencyStop()
         {
             this.TargetHeight = this.Height;
-            this.MotorCtrl.Stop();
+            this.MotorCtrl.SetEnabled(false);
             this.UpdateState();
         }
 

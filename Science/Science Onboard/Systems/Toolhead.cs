@@ -23,7 +23,7 @@ namespace Science.Systems
 
         public void EmergencyStop()
         {
-            this.MotorCtrl.Stop();
+            this.MotorCtrl.SetEnabled(false);
             this.UpdateState();
         }
 
