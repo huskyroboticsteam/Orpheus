@@ -1,6 +1,6 @@
 ﻿using Scarlet.Communications;
-using Scarlet.Science;
 using Scarlet.Utilities;
+using Science.Library;
 
 namespace Science
 {

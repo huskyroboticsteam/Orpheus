@@ -3,7 +3,7 @@ using System.Net;
 using System.Windows.Forms;
 using Scarlet.Utilities;
 using Scarlet.Communications;
-using Scarlet.Science;
+using Science.Library;
 
 namespace Science_Base
 {

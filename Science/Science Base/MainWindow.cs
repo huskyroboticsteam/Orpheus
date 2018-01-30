@@ -1,12 +1,12 @@
 ﻿using DarkUI.Forms;
 using Scarlet.Communications;
-using Scarlet.Science;
 using Scarlet.Utilities;
 using System;
 using System.Linq;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Net;
+using Science.Library;
 
 namespace Science_Base
 {
@@ -23,7 +23,7 @@ namespace Science_Base
         {
             try
             {
-                Packet EmergencyStopPacket = new Packet(PacketType.EMERGENCY_STOP, false, Scarlet.Science.Constants.CLIENT_NAME);
+                Packet EmergencyStopPacket = new Packet(PacketType.EMERGENCY_STOP, false, ScienceConstants.CLIENT_NAME);
                 EmergencyStopPacket.AppendData(UtilData.ToBytes("Homura"));
                 Server.SendNow(EmergencyStopPacket);
             }
