@@ -66,10 +66,6 @@ namespace FlatRobot
                     Console.WriteLine("NOT CONNECTED");
                 }
 
-
-
-
-
             } while (State.Buttons.Start != ButtonState.Pressed);
 
         }
