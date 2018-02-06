@@ -43,12 +43,9 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="FlatBoi.cs" />
-    <Compile Include="opentk.cs" />
     <Compile Include="Drive.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
