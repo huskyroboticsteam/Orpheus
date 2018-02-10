@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -24,20 +25,20 @@ using System.Windows.Threading;
 // capabilities.
 // Gstreamer must be installed to the C drive
 // TO DO:
-// fix file not opening
-// add port adding and subtracting
+// find a final loaction for ports file and create generic destination to work on any computer
 
 // server command:
 // IP will cange when switching to basestation computer
 // gst-launch-1.0 v4l2src device="/dev/video0" ! "video/x-raw, format=(string)I420, width=(int)1280, height=(int)720" ! omxh264enc ! 'video/x-h264, stream-format=(string)byte-stream' ! h264parse ! rtph264pay ! udpsink host=192.168.0.5 port=5555
 // client test:
 // gst-launch-1.0 -vvv -e udpsrc caps=\"application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264\" port=5555 ! rtph264depay ! h264parse ! mp4mux ! filesink location=test.mp4
-namespace Video_player
+namespace VideoStreamer
 {
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
         private DispatcherTimer recordingTime;
         private DateTime duration;
+        private String portFileLocation;
         private String _destination;
         public String Destination
         {
@@ -48,20 +49,18 @@ namespace Video_player
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Destinaion"));
             }
         }
-        private Boolean recording;
-        List<int> ports;
-        Process[] players;
-        Process[] recorders;
-        
-        // experimentation
-        const int CTRL_C_EVENT = 0;
-        const int CTRL_BREAK_EVENT = 1;
+        private Boolean playing;
 
-        [DllImport("user32.dll")]
-        static extern int SendMessage(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
-        //
+        private ObservableCollection<int> ports;
+        private Process[] players;
+        private Process[] recorders;
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public ObservableCollection<int> Ports
+        {
+            get => ports;
+        }
 
         public MainWindow()
         {
@@ -71,27 +70,36 @@ namespace Video_player
             duration = new DateTime(0);
             DataContext = this;
             Destination = @"C:\Users\emela\Desktop\";
+            // I know this is bad but I don't know where it should go
+            portFileLocation = Directory.GetCurrentDirectory() + @"\ports.txt";
 
-            ports = new List<int>();
+            ports = new ObservableCollection<int>();
             initPorts();
 
-            players = new Process[ports.Count];
-            recorders = new Process[ports.Count];
-
             InitializeComponent();
-
-            Console.WriteLine(Directory.GetCurrentDirectory());
         }
 
+        // initializes the ports from the portfilelocation
         private void initPorts()
         {
-
+            String line;
+            int x;
+            StreamReader file = new StreamReader(portFileLocation);
+            while ((line = file.ReadLine()) != null)
+            {
+                if (Int32.TryParse(line, out x))
+                {
+                    ports.Add(x);
+                }
+            }
+            file.Close();
         }
 
         // initializes the processes used to launch the stream and file recorder
-        private void initProcesses(Process[] pro)
+        private void initProcesses(ref Process[] pro)
         {
-            for (int i = 0; i < players.Length; i++)
+            pro = new Process[ports.Count];
+            for (int i = 0; i < ports.Count; i++)
             {
                 pro[i] = new Process();
                 pro[i].StartInfo.RedirectStandardInput = false;
@@ -107,67 +115,42 @@ namespace Video_player
         }
 
         // initiates the recording of the stream
-        // ALL PLACES WHERE ONE PROCESS IS STARTED SHOULD BE REPLACED WITH A LOOP TO START ALL IN ARRAY
         private void ButtonRecord(object sender, RoutedEventArgs e)
         {
-            // stop currently does nothing
-            if (recording)
-            {
-                closeAll(recorders);
-                recording = false;
-                btnRecord.Content = "Record";
-                recordingTime.Stop();
-            }
-            else
-            {
-                initProcesses(recorders);
-                recordStream(5555, recorders[0], 0);
-                recording = true;
-                btnRecord.Content = "Stop";
+                initProcesses(ref recorders);
+                for (int i = 0; i < ports.Count; i++)
+                {
+                    recordStream(ports.ElementAt(i), recorders[i], i);
+                }
                 duration = new DateTime(0);
                 time.Content = "Recording Duration: " + duration.ToString("HH:mm:ss");
                 recordingTime.Start();
-                //debug
-                Console.WriteLine(recorders[0].Id);
-            }
         }
 
         // plays the video streams in their own windows
         private void ButtonLaunch(object sender, RoutedEventArgs e)
         {
-            initProcesses(players);
-            startStream(5555, players[0]);
+            if (playing)
+            {
+                playing = false;
+                btnLaunch.Content = "Launch";
+                closeAll(players);
+            }
+            else
+            {
+                playing = true;
+                btnLaunch.Content = "Stahp";
+                initProcesses(ref players);
+                for (int i = 0; i < ports.Count; i++)
+                {
+                    startStream(ports.ElementAt(i), players[i]);
+                }
+            }
         }
-
-        [DllImport("user32")]
-        public static extern int SetForegroundWindow(IntPtr hwnd);
-
-        [DllImport("user32")]
-        public static extern int PostMessage(IntPtr hwnd, UInt32 Msg, int wParam, int lParam);
 
         // closes all windows in the array of processes given
         private void closeAll(Process[] cmd)
         {
-            //SendMessage(cmd[0].MainWindowHandle, CTRL_C_EVENT, (IntPtr)0, (IntPtr)0);
-            //SetForegroundWindow(cmd[0].MainWindowHandle);
-            //PostMessage(cmd[0].MainWindowHandle, 0x011, 0x43, 0);
-            //Thread.Sleep(1000);
-            //SendKeys.Send("^{BREAK}");
-            //SendKeys.Send("^C");
-            //Thread.Sleep(1000);
-            //cmd[0].Close();
-            //cmd[0].Kill();
-
-            //Console.WriteLine(cmd[0].HasExited);
-            //cmd[0].StandardInput.Write("\x3");
-            //Console.WriteLine(cmd[0].StandardOutput.ReadToEnd());
-            //Console.WriteLine(cmd[0].HasExited);
-
-            //cmd[0].StandardInput.Flush();
-            //cmd[0].WaitForExit();
-
-            //cmd[0].StandardInput.Close();
-
             for (int i = 0; i < cmd.Length; i++)
             {
                 cmd[i].CloseMainWindow();
@@ -191,7 +174,6 @@ namespace Video_player
         // and a pseudo-random name is generated for the file using the current date and time
         private void recordStream(int port, Process cmd, int cam)
         {
-
             cmd.StartInfo.WorkingDirectory = Destination;
             cmd.StartInfo.FileName = @"C:\gstreamer\1.0\x86_64\bin\gst-launch-1.0.exe";
             cmd.StartInfo.Arguments = "-m -vvv -e udpsrc caps=\"application/x-rtp," +
@@ -199,30 +181,51 @@ namespace Video_player
                 port + " ! rtph264depay ! h264parse ! mp4mux ! filesink location=" +
                 DateTime.Now.ToString("MM-dd-yyyy--HH;mm;ss") + "(" + cam + ")" + ".mp4";
             cmd.Start();
-            Console.WriteLine(cmd.Id);
-
-            //cmd.Start();
-            //cmd.StandardInput.WriteLine("cd " + Destination);
-            //cmd.StandardInput.WriteLine(@"set PATH=%PATH%;C:\gstreamer\1.0\x86_64\bin");
-            //cmd.StandardInput.WriteLine("gst-launch-1.0 -v -e udpsrc caps=\"application/x-rtp," +
-            //    " media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264\" port=" +
-            //    port + " ! rtph264depay ! h264parse ! mp4mux ! filesink location=" +
-            //    DateTime.Now.ToString("MM-dd-yyyy--HH;mm;ss") + "(" + cam + ")" + ".mp4");
         }
 
-        // closes all processes when the window closes
+        // adds ports to the port list
+        private void Add(object sender, RoutedEventArgs e)
+        {
+            int x;
+            if (Int32.TryParse(portBox.Text, out x))
+            {
+                Ports.Add(x);
+            }
+            portBox.Text = "";
+        }
+
+        // removes selected items from the port list
+        private void Remove(object sender, RoutedEventArgs e)
+        {
+            List<int> remove = new List<int>();
+            foreach (int thing in portList.SelectedItems)
+            {
+                remove.Add(thing);
+            }
+            foreach (int eachItem in remove)
+            {
+                Ports.Remove(eachItem);
+            }
+        }
+
+        // closes all player processes when the window closes the recorders will not be closed
+        // because they must be closed by Ctrl+C
+        // ports will be re-written to file in case of edits made
         private void Window_Closing(object sender, EventArgs e)
         {
-            try
-            {
-                closeAll(recorders);
-            }
-            catch { }
+            System.Windows.MessageBox.Show("Please close all recording streams using Ctrl+C");
             try
             {
                 closeAll(players);
             }
             catch { }
+
+            StreamWriter saver = new StreamWriter(portFileLocation);
+            for (int i = 0; i < ports.Count; i++)
+            {
+                saver.WriteLine(ports.ElementAt(i));
+            }
+            saver.Close();
         }
     }
 }
