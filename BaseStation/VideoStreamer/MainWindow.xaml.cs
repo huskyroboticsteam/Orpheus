@@ -117,14 +117,18 @@ namespace VideoStreamer
         // initiates the recording of the stream
         private void ButtonRecord(object sender, RoutedEventArgs e)
         {
-                initProcesses(ref recorders);
-                for (int i = 0; i < ports.Count; i++)
-                {
-                    recordStream(ports.ElementAt(i), recorders[i], i);
-                }
-                duration = new DateTime(0);
-                time.Content = "Recording Duration: " + duration.ToString("HH:mm:ss");
-                recordingTime.Start();
+            if (!playing)
+            {
+                ButtonLaunch(null, null);
+            }
+            initProcesses(ref recorders);
+            for (int i = 0; i < ports.Count; i++)
+            {
+                recordStream(ports.ElementAt(i), recorders[i], i);
+            }
+            duration = new DateTime(0);
+            time.Content = "Recording Duration: " + duration.ToString("HH:mm:ss");
+            recordingTime.Start();
         }
 
         // plays the video streams in their own windows
@@ -165,7 +169,7 @@ namespace VideoStreamer
             cmd.StartInfo.UseShellExecute = false;
             cmd.Start();
             cmd.StandardInput.WriteLine(@"set PATH=%PATH%;C:\gstreamer\1.0\x86_64\bin");
-            cmd.StandardInput.WriteLine("gst-launch-1.0 -vvv udpsrc caps=\"application/x-rtp," +
+            cmd.StandardInput.WriteLine("gst-launch-1.0 udpsrc caps=\"application/x-rtp," +
                 " media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264\" port=" +
                 port + " ! rtph264depay ! decodebin ! videoconvert ! autovideosink");
         }
@@ -176,7 +180,7 @@ namespace VideoStreamer
         {
             cmd.StartInfo.WorkingDirectory = Destination;
             cmd.StartInfo.FileName = @"C:\gstreamer\1.0\x86_64\bin\gst-launch-1.0.exe";
-            cmd.StartInfo.Arguments = "-m -vvv -e udpsrc caps=\"application/x-rtp," +
+            cmd.StartInfo.Arguments = "-m -e udpsrc caps=\"application/x-rtp," +
                 " media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264\" port=" +
                 port + " ! rtph264depay ! h264parse ! mp4mux ! filesink location=" +
                 DateTime.Now.ToString("MM-dd-yyyy--HH;mm;ss") + "(" + cam + ")" + ".mp4";
