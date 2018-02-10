@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace VideoStreamer.Properties
+namespace Video_player.Properties
 {
 
 
