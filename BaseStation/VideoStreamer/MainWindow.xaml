@@ -13,7 +13,7 @@
         Closing="Window_Closing">
     <StackPanel>
         <DockPanel>
-            <TextBox Height="23" Margin="5" TextWrapping="Wrap"  Text="{Binding Destination}" Width="170" Name="dst" ToolTip="File Destination"/>
+            <TextBox Height="23" Margin="5" TextWrapping="NoWrap"  Text="{Binding RecordingFolder}" Width="170" Name="dst" ToolTip="File Destination"/>
             <Label Content="Recording Duration: 00:00:00" Width="170" Margin="5" Name="time"/>
         </DockPanel>
         <DockPanel>
@@ -22,8 +22,8 @@
         </DockPanel>
         <DockPanel>
             <TextBox Width="100" Name="portBox"/>
-            <Button Content="Add" Width="50" ToolTip="Add a port" Click="Add"/>
-            <Button Content="Remove" Width="50" ToolTip="Remove a port" Click="Remove"/>
+            <Button Content="Add" Width="50" ToolTip="Add a port" Click="AddPort_Textbox"/>
+            <Button Content="Remove" Width="50" ToolTip="Remove a port" Click="RemoveSelectedPorts"/>
         </DockPanel>
         <ScrollViewer Height="70" Width="365" VerticalScrollBarVisibility="Visible">
             <ListView ItemsSource="{Binding Ports}" Name="portList"/>
