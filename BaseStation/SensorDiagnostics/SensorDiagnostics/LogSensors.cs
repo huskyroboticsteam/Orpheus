@@ -13,7 +13,7 @@ namespace FlatRobot
 {
     static class LogSensors
     {
-        private static List<List<string>>[] fileOutput = new List<List<string>>[6];
+        private static List<List<string>>[] fileOutput = new List<List<string>>[7];
         private static StreamWriter SensorLogFile;
 
         private const string delimiter = ",";
@@ -21,7 +21,7 @@ namespace FlatRobot
 
         public static void logSensors()
         {
-            int[] sensorCount = new int[6];
+            int[] sensorCount = new int[7];
             /*
              * 0 - Encoders
              * 1 - LimitSwtichs
@@ -54,26 +54,28 @@ namespace FlatRobot
                 if (s.GetType() == typeof(MPU6050))
                 {
                     MPU6050 temp = (MPU6050)s;
-                    fileOutput[3][sensorCount[3]].Add(temp.GetData().ToString());
+                    MPU6050.MPUData Data = temp.GetData();
+                    fileOutput[3][sensorCount[3]].Add(String.Format("{0}/{1}/{2}-{3}/{4}/{5}", Data.AccelX, Data.AccelY, Data.AccelZ, Data.GyroX, Data.GyroY, Data.GyroZ));
                     sensorCount[3]++;
                 } else
-                    /*if (s.GetType() == typeof(MTK3339))
+                /*if (s.GetType() == typeof(MTK3339))
                 {
-
                     MTK3339 temp = (MTK3339)s;
                     s.GetCoords().ToString()
+                    fileOutput[4][sensorCount[4]].Add(String.Format("{0}/{1}", s.GetCoords.Item1, s.GetCoords.Item2));
+                    sensorCount[4]++;
                 }else*/
                 if (s.GetType() == typeof(Potentiometer))
                 {
                     Potentiometer temp = (Potentiometer)s;
-                    fileOutput[4][sensorCount[4]].Add(temp.Angle.ToString());
-                    sensorCount[4]++;
+                    fileOutput[5][sensorCount[5]].Add(temp.Angle.ToString());
+                    sensorCount[5]++;
                 } else
                 if (s.GetType() == typeof(VEML6070))
                 {
                     VEML6070 temp = (VEML6070)s;
-                    fileOutput[5][sensorCount[5]].Add(temp.GetRawData().ToString());
-                    sensorCount[5]++;
+                    fileOutput[6][sensorCount[6]].Add(temp.GetRawData().ToString());
+                    sensorCount[6]++;
                 }
                 
             }

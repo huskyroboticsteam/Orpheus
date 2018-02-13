@@ -233,12 +233,12 @@ namespace SensorHistoryGraph
             }
         }
 
-        private PointCollection createPoints(string[] pointData)
+        private PointCollection[] createPoints(string[] pointData)
         {
-            PointCollection result = new PointCollection();
+            PointCollection[] result = new PointCollection[6]();
             int mode = 0;
             string sensorType = pointData[0];
-            double[] dataArray = new double[pointData.Length - 1];
+            double[,] dataArray = new double[result.Length, pointData.Length - 1];
             double data;
             for (int i = 1; i < pointData.Length; i++)
             {
@@ -259,12 +259,24 @@ namespace SensorHistoryGraph
                 else
                 if (MPU6050Regex.IsMatch(sensorType))
                 {
-
+                    string[] temp1 = sensorType.Split('-');
+                    string[] temp2 = temp1[0].Split('/');
+                    string[] temp1 = temp1[1].Split('/');
+                    string[] tempF = new string[temp1.Length + temp2.Length];
+                    Array.Copy(temp1, tempF, temp1.Length);
+                    Array.Copy(temp2, 0, tempF, temp1.Length, temp2.Length);
+                    data = Convert.ToDouble(tempF[0]);
+                    for (int p=1; p<tempF.Length; p++)
+                    {
+                        dataArray[p,i] = Convert.ToDouble(tempF[p]);
+                    }
                 }
                 else
                 if (MTK3339Regex.IsMatch(sensorType))
                 {
-
+                    string[] temp = sensorType.Split('/');
+                    data = Convert.ToDouble(temp[0]);
+                    dataArray[1, i] = Convert.ToDouble(temp[1]);
                 }
                 else
                 if (PotentiometerRegex.IsMatch(sensorType))
@@ -280,7 +292,7 @@ namespace SensorHistoryGraph
                 {
                     maxValue = data;
                 }
-                dataArray[i] = data;
+                dataArray[0,i] = data;
             }
             for (int j = 0; j < dataArray.Length; JournalEntry++)
             {
