@@ -65,7 +65,7 @@ namespace SensorHistoryGraph
 
         private void makeGraph()
         {
-            
+
             xmax = canGraph.Width - margin;
             ymax = canGraph.Height - margin;
 
@@ -115,9 +115,9 @@ namespace SensorHistoryGraph
             {
                 ComboBoxItem cboxitem = new ComboBoxItem();
                 cboxitem.Content = data[i].Name;
-                cbox.Items.Add(cboxitem); 
+                cbox.Items.Add(cboxitem);
             }
-            cbox.SelectionChanged += (object sender, SelectionChangedEventArgs args) => 
+            cbox.SelectionChanged += (object sender, SelectionChangedEventArgs args) =>
             {
                 selectedFile = cbox.SelectedIndex;
                 updateGraph();
@@ -137,7 +137,7 @@ namespace SensorHistoryGraph
                 Color brushColor = Color.FromRgb(0, 0, 0);
                 if (encoderRegex.IsMatch(sensorType))
                 {
-                    brushColor = Color.FromRgb(Convert.ToByte(255-10*sensorNums[0]), 0, 0);
+                    brushColor = Color.FromRgb(Convert.ToByte(255 - 10 * sensorNums[0]), 0, 0);
                     if (sensorNums[0] < 255)
                     {
                         sensorNums[0]++;
@@ -189,7 +189,7 @@ namespace SensorHistoryGraph
                 else
                     if (MTK3339Regex.IsMatch(sensorType))
                 {
-                    brushColor = Color.FromRgb(Convert.ToByte(255 - 10 * sensorNums[0]),0, Convert.ToByte(255 - 10 * sensorNums[0]));
+                    brushColor = Color.FromRgb(Convert.ToByte(255 - 10 * sensorNums[0]), 0, Convert.ToByte(255 - 10 * sensorNums[0]));
                     if (sensorNums[4] < 255)
                     {
                         sensorNums[4]++;
@@ -202,7 +202,7 @@ namespace SensorHistoryGraph
                 else
                     if (PotentiometerRegex.IsMatch(sensorType))
                 {
-                    brushColor = Color.FromRgb(0,Convert.ToByte(255 - 10 * sensorNums[0]), Convert.ToByte(255 - 10 * sensorNums[0]));
+                    brushColor = Color.FromRgb(0, Convert.ToByte(255 - 10 * sensorNums[0]), Convert.ToByte(255 - 10 * sensorNums[0]));
                     if (sensorNums[5] < 255)
                     {
                         sensorNums[5]++;
@@ -236,70 +236,58 @@ namespace SensorHistoryGraph
         private PointCollection createPoints(string[] pointData)
         {
             PointCollection result = new PointCollection();
-                int mode = 0;
-                string sensorType = pointData[0];
+            int mode = 0;
+            string sensorType = pointData[0];
+            double[] dataArray = new double[pointData.Length - 1];
+            double data;
+            for (int i = 1; i < pointData.Length; i++)
+            {
                 if (encoderRegex.IsMatch(sensorType))
                 {
-                    mode = 1;
+                    data = Convert.ToDouble(pointData[i]);
                 }
                 else
-                    if (LimitSwitchRegex.IsMatch(sensorType))
+                if (LimitSwitchRegex.IsMatch(sensorType))
                 {
-                    mode = 2;
+                    data = Convert.ToDouble(Convert.ToBoolean(pointData[i]));
                 }
                 else
-                    if (MAX31855Regex.IsMatch(sensorType))
+                if (MAX31855Regex.IsMatch(sensorType))
                 {
-                    mode = 3;
+                    data = Convert.ToDouble(pointData[i]);
                 }
                 else
-                    if (MPU6050Regex.IsMatch(sensorType))
+                if (MPU6050Regex.IsMatch(sensorType))
                 {
-                    mode = 4;
-                }
-                else
-                    if (MTK3339Regex.IsMatch(sensorType))
-                {
-                    mode = 5;
-                }
-                else
-                    if (PotentiometerRegex.IsMatch(sensorType))
-                {
-                    mode = 6;
-                }
-                else
-                    if (VEML6070Regex.IsMatch(sensorType))
-                {
-                    mode = 7;
-                }
-                double data;
-                for (int i = 1; i < pointData.Length; i++)
-                {
-                    switch (mode)
-                    {
-                        case 1:
-                            data = Convert.ToDouble(pointData[i]);
-                            break;
-                        case 2:
-                            data = Convert.ToDouble(Convert.ToBoolean(pointData[i]));
-                            break;
-                        case 3:
-                            data = Convert.ToDouble(pointData[i]);
-                            break;
-                        case 4:
 
-                            break;
-                        case 5:
-                            break;
-                        case 6:
-                            data = Convert.ToDouble(pointData[i]);
-                            break;
-                        case 7:
-                            data = Convert.ToDouble(pointData[i]);
-                            break;
-                    }
-                    result.Add(new Point());
                 }
+                else
+                if (MTK3339Regex.IsMatch(sensorType))
+                {
+
+                }
+                else
+                if (PotentiometerRegex.IsMatch(sensorType))
+                {
+                    data = Convert.ToDouble(pointData[i]);
+                }
+                else
+                if (VEML6070Regex.IsMatch(sensorType))
+                {
+                    data = Convert.ToDouble(pointData[i]);
+                }
+                if (maxValue < data)
+                {
+                    maxValue = data;
+                }
+                dataArray[i] = data;
+            }
+            for (int j = 0; j < dataArray.Length; JournalEntry++)
+            {
+                double yvalue = d / maxValue * (ymax + ymin);
+                double xvalue = j * (xmax / dataArray.Length);
+                result.Add(new Point(xvalue, yvalue));
+            }
             return result;
         }
     }
