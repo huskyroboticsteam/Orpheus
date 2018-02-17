@@ -18,14 +18,7 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <local:RoverView Grid.Row="0" Grid.Column="1"></local:RoverView>
-            <Canvas  Grid.Row="0" Grid.Column="0" Width="Auto" Height="Auto" ClipToBounds="True">
-                <Canvas 
-                    x:Name="canvas"
-                    MouseLeftButtonDown="CanvasMouseButtonDown"
-                    MouseLeftButtonUp="CanvasMouseButtonUp"
-                    MouseMove="CanvasMouseMove">
-                </Canvas>
-            </Canvas>
+            <local:MapDisplay Grid.Row="0" Grid.Column="0" Height="Auto" Width="Auto"/>
         </Grid>
     </DockPanel>
 </Window>
