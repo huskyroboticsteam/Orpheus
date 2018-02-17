@@ -4,10 +4,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HuskyRobotics.UI"
+        xmlns:stream="clr-namespace:HuskyRobotics.UI.VideoStreamer;assembly=VideoStreamer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="800" Width="1200">
-    <DockPanel>
-        <Button Content="Connect with PuTTY" Click="Button_Click"></Button>
+        Title="MainWindow">
+    <DockPanel Name="dock">
+        <Button Content="Connect with PuTTY" Click="PuTTY_Button_Click"></Button>
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition />
@@ -17,7 +18,9 @@
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
+            <stream:VideoDisplay Grid.Row="1" Grid.Column="0"></stream:VideoDisplay>
             <local:RoverView Grid.Row="0" Grid.Column="1"></local:RoverView>
+            <local:ConsoleView Grid.Row="1" Grid.Column="1"></local:ConsoleView>
         </Grid>
     </DockPanel>
 </Window>
