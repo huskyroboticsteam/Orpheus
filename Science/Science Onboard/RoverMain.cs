@@ -25,6 +25,7 @@ namespace Science
         private static int PortUDP = ScienceConstants.DEFAULT_PORT_UDP;
         internal static BBBPinManager.ApplicationMode ApplyDevTree = BBBPinManager.ApplicationMode.APPLY_IF_NONE;
         private static Log.Severity LogLevel = Log.Severity.INFO;
+        public static bool IsBeagleBone = false;
 
         static void Main(string[] Args)
 		{
@@ -34,12 +35,13 @@ namespace Science
             //Log.SetSingleOutputLevel(Log.Source.NETWORK, Log.Severity.DEBUG);
             Log.ErrorCodes = ScienceErrors.ERROR_CODES;
             Log.SystemNames = ScienceErrors.SYSTEMS;
+            Log.Destination = Log.WriteDestination.ALL;
             Log.Begin();
             Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Science Station - Rover Side");
             //Client.Start(IP, PortTCP, PortUDP, "SciRover");
-            BeagleBone.Initialize(SystemMode.DEFAULT, true);
+            //BeagleBone.Initialize(SystemMode.DEFAULT, true);
 
-            BBBTests.TestUART();
+            //BBBTests.TestUART();
 
             /*IOHandler = new IOHandler();
             IOHandler.InitializeSystems(ApplyDevTree);
@@ -50,7 +52,7 @@ namespace Science
 
             while (!Console.KeyAvailable)
             {
-                IOHandler.UpdateStates();
+                //IOHandler.UpdateStates();
                 Thread.Sleep(20);
             }
             Environment.Exit(0);
@@ -94,5 +96,5 @@ namespace Science
                 if(Args[i] == "--add-dt") { ApplyDevTree = BBBPinManager.ApplicationMode.APPLY_REGARDLESS; }
             }
         }
-	}
+    }
 }

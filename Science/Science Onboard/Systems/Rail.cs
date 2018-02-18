@@ -20,15 +20,12 @@ namespace Science.Systems
 
         private TalonMC MotorCtrl;
         private LimitSwitch Limit;
-        private Encoder Encoder;
 
-        /// <summary>
-        /// Handles moving the linear rail up and down for the various experiments.
-        /// </summary>
-        public Rail()
+        /// <summary> Handles moving the linear rail up and down for the various experiments. </summary>
+        public Rail(IPWMOutput MotorPWM, IDigitalIn LimitSw)
         {
-            BBBPinManager.AddMappingPWM(BBBPin.P8_13); // Linear Actuator
-            BBBPinManager.AddMappingGPIO(BBBPin.P8_08, false, ResistorState.PULL_UP); // Limit Switch
+            this.MotorCtrl = new TalonMC(MotorPWM, MOTOR_MAX_SPEED);
+            this.Limit = new LimitSwitch(LimitSw, false);
         }
 
         public void EventTriggered(object Sender, EventArgs Event)
@@ -52,10 +49,6 @@ namespace Science.Systems
                 this.MotorCtrl.SetEnabled(false);
                 Log.Output(Log.Severity.WARNING, Log.Source.MOTORS, "Rail motor hit limit switch and was stopped for safety.");
             }
-            if(Event is EncoderTurn)
-            {
-                // TODO: Track this.
-            }
         }
 
         /// <summary>
@@ -66,14 +59,7 @@ namespace Science.Systems
 
             this.Initializing = true;
 
-            IPWMOutput MotorPWM = PWMBBB.PWMDevice2.OutputB;
-            IDigitalIn LimitSw = new DigitalInBBB(BBBPin.P8_08);
-            this.MotorCtrl = new TalonMC(MotorPWM, MOTOR_MAX_SPEED);
-            this.Limit = new LimitSwitch(LimitSw, false);
-            //this.Encoder = new Encoder(2, 3, 80);
-
             this.Limit.SwitchToggle += this.EventTriggered;
-            //this.Encoder.Turned += this.EventTriggered;
 
             Timer TimeoutTrigger = new Timer() { Interval = INIT_TIMEOUT, AutoReset = false };
             TimeoutTrigger.Elapsed += this.EventTriggered;
@@ -81,34 +67,20 @@ namespace Science.Systems
             this.GotoTop();
         }
 
-        /// <summary>
-        /// Moves the rail to the highest position.
-        /// </summary>
+        /// <summary> Moves the rail to the highest position. </summary>
         public void GotoTop()
         {
             this.MotorCtrl.SetSpeed(MOTOR_MAX_SPEED);
         }
 
-        /// <summary>
-        /// Move the rail to where the drill is just above the ground.
-        /// </summary>
+        /// <summary> Move the rail to where the drill is just above the ground. </summary>
         public void GotoDrillGround()
         {
 
         }
 
-        /// <summary>
-        /// Move the rail to where the moisture sensor is in the soil.
-        /// </summary>
+        /// <summary> Move the rail to where the moisture sensor is in the soil. </summary>
         public void GotoMoistureInsert()
-        {
-
-        }
-
-        /// <summary>
-        /// Move the rail to where the thermocouple is in the soil.
-        /// </summary>
-        public void GotoThermoInsert()
         {
 
         }

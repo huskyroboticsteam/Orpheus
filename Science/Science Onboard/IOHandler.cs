@@ -1,25 +1,33 @@
 ﻿using Scarlet.Components;
+using Scarlet.Components.Outputs;
+using Scarlet.IO;
 using Scarlet.IO.BeagleBone;
+using Scarlet.IO.RaspberryPi;
 using Science.Systems;
 
 namespace Science
 {
     class IOHandler
     {
-        public readonly ISubsystem RailController;
-        public readonly ISubsystem TurntableController;
-        public readonly ISubsystem ToolheadController;
-        public readonly ISubsystem DrillController;
+        public readonly Rail RailController;
+        public readonly Drill DrillController;
+        public readonly Sample SampleController;
+        public readonly LEDs LEDController;
 
-        public readonly Microscope Microscope; // TODO: Evaluate whether this should also be a subsystem.
+        private II2CBus I2C;
+        private PCA9685 PWMGenLowFreq, PWMGenHighFreq;
 
         public IOHandler()
         {
-            this.RailController = new Rail();
-            this.TurntableController = new Turntable();
-            this.ToolheadController = new Toolhead();
-            this.DrillController = new Drill();
-            this.Microscope = new Microscope();
+            RaspberryPi.Initialize();
+            this.I2C = new I2CBusPi();
+            this.PWMGenHighFreq = new PCA9685(this.I2C, 0x4C);
+            this.PWMGenLowFreq = new PCA9685(this.I2C, 0x4B);
+
+            this.RailController = new Rail(this.PWMGenHighFreq.Outputs[1], new DigitalInPi(11));
+            this.DrillController = new Drill(this.PWMGenHighFreq.Outputs[0], this.PWMGenLowFreq.Outputs[0]);
+            this.SampleController = new Sample(this.PWMGenLowFreq.Outputs[1]);
+            this.LEDController = new LEDs(this.PWMGenLowFreq.Outputs, this.PWMGenHighFreq.Outputs);
         }
 
         /// <summary>
@@ -27,11 +35,11 @@ namespace Science
         /// </summary>
         public void InitializeSystems(BBBPinManager.ApplicationMode AppMode)
         {
-            BBBPinManager.ApplyPinSettings(AppMode);
+            if (RoverMain.IsBeagleBone) { BBBPinManager.ApplyPinSettings(AppMode); }
             this.RailController.Initialize();
-            this.TurntableController.Initialize();
-            this.ToolheadController.Initialize();
             this.DrillController.Initialize();
+            this.SampleController.Initialize();
+            this.LEDController.Initialize();
         }
 
         /// <summary>
@@ -40,17 +48,17 @@ namespace Science
         public void EmergencyStop()
         {
             this.RailController.EmergencyStop();
-            this.TurntableController.EmergencyStop();
-            this.ToolheadController.EmergencyStop();
             this.DrillController.EmergencyStop();
+            this.SampleController.EmergencyStop();
+            this.LEDController.EmergencyStop();
         }
 
         public void UpdateStates()
         {
             this.RailController.UpdateState();
-            this.TurntableController.UpdateState();
-            this.ToolheadController.UpdateState();
             this.DrillController.UpdateState();
+            this.SampleController.UpdateState();
+            this.LEDController.UpdateState();
         }
     }
 }
