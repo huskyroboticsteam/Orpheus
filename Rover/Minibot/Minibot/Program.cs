@@ -117,7 +117,7 @@ namespace Minibot
                     Console.WriteLine("xTesla: " + xTesla);
                     Console.WriteLine("yTesla: " + yTesla);
                     //Console.WriteLine(zTesla);
-                    var arcTan = Math.Atan2(yTesla, xTesla);
+                    var arcTan = Math.Atan2(xTesla, yTesla);
 
                     if(yTesla > 0) {
                         orientation = (float)(90  - (arcTan * (180 / Math.PI)));
