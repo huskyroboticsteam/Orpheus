@@ -8,17 +8,19 @@ using OpenTK.Input;
 using Scarlet.Communications;
 using Scarlet.Utilities;
 
+// this code will be used for the basestation and takes in all of the controller inputs then sends
+// them to the rover side. Whichever is client or server side has yet to be determined
+
 namespace ControllerServer
 {
     class Program
     {
-        private enum PacketID : byte {GenericPackets, LXAxis, LYAxis};
         static void Main(string[] args)
         {
             int PortTCP = 5287;
             int PortUDP = 5288;
-
-            Parse.SetParseHandler((byte)PacketID.GenericPackets, PrintPacketData);
+            byte PacketID = 0; // Packet ID must be formalized, 0 is just a placeholder
+            Parse.SetParseHandler(0, PrintPacketData);
 
             Log.SetGlobalOutputLevel(Log.Severity.ERROR);
             Server.Start(PortTCP, PortUDP);
@@ -27,22 +29,33 @@ namespace ControllerServer
                 if (Server.GetClients().Contains("Controller Parser"))
                 {
                     GamePadState state = GamePad.GetState(0);
-                    // Left X-axis
-                    sendPacket(new Message((byte)PacketID.LXAxis, UtilData.ToBytes(state.ThumbSticks.Left.X)),
-                        true, "Controller Parser");
-                    // Left Y-axis
-                    sendPacket(new Message((byte)PacketID.LYAxis, UtilData.ToBytes(state.ThumbSticks.Left.Y)),
-                        true, "Controller Parser");
+                    Packet info = new Packet(new Message(PacketID,
+                        UtilData.ToBytes(state.ThumbSticks.Left.X)), true, "Controller Parser");
+                    info.AppendData(UtilData.ToBytes(state.ThumbSticks.Left.Y));
+                    info.AppendData(UtilData.ToBytes(state.ThumbSticks.Right.X));
+                    info.AppendData(UtilData.ToBytes(state.ThumbSticks.Right.Y));
+                    info.AppendData(UtilData.ToBytes((int)state.DPad.Up));
+                    info.AppendData(UtilData.ToBytes((int)state.DPad.Down));
+                    info.AppendData(UtilData.ToBytes((int)state.DPad.Left));
+                    info.AppendData(UtilData.ToBytes((int)state.DPad.Right));
+                    info.AppendData(UtilData.ToBytes(state.Triggers.Right));
+                    info.AppendData(UtilData.ToBytes(state.Triggers.Left));
+                    info.AppendData(UtilData.ToBytes((int)state.Buttons.RightShoulder));
+                    info.AppendData(UtilData.ToBytes((int)state.Buttons.LeftShoulder));
+                    info.AppendData(UtilData.ToBytes((int)state.Buttons.A));
+                    info.AppendData(UtilData.ToBytes((int)state.Buttons.B));
+                    info.AppendData(UtilData.ToBytes((int)state.Buttons.X));
+                    info.AppendData(UtilData.ToBytes((int)state.Buttons.Y));
+                    info.AppendData(UtilData.ToBytes((int)state.Buttons.RightStick));
+                    info.AppendData(UtilData.ToBytes((int)state.Buttons.LeftStick));
+                    info.AppendData(UtilData.ToBytes((int)state.Buttons.Back));
+                    info.AppendData(UtilData.ToBytes((int)state.Buttons.Start));
+                    info.AppendData(UtilData.ToBytes((int)state.Buttons.BigButton));
+
+                    Server.Send(info);
                 }
                 Thread.Sleep(50);
             }
-        }
-
-        // sends a packet with the given message udp setting and endpoint
-        private static void sendPacket(Message message, bool isUDP, String endpoint)
-        {
-            Packet MyPack = new Packet(message, isUDP, endpoint);
-            Server.Send(MyPack);
         }
 
         // package handler prints package contents to console

@@ -6,77 +6,49 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+// this code will go on the rover. Right now it only prints the data to a console
+
 namespace ControllerClient
 {
     class Program
     {
         static string ServerIP;
-        private enum PacketID : byte {GenericPackets, LXAxis, LYAxis};
         static void Main(string[] args)
         {
             ServerIP = "127.0.0.1";
             int PortTCP = 5287;
             int PortUDP = 5288;
             string ClientName = "Controller Parser";
+            int recieveBufferSize = 128;
 
-            Parse.SetParseHandler((byte)PacketID.LXAxis, LXAxisHandle);
-            Parse.SetParseHandler((byte)PacketID.LYAxis, LYAxisHandle);
+            Parse.SetParseHandler(0, PrintPacketData);
 
             Log.SetGlobalOutputLevel(Log.Severity.ERROR);
-            Client.Start(ServerIP, PortTCP, PortUDP, ClientName);
+            Client.Start(ServerIP, PortTCP, PortUDP, ClientName, recieveBufferSize);
         }
 
-        // sends a message back to server indicating the clients interpretation of the packet
-        // for left y axis packets
-        private static void LYAxisHandle(Packet Packet)
+        // prints the packet raw information. In the future the data will be used to control the rover 
+        private static void PrintPacketData(Packet Packet)
         {
-            float data = UtilData.ToFloat(Packet.Data.Payload);
-            Console.WriteLine(data);
-            data = (float)Math.Round(data, 2);
-            if (data < -0.02 || data > 0.02)
+            // this will make sure that any packets recieved are ones that we sent
+            // because we knoe the length of the packets we send
+            // data order: LX, LY, RX, RY, DUp, DDown, DLeft, DRight, RTrig, LTrig, RBump,
+            // LBump, A, B, X, Y, RStick, LStick, Back, Start, Big
+            // Data parts that are floats: LX, LY, RX, RY, RTrig, LTrig
+            // All other data piecees are ints
+            if (Packet.Data.Payload.Length % 4 == 0)
             {
-                String say = "Broken";
-                if (data < -0.02)
+                byte[][] chunks = Packet.Data.Payload
+                        .Select((s, i) => new { Value = s, Index = i })
+                        .GroupBy(x => x.Index / 4)
+                        .Select(grp => grp.Select(x => x.Value).ToArray())
+                        .ToArray();
+                foreach (byte[] part in chunks)
                 {
-                    say = "Move Backward";
+                    //NOT ALL VALUES ARE FLOATS this is just a simple test to make sure all data got through
+                    Console.WriteLine(UtilData.ToFloat(part));
                 }
-                else if (data > 0.02)
-                {
-                    say = "Move Foreward";
-                }
-                Message returns = new Message((byte)PacketID.GenericPackets, say);
-                sendPacket(returns, true, "Server");
             }
-        }
-
-        // sends a message back to server indicating the clients interpretation of the packet
-        // for left x axis packets
-        private static void LXAxisHandle(Packet Packet)
-        {
-            float data = UtilData.ToFloat(Packet.Data.Payload);
-            Console.WriteLine(data);
-            data = (float)Math.Round(data, 2);
-            if (data < -0.02 || data > 0.02)
-            {
-                String say = "Broken";
-                if (data < -0.02)
-                {
-                    say = "Straif left";
-                }
-                else if (data > 0.02)
-                {
-                    say = "Straif right";
-                }
-                Message returns = new Message((byte)PacketID.GenericPackets, say);
-                sendPacket(returns, true, "Server");
-            }
-        }
-
-        // sends a packet to the server with the given message, udp setting and endpoint
-        private static void sendPacket(Message message, bool isUDP, String endpoint)
-        {
-            Packet returnMessage = new Packet(message, isUDP, endpoint);
-            Client.Send(returnMessage);
         }
     }
 }
