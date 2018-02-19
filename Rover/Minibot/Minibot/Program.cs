@@ -53,7 +53,7 @@ namespace Minibot
             }
 
             //Tests the wheel motors
-
+            /*
             for (int i = 0; i < 8; i++)
             {
                 Console.WriteLine("Motor " + i);
@@ -62,7 +62,7 @@ namespace Minibot
                 MinibotMotors[i].SetSpeed(0);
                 Thread.Sleep(500);
             }
-
+            */
             MinibotMotors[0].SetSpeed(0.0f);
             MinibotMotors[1].SetSpeed(0.0f);
             MinibotMotors[2].SetSpeed(0.0f);
@@ -118,7 +118,7 @@ namespace Minibot
                     Console.WriteLine("yTesla: " + yTesla);
                     //Console.WriteLine(zTesla);
                     var arcTan = Math.Atan2(yTesla, xTesla);
-                    /*
+
                     if(yTesla > 0) {
                         orientation = (float)(90  - (arcTan * (180 / Math.PI)));
                     } else if (yTesla < 0) {
@@ -128,8 +128,6 @@ namespace Minibot
                     } else if(Math.Abs(yTesla) < 1e-6 && xTesla > 0) {
                         orientation = 0.0f;
                     }
-                    */
-                    orientation = (float)(arcTan * 180 / Math.PI);
                     Console.WriteLine(orientation);
                     Thread.Sleep(500);
 
