@@ -5,5 +5,28 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VideoStreamer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="Video Player"
+        Height="200"
+        Width="390"
+        BorderThickness="3"
+        BorderBrush="LightGray"
+        Closing="Window_Closing">
+    <StackPanel>
+        <DockPanel>
+            <TextBox Height="23" Margin="5" TextWrapping="NoWrap"  Text="{Binding RecordingFolder}" Width="170" Name="dst" ToolTip="File Destination"/>
+            <Label Content="Recording Duration: 00:00:00" Width="170" Margin="5" Name="time"/>
+        </DockPanel>
+        <DockPanel>
+            <Button Content="Launch" Width="75" Margin="5" Height="20" Click="ButtonLaunch" Name="btnLaunch"/>
+            <Button Content="Record" Width="75" Margin="5" Height="20" Click="ButtonRecord" Name="btnRecord"/>
+        </DockPanel>
+        <DockPanel>
+            <TextBox Width="100" Name="portBox"/>
+            <Button Content="Add" Width="50" ToolTip="Add a port" Click="AddPort_Textbox"/>
+            <Button Content="Remove" Width="50" ToolTip="Remove a port" Click="RemoveSelectedPorts"/>
+        </DockPanel>
+        <ScrollViewer Height="70" Width="365" VerticalScrollBarVisibility="Visible">
+            <ListView ItemsSource="{Binding Ports}" Name="portList"/>
+        </ScrollViewer>
+    </StackPanel>
 </Window>
