@@ -15,7 +15,7 @@ namespace ControllerClient
         static string ServerIP;
         static void Main(string[] args)
         {
-            ServerIP = "127.0.0.1";
+            ServerIP = "127.0.0.1"; // ip to be changed later
             int PortTCP = 5287;
             int PortUDP = 5288;
             string ClientName = "Controller Parser";
@@ -30,13 +30,13 @@ namespace ControllerClient
         // prints the packet raw information. In the future the data will be used to control the rover 
         private static void PrintPacketData(Packet Packet)
         {
-            // this will make sure that any packets recieved are ones that we sent
-            // because we knoe the length of the packets we send
             // data order: LX, LY, RX, RY, DUp, DDown, DLeft, DRight, RTrig, LTrig, RBump,
             // LBump, A, B, X, Y, RStick, LStick, Back, Start, Big
             // Data parts that are floats: LX, LY, RX, RY, RTrig, LTrig
             // All other data piecees are ints
-            if (Packet.Data.Payload.Length % 4 == 0)
+            if (Packet.Data.Payload.Length == 84)
+            // this will make sure that any packets recieved are ones that we sent
+            // because we know the length of the packets we send
             {
                 byte[][] chunks = Packet.Data.Payload
                         .Select((s, i) => new { Value = s, Index = i })
