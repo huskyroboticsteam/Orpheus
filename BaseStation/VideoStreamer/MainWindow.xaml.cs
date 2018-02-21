@@ -1,6 +1,5 @@
-<<<<<<< HEAD
+
 ﻿using System.Windows;
-=======
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,7 +11,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
@@ -23,7 +21,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
->>>>>>> 4e4814bfd57fc939a6af1d502b75e3a22a26e1c9
 
 // this program is a video player that uses G-streamer through the console with file saving
 // capabilities.

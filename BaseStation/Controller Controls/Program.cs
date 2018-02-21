@@ -15,15 +15,21 @@ namespace ControllerServer
 {
     class Program
     {
+        private static byte PacketID = 0; // Packet ID must be formalized, 0 is just a placeholder
         static void Main(string[] args)
         {
             int PortTCP = 5287;
             int PortUDP = 5288;
-            byte PacketID = 0; // Packet ID must be formalized, 0 is just a placeholder
-            Parse.SetParseHandler(0, PrintPacketData);
+            Parse.SetParseHandler(PacketID, PrintPacketData);
 
             Log.SetGlobalOutputLevel(Log.Severity.ERROR);
             Server.Start(PortTCP, PortUDP);
+            SendGamePadData();
+        }
+
+        // sends the gamepad state data to the client named Controller Parser every 50ms
+        private static void SendGamePadData()
+        {
             while (true)
             {
                 if (Server.GetClients().Contains("Controller Parser"))
@@ -34,12 +40,12 @@ namespace ControllerServer
                     info.AppendData(UtilData.ToBytes(state.ThumbSticks.Left.Y));
                     info.AppendData(UtilData.ToBytes(state.ThumbSticks.Right.X));
                     info.AppendData(UtilData.ToBytes(state.ThumbSticks.Right.Y));
+                    info.AppendData(UtilData.ToBytes(state.Triggers.Right));
+                    info.AppendData(UtilData.ToBytes(state.Triggers.Left));
                     info.AppendData(UtilData.ToBytes((int)state.DPad.Up));
                     info.AppendData(UtilData.ToBytes((int)state.DPad.Down));
                     info.AppendData(UtilData.ToBytes((int)state.DPad.Left));
                     info.AppendData(UtilData.ToBytes((int)state.DPad.Right));
-                    info.AppendData(UtilData.ToBytes(state.Triggers.Right));
-                    info.AppendData(UtilData.ToBytes(state.Triggers.Left));
                     info.AppendData(UtilData.ToBytes((int)state.Buttons.RightShoulder));
                     info.AppendData(UtilData.ToBytes((int)state.Buttons.LeftShoulder));
                     info.AppendData(UtilData.ToBytes((int)state.Buttons.A));
