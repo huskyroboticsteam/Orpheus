@@ -23,9 +23,8 @@ namespace Science
         private static string IP = ScienceConstants.DEFAULT_SERVER_IP;
         private static int PortTCP = ScienceConstants.DEFAULT_PORT_TCP;
         private static int PortUDP = ScienceConstants.DEFAULT_PORT_UDP;
-        internal static BBBPinManager.ApplicationMode ApplyDevTree = BBBPinManager.ApplicationMode.APPLY_IF_NONE;
+
         private static Log.Severity LogLevel = Log.Severity.INFO;
-        public static bool IsBeagleBone = false;
 
         static void Main(string[] Args)
 		{
@@ -41,11 +40,9 @@ namespace Science
             //Client.Start(IP, PortTCP, PortUDP, "SciRover");
             //BeagleBone.Initialize(SystemMode.DEFAULT, true);
 
-            //BBBTests.TestUART();
-
-            /*IOHandler = new IOHandler();
-            IOHandler.InitializeSystems(ApplyDevTree);
-            ((Turntable)IOHandler.TurntableController).TargetAngle = 50;*/
+            IOHandler = new IOHandler();
+            IOHandler.InitializeSystems();
+            //((Turntable)IOHandler.TurntableController).TargetAngle = 50;
 
             while (Console.KeyAvailable) { Console.ReadKey(); } // Clear previous keypresses
             Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Press any key to exit.");
@@ -86,14 +83,14 @@ namespace Science
                     Console.WriteLine("  -s|--server <IP> : Connects to the given server instead of the default.");
                     Console.WriteLine("  -pt|--port-tcp <Port> : Connects to the server via TCP using the given port instead of the default.");
                     Console.WriteLine("  -pu|--port-udp <Port> : Connects to the server via UDP using the given port instead of the default.");
-                    Console.WriteLine(" Device Tree (BBB):");
+                    /*Console.WriteLine(" Device Tree (BBB):");
                     Console.WriteLine("  --no-dt : Do not attempt to remove/add device tree overlays.");
                     Console.WriteLine("  --replace-dt : Remove all Scarlet DT overlays, then apply the new one. DANGEROUS!");
-                    Console.WriteLine("  --add-dt : Add device tree overlay even if there is one already.");
+                    Console.WriteLine("  --add-dt : Add device tree overlay even if there is one already.");*/
                 }
-                if(Args[i] == "--no-dt") { ApplyDevTree = BBBPinManager.ApplicationMode.NO_CHANGES; }
+                /*if(Args[i] == "--no-dt") { ApplyDevTree = BBBPinManager.ApplicationMode.NO_CHANGES; }
                 if(Args[i] == "--replace-dt") { ApplyDevTree = BBBPinManager.ApplicationMode.REMOVE_AND_APPLY; }
-                if(Args[i] == "--add-dt") { ApplyDevTree = BBBPinManager.ApplicationMode.APPLY_REGARDLESS; }
+                if(Args[i] == "--add-dt") { ApplyDevTree = BBBPinManager.ApplicationMode.APPLY_REGARDLESS; }*/
             }
         }
     }

@@ -48,7 +48,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IOHandler.cs" />
-    <Compile Include="RPiTests.cs" />
     <Compile Include="Systems\Drill.cs" />
     <Compile Include="Systems\LEDs.cs" />
     <Compile Include="Systems\Rail.cs" />

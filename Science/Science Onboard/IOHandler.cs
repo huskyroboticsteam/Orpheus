@@ -33,9 +33,8 @@ namespace Science
         /// <summary>
         /// Prepares all systems for use by zeroing them. This takes a while.
         /// </summary>
-        public void InitializeSystems(BBBPinManager.ApplicationMode AppMode)
+        public void InitializeSystems()
         {
-            if (RoverMain.IsBeagleBone) { BBBPinManager.ApplyPinSettings(AppMode); }
             this.RailController.Initialize();
             this.DrillController.Initialize();
             this.SampleController.Initialize();
