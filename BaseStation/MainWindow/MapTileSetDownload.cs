@@ -9,23 +9,26 @@ namespace TileSetDownloader
     {
         public static void Main(string[] args)
         {
-            MapGenerator.Configuration config = new MapGenerator.Configuration();
-
-            config.setImageSize(3000, 3000);
-            config.setImageScale(2);
-            config.setZoomLevel(19);
-            config.setLocation(38.4064262, -110.7941097);
-            config.setSatelliteImage();
-
-            MapGenerator.Fetch(config);
+            MapTileDownloadManager.Configuration config = new MapTileDownloadManager.Configuration
+                (3000, 3000, 2, 19, 38.4064262, -110.7941097);
+            MapTileDownloadManager.Fetch(config);
         }
     }
 
-    class MapGenerator
+    class MapTileDownloadManager
     {
         public class Configuration
         {
             Dictionary<String, String> parameters = new Dictionary<String, String>();
+
+            public Configuration(int imgWidth, int ingHeight, int scale, int zoom, double longe, double lat)
+            {
+                setImageSize(3000, 3000);
+                setImageScale(2);
+                setZoomLevel(19);
+                setLocation(38.4064262, -110.7941097);
+                parameters.Add("maptype", "satellite");
+            }
 
             public void setImageSize(int width, int height)
             {
@@ -47,11 +50,6 @@ namespace TileSetDownloader
                 parameters.Add("zoom", zoom.ToString());
             }
 
-            public void setSatelliteImage()
-            {
-                parameters.Add("maptype", "satellite");
-            }
-
             public String toString()
             {
                 String result = "";
@@ -63,10 +61,11 @@ namespace TileSetDownloader
             }
         }
 
-        public static void Fetch(MapGenerator.Configuration config)
+        // pulls a single map tile from google maps
+        public static void Fetch(Configuration config)
         {
             String googleUrl = "https://maps.googleapis.com/maps/api/staticmap?" + config.toString();
-            String filename = "/Users/sydneyzapf/Desktop/map_image.jpg";
+            String filename = Directory.GetCurrentDirectory().ToString() + "Test.jpg";
 
             Uri uri = new Uri(googleUrl);
 
@@ -76,10 +75,11 @@ namespace TileSetDownloader
 
             using (Stream file = File.Create(filename))
             {
-                MapGenerator.CopyStream(input, file);
+                CopyStream(input, file);
             }
         }
 
+        // copies the given input stream to the given output stream
         public static void CopyStream(Stream input, Stream output)
         {
             byte[] buffer = new byte[8 * 1024];
