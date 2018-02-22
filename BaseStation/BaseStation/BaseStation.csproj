@@ -8,9 +8,10 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>BaseStation</RootNamespace>
     <AssemblyName>BaseStation</AssemblyName>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -52,10 +53,6 @@
     <ProjectReference Include="..\Utilities\Utilities.csproj">
       <Project>{a6dfdff4-614f-4225-8f75-c81c6765f23e}</Project>
       <Name>Utilities</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\VideoStreamer\VideoStreamer.csproj">
-      <Project>{97cc5515-a095-48eb-9ec2-ac134eb4a79c}</Project>
-      <Name>VideoStreamer</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

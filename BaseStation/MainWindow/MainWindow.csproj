@@ -13,6 +13,7 @@
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -60,6 +61,12 @@
     <Compile Include="RoverView.xaml.cs">
       <DependentUpon>RoverView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Settings\RemoteDevice.cs" />
+    <Compile Include="Settings\Settings.cs" />
+    <Compile Include="Settings\SettingsFile.cs" />
+    <Compile Include="Settings\SettingsPanel.xaml.cs">
+      <DependentUpon>SettingsPanel.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -75,6 +82,10 @@
     <Page Include="RoverView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Settings\SettingsPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
