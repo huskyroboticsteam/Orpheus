@@ -1,0 +1,20 @@
+﻿<UserControl x:Class="HuskyRobotics.UI.SettingsPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HuskyRobotics.UI"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <!--<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">-->
+        <StackPanel HorizontalAlignment="Left">
+            <Label Content="Devices:" />
+            <DataGrid Name="Devices" Width="400" Height="200" ItemsSource="{Binding Devices}" CanUserAddRows="True" AutoGenerateColumns="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Binding="{Binding Name}" Header="Name" Width="*"/>
+                    <DataGridTextColumn Binding="{Binding Address}" Header="Address" Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+    </StackPanel>
+    <!--</ScrollViewer>-->
+</UserControl>
