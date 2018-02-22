@@ -30,7 +30,8 @@ namespace HuskyRobotics.UI
         {
             // load in individual images
             // var path = Path.Combine(System.Environment.CurrentDirectory, "Images", "map.jpg");
-            var uri = new System.Uri("F:/GitHub/2017-18/BaseStation/MainWindow/Images/map.jpg");
+            // TODO get the path from the settings
+            var uri = new Uri("Images/map.jpg", UriKind.Relative);
             var bitmap = new BitmapImage(uri);
             var hi = new BitmapImage(uri);
             var image = new Image { Source = bitmap, Width = 300, Height = 300 };

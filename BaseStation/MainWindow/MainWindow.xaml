@@ -8,7 +8,7 @@
         Title="MainWindow" Height="800" Width="1200">
     <DockPanel>
         <Button Content="Connect with PuTTY" Click="Button_Click"></Button>
-        <Grid x:Name="grid">
+        <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition />
