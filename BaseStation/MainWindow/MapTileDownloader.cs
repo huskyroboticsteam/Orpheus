@@ -5,42 +5,14 @@ using System.Collections.Generic;
 using HuskyRobotics.Utilities;
 
 // make sure there is a folder named MapTiles in the working directory
-// google API key: AIzaSyDr7Tuv6bar9jkYbz23b3jv0RlHLnhtzxU
+// google API key is stored in environment variables
 // https://msdn.microsoft.com/en-us/library/bb259689.aspx#Map map system (its bing but google
 // uses the same system)
 // https://google-developers.appspot.com/maps/documentation/static-maps/intro#Zoomlevels google
 // tile download documentation
 
-// To Do:
-// Download tile set
-// store tile set info in file using hash for map file names
-// add on to existing tile set
-
-namespace MapDownloadTest
+namespace HuskyRobotics.UI
 {
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            int imagewidth = 500;
-            int imageheight = 500;
-            int scale = 2;
-            int zoom = 19;
-            Tuple<double, double> coords = new Tuple<double, double>(47.653741, -122.304855); // latitude, longitude
-            // shift x and y by image height and width
-            MapTileDownloadManager.Configuration config = new MapTileDownloadManager.Configuration
-                (imagewidth, imageheight, scale, zoom, coords);
-            //Tuple<int, int> point = MapConversion.LatLongToPixelXY(coords, zoom);
-            //Tuple<double, double> newCoords = MapConversion.PixelXYToLatLong
-            //    (point.Item1, point.Item2 + imageheight, zoom);
-            //MapTileDownloadManager.Configuration config2 = new MapTileDownloadManager.Configuration
-            //    (imagewidth, imageheight, scale, zoom, newCoords);
-            //MapTileDownloadManager.Fetch(config1);
-            //MapTileDownloadManager.Fetch(config2);
-            MapTileDownloadManager.DownloadNewTileSet(new Tuple<int, int>(3, 3), config, "test");
-        }
-    }
-
     public static class MapTileDownloadManager
     {
         // a class to hold the configuration for the map dowload, formated as specified by google
@@ -137,7 +109,7 @@ namespace MapDownloadTest
         public static void DownloadNewTileSet(Tuple<int, int> tilingDim, Configuration config, String mapSetName)
         {
             String fileName = Directory.GetCurrentDirectory().ToString() + @"\MapTiles\" + mapSetName + ".txt";
-            using(StreamWriter file = new StreamWriter(fileName))
+            using (StreamWriter file = new StreamWriter(fileName))
             {
                 int zoom;
                 int imgWidth;
@@ -152,7 +124,7 @@ namespace MapDownloadTest
                 Int32.TryParse(config.GetZoom(), out zoom);
                 Double.TryParse(coords[0], out lat);
                 Double.TryParse(coords[1], out longe);
-                
+
                 Tuple<int, int> centerPoint = MapConversion.LatLongToPixelXY(lat, longe, zoom);
 
                 file.WriteLine(config.GetImageDim() + "|" + zoom + "|" + config.GetScale());
@@ -193,7 +165,7 @@ namespace MapDownloadTest
                 input.CopyTo(buffer);
                 //CopyStream(input, buffer);
                 bufferHash = buffer.GetHashCode().ToString();
-                String fileName = Directory.GetCurrentDirectory().ToString()+ @"\MapTiles\" + bufferHash + ".jpeg";
+                String fileName = Directory.GetCurrentDirectory().ToString() + @"\MapTiles\" + bufferHash + ".jpeg";
                 buffer.Position = 0;
                 buffer.CopyTo(File.Create(fileName));
             }
