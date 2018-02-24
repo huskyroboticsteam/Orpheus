@@ -6,19 +6,43 @@
         xmlns:local="clr-namespace:HuskyRobotics.UI"
         mc:Ignorable="d"
         Title="MainWindow" Height="800" Width="1200">
-    <DockPanel>
-        <Button Content="Connect with PuTTY" Click="Button_Click"></Button>
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <local:RoverView Grid.Row="0" Grid.Column="1"></local:RoverView>
-            <local:MapDisplay Grid.Row="0" Grid.Column="0" Height="Auto" Width="Auto"/>
-        </Grid>
-    </DockPanel>
+    <TabControl TabStripPlacement="Left">
+        <!-- This rotates the tab labels 90deg to the right -->
+        <TabControl.Resources>
+            <Style TargetType="{x:Type TabItem}">
+                <Setter Property="HeaderTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <ContentPresenter Content="{TemplateBinding Content}">
+                                <ContentPresenter.LayoutTransform>
+                                    <RotateTransform Angle="270" />
+                                </ContentPresenter.LayoutTransform>
+                            </ContentPresenter>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Padding" Value="1,5,1,5" />
+            </Style>
+        </TabControl.Resources>
+
+        <TabItem Header="Main">
+            <DockPanel>
+                <Button Content="Connect with PuTTY" Click="ConnectPutty"></Button>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <local:RoverView Grid.Row="0" Grid.Column="1"></local:RoverView>
+                </Grid>
+            </DockPanel>
+        </TabItem>
+        <TabItem Header="Settings">
+            <local:SettingsPanel DataContext="{Binding Settings}"/>
+        </TabItem>
+    </TabControl>
 </Window>
