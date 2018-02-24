@@ -19,10 +19,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-<<<<<<< HEAD
-=======
 using System.Windows.Threading;
->>>>>>> cebb255948f8eb5256a033ba77afdefe97149a06
 
 // this program is a video player that uses G-streamer through the console with file saving
 // capabilities.
