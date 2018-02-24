@@ -3,10 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:HuskyRobotics.UI"
+        xmlns:ui="clr-namespace:HuskyRobotics.UI"
         xmlns:stream="clr-namespace:HuskyRobotics.UI.VideoStreamer;assembly=VideoStreamer"
         mc:Ignorable="d"
-        Title="MainWindow">
+        Title="Control Station">
     <DockPanel Name="dock">
         <Button Content="Connect with PuTTY" Click="PuTTY_Button_Click"></Button>
         <Grid>
@@ -18,9 +18,9 @@
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <stream:VideoDisplay Grid.Row="1" Grid.Column="0"></stream:VideoDisplay>
-            <local:RoverView Grid.Row="0" Grid.Column="1"></local:RoverView>
-            <local:ConsoleView Grid.Row="1" Grid.Column="1"></local:ConsoleView>
+            <!--<stream:VideoDisplay Grid.Row="1" Grid.Column="0"></stream:VideoDisplay>-->
+            <ui:RoverView Grid.Row="0" Grid.Column="1"></ui:RoverView>
+            <ui:ConsoleView Grid.Row="1" Grid.Column="1"></ui:ConsoleView>
         </Grid>
     </DockPanel>
 </Window>

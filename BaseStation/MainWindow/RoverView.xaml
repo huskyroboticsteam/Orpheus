@@ -9,7 +9,6 @@
     <UserControl.Resources>
         <local:ProportionToDegree x:Key="proportionToDegree" />
     </UserControl.Resources>
-    
     <Viewbox Stretch="Uniform">
         <Canvas Height="100" Width="100">
             <Rectangle Width="30" Height="70" Canvas.Left="35" Canvas.Top="15" Fill="Gray" />
