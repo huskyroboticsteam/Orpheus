@@ -2,33 +2,37 @@
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Controls;
+using HuskyRobotics.Utilities;
 
 namespace HuskyRobotics.UI {
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
 	public partial class MainWindow : Window {
+		private const string SETTINGS_PATH = "settings.xml";
+		private SettingsFile SettingsFile = new SettingsFile(SETTINGS_PATH);
+		public Settings Settings { get => SettingsFile.Settings; }
+		public ObservableDictionary<string, MeasuredValue<double>> Properties { get; }
+
 		public MainWindow() {
+			Properties = new MockObservableMap();
 			InitializeComponent();
 			WindowState = WindowState.Maximized;
 			DataContext = this;
 		}
 
 		private void PuTTY_Button_Click(object sender, RoutedEventArgs e) {
-			string puttyPath = @"C:\Program Files (x86)\PuTTY\putty.exe";
-			if (File.Exists(puttyPath)) {
+			if (File.Exists(Settings.PuttyPath)) {
 				var process = new Process();
-				process.StartInfo.FileName = puttyPath;
+				process.StartInfo.FileName = Settings.PuttyPath;
 				process.StartInfo.Arguments = "-ssh root@192.168.0.50";
 				process.Start();
 			} else {
-				//remove button if PuTTY is not found
-				DockPanel panel = this.FindName("dock") as DockPanel;
-				panel.Children.Remove(sender as UIElement);
 				//display error message
 				MessageBox.Show("Could not find PuTTY. You will need to install putty, or launch it manually\n" +
-						"Looking at: " + puttyPath);
+						"Looking at: " + Settings.PuttyPath + "\n" +
+						"Should be pointed to putty.exe");
 			}
 		}
-    }
+	}
 }

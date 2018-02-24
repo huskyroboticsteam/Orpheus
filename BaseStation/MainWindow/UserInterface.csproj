@@ -57,6 +57,15 @@
     <Compile Include="ConsoleView.xaml.cs">
       <DependentUpon>ConsoleView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MapDisplay.xaml.cs">
+      <DependentUpon>MapDisplay.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Settings\RemoteDevice.cs" />
+    <Compile Include="Settings\Settings.cs" />
+    <Compile Include="Settings\SettingsFile.cs" />
+    <Compile Include="Settings\SettingsPanel.xaml.cs">
+      <DependentUpon>SettingsPanel.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Utilities\MockObservableMap.cs" />
     <Compile Include="Utilities\ProportionToDegree.cs" />
     <Compile Include="RoverView.xaml.cs">
@@ -74,9 +83,17 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="MapDisplay.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="RoverView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Settings\SettingsPanel.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>
@@ -97,6 +114,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -114,6 +132,12 @@
       <Project>{97cc5515-a095-48eb-9ec2-ac134eb4a79c}</Project>
       <Name>VideoStreamer</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\map.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="settings.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
