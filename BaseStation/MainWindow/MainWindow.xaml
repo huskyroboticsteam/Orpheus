@@ -27,18 +27,26 @@
 
         <TabItem Header="Main">
             <DockPanel>
-                <Button Content="Connect with PuTTY" Click="ConnectPutty"></Button>
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
+                <Grid DockPanel.Dock="Bottom" Height="250">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="220" />
                     </Grid.ColumnDefinitions>
-                    <local:RoverView Grid.Row="0" Grid.Column="1"></local:RoverView>
+                    <local:RoverView Grid.Column="0"></local:RoverView>
+                    <local:RoverView Grid.Column="1"></local:RoverView>
+                    <local:RoverView Grid.Column="2"></local:RoverView>
+                    <StackPanel Grid.Column="3" Orientation="Vertical">
+                        <Label Content="Devices" />
+                        <Button Content="Connect with PuTTY" Click="ConnectPutty"></Button>
+                    </StackPanel>
                 </Grid>
+                <StackPanel Width="200" DockPanel.Dock="Right" Orientation="Vertical">
+                    <Label Content="Waypoints" />
+                    <ListView></ListView>
+                </StackPanel>
+                <local:MapDisplay />
             </DockPanel>
         </TabItem>
         <TabItem Header="Settings">
