@@ -15,6 +15,9 @@ using System.Windows.Shapes;
 using HuskyRobotics.Utilities;
 using System.Diagnostics;
 using System.IO;
+using System.Windows.Media.Imaging;
+using System.Windows.Controls;
+using System.Windows.Input;
 using System.Xml.Serialization;
 
 namespace HuskyRobotics.UI
@@ -34,26 +37,28 @@ namespace HuskyRobotics.UI
         public MainWindow()
         {
             InitializeComponent();
-
             DataContext = this;
+            
         }
-
+        
         private void ConnectPutty(object sender, RoutedEventArgs e)
         {
-            string puttyPath = @"C:\Program Files (x86)\PuTTY\putty.exe";
-
-            if (File.Exists(puttyPath))
+            if (File.Exists(Settings.PuttyPath))
             {
                 var process = new Process();
-                process.StartInfo.FileName = puttyPath;
+                process.StartInfo.FileName = Settings.PuttyPath;
                 process.StartInfo.Arguments = "-ssh root@192.168.0.50";
                 process.Start();
             }
             else
             {
                 MessageBox.Show("Could not find PuTTY. You will need to install putty, or launch it manually\n" +
-                        "Looking at: " + puttyPath);
+                        "Looking at: " + Settings.PuttyPath + "\n" + 
+                        "Should be pointed to putty.exe");
             }
         }
+
+        
     }
 }
+

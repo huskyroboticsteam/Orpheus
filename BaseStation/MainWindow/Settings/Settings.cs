@@ -18,6 +18,7 @@ namespace HuskyRobotics.UI
         /// Maps device names to their addresses
         /// </summary>
         private ObservableCollection<RemoteDevice> _devices = new ObservableCollection<RemoteDevice>();
+        private String _puttyPath = @"C:\Program Files (x86)\PuTTY\putty.exe";
 
         /// <summary>
         /// Triggered when any value in any part of the settings is changed.
@@ -28,6 +29,14 @@ namespace HuskyRobotics.UI
         
         public IEnumerable<RemoteDevice> Devices {
             get => _devices;
+        }
+
+        public String PuttyPath {
+            get => _puttyPath;
+            set {
+                _puttyPath = value;
+                NotifyChanged("PuttyPath");
+            }
         }
 
         // For serialization only
@@ -56,13 +65,19 @@ namespace HuskyRobotics.UI
                         item.PropertyChanged -= Settings_PropertyChanged;
                     }
                 }
-                ValueChanged.Invoke(this, new PropertyChangedEventArgs(collectionName));
+                ValueChanged?.Invoke(this, new PropertyChangedEventArgs(collectionName));
             };
         }
 
         private void Settings_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             ValueChanged.Invoke(this, new PropertyChangedEventArgs(null));
+        }
+
+        private void NotifyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            ValueChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         /// <summary>

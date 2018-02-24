@@ -7,14 +7,16 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <!--<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">-->
-        <StackPanel HorizontalAlignment="Left">
-            <Label Content="Devices:" />
-            <DataGrid Name="Devices" Width="400" Height="200" ItemsSource="{Binding Devices}" CanUserAddRows="True" AutoGenerateColumns="False">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Binding="{Binding Name}" Header="Name" Width="*"/>
-                    <DataGridTextColumn Binding="{Binding Address}" Header="Address" Width="*"/>
-                </DataGrid.Columns>
-            </DataGrid>
+    <StackPanel HorizontalAlignment="Left">
+        <Label Content="Devices:" />
+        <DataGrid Name="Devices" Width="400" Height="200" ItemsSource="{Binding Devices}" CanUserAddRows="True" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Name}" Header="Name" Width="*"/>
+                <DataGridTextColumn Binding="{Binding Address}" Header="Address" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <Label Content="PuTTY Path:" />
+        <TextBox Text="{Binding PuttyPath}" />
     </StackPanel>
     <!--</ScrollViewer>-->
 </UserControl>
