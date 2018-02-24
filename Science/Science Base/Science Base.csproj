@@ -39,6 +39,10 @@
     <Reference Include="DarkUI">
       <HintPath>..\Libraries\DarkUI.dll</HintPath>
     </Reference>
+    <Reference Include="Scarlet, Version=0.2.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Scarlet.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -64,10 +68,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Scarlet\Scarlet.csproj">
-      <Project>{eb8d6fe6-e3dd-4049-89a2-f636c6d70477}</Project>
-      <Name>Scarlet</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Science Library\Science Library.csproj">
       <Project>{a43e6103-949b-4efd-9a17-662ea79df9c7}</Project>
       <Name>Science Library</Name>

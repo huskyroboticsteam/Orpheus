@@ -3,54 +3,59 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:HuskyRobotics.UI"
+        xmlns:ui="clr-namespace:HuskyRobotics.UI"
         mc:Ignorable="d"
-        Title="MainWindow" Height="800" Width="1200">
-    <TabControl TabStripPlacement="Left">
-        <!-- This rotates the tab labels 90deg to the right -->
-        <TabControl.Resources>
-            <Style TargetType="{x:Type TabItem}">
-                <Setter Property="HeaderTemplate">
-                    <Setter.Value>
-                        <DataTemplate>
-                            <ContentPresenter Content="{TemplateBinding Content}">
-                                <ContentPresenter.LayoutTransform>
-                                    <RotateTransform Angle="270" />
-                                </ContentPresenter.LayoutTransform>
-                            </ContentPresenter>
-                        </DataTemplate>
-                    </Setter.Value>
-                </Setter>
-                <Setter Property="Padding" Value="1,5,1,5" />
-            </Style>
-        </TabControl.Resources>
+        Title="Control Station">
+    <DockPanel Name="dock">
+        <TabControl TabStripPlacement="Left">
+            <!-- This rotates the tab labels 90deg to the right -->
+            <TabControl.Resources>
+                <Style TargetType="{x:Type TabItem}">
+                    <Setter Property="HeaderTemplate">
+                        <Setter.Value>
+                            <DataTemplate>
+                                <ContentPresenter Content="{TemplateBinding Content}">
+                                    <ContentPresenter.LayoutTransform>
+                                        <RotateTransform Angle="270" />
+                                    </ContentPresenter.LayoutTransform>
+                                </ContentPresenter>
+                            </DataTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="Padding" Value="1,5,1,5" />
+                </Style>
+            </TabControl.Resources>
 
-        <TabItem Header="Main">
-            <DockPanel>
-                <Grid DockPanel.Dock="Bottom" Height="250">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="220" />
-                    </Grid.ColumnDefinitions>
-                    <local:RoverView Grid.Column="0"></local:RoverView>
-                    <local:RoverView Grid.Column="1"></local:RoverView>
-                    <local:RoverView Grid.Column="2"></local:RoverView>
-                    <StackPanel Grid.Column="3" Orientation="Vertical">
-                        <Label Content="Devices" />
-                        <Button Content="Connect with PuTTY" Click="ConnectPutty"></Button>
+            <TabItem Header="Main">
+                <DockPanel>
+                    <Grid DockPanel.Dock="Bottom" Height="250">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="220" />
+                        </Grid.ColumnDefinitions>
+                        <ui:RoverView Grid.Column="0"></ui:RoverView>
+                        <ui:RoverView Grid.Column="1"></ui:RoverView>
+                        <ui:RoverView Grid.Column="2"></ui:RoverView>
+                        <StackPanel Grid.Column="3" Orientation="Vertical">
+                            <Label Content="Devices" />
+                            <Button Content="Connect with PuTTY" Click="PuTTY_Button_Click"></Button>
+                        </StackPanel>
+                    </Grid>
+                    <StackPanel Width="200" DockPanel.Dock="Right" Orientation="Vertical">
+                        <Label Content="Waypoints" />
+                        <ListView></ListView>
                     </StackPanel>
-                </Grid>
-                <StackPanel Width="200" DockPanel.Dock="Right" Orientation="Vertical">
-                    <Label Content="Waypoints" />
-                    <ListView></ListView>
-                </StackPanel>
-                <local:MapDisplay />
-            </DockPanel>
-        </TabItem>
-        <TabItem Header="Settings">
-            <local:SettingsPanel DataContext="{Binding Settings}"/>
-        </TabItem>
-    </TabControl>
+                    <ui:MapDisplay />
+                </DockPanel>
+            </TabItem>
+            <TabItem Header="Settings">
+                <ui:SettingsPanel DataContext="{Binding Settings}"/>
+            </TabItem>
+            <TabItem Header="Console">
+                <ui:ConsoleView Grid.Column="3"></ui:ConsoleView>
+            </TabItem>
+        </TabControl>
+    </DockPanel>
 </Window>
