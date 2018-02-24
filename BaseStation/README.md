@@ -37,9 +37,5 @@ server logic, but may be merged with the BaseStation project.
  - separate windows
  - Always on top option
  
-## Required Libraries (include dll files)
- - VLC Video player
-	- nVLC.Declarations
-	- nVLC.Implementation
-	- nVLC.LibVlcWrapper
- - Nlog
+## Required Libraries
+ - GStreamer must be installed for VideoStreamer to work
