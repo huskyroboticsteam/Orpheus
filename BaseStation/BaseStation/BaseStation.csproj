@@ -6,9 +6,9 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{717939F0-9BDC-4D66-99B5-AE34D586488E}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>BaseStation</RootNamespace>
+    <RootNamespace>HuskyRobotics.BaseStation</RootNamespace>
     <AssemblyName>BaseStation</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
@@ -33,7 +33,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>BaseStation.StartBaseStation</StartupObject>
+    <StartupObject>HuskyRobotics.BaseStation.Start.StartBaseStation</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -46,9 +46,9 @@
       <Project>{5fca414a-cf38-44cb-888d-95d151a5c662}</Project>
       <Name>BaseServer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MainWindow\MainWindow.csproj">
+    <ProjectReference Include="..\MainWindow\UserInterface.csproj">
       <Project>{722b3498-9988-4667-b02c-c9d15d288657}</Project>
-      <Name>MainWindow</Name>
+      <Name>UserInterface</Name>
     </ProjectReference>
     <ProjectReference Include="..\Utilities\Utilities.csproj">
       <Project>{a6dfdff4-614f-4225-8f75-c81c6765f23e}</Project>
@@ -56,7 +56,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="PresentationFramework" />
+    <Reference Include="Scarlet">
+      <HintPath>..\..\lib\Scarlet.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
