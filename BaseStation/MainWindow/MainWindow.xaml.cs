@@ -15,7 +15,13 @@ using System.Windows.Shapes;
 using HuskyRobotics.Utilities;
 using System.Diagnostics;
 using System.IO;
+<<<<<<< HEAD
+using System.Windows.Media.Imaging;
+using System.Windows.Controls;
+using System.Windows.Input;
+=======
 using System.Xml.Serialization;
+>>>>>>> 788d94bc616e55fb0ac597436e54b41463a3345f
 
 namespace HuskyRobotics.UI
 {
@@ -34,10 +40,10 @@ namespace HuskyRobotics.UI
         public MainWindow()
         {
             InitializeComponent();
-
             DataContext = this;
+            
         }
-
+        
         private void ConnectPutty(object sender, RoutedEventArgs e)
         {
             if (File.Exists(Settings.PuttyPath))
@@ -54,5 +60,8 @@ namespace HuskyRobotics.UI
                         "Should be pointed to putty.exe");
             }
         }
+
+        
     }
 }
+
