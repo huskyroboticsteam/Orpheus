@@ -1,24 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.15
+VisualStudioVersion = 15.0.27004.2008
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Science Onboard", "Science Onboard\Science Onboard.csproj", "{D33A5CED-F246-4423-B237-DBE217B208DB}"
-	ProjectSection(ProjectDependencies) = postProject
-		{EB8D6FE6-E3DD-4049-89A2-F636C6D70477} = {EB8D6FE6-E3DD-4049-89A2-F636C6D70477}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Science Base", "Science Base\Science Base.csproj", "{12D16A1D-C562-427C-B570-48EA44633728}"
-	ProjectSection(ProjectDependencies) = postProject
-		{EB8D6FE6-E3DD-4049-89A2-F636C6D70477} = {EB8D6FE6-E3DD-4049-89A2-F636C6D70477}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Science Library", "Science Library\Science Library.csproj", "{A43E6103-949B-4EFD-9A17-662EA79DF9C7}"
-	ProjectSection(ProjectDependencies) = postProject
-		{EB8D6FE6-E3DD-4049-89A2-F636C6D70477} = {EB8D6FE6-E3DD-4049-89A2-F636C6D70477}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scarlet", "..\..\Scarlet\Scarlet.csproj", "{EB8D6FE6-E3DD-4049-89A2-F636C6D70477}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -52,14 +41,6 @@ Global
 		{A43E6103-949B-4EFD-9A17-662EA79DF9C7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A43E6103-949B-4EFD-9A17-662EA79DF9C7}.Release|x86.ActiveCfg = Release|Any CPU
 		{A43E6103-949B-4EFD-9A17-662EA79DF9C7}.Release|x86.Build.0 = Release|Any CPU
-		{EB8D6FE6-E3DD-4049-89A2-F636C6D70477}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EB8D6FE6-E3DD-4049-89A2-F636C6D70477}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EB8D6FE6-E3DD-4049-89A2-F636C6D70477}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{EB8D6FE6-E3DD-4049-89A2-F636C6D70477}.Debug|x86.Build.0 = Debug|Any CPU
-		{EB8D6FE6-E3DD-4049-89A2-F636C6D70477}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EB8D6FE6-E3DD-4049-89A2-F636C6D70477}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EB8D6FE6-E3DD-4049-89A2-F636C6D70477}.Release|x86.ActiveCfg = Release|Any CPU
-		{EB8D6FE6-E3DD-4049-89A2-F636C6D70477}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

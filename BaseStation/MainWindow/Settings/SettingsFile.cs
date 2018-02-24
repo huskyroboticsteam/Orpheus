@@ -22,13 +22,13 @@ namespace HuskyRobotics.UI
 
             if (File.Exists(FileName))
             {
-                try
-                {
+                try {
                     XmlSerializer serializer = new XmlSerializer(typeof(Settings));
                     TextReader reader = new StreamReader(FileName);
                     Settings = (Settings)serializer.Deserialize(reader);
-                }
-                catch (Exception e) { }
+                } catch (Exception) {
+
+				}
             }
             Settings = Settings ?? new Settings();
 
