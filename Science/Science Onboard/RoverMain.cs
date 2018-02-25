@@ -1,19 +1,7 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Net;
 using System.Threading;
-using BBBCSIO;
-using Scarlet.Communications;
-using Scarlet.Components;
-using Scarlet.Components.Motors;
-using Scarlet.Components.Sensors;
-using Scarlet.Filters;
-using Scarlet.IO;
-using Scarlet.IO.BeagleBone;
-using Scarlet.IO.RaspberryPi;
 using Scarlet.Utilities;
 using Science.Library;
-using Science.Systems;
 
 namespace Science
 {

@@ -6,6 +6,9 @@
 bin/
 obj/
 
+#Don't include auto-downloaded packages
+packages
+
 #Don't include visual studio metadata
 .vs/
 *.csproj.user

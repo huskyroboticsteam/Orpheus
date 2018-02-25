@@ -18,20 +18,9 @@ namespace Science_Base
             Log.Begin();
             Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Science Station - Base Side");
 
-            byte[] StrB = UtilData.ToBytes("Erza-{}'");
-            byte[] Fail = new byte[] { 0x8C };
-            bool Success = UtilData.TryToString(Fail, out string Str);
-            if (Success)
-            {
-                Console.WriteLine(Str);
-            }
-            else
-            {
-                Console.WriteLine(UtilMain.BytesToNiceString(StrB, true));
-            }
-
             MainWindow Main = new MainWindow();
             Application.EnableVisualStyles();
+            Server.Start(ScienceConstants.DEFAULT_PORT_TCP, ScienceConstants.DEFAULT_PORT_UDP);
             Server.ClientConnectionChange += Main.UpdateClientList;
             Application.Run(Main);
         }
