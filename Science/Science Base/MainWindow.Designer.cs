@@ -84,6 +84,7 @@
             this.EmergencyStopBtn = new System.Windows.Forms.Button();
             this.SecTimer = new System.Windows.Forms.Timer(this.components);
             this.UIUpdate = new System.Windows.Forms.Timer(this.components);
+            this.cartesianChart1 = new LiveCharts.WinForms.CartesianChart();
             this.tableLayoutPanel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.Control.SuspendLayout();
@@ -149,6 +150,7 @@
             this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel5.Controls.Add(this.GaugeTable, 1, 0);
+            this.tableLayoutPanel5.Controls.Add(this.cartesianChart1, 0, 1);
             this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel5.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel5.Margin = new System.Windows.Forms.Padding(0);
@@ -538,7 +540,7 @@
             this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15F));
             this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 65F));
-            this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 156F));
+            this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 158F));
             this.PacketGenLayout.Controls.Add(this.TimestampTitle, 0, 0);
             this.PacketGenLayout.Controls.Add(this.IDTitle, 1, 0);
             this.PacketGenLayout.Controls.Add(this.IDTextbox, 1, 1);
@@ -606,7 +608,7 @@
             this.DataTextbox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.DataTextbox.Location = new System.Drawing.Point(213, 20);
             this.DataTextbox.Name = "DataTextbox";
-            this.DataTextbox.Size = new System.Drawing.Size(386, 20);
+            this.DataTextbox.Size = new System.Drawing.Size(385, 20);
             this.DataTextbox.TabIndex = 4;
             this.DataTextbox.TextChanged += new System.EventHandler(this.DataTextbox_TextChanged);
             // 
@@ -617,7 +619,7 @@
             this.DataTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.DataTitle.Location = new System.Drawing.Point(213, 0);
             this.DataTitle.Name = "DataTitle";
-            this.DataTitle.Size = new System.Drawing.Size(386, 17);
+            this.DataTitle.Size = new System.Drawing.Size(385, 17);
             this.DataTitle.TabIndex = 5;
             this.DataTitle.Text = "Data";
             // 
@@ -689,7 +691,7 @@
             this.InterpretationData.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.InterpretationData.Location = new System.Drawing.Point(213, 82);
             this.InterpretationData.Name = "InterpretationData";
-            this.InterpretationData.Size = new System.Drawing.Size(386, 13);
+            this.InterpretationData.Size = new System.Drawing.Size(385, 13);
             this.InterpretationData.TabIndex = 10;
             this.InterpretationData.Text = "Unknown";
             // 
@@ -698,9 +700,9 @@
             this.PacketConstructStatus.AutoSize = true;
             this.PacketConstructStatus.Dock = System.Windows.Forms.DockStyle.Fill;
             this.PacketConstructStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.PacketConstructStatus.Location = new System.Drawing.Point(605, 82);
+            this.PacketConstructStatus.Location = new System.Drawing.Point(604, 82);
             this.PacketConstructStatus.Name = "PacketConstructStatus";
-            this.PacketConstructStatus.Size = new System.Drawing.Size(152, 13);
+            this.PacketConstructStatus.Size = new System.Drawing.Size(153, 13);
             this.PacketConstructStatus.TabIndex = 11;
             this.PacketConstructStatus.Text = "Unknown";
             // 
@@ -712,13 +714,13 @@
             this.tableLayoutPanel3.Controls.Add(this.SendPacketBtn, 0, 1);
             this.tableLayoutPanel3.Controls.Add(this.ClientSelector, 0, 0);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(602, 17);
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(601, 17);
             this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.RowCount = 2;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(158, 65);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(159, 65);
             this.tableLayoutPanel3.TabIndex = 12;
             // 
             // SendPacketBtn
@@ -728,7 +730,7 @@
             this.SendPacketBtn.Location = new System.Drawing.Point(3, 35);
             this.SendPacketBtn.Name = "SendPacketBtn";
             this.SendPacketBtn.Padding = new System.Windows.Forms.Padding(5);
-            this.SendPacketBtn.Size = new System.Drawing.Size(152, 25);
+            this.SendPacketBtn.Size = new System.Drawing.Size(153, 25);
             this.SendPacketBtn.TabIndex = 5;
             this.SendPacketBtn.Text = "Send";
             this.SendPacketBtn.Click += new System.EventHandler(this.SendPacketBtn_Click);
@@ -740,7 +742,7 @@
             this.ClientSelector.FormattingEnabled = true;
             this.ClientSelector.Location = new System.Drawing.Point(3, 3);
             this.ClientSelector.Name = "ClientSelector";
-            this.ClientSelector.Size = new System.Drawing.Size(152, 21);
+            this.ClientSelector.Size = new System.Drawing.Size(153, 21);
             this.ClientSelector.TabIndex = 6;
             // 
             // SendAsUDP
@@ -748,7 +750,7 @@
             this.SendAsUDP.AutoSize = true;
             this.SendAsUDP.Checked = true;
             this.SendAsUDP.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.SendAsUDP.Location = new System.Drawing.Point(605, 0);
+            this.SendAsUDP.Location = new System.Drawing.Point(604, 0);
             this.SendAsUDP.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
             this.SendAsUDP.Name = "SendAsUDP";
             this.SendAsUDP.Size = new System.Drawing.Size(49, 17);
@@ -838,6 +840,15 @@
             this.UIUpdate.Interval = 33;
             this.UIUpdate.Tick += new System.EventHandler(this.UIUpdate_Tick);
             // 
+            // cartesianChart1
+            // 
+            this.cartesianChart1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cartesianChart1.Location = new System.Drawing.Point(3, 313);
+            this.cartesianChart1.Name = "cartesianChart1";
+            this.cartesianChart1.Size = new System.Drawing.Size(382, 180);
+            this.cartesianChart1.TabIndex = 1;
+            this.cartesianChart1.Text = "cartesianChart1";
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -907,5 +918,6 @@
         private System.Windows.Forms.AGauge GaugeDrillCurrent;
         private System.Windows.Forms.AGauge GaugeRailCurrent;
         private System.Windows.Forms.AGauge GaugeSysVoltage;
+        private LiveCharts.WinForms.CartesianChart cartesianChart1;
     }
 }
