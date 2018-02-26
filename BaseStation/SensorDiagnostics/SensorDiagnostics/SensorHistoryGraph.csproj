@@ -32,6 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BBBCSIO, Version=1.6.0.0, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\HuskyRobotics.Scarlet.0.3.1\lib\BBBCSIO.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore">
       <HintPath>..\..\packages\Microsoft.Xaml.4.0.0.1\lib\PresentationCore.dll</HintPath>
       <Private>True</Private>
@@ -39,6 +42,9 @@
     <Reference Include="PresentationFramework">
       <HintPath>..\..\packages\Microsoft.Xaml.4.0.0.1\lib\PresentationFramework.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="Scarlet, Version=0.3.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HuskyRobotics.Scarlet.0.3.1\lib\Scarlet.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -66,9 +72,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-    </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
@@ -79,16 +82,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Utilities\Utilities.csproj">
-      <Project>{a6dfdff4-614f-4225-8f75-c81c6765f23e}</Project>
-      <Name>Utilities</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

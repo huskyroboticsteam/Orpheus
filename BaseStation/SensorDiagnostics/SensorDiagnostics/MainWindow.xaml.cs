@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,16 +14,15 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using HuskyRobotics.Utilities;
 using System.Diagnostics;
 using System.IO;
 
-namespace SensorHistoryGraph
+namespace HuskyRobotics.UI
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class sensorHistoryGraph : UserControl
     {
         private const string LogFilesLocation = "Logs";
         private const char Delimiter = ',';
@@ -33,25 +33,13 @@ namespace SensorHistoryGraph
         private double ymax;
         private const double step = 10;
 
-        private Regex encoderRegex = new Regex(@"Encoder_\d+");
-        private Regex LimitSwitchRegex = new Regex(@"LimitSwitch_\d+");
-        private Regex MAX31855Regex = new Regex(@"MAX31855_\d+");
-        private Regex MPU6050Regex = new Regex(@"MPU6050_\d+");
-        private Regex MTK3339Regex = new Regex(@"MTK3339_\d+");
-        private Regex PotentiometerRegex = new Regex(@"Potentiometer_\d+");
-        private Regex VEML6070Regex = new Regex(@"VEML6070_\d+");
         private int selectedFile;
         private FileInfo[] data;
-        private int maxValue = 0;
+        private double maxValue = 0;
 
-        public MainWindow()
+        public sensorHistoryGraph()
         {
             InitializeComponent();
-
-        }
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-
             getData();
             makeDropBox();
             makeGraph();
@@ -128,179 +116,38 @@ namespace SensorHistoryGraph
         private void updateGraph()
         {
             StreamReader sr = data[selectedFile].OpenText();
+            string[] headers = sr.ReadLine().Split(Delimiter);
+            List<double>[] sensorValues = new List<double>[headers.Length];
             while (sr.Peek() >= 0)
             {
-                int[] sensorNums = new int[7];
                 string[] sensorLogData = sr.ReadLine().Split(Delimiter);
-                PointCollection points = createPoints(sensorLogData);
-                string sensorType = sensorLogData[0];
-                Color brushColor = Color.FromRgb(0, 0, 0);
-                if (encoderRegex.IsMatch(sensorType))
+                double currentdata;
+                for(int i=0; i<sensorLogData.Length; i++)
                 {
-                    brushColor = Color.FromRgb(Convert.ToByte(255 - 10 * sensorNums[0]), 0, 0);
-                    if (sensorNums[0] < 255)
+                    currentdata = Convert.ToDouble(sensorLogData[i]);
+                    if (maxValue < currentdata)
                     {
-                        sensorNums[0]++;
+                        maxValue = currentdata;
                     }
-                    else
-                    {
-                        sensorNums[0] = 0;
-                    }
+                    sensorValues[i].Add(currentdata);
                 }
-                else
-                    if (LimitSwitchRegex.IsMatch(sensorType))
+                
+            }
+            Polyline polyline;
+            polyline = new Polyline();
+            polyline.StrokeThickness = 1;
+            polyline.Stroke = Brushes.Purple;
+            PointCollection[] points = new PointCollection[headers.Length];
+            for(int i=0; i<headers.Length;i++)
+            {
+                foreach (double d in sensorValues[i])
                 {
-                    brushColor = Color.FromRgb(0, Convert.ToByte(255 - 10 * sensorNums[0]), 0);
-                    if (sensorNums[1] < 255)
-                    {
-                        sensorNums[1]++;
-                    }
-                    else
-                    {
-                        sensorNums[1] = 0;
-                    }
+                    points[i].Add(new Point(ymax*(d/maxValue),i*(xmax/sensorValues[i].Count)));
                 }
-                else
-                    if (MAX31855Regex.IsMatch(sensorType))
-                {
-                    brushColor = Color.FromRgb(0, 0, Convert.ToByte(255 - 10 * sensorNums[0]));
-                    if (sensorNums[2] < 255)
-                    {
-                        sensorNums[2]++;
-                    }
-                    else
-                    {
-                        sensorNums[2] = 0;
-                    }
-                }
-                else
-                    if (MPU6050Regex.IsMatch(sensorType))
-                {
-                    brushColor = Color.FromRgb(Convert.ToByte(255 - 10 * sensorNums[0]), Convert.ToByte(255 - 10 * sensorNums[0]), 0);
-                    if (sensorNums[3] < 255)
-                    {
-                        sensorNums[3]++;
-                    }
-                    else
-                    {
-                        sensorNums[3] = 0;
-                    }
-                }
-                else
-                    if (MTK3339Regex.IsMatch(sensorType))
-                {
-                    brushColor = Color.FromRgb(Convert.ToByte(255 - 10 * sensorNums[0]), 0, Convert.ToByte(255 - 10 * sensorNums[0]));
-                    if (sensorNums[4] < 255)
-                    {
-                        sensorNums[4]++;
-                    }
-                    else
-                    {
-                        sensorNums[4] = 0;
-                    }
-                }
-                else
-                    if (PotentiometerRegex.IsMatch(sensorType))
-                {
-                    brushColor = Color.FromRgb(0, Convert.ToByte(255 - 10 * sensorNums[0]), Convert.ToByte(255 - 10 * sensorNums[0]));
-                    if (sensorNums[5] < 255)
-                    {
-                        sensorNums[5]++;
-                    }
-                    else
-                    {
-                        sensorNums[5] = 0;
-                    }
-                }
-                else
-                    if (VEML6070Regex.IsMatch(sensorType))
-                {
-                    brushColor = Color.FromRgb(Convert.ToByte(255 - 10 * sensorNums[0]), Convert.ToByte(255 - 10 * sensorNums[0]), Convert.ToByte(255 - 10 * sensorNums[0]));
-                    if (sensorNums[6] < 255)
-                    {
-                        sensorNums[6]++;
-                    }
-                    else
-                    {
-                        sensorNums[6] = 0;
-                    }
-                }
-                Polyline polyline = new Polyline();
-                polyline.StrokeThickness = 1;
-                polyline.Stroke = new SolidColorBrush(brushColor);
-                polyline.Points = points;
+                polyline.Points = points[i];
                 canGraph.Children.Add(polyline);
             }
         }
-
-        private PointCollection[] createPoints(string[] pointData)
-        {
-            PointCollection[] result = new PointCollection[6]();
-            int mode = 0;
-            string sensorType = pointData[0];
-            double[,] dataArray = new double[result.Length, pointData.Length - 1];
-            double data;
-            for (int i = 1; i < pointData.Length; i++)
-            {
-                if (encoderRegex.IsMatch(sensorType))
-                {
-                    data = Convert.ToDouble(pointData[i]);
-                }
-                else
-                if (LimitSwitchRegex.IsMatch(sensorType))
-                {
-                    data = Convert.ToDouble(Convert.ToBoolean(pointData[i]));
-                }
-                else
-                if (MAX31855Regex.IsMatch(sensorType))
-                {
-                    data = Convert.ToDouble(pointData[i]);
-                }
-                else
-                if (MPU6050Regex.IsMatch(sensorType))
-                {
-                    string[] temp1 = sensorType.Split('-');
-                    string[] temp2 = temp1[0].Split('/');
-                    string[] temp1 = temp1[1].Split('/');
-                    string[] tempF = new string[temp1.Length + temp2.Length];
-                    Array.Copy(temp1, tempF, temp1.Length);
-                    Array.Copy(temp2, 0, tempF, temp1.Length, temp2.Length);
-                    data = Convert.ToDouble(tempF[0]);
-                    for (int p=1; p<tempF.Length; p++)
-                    {
-                        dataArray[p,i] = Convert.ToDouble(tempF[p]);
-                    }
-                }
-                else
-                if (MTK3339Regex.IsMatch(sensorType))
-                {
-                    string[] temp = sensorType.Split('/');
-                    data = Convert.ToDouble(temp[0]);
-                    dataArray[1, i] = Convert.ToDouble(temp[1]);
-                }
-                else
-                if (PotentiometerRegex.IsMatch(sensorType))
-                {
-                    data = Convert.ToDouble(pointData[i]);
-                }
-                else
-                if (VEML6070Regex.IsMatch(sensorType))
-                {
-                    data = Convert.ToDouble(pointData[i]);
-                }
-                if (maxValue < data)
-                {
-                    maxValue = data;
-                }
-                dataArray[0,i] = data;
-            }
-            for (int j = 0; j < dataArray.Length; JournalEntry++)
-            {
-                double yvalue = d / maxValue * (ymax + ymin);
-                double xvalue = j * (xmax / dataArray.Length);
-                result.Add(new Point(xvalue, yvalue));
-            }
-            return result;
-        }
     }
 }
+
