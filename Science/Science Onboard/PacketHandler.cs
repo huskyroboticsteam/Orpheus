@@ -9,9 +9,9 @@ namespace Science
 
         public PacketHandler()
         {
-            Parse.SetParseHandler(PacketType.WATCHDOG_PING, ParseWatchdog);
-            Parse.SetParseHandler(PacketType.ERROR, ParseErrorPacket);
-            Parse.SetParseHandler(PacketType.EMERGENCY_STOP, ParseStopPacket);
+            Parse.SetParseHandler(ScienceConstants.Packets.WATCHDOG_PING, ParseWatchdog); // TODO: What are we doing with this?
+            Parse.SetParseHandler(ScienceConstants.Packets.ERROR, ParseErrorPacket);
+            Parse.SetParseHandler(ScienceConstants.Packets.EMERGENCY_STOP, ParseStopPacket);
         }
 
         public static void ParseErrorPacket(Packet Error)
