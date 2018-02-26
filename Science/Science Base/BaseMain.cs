@@ -9,6 +9,7 @@ namespace Science_Base
 {
     class BaseMain
     {
+        [STAThread]
         static void Main(string[] args)
         {
             Log.SetGlobalOutputLevel(Log.Severity.INFO);

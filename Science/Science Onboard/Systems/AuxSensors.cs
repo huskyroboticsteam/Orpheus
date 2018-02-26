@@ -10,7 +10,7 @@ namespace Science.Systems
     class AuxSensors : ISubsystem
     {
         private bool TakeReadings = false;
-        private Thread SenseThread;
+        private Timer Timer;
 
         // Comms buses
         private ISPIBus SPI0;
@@ -28,7 +28,7 @@ namespace Science.Systems
 
         public AuxSensors()
         {
-
+            this.Timer = new Timer(this.UpdateState, null, 0, 250);
         }
 
         public void EmergencyStop() { this.TakeReadings = false; }
@@ -50,9 +50,15 @@ namespace Science.Systems
             this.TakeReadings = true;
         }
 
+        public void UpdateState(object TimerCallback) => this.UpdateState();
+
         public void UpdateState()
         {
-            
+            if(this.TakeReadings)
+            {
+                DateTime Sample = DateTime.Now;
+                
+            }
         }
     }
 }
