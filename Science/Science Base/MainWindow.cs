@@ -13,6 +13,7 @@ using LiveCharts;
 using System.Windows.Media;
 using System.Drawing.Imaging;
 using System.Drawing;
+using Science_Base.Properties;
 
 namespace Science_Base
 {
@@ -24,9 +25,9 @@ namespace Science_Base
             InitWindow();
             this.EmergencyStopBtn.NotifyDefault(false);
             this.UIUpdate.Enabled = true;
-            SetMode(this.pictureBox1, 0);
-            SetMode(this.pictureBox2, 1);
-            SetMode(this.pictureBox3, 2);
+            SetMode(this.StatusImgNetwork, Resources.Network, 2);
+            SetMode(this.StatusImgPower, Resources.Power, 3);
+            SetMode(this.StatusImgSystem, Resources.CPU, 3);
         }
 
         private void InitWindow()
@@ -157,7 +158,7 @@ namespace Science_Base
             });
         }
 
-        public void SetMode(PictureBox Box, byte Mode)
+        public void SetMode(PictureBox Box, Image Original, byte Mode)
         {
             float[][] Good =
             {
@@ -169,7 +170,7 @@ namespace Science_Base
             };
 
             float[][] Warning =
-{
+            {
                 new float[] { 0.8F, 0, 0, 0, 0 },
                 new float[] { 0, 0.8F, 0, 0, 0 },
                 new float[] { 0, 0, 0, 0, 0 },
@@ -178,10 +179,19 @@ namespace Science_Base
             };
 
             float[][] Error =
-{
+            {
                 new float[] { 0.8F, 0, 0, 0, 0 },
                 new float[] { 0, 0, 0, 0, 0 },
                 new float[] { 0, 0, 0, 0, 0 },
+                new float[] { 0, 0, 0, 1, 0 },
+                new float[] { 0, 0, 0, 0, 0 }
+            };
+
+            float[][] Default =
+            {
+                new float[] { 0.8F, 0, 0, 0, 0 },
+                new float[] { 0, 0.8F, 0, 0, 0 },
+                new float[] { 0, 0, 0.8F, 0, 0 },
                 new float[] { 0, 0, 0, 1, 0 },
                 new float[] { 0, 0, 0, 0, 0 }
             };
@@ -191,11 +201,12 @@ namespace Science_Base
             {
                 case 0: Matrix = new ColorMatrix(Good); break;
                 case 1: Matrix = new ColorMatrix(Warning); break;
-                default: Matrix = new ColorMatrix(Error); break;
+                case 2: Matrix = new ColorMatrix(Error); break;
+                default: Matrix = new ColorMatrix(Default); break;
             }
             ImageAttributes Attributes = new ImageAttributes();
             Attributes.SetColorMatrix(Matrix);
-            Image Image = Box.Image;
+            Image Image = (Image)Original.Clone();
             Graphics Graphics = Graphics.FromImage(Image);
             Rectangle Output = new Rectangle(0, 0, Image.Width, Image.Height);
             Graphics.DrawImage(Image, Output, 0, 0, Image.Width, Image.Height, GraphicsUnit.Pixel, Attributes);
@@ -213,14 +224,14 @@ namespace Science_Base
             };
             Axis YAxis = new Axis()
             {
-                MinValue = 0,
-                MaxValue = 100
+                //MinValue = 0,
+                //MaxValue = 100
             };
             SolidColorBrush Red = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x81, 0x14, 0x26));
             SolidColorBrush Back = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0x3F, 0x81, 0x14, 0x26));
             Red.Freeze();
             Back.Freeze();
-            LineSeries Series = new LineSeries(DataSet.GetMapper("RandNumber"))
+            LineSeries Series = new LineSeries(DataSet.GetMapper("IntTemp"))
             {
                 Values = new ChartValues<DataUnit>(),
                 Stroke = Red,
@@ -230,7 +241,7 @@ namespace Science_Base
             this.DataGraph.AxisX.Add(XAxis);
             this.DataGraph.AxisY.Add(YAxis);
             this.DataGraph.DisableAnimations = true;
-            DataHandler.RandomData.ItemAdd += this.DataAdded;
+            DataHandler.ThermocoupleData.ItemAdd += this.DataAdded;
         }
 
         public void DataAdded(object Sender, DataEvent Event)
@@ -377,6 +388,8 @@ namespace Science_Base
             {
                 this.ClientSelector.Items.Clear();
                 this.ClientSelector.Items.AddRange(Server.GetClients().ToArray());
+                if (Server.GetClients().Contains(ScienceConstants.CLIENT_NAME)) { SetMode(this.StatusImgNetwork, Resources.Network, 0); }
+                else { SetMode(this.StatusImgNetwork, Resources.Network, 2); }
             });
         }
     }

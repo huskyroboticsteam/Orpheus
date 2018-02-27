@@ -35,6 +35,14 @@
             this.Control = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
             this.GaugeTable = new System.Windows.Forms.TableLayoutPanel();
+            this.darkLabel3 = new DarkUI.Controls.DarkLabel();
+            this.darkLabel2 = new DarkUI.Controls.DarkLabel();
+            this.darkLabel1 = new DarkUI.Controls.DarkLabel();
+            this.LabSysVoltage = new DarkUI.Controls.DarkLabel();
+            this.GaugeRailCurrent = new LiveCharts.WinForms.AngularGauge();
+            this.GaugeDrillCurrent = new LiveCharts.WinForms.AngularGauge();
+            this.GaugeSysCurrent = new LiveCharts.WinForms.AngularGauge();
+            this.GaugeSysVoltage = new LiveCharts.WinForms.AngularGauge();
             this.DataGraph = new LiveCharts.WinForms.CartesianChart();
             this.Debugging = new System.Windows.Forms.TabPage();
             this.DebugList = new System.Windows.Forms.TableLayoutPanel();
@@ -61,20 +69,12 @@
             this.StatsPacketQueueOut = new DarkUI.Controls.DarkLabel();
             this.StatsPacketQueueIn = new DarkUI.Controls.DarkLabel();
             this.EmergencyStopBtn = new System.Windows.Forms.Button();
+            this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
+            this.StatusImgNetwork = new System.Windows.Forms.PictureBox();
+            this.StatusImgPower = new System.Windows.Forms.PictureBox();
+            this.StatusImgSystem = new System.Windows.Forms.PictureBox();
             this.SecTimer = new System.Windows.Forms.Timer(this.components);
             this.UIUpdate = new System.Windows.Forms.Timer(this.components);
-            this.GaugeSysVoltage = new LiveCharts.WinForms.AngularGauge();
-            this.GaugeSysCurrent = new LiveCharts.WinForms.AngularGauge();
-            this.GaugeDrillCurrent = new LiveCharts.WinForms.AngularGauge();
-            this.GaugeRailCurrent = new LiveCharts.WinForms.AngularGauge();
-            this.LabSysVoltage = new DarkUI.Controls.DarkLabel();
-            this.darkLabel1 = new DarkUI.Controls.DarkLabel();
-            this.darkLabel2 = new DarkUI.Controls.DarkLabel();
-            this.darkLabel3 = new DarkUI.Controls.DarkLabel();
-            this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.pictureBox2 = new System.Windows.Forms.PictureBox();
-            this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.Control.SuspendLayout();
@@ -89,9 +89,9 @@
             this.groupBox1.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
             this.tableLayoutPanel6.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.StatusImgNetwork)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.StatusImgPower)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.StatusImgSystem)).BeginInit();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -181,6 +181,90 @@
             this.GaugeTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.GaugeTable.Size = new System.Drawing.Size(388, 310);
             this.GaugeTable.TabIndex = 0;
+            // 
+            // darkLabel3
+            // 
+            this.darkLabel3.AutoSize = true;
+            this.darkLabel3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.darkLabel3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.darkLabel3.Location = new System.Drawing.Point(197, 155);
+            this.darkLabel3.Name = "darkLabel3";
+            this.darkLabel3.Size = new System.Drawing.Size(188, 20);
+            this.darkLabel3.TabIndex = 12;
+            this.darkLabel3.Text = "Rail (A)";
+            this.darkLabel3.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            // 
+            // darkLabel2
+            // 
+            this.darkLabel2.AutoSize = true;
+            this.darkLabel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.darkLabel2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.darkLabel2.Location = new System.Drawing.Point(197, 0);
+            this.darkLabel2.Name = "darkLabel2";
+            this.darkLabel2.Size = new System.Drawing.Size(188, 20);
+            this.darkLabel2.TabIndex = 11;
+            this.darkLabel2.Text = "System (A)";
+            this.darkLabel2.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            // 
+            // darkLabel1
+            // 
+            this.darkLabel1.AutoSize = true;
+            this.darkLabel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.darkLabel1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.darkLabel1.Location = new System.Drawing.Point(3, 155);
+            this.darkLabel1.Name = "darkLabel1";
+            this.darkLabel1.Size = new System.Drawing.Size(188, 20);
+            this.darkLabel1.TabIndex = 10;
+            this.darkLabel1.Text = "Drill (A)";
+            this.darkLabel1.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            // 
+            // LabSysVoltage
+            // 
+            this.LabSysVoltage.AutoSize = true;
+            this.LabSysVoltage.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.LabSysVoltage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.LabSysVoltage.Location = new System.Drawing.Point(3, 0);
+            this.LabSysVoltage.Name = "LabSysVoltage";
+            this.LabSysVoltage.Size = new System.Drawing.Size(188, 20);
+            this.LabSysVoltage.TabIndex = 9;
+            this.LabSysVoltage.Text = "Supply (V)";
+            this.LabSysVoltage.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            // 
+            // GaugeRailCurrent
+            // 
+            this.GaugeRailCurrent.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.GaugeRailCurrent.Location = new System.Drawing.Point(197, 178);
+            this.GaugeRailCurrent.Name = "GaugeRailCurrent";
+            this.GaugeRailCurrent.Size = new System.Drawing.Size(188, 129);
+            this.GaugeRailCurrent.TabIndex = 7;
+            this.GaugeRailCurrent.Text = "angularGauge1";
+            // 
+            // GaugeDrillCurrent
+            // 
+            this.GaugeDrillCurrent.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.GaugeDrillCurrent.Location = new System.Drawing.Point(3, 178);
+            this.GaugeDrillCurrent.Name = "GaugeDrillCurrent";
+            this.GaugeDrillCurrent.Size = new System.Drawing.Size(188, 129);
+            this.GaugeDrillCurrent.TabIndex = 6;
+            this.GaugeDrillCurrent.Text = "angularGauge1";
+            // 
+            // GaugeSysCurrent
+            // 
+            this.GaugeSysCurrent.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.GaugeSysCurrent.Location = new System.Drawing.Point(197, 23);
+            this.GaugeSysCurrent.Name = "GaugeSysCurrent";
+            this.GaugeSysCurrent.Size = new System.Drawing.Size(188, 129);
+            this.GaugeSysCurrent.TabIndex = 5;
+            this.GaugeSysCurrent.Text = "angularGauge1";
+            // 
+            // GaugeSysVoltage
+            // 
+            this.GaugeSysVoltage.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.GaugeSysVoltage.Location = new System.Drawing.Point(3, 23);
+            this.GaugeSysVoltage.Name = "GaugeSysVoltage";
+            this.GaugeSysVoltage.Size = new System.Drawing.Size(188, 129);
+            this.GaugeSysVoltage.TabIndex = 4;
+            this.GaugeSysVoltage.Text = "angularGauge1";
             // 
             // DataGraph
             // 
@@ -532,6 +616,60 @@
             this.EmergencyStopBtn.UseVisualStyleBackColor = false;
             this.EmergencyStopBtn.Click += new System.EventHandler(this.EmergencyStopClick);
             // 
+            // tableLayoutPanel6
+            // 
+            this.tableLayoutPanel6.ColumnCount = 4;
+            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 40F));
+            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 40F));
+            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 40F));
+            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel6.Controls.Add(this.StatusImgNetwork, 0, 0);
+            this.tableLayoutPanel6.Controls.Add(this.StatusImgPower, 1, 0);
+            this.tableLayoutPanel6.Controls.Add(this.StatusImgSystem, 2, 0);
+            this.tableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel6.Location = new System.Drawing.Point(2, 524);
+            this.tableLayoutPanel6.Margin = new System.Windows.Forms.Padding(2);
+            this.tableLayoutPanel6.Name = "tableLayoutPanel6";
+            this.tableLayoutPanel6.RowCount = 1;
+            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel6.Size = new System.Drawing.Size(313, 35);
+            this.tableLayoutPanel6.TabIndex = 1000;
+            // 
+            // StatusImgNetwork
+            // 
+            this.StatusImgNetwork.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.StatusImgNetwork.Image = global::Science_Base.Properties.Resources.Network;
+            this.StatusImgNetwork.Location = new System.Drawing.Point(1, 1);
+            this.StatusImgNetwork.Margin = new System.Windows.Forms.Padding(1);
+            this.StatusImgNetwork.Name = "StatusImgNetwork";
+            this.StatusImgNetwork.Size = new System.Drawing.Size(38, 33);
+            this.StatusImgNetwork.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.StatusImgNetwork.TabIndex = 0;
+            this.StatusImgNetwork.TabStop = false;
+            // 
+            // StatusImgPower
+            // 
+            this.StatusImgPower.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.StatusImgPower.Image = global::Science_Base.Properties.Resources.Power;
+            this.StatusImgPower.Location = new System.Drawing.Point(41, 1);
+            this.StatusImgPower.Margin = new System.Windows.Forms.Padding(1);
+            this.StatusImgPower.Name = "StatusImgPower";
+            this.StatusImgPower.Size = new System.Drawing.Size(38, 33);
+            this.StatusImgPower.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.StatusImgPower.TabIndex = 1;
+            this.StatusImgPower.TabStop = false;
+            // 
+            // StatusImgSystem
+            // 
+            this.StatusImgSystem.Image = global::Science_Base.Properties.Resources.CPU;
+            this.StatusImgSystem.Location = new System.Drawing.Point(81, 1);
+            this.StatusImgSystem.Margin = new System.Windows.Forms.Padding(1);
+            this.StatusImgSystem.Name = "StatusImgSystem";
+            this.StatusImgSystem.Size = new System.Drawing.Size(38, 33);
+            this.StatusImgSystem.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.StatusImgSystem.TabIndex = 2;
+            this.StatusImgSystem.TabStop = false;
+            // 
             // SecTimer
             // 
             this.SecTimer.Interval = 1000;
@@ -541,144 +679,6 @@
             // 
             this.UIUpdate.Interval = 33;
             this.UIUpdate.Tick += new System.EventHandler(this.UIUpdate_Tick);
-            // 
-            // GaugeSysVoltage
-            // 
-            this.GaugeSysVoltage.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.GaugeSysVoltage.Location = new System.Drawing.Point(3, 23);
-            this.GaugeSysVoltage.Name = "GaugeSysVoltage";
-            this.GaugeSysVoltage.Size = new System.Drawing.Size(188, 129);
-            this.GaugeSysVoltage.TabIndex = 4;
-            this.GaugeSysVoltage.Text = "angularGauge1";
-            // 
-            // GaugeSysCurrent
-            // 
-            this.GaugeSysCurrent.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.GaugeSysCurrent.Location = new System.Drawing.Point(197, 23);
-            this.GaugeSysCurrent.Name = "GaugeSysCurrent";
-            this.GaugeSysCurrent.Size = new System.Drawing.Size(188, 129);
-            this.GaugeSysCurrent.TabIndex = 5;
-            this.GaugeSysCurrent.Text = "angularGauge1";
-            // 
-            // GaugeDrillCurrent
-            // 
-            this.GaugeDrillCurrent.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.GaugeDrillCurrent.Location = new System.Drawing.Point(3, 178);
-            this.GaugeDrillCurrent.Name = "GaugeDrillCurrent";
-            this.GaugeDrillCurrent.Size = new System.Drawing.Size(188, 129);
-            this.GaugeDrillCurrent.TabIndex = 6;
-            this.GaugeDrillCurrent.Text = "angularGauge1";
-            // 
-            // GaugeRailCurrent
-            // 
-            this.GaugeRailCurrent.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.GaugeRailCurrent.Location = new System.Drawing.Point(197, 178);
-            this.GaugeRailCurrent.Name = "GaugeRailCurrent";
-            this.GaugeRailCurrent.Size = new System.Drawing.Size(188, 129);
-            this.GaugeRailCurrent.TabIndex = 7;
-            this.GaugeRailCurrent.Text = "angularGauge1";
-            // 
-            // LabSysVoltage
-            // 
-            this.LabSysVoltage.AutoSize = true;
-            this.LabSysVoltage.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.LabSysVoltage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.LabSysVoltage.Location = new System.Drawing.Point(3, 0);
-            this.LabSysVoltage.Name = "LabSysVoltage";
-            this.LabSysVoltage.Size = new System.Drawing.Size(188, 20);
-            this.LabSysVoltage.TabIndex = 9;
-            this.LabSysVoltage.Text = "Supply (V)";
-            this.LabSysVoltage.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            // 
-            // darkLabel1
-            // 
-            this.darkLabel1.AutoSize = true;
-            this.darkLabel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.darkLabel1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkLabel1.Location = new System.Drawing.Point(3, 155);
-            this.darkLabel1.Name = "darkLabel1";
-            this.darkLabel1.Size = new System.Drawing.Size(188, 20);
-            this.darkLabel1.TabIndex = 10;
-            this.darkLabel1.Text = "Drill (A)";
-            this.darkLabel1.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            // 
-            // darkLabel2
-            // 
-            this.darkLabel2.AutoSize = true;
-            this.darkLabel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.darkLabel2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkLabel2.Location = new System.Drawing.Point(197, 0);
-            this.darkLabel2.Name = "darkLabel2";
-            this.darkLabel2.Size = new System.Drawing.Size(188, 20);
-            this.darkLabel2.TabIndex = 11;
-            this.darkLabel2.Text = "System (A)";
-            this.darkLabel2.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            // 
-            // darkLabel3
-            // 
-            this.darkLabel3.AutoSize = true;
-            this.darkLabel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.darkLabel3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkLabel3.Location = new System.Drawing.Point(197, 155);
-            this.darkLabel3.Name = "darkLabel3";
-            this.darkLabel3.Size = new System.Drawing.Size(188, 20);
-            this.darkLabel3.TabIndex = 12;
-            this.darkLabel3.Text = "Rail (A)";
-            this.darkLabel3.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            // 
-            // tableLayoutPanel6
-            // 
-            this.tableLayoutPanel6.ColumnCount = 4;
-            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 40F));
-            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 40F));
-            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 40F));
-            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel6.Controls.Add(this.pictureBox1, 0, 0);
-            this.tableLayoutPanel6.Controls.Add(this.pictureBox2, 1, 0);
-            this.tableLayoutPanel6.Controls.Add(this.pictureBox3, 2, 0);
-            this.tableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel6.Location = new System.Drawing.Point(0, 522);
-            this.tableLayoutPanel6.Margin = new System.Windows.Forms.Padding(2);
-            this.tableLayoutPanel6.Name = "tableLayoutPanel6";
-            this.tableLayoutPanel6.RowCount = 1;
-            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel6.Size = new System.Drawing.Size(317, 39);
-            this.tableLayoutPanel6.TabIndex = 1000;
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox1.Image = global::Science_Base.Properties.Resources.Network;
-            this.pictureBox1.Location = new System.Drawing.Point(1, 1);
-            this.pictureBox1.Margin = new System.Windows.Forms.Padding(1);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(38, 37);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
-            // 
-            // pictureBox2
-            // 
-            this.pictureBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox2.Image = global::Science_Base.Properties.Resources.Power;
-            this.pictureBox2.Location = new System.Drawing.Point(41, 1);
-            this.pictureBox2.Margin = new System.Windows.Forms.Padding(1);
-            this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(38, 37);
-            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox2.TabIndex = 1;
-            this.pictureBox2.TabStop = false;
-            // 
-            // pictureBox3
-            // 
-            this.pictureBox3.Image = global::Science_Base.Properties.Resources.CPU;
-            this.pictureBox3.Location = new System.Drawing.Point(81, 1);
-            this.pictureBox3.Margin = new System.Windows.Forms.Padding(1);
-            this.pictureBox3.Name = "pictureBox3";
-            this.pictureBox3.Size = new System.Drawing.Size(38, 37);
-            this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox3.TabIndex = 2;
-            this.pictureBox3.TabStop = false;
             // 
             // MainWindow
             // 
@@ -709,9 +709,9 @@
             this.tableLayoutPanel4.ResumeLayout(false);
             this.tableLayoutPanel4.PerformLayout();
             this.tableLayoutPanel6.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.StatusImgNetwork)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.StatusImgPower)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.StatusImgSystem)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -760,8 +760,8 @@
         private DarkUI.Controls.DarkLabel darkLabel1;
         private DarkUI.Controls.DarkLabel LabSysVoltage;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel6;
-        private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.PictureBox pictureBox2;
-        private System.Windows.Forms.PictureBox pictureBox3;
+        private System.Windows.Forms.PictureBox StatusImgNetwork;
+        private System.Windows.Forms.PictureBox StatusImgPower;
+        private System.Windows.Forms.PictureBox StatusImgSystem;
     }
 }

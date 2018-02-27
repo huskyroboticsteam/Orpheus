@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using Scarlet.Communications;
 using Scarlet.Utilities;
 using Science.Library;
 
@@ -17,15 +18,15 @@ namespace Science
         static void Main(string[] Args)
 		{
             ParseArgs(Args);
-            StateStore.Start("SciRover");
-            Log.SetGlobalOutputLevel(Log.Severity.DEBUG);
+            StateStore.Start(ScienceConstants.CLIENT_NAME);
+            Log.SetGlobalOutputLevel(LogLevel);
             //Log.SetSingleOutputLevel(Log.Source.NETWORK, Log.Severity.DEBUG);
             Log.ErrorCodes = ScienceErrors.ERROR_CODES;
             Log.SystemNames = ScienceErrors.SYSTEMS;
             Log.Destination = Log.WriteDestination.ALL;
             Log.Begin();
             Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Science Station - Rover Side");
-            //Client.Start(IP, PortTCP, PortUDP, "SciRover");
+            Client.Start(IP, PortTCP, PortUDP, ScienceConstants.CLIENT_NAME);
             //BeagleBone.Initialize(SystemMode.DEFAULT, true);
 
             IOHandler = new IOHandler();
