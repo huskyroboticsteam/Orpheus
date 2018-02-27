@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using LiveCharts;
 using LiveCharts.Configurations;
 using Scarlet.Utilities;
 
@@ -25,11 +26,14 @@ namespace Science_Base
             this.ItemAdd?.Invoke(this, new DataEvent() { Unit = New });
         }
 
+        public List<DataUnit> Get() => this.Data;
+        public ChartValues<DataUnit> GetValues() => new ChartValues<DataUnit>(this.Data);
+
         public static CartesianMapper<DataUnit> GetMapper(string SeriesName)
         {
             return Mappers.Xy<DataUnit>()
                 .X(du => du.GetValue<DateTime>("Time").Ticks)
-                .Y(du => du.GetValue<int>(SeriesName));
+                .Y(du => du.GetValue<float>(SeriesName));
         }
     }
 

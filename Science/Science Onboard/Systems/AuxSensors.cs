@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
+using Scarlet.Communications;
 using Scarlet.Components;
 using Scarlet.Components.Sensors;
 using Scarlet.IO;
 using Scarlet.IO.RaspberryPi;
+using Scarlet.Utilities;
+using Science.Library;
 
 namespace Science.Systems
 {
@@ -57,7 +61,11 @@ namespace Science.Systems
             if(this.TakeReadings)
             {
                 DateTime Sample = DateTime.Now;
-                
+                this.Thermocouple.UpdateState();
+                this.UVLight.UpdateState();
+                byte[] Data = UtilData.ToBytes(this.UVLight.GetReading()).Concat(UtilData.ToBytes(this.Thermocouple.GetRawData())).ToArray();
+                Packet Packet = new Packet(new Message(ScienceConstants.Packets.GND_SENSOR, Data), false);
+                Client.Send(Packet);
             }
         }
     }
