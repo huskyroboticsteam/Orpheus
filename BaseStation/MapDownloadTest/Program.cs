@@ -3,6 +3,8 @@ using System.Net;
 using System.IO;
 using System.Collections.Generic;
 using HuskyRobotics.Utilities;
+using System.Security.Cryptography;
+using System.Threading;
 
 // make sure there is a folder named MapTiles in the working directory
 // google API key: AIzaSyDr7Tuv6bar9jkYbz23b3jv0RlHLnhtzxU
@@ -22,22 +24,15 @@ namespace MapDownloadTest
     {
         static void Main(string[] args)
         {
-            int imagewidth = 500;
-            int imageheight = 500;
             int scale = 2;
             int zoom = 19;
-            Tuple<double, double> coords = new Tuple<double, double>(47.653741, -122.304855); // latitude, longitude
+            Tuple<double, double> coords = new Tuple<double, double>(40, -120); // latitude, longitude
+            Tuple<int, int> imgDim = new Tuple<int, int>(100, 100);
             // shift x and y by image height and width
             MapTileDownloadManager.Configuration config = new MapTileDownloadManager.Configuration
-                (imagewidth, imageheight, scale, zoom, coords);
-            //Tuple<int, int> point = MapConversion.LatLongToPixelXY(coords, zoom);
-            //Tuple<double, double> newCoords = MapConversion.PixelXYToLatLong
-            //    (point.Item1, point.Item2 + imageheight, zoom);
-            //MapTileDownloadManager.Configuration config2 = new MapTileDownloadManager.Configuration
-            //    (imagewidth, imageheight, scale, zoom, newCoords);
-            //MapTileDownloadManager.Fetch(config1);
-            //MapTileDownloadManager.Fetch(config2);
-            MapTileDownloadManager.DownloadNewTileSet(new Tuple<int, int>(3, 3), config, "test");
+                (coords, imgDim, scale, zoom);
+            MapTileDownloadManager.DownloadNewTileSet(new Tuple<int, int>(3, 3), config, "test1");
+            Thread.Sleep(30000);
         }
     }
 
@@ -46,89 +41,52 @@ namespace MapDownloadTest
         // a class to hold the configuration for the map dowload, formated as specified by google
         public class Configuration
         {
-            private Dictionary<String, String> parameters;
+            private const double MinLatitude = -85.05112878;
+            private const double MaxLatitude = 85.05112878;
+            private const double MinLongitude = -180;
+            private const double MaxLongitude = 180;
 
-            public Configuration(int imgWidth, int imgHeight, int scale, int zoom, Tuple<double, double> coords)
-            {
-                parameters = new Dictionary<String, String>();
-
-                SetLocation(coords);
-                SetZoom(zoom);
-                SetImageSize(imgHeight, imgWidth);
-                SetImageScale(scale);
-                parameters.Add("maptype", "satellite");
+            private int _scale;
+            public int Scale { get { return _scale; }
+                set { if (value == 1 || value == 2) _scale = value; }
             }
-
-            // adds the image dimensions to the current configuration
-            public void SetImageSize(int width, int height)
-            {
-                if (parameters.ContainsKey("size")) parameters.Remove("size");
-                parameters.Add("size", width + "x" + height);
+            private int _zoom;
+            public int Zoom { get { return _zoom; }
+                set { if (value >= 0 && value <= 21) _zoom = value; }
             }
-
-            // returns the dimensions of the image in the configuration
-            public String GetImageDim()
-            {
-                String size;
-                parameters.TryGetValue("size", out size);
-                return size;
+            private string _mapType;
+            public string MapType { get { return _mapType; }
+                set { if (value.Equals("roadmap") || value.Equals("satellite") ||
+                        value.Equals("terrain") || value.Equals("hybrid")) _mapType = value;
+                }
             }
-
-            // adds the scale to the current configuration
-            public void SetImageScale(int scale)
-            {
-                if (parameters.ContainsKey("scale")) parameters.Remove("scale");
-                parameters.Add("scale", scale.ToString());
+            private Tuple<int, int> _imgDim;
+            public Tuple<int, int> ImgDim { get { return _imgDim; }
+                set { if (value.Item1 > 0 && value.Item2 > 0) _imgDim = value; }
             }
-
-            // returns the scale of the image in the configuration
-            public String GetScale()
-            {
-                String scale;
-                parameters.TryGetValue("scale", out scale);
-                return scale;
+            private Tuple<double, double> _coords;
+            public Tuple<double, double> Coords {
+                get { return _coords; }
+                set { if (value.Item1 >= MinLatitude && value.Item1 <= MaxLatitude &&
+                          value.Item2 >= MinLongitude && value.Item2 <= MaxLongitude)
+                        _coords = value;
+                }
             }
-
-            // adds the coords to the current confuguration
-            public void SetLocation(Tuple<double, double> coords)
+            
+            public Configuration(Tuple<double, double> coords, Tuple<int, int> imgDim, int scale=2, int zoom=1, string maptype = "satellite")
             {
-                if (parameters.ContainsKey("center")) parameters.Remove("center");
-                parameters.Add("center", coords.Item1 + "," + coords.Item2);
-            }
-
-            // returns the location of the center for the current config
-            public String GetLocation()
-            {
-                String center;
-                parameters.TryGetValue("center", out center);
-                return center;
-            }
-
-            // adds the zoom level to the current configuration
-            public void SetZoom(int zoom)
-            {
-                if (parameters.ContainsKey("zoom")) parameters.Remove("zoom");
-                parameters.Add("zoom", zoom.ToString());
-            }
-
-            // returns the zoom value of the configuration
-            public String GetZoom()
-            {
-                String zoom;
-                parameters.TryGetValue("zoom", out zoom);
-                return zoom;
+                Coords = coords;
+                ImgDim = imgDim;
+                Scale = scale;
+                Zoom = zoom;
+                MapType = maptype;
             }
 
             // returns the string representation of the configuration
             public override String ToString()
             {
-                String result = "";
-                foreach (String key in parameters.Keys)
-                {
-                    result += key + "=" + parameters[key] + "&";
-                }
-                result += "key=" + Environment.GetEnvironmentVariable("GOOGLEMAPSAPIKEY");
-                return result;
+                return "center=" + Coords.Item1 + "," + Coords.Item2 + "&size=" + ImgDim.Item1 + "x"
+                    + ImgDim.Item2 + "&scale=" + Scale + "&zoom=" + Zoom + "&maptype=" + MapType;
             }
         }
 
@@ -139,23 +97,11 @@ namespace MapDownloadTest
             String fileName = Directory.GetCurrentDirectory().ToString() + @"\MapTiles\" + mapSetName + ".txt";
             using(StreamWriter file = new StreamWriter(fileName))
             {
-                int zoom;
-                int imgWidth;
-                int imgHeight;
-                double longe;
-                double lat;
+                Tuple<int, int> centerPoint = MapConversion.LatLongToPixelXY(config.Coords.Item1,
+                    config.Coords.Item2, config.Zoom);
 
-                String[] imgDim = config.GetImageDim().Split('x');
-                String[] coords = config.GetLocation().Split(',');
-                Int32.TryParse(imgDim[0], out imgWidth);
-                Int32.TryParse(imgDim[1], out imgHeight);
-                Int32.TryParse(config.GetZoom(), out zoom);
-                Double.TryParse(coords[0], out lat);
-                Double.TryParse(coords[1], out longe);
-                
-                Tuple<int, int> centerPoint = MapConversion.LatLongToPixelXY(lat, longe, zoom);
-
-                file.WriteLine(config.GetImageDim() + "|" + zoom + "|" + config.GetScale());
+                file.WriteLine(config.ImgDim.Item1 + "x" + config.ImgDim.Item2 + "|" + config.Zoom + "|"
+                    + config.Scale + "|" + config.MapType);
 
                 // center of the tiling is 0,0
                 int startx = -tilingDim.Item1 / 2;
@@ -168,8 +114,9 @@ namespace MapDownloadTest
                     for (int j = starty; j <= tilingDim.Item2 / 2; j++)
                     {
                         Tuple<double, double> newCoords = MapConversion.PixelXYToLatLong
-                            (centerPoint.Item1 + (i * imgWidth), centerPoint.Item2 + (j * imgHeight), zoom);
-                        config.SetLocation(newCoords);
+                            (centerPoint.Item1 + (i * config.ImgDim.Item1), centerPoint.Item2
+                            + (j * config.ImgDim.Item2), config.Zoom);
+                        config.Coords = newCoords;
                         file.WriteLine(i + "," + j + "|" + Fetch(config));
                     }
                 }
@@ -186,18 +133,25 @@ namespace MapDownloadTest
             Stream input = response.GetResponseStream();
 
             MemoryStream buffer;
-            String bufferHash;
+            
             // writes to the buffer stream
             using (buffer = new MemoryStream())
             {
                 input.CopyTo(buffer);
-                //CopyStream(input, buffer);
-                bufferHash = buffer.GetHashCode().ToString();
-                String fileName = Directory.GetCurrentDirectory().ToString()+ @"\MapTiles\" + bufferHash + ".jpeg";
+                //hash code generator
+                SHA256Managed sha = new SHA256Managed();
                 buffer.Position = 0;
-                buffer.CopyTo(File.Create(fileName));
+                byte[] hash = sha.ComputeHash(buffer);
+                var bufferHash = BitConverter.ToString(hash).Replace("-", String.Empty).Substring(0, 16);
+                Console.WriteLine(bufferHash);
+                String fileName = Directory.GetCurrentDirectory().ToString()+ @"\MapTiles\" + bufferHash + ".jpg";
+                buffer.Position = 0;
+                using (var file = File.Create(fileName))
+                {
+                    buffer.CopyTo(file);
+                    return bufferHash;
+                }
             }
-            return bufferHash;
         }
     }
 }
