@@ -7,6 +7,9 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Net;
 using Science.Library;
+using LiveCharts.Configurations;
+using LiveCharts.Wpf;
+using LiveCharts;
 
 namespace Science_Base
 {
@@ -17,6 +20,29 @@ namespace Science_Base
             InitializeComponent();
             this.EmergencyStopBtn.NotifyDefault(false);
             this.UIUpdate.Enabled = true;
+        }
+
+        public void StartData()
+        {
+            Axis XAxis = new Axis() { MinValue = DateTime.Now.Ticks, MaxValue = DateTime.Now.AddSeconds(15).Ticks };
+            CartesianMapper<DataUnit> Mapper = Mappers.Xy<DataUnit>()
+                .X(x => x.GetValue<DateTime>("Time").Ticks)
+                .Y(y => y.GetValue<int>("RandNumber"));
+            LineSeries Series = new LineSeries(Mapper);
+            Series.Values = new ChartValues<DataUnit>(DataHandler.RandomData);
+            this.cartesianChart1.Series.Add(Series);
+            this.cartesianChart1.AxisX.Add(XAxis);
+            this.cartesianChart1.DisableAnimations = true;
+        }
+
+        public void UpdateGraph()
+        {
+            Invoke((MethodInvoker)delegate
+            {
+        this.cartesianChart1.Series.First().Values = new ChartValues<DataUnit>(DataHandler.RandomData);
+                this.cartesianChart1.Update();
+                Log.Output(Log.Severity.INFO, Log.Source.GUI, "Updating graph");
+            });
         }
 
         private void EmergencyStopClick(object sender, EventArgs e)

@@ -9,6 +9,8 @@ namespace Science_Base
 {
     class BaseMain
     {
+        public static MainWindow Window;
+
         [STAThread]
         static void Main(string[] args)
         {
@@ -19,11 +21,13 @@ namespace Science_Base
             Log.Begin();
             Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Science Station - Base Side");
 
-            MainWindow Main = new MainWindow();
+            Window = new MainWindow();
             Application.EnableVisualStyles();
-            Server.Start(ScienceConstants.DEFAULT_PORT_TCP, ScienceConstants.DEFAULT_PORT_UDP);
-            Server.ClientConnectionChange += Main.UpdateClientList;
-            Application.Run(Main);
+            //Server.Start(ScienceConstants.DEFAULT_PORT_TCP, ScienceConstants.DEFAULT_PORT_UDP);
+            Server.ClientConnectionChange += Window.UpdateClientList;
+            DataHandler.Start();
+            Window.StartData();
+            Application.Run(Window);
         }
     }
 }
