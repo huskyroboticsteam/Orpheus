@@ -37,9 +37,9 @@ namespace Science_Base
         {
             Log.Output(Log.Severity.INFO, Log.Source.GUI, "Beginning data addition.");
             Thread.Sleep(5000);
-            for (int i = 0; i < 60; i++)
+            for (int i = 0; i < 600; i++)
             {
-                Thread.Sleep(500);
+                Thread.Sleep(150);
                 DataUnit ToAdd = new DataUnit("Garbage")
                 {
                     { "Time", DateTime.Now },
