@@ -97,20 +97,12 @@ namespace HuskyRobotics.UI
 
         private void makeDropBox()
         {
-            ComboBox cbox = new ComboBox();
-            cbox.Background = Brushes.LightGray;
             for (int i = 0; i < data.Length; i++)
             {
                 ComboBoxItem cboxitem = new ComboBoxItem();
                 cboxitem.Content = data[i].Name;
-                cbox.Items.Add(cboxitem);
+                Selection.Items.Add(cboxitem);
             }
-            cbox.SelectionChanged += (object sender, SelectionChangedEventArgs args) =>
-            {
-                selectedFile = cbox.SelectedIndex;
-                updateGraph();
-            };
-            grid.Children.Add(cbox);
         }
 
         private void updateGraph()
@@ -136,17 +128,36 @@ namespace HuskyRobotics.UI
             Polyline polyline;
             polyline = new Polyline();
             polyline.StrokeThickness = 1;
-            polyline.Stroke = Brushes.Purple;
+            int R = 128, G = 0, B = 128;
+            SolidColorBrush brushColor = new SolidColorBrush(Color.FromArgb(255, (byte)R, (byte)G, (byte)B));
             PointCollection[] points = new PointCollection[headers.Length];
+            Point temp=new Point();
             for(int i=0; i<headers.Length;i++)
             {
                 foreach (double d in sensorValues[i])
                 {
-                    points[i].Add(new Point(ymax*(d/maxValue),i*(xmax/sensorValues[i].Count)));
+                    temp = new Point(ymax * (d / maxValue), i * (xmax / sensorValues[i].Count));
+                    points[i].Add(temp);
                 }
+                polyline.Stroke = brushColor;
                 polyline.Points = points[i];
                 canGraph.Children.Add(polyline);
+                Label lineLabel = new Label();
+                lineLabel.Content = headers[i];
+                canGraph.Children.Add(lineLabel);
+                Canvas.SetBottom(lineLabel,temp.Y);
+                Canvas.SetRight(lineLabel,temp.X);
+                canGraph.Children.Add(lineLabel);
+                R += 20;
+                B += 20;
+                brushColor.Color = Color.FromArgb(255, (byte)R, (byte)G, (byte)B);
             }
+        }
+
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            selectedFile = Selection.SelectedIndex;
+            updateGraph();
         }
     }
 }

@@ -6,9 +6,14 @@
         xmlns:local="clr-namespace:HuskyRobotics.UI"
         mc:Ignorable="d"
         d:DesignHeight="300" d:DesignWidth="300">
-    <Grid Name="grid">
-        <Canvas Name="canGraph" Background="White"
-      Width="100" Height="100"
-      VerticalAlignment="Center" HorizontalAlignment="Center"/>
-    </Grid>
+    <Viewbox Stretch="Uniform">
+        <Grid>
+            <Canvas Name="canGraph" Background="White"
+             Width="300" Height="300"
+            VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <ComboBox Name="Selection" Background="LightGray"
+             Width="75" Height="15"
+             VerticalAlignment="Top" HorizontalAlignment="Right" SelectionChanged="ComboBox_SelectionChanged"/>
+        </Grid>
+    </Viewbox>
 </UserControl>
