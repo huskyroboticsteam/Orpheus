@@ -29,34 +29,13 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.AGaugeLabel aGaugeLabel1 = new System.Windows.Forms.AGaugeLabel();
-            System.Windows.Forms.AGaugeRange aGaugeRange1 = new System.Windows.Forms.AGaugeRange();
-            System.Windows.Forms.AGaugeRange aGaugeRange2 = new System.Windows.Forms.AGaugeRange();
-            System.Windows.Forms.AGaugeRange aGaugeRange3 = new System.Windows.Forms.AGaugeRange();
-            System.Windows.Forms.AGaugeRange aGaugeRange4 = new System.Windows.Forms.AGaugeRange();
-            System.Windows.Forms.AGaugeRange aGaugeRange5 = new System.Windows.Forms.AGaugeRange();
-            System.Windows.Forms.AGaugeLabel aGaugeLabel2 = new System.Windows.Forms.AGaugeLabel();
-            System.Windows.Forms.AGaugeRange aGaugeRange6 = new System.Windows.Forms.AGaugeRange();
-            System.Windows.Forms.AGaugeRange aGaugeRange7 = new System.Windows.Forms.AGaugeRange();
-            System.Windows.Forms.AGaugeRange aGaugeRange8 = new System.Windows.Forms.AGaugeRange();
-            System.Windows.Forms.AGaugeLabel aGaugeLabel3 = new System.Windows.Forms.AGaugeLabel();
-            System.Windows.Forms.AGaugeRange aGaugeRange9 = new System.Windows.Forms.AGaugeRange();
-            System.Windows.Forms.AGaugeRange aGaugeRange10 = new System.Windows.Forms.AGaugeRange();
-            System.Windows.Forms.AGaugeRange aGaugeRange11 = new System.Windows.Forms.AGaugeRange();
-            System.Windows.Forms.AGaugeLabel aGaugeLabel4 = new System.Windows.Forms.AGaugeLabel();
-            System.Windows.Forms.AGaugeRange aGaugeRange12 = new System.Windows.Forms.AGaugeRange();
-            System.Windows.Forms.AGaugeRange aGaugeRange13 = new System.Windows.Forms.AGaugeRange();
-            System.Windows.Forms.AGaugeRange aGaugeRange14 = new System.Windows.Forms.AGaugeRange();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.Control = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
             this.GaugeTable = new System.Windows.Forms.TableLayoutPanel();
-            this.GaugeSysVoltage = new System.Windows.Forms.AGauge();
-            this.GaugeRailCurrent = new System.Windows.Forms.AGauge();
-            this.GaugeDrillCurrent = new System.Windows.Forms.AGauge();
-            this.GaugeSysCurrent = new System.Windows.Forms.AGauge();
+            this.cartesianChart1 = new LiveCharts.WinForms.CartesianChart();
             this.Debugging = new System.Windows.Forms.TabPage();
             this.DebugList = new System.Windows.Forms.TableLayoutPanel();
             this.PacketGenBox = new System.Windows.Forms.GroupBox();
@@ -84,7 +63,14 @@
             this.EmergencyStopBtn = new System.Windows.Forms.Button();
             this.SecTimer = new System.Windows.Forms.Timer(this.components);
             this.UIUpdate = new System.Windows.Forms.Timer(this.components);
-            this.cartesianChart1 = new LiveCharts.WinForms.CartesianChart();
+            this.GaugeSysVoltage = new LiveCharts.WinForms.AngularGauge();
+            this.GaugeSysCurrent = new LiveCharts.WinForms.AngularGauge();
+            this.GaugeDrillCurrent = new LiveCharts.WinForms.AngularGauge();
+            this.GaugeRailCurrent = new LiveCharts.WinForms.AngularGauge();
+            this.LabSysVoltage = new DarkUI.Controls.DarkLabel();
+            this.darkLabel1 = new DarkUI.Controls.DarkLabel();
+            this.darkLabel2 = new DarkUI.Controls.DarkLabel();
+            this.darkLabel3 = new DarkUI.Controls.DarkLabel();
             this.tableLayoutPanel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.Control.SuspendLayout();
@@ -166,328 +152,35 @@
             this.GaugeTable.ColumnCount = 2;
             this.GaugeTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.GaugeTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.GaugeTable.Controls.Add(this.GaugeSysVoltage, 0, 0);
-            this.GaugeTable.Controls.Add(this.GaugeRailCurrent, 1, 1);
-            this.GaugeTable.Controls.Add(this.GaugeDrillCurrent, 0, 1);
-            this.GaugeTable.Controls.Add(this.GaugeSysCurrent, 1, 0);
+            this.GaugeTable.Controls.Add(this.darkLabel3, 1, 2);
+            this.GaugeTable.Controls.Add(this.darkLabel2, 1, 0);
+            this.GaugeTable.Controls.Add(this.darkLabel1, 0, 2);
+            this.GaugeTable.Controls.Add(this.LabSysVoltage, 0, 0);
+            this.GaugeTable.Controls.Add(this.GaugeRailCurrent, 1, 3);
+            this.GaugeTable.Controls.Add(this.GaugeDrillCurrent, 0, 3);
+            this.GaugeTable.Controls.Add(this.GaugeSysCurrent, 1, 1);
+            this.GaugeTable.Controls.Add(this.GaugeSysVoltage, 0, 1);
             this.GaugeTable.Dock = System.Windows.Forms.DockStyle.Fill;
             this.GaugeTable.Location = new System.Drawing.Point(388, 0);
             this.GaugeTable.Margin = new System.Windows.Forms.Padding(0);
             this.GaugeTable.Name = "GaugeTable";
-            this.GaugeTable.RowCount = 2;
+            this.GaugeTable.RowCount = 4;
+            this.GaugeTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.GaugeTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.GaugeTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.GaugeTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.GaugeTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.GaugeTable.Size = new System.Drawing.Size(388, 310);
             this.GaugeTable.TabIndex = 0;
             // 
-            // GaugeSysVoltage
+            // cartesianChart1
             // 
-            this.GaugeSysVoltage.BaseArcColor = System.Drawing.Color.White;
-            this.GaugeSysVoltage.BaseArcRadius = 80;
-            this.GaugeSysVoltage.BaseArcStart = 160;
-            this.GaugeSysVoltage.BaseArcSweep = 220;
-            this.GaugeSysVoltage.BaseArcWidth = 3;
-            this.GaugeSysVoltage.Center = new System.Drawing.Point(93, 100);
-            this.GaugeSysVoltage.Dock = System.Windows.Forms.DockStyle.Fill;
-            aGaugeLabel1.Color = System.Drawing.Color.White;
-            aGaugeLabel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            aGaugeLabel1.Name = "GaugeLabel1";
-            aGaugeLabel1.Position = new System.Drawing.Point(63, 120);
-            aGaugeLabel1.Text = "Supply (V)";
-            this.GaugeSysVoltage.GaugeLabels.Add(aGaugeLabel1);
-            aGaugeRange1.Color = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            aGaugeRange1.EndValue = 22.5F;
-            aGaugeRange1.InnerRadius = 80;
-            aGaugeRange1.InRange = true;
-            aGaugeRange1.Name = "GaugeRange3";
-            aGaugeRange1.OuterRadius = 85;
-            aGaugeRange1.StartValue = 22F;
-            aGaugeRange2.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
-            aGaugeRange2.EndValue = 23.5F;
-            aGaugeRange2.InnerRadius = 80;
-            aGaugeRange2.InRange = true;
-            aGaugeRange2.Name = "GaugeRange2";
-            aGaugeRange2.OuterRadius = 85;
-            aGaugeRange2.StartValue = 22.5F;
-            aGaugeRange3.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
-            aGaugeRange3.EndValue = 28.5F;
-            aGaugeRange3.InnerRadius = 80;
-            aGaugeRange3.InRange = false;
-            aGaugeRange3.Name = "GaugeRange1";
-            aGaugeRange3.OuterRadius = 85;
-            aGaugeRange3.StartValue = 23.5F;
-            aGaugeRange4.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
-            aGaugeRange4.EndValue = 29.25F;
-            aGaugeRange4.InnerRadius = 80;
-            aGaugeRange4.InRange = false;
-            aGaugeRange4.Name = "GaugeRange4";
-            aGaugeRange4.OuterRadius = 85;
-            aGaugeRange4.StartValue = 28.5F;
-            aGaugeRange5.Color = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            aGaugeRange5.EndValue = 30F;
-            aGaugeRange5.InnerRadius = 80;
-            aGaugeRange5.InRange = false;
-            aGaugeRange5.Name = "GaugeRange5";
-            aGaugeRange5.OuterRadius = 85;
-            aGaugeRange5.StartValue = 29.25F;
-            this.GaugeSysVoltage.GaugeRanges.Add(aGaugeRange1);
-            this.GaugeSysVoltage.GaugeRanges.Add(aGaugeRange2);
-            this.GaugeSysVoltage.GaugeRanges.Add(aGaugeRange3);
-            this.GaugeSysVoltage.GaugeRanges.Add(aGaugeRange4);
-            this.GaugeSysVoltage.GaugeRanges.Add(aGaugeRange5);
-            this.GaugeSysVoltage.Location = new System.Drawing.Point(3, 3);
-            this.GaugeSysVoltage.MaxValue = 30F;
-            this.GaugeSysVoltage.MinValue = 22F;
-            this.GaugeSysVoltage.Name = "GaugeSysVoltage";
-            this.GaugeSysVoltage.NeedleColor1 = System.Windows.Forms.AGaugeNeedleColor.Gray;
-            this.GaugeSysVoltage.NeedleColor2 = System.Drawing.Color.LightGray;
-            this.GaugeSysVoltage.NeedleRadius = 80;
-            this.GaugeSysVoltage.NeedleType = System.Windows.Forms.NeedleType.Advance;
-            this.GaugeSysVoltage.NeedleWidth = 2;
-            this.GaugeSysVoltage.ScaleLinesInterColor = System.Drawing.Color.White;
-            this.GaugeSysVoltage.ScaleLinesInterInnerRadius = 73;
-            this.GaugeSysVoltage.ScaleLinesInterOuterRadius = 80;
-            this.GaugeSysVoltage.ScaleLinesInterWidth = 1;
-            this.GaugeSysVoltage.ScaleLinesMajorColor = System.Drawing.Color.White;
-            this.GaugeSysVoltage.ScaleLinesMajorInnerRadius = 70;
-            this.GaugeSysVoltage.ScaleLinesMajorOuterRadius = 80;
-            this.GaugeSysVoltage.ScaleLinesMajorStepValue = 1F;
-            this.GaugeSysVoltage.ScaleLinesMajorWidth = 2;
-            this.GaugeSysVoltage.ScaleLinesMinorColor = System.Drawing.Color.LightGray;
-            this.GaugeSysVoltage.ScaleLinesMinorInnerRadius = 75;
-            this.GaugeSysVoltage.ScaleLinesMinorOuterRadius = 80;
-            this.GaugeSysVoltage.ScaleLinesMinorTicks = 3;
-            this.GaugeSysVoltage.ScaleLinesMinorWidth = 1;
-            this.GaugeSysVoltage.ScaleNumbersColor = System.Drawing.Color.White;
-            this.GaugeSysVoltage.ScaleNumbersFormat = null;
-            this.GaugeSysVoltage.ScaleNumbersRadius = 90;
-            this.GaugeSysVoltage.ScaleNumbersRotation = 90;
-            this.GaugeSysVoltage.ScaleNumbersStartScaleLine = 1;
-            this.GaugeSysVoltage.ScaleNumbersStepScaleLines = 1;
-            this.GaugeSysVoltage.Size = new System.Drawing.Size(188, 149);
-            this.GaugeSysVoltage.TabIndex = 4;
-            this.GaugeSysVoltage.Text = "Supply Voltage";
-            this.GaugeSysVoltage.Value = 22.5F;
-            // 
-            // GaugeRailCurrent
-            // 
-            this.GaugeRailCurrent.BaseArcColor = System.Drawing.Color.White;
-            this.GaugeRailCurrent.BaseArcRadius = 80;
-            this.GaugeRailCurrent.BaseArcStart = 160;
-            this.GaugeRailCurrent.BaseArcSweep = 220;
-            this.GaugeRailCurrent.BaseArcWidth = 3;
-            this.GaugeRailCurrent.Center = new System.Drawing.Point(93, 100);
-            this.GaugeRailCurrent.Dock = System.Windows.Forms.DockStyle.Fill;
-            aGaugeLabel2.Color = System.Drawing.Color.White;
-            aGaugeLabel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            aGaugeLabel2.Name = "GaugeLabel1";
-            aGaugeLabel2.Position = new System.Drawing.Point(74, 120);
-            aGaugeLabel2.Text = "Rail (A)";
-            this.GaugeRailCurrent.GaugeLabels.Add(aGaugeLabel2);
-            aGaugeRange6.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
-            aGaugeRange6.EndValue = 35F;
-            aGaugeRange6.InnerRadius = 80;
-            aGaugeRange6.InRange = false;
-            aGaugeRange6.Name = "GaugeRange1";
-            aGaugeRange6.OuterRadius = 85;
-            aGaugeRange6.StartValue = 0F;
-            aGaugeRange7.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
-            aGaugeRange7.EndValue = 45F;
-            aGaugeRange7.InnerRadius = 80;
-            aGaugeRange7.InRange = false;
-            aGaugeRange7.Name = "GaugeRange2";
-            aGaugeRange7.OuterRadius = 85;
-            aGaugeRange7.StartValue = 35F;
-            aGaugeRange8.Color = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            aGaugeRange8.EndValue = 60F;
-            aGaugeRange8.InnerRadius = 80;
-            aGaugeRange8.InRange = false;
-            aGaugeRange8.Name = "GaugeRange3";
-            aGaugeRange8.OuterRadius = 85;
-            aGaugeRange8.StartValue = 45F;
-            this.GaugeRailCurrent.GaugeRanges.Add(aGaugeRange6);
-            this.GaugeRailCurrent.GaugeRanges.Add(aGaugeRange7);
-            this.GaugeRailCurrent.GaugeRanges.Add(aGaugeRange8);
-            this.GaugeRailCurrent.Location = new System.Drawing.Point(197, 158);
-            this.GaugeRailCurrent.MaxValue = 60F;
-            this.GaugeRailCurrent.MinValue = 0F;
-            this.GaugeRailCurrent.Name = "GaugeRailCurrent";
-            this.GaugeRailCurrent.NeedleColor1 = System.Windows.Forms.AGaugeNeedleColor.Gray;
-            this.GaugeRailCurrent.NeedleColor2 = System.Drawing.Color.LightGray;
-            this.GaugeRailCurrent.NeedleRadius = 80;
-            this.GaugeRailCurrent.NeedleType = System.Windows.Forms.NeedleType.Advance;
-            this.GaugeRailCurrent.NeedleWidth = 2;
-            this.GaugeRailCurrent.ScaleLinesInterColor = System.Drawing.Color.White;
-            this.GaugeRailCurrent.ScaleLinesInterInnerRadius = 73;
-            this.GaugeRailCurrent.ScaleLinesInterOuterRadius = 80;
-            this.GaugeRailCurrent.ScaleLinesInterWidth = 1;
-            this.GaugeRailCurrent.ScaleLinesMajorColor = System.Drawing.Color.White;
-            this.GaugeRailCurrent.ScaleLinesMajorInnerRadius = 70;
-            this.GaugeRailCurrent.ScaleLinesMajorOuterRadius = 80;
-            this.GaugeRailCurrent.ScaleLinesMajorStepValue = 10F;
-            this.GaugeRailCurrent.ScaleLinesMajorWidth = 2;
-            this.GaugeRailCurrent.ScaleLinesMinorColor = System.Drawing.Color.LightGray;
-            this.GaugeRailCurrent.ScaleLinesMinorInnerRadius = 75;
-            this.GaugeRailCurrent.ScaleLinesMinorOuterRadius = 80;
-            this.GaugeRailCurrent.ScaleLinesMinorTicks = 9;
-            this.GaugeRailCurrent.ScaleLinesMinorWidth = 1;
-            this.GaugeRailCurrent.ScaleNumbersColor = System.Drawing.Color.White;
-            this.GaugeRailCurrent.ScaleNumbersFormat = null;
-            this.GaugeRailCurrent.ScaleNumbersRadius = 90;
-            this.GaugeRailCurrent.ScaleNumbersRotation = 90;
-            this.GaugeRailCurrent.ScaleNumbersStartScaleLine = 1;
-            this.GaugeRailCurrent.ScaleNumbersStepScaleLines = 1;
-            this.GaugeRailCurrent.Size = new System.Drawing.Size(188, 149);
-            this.GaugeRailCurrent.TabIndex = 3;
-            this.GaugeRailCurrent.Text = "aGauge3";
-            this.GaugeRailCurrent.Value = 0F;
-            // 
-            // GaugeDrillCurrent
-            // 
-            this.GaugeDrillCurrent.BaseArcColor = System.Drawing.Color.White;
-            this.GaugeDrillCurrent.BaseArcRadius = 80;
-            this.GaugeDrillCurrent.BaseArcStart = 160;
-            this.GaugeDrillCurrent.BaseArcSweep = 220;
-            this.GaugeDrillCurrent.BaseArcWidth = 3;
-            this.GaugeDrillCurrent.Center = new System.Drawing.Point(93, 100);
-            this.GaugeDrillCurrent.Dock = System.Windows.Forms.DockStyle.Fill;
-            aGaugeLabel3.Color = System.Drawing.Color.White;
-            aGaugeLabel3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            aGaugeLabel3.Name = "GaugeLabel1";
-            aGaugeLabel3.Position = new System.Drawing.Point(73, 120);
-            aGaugeLabel3.Text = "Drill (A)";
-            this.GaugeDrillCurrent.GaugeLabels.Add(aGaugeLabel3);
-            aGaugeRange9.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
-            aGaugeRange9.EndValue = 9F;
-            aGaugeRange9.InnerRadius = 80;
-            aGaugeRange9.InRange = false;
-            aGaugeRange9.Name = "GaugeRange1";
-            aGaugeRange9.OuterRadius = 85;
-            aGaugeRange9.StartValue = 0F;
-            aGaugeRange10.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
-            aGaugeRange10.EndValue = 12F;
-            aGaugeRange10.InnerRadius = 80;
-            aGaugeRange10.InRange = false;
-            aGaugeRange10.Name = "GaugeRange2";
-            aGaugeRange10.OuterRadius = 85;
-            aGaugeRange10.StartValue = 9F;
-            aGaugeRange11.Color = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            aGaugeRange11.EndValue = 15F;
-            aGaugeRange11.InnerRadius = 80;
-            aGaugeRange11.InRange = false;
-            aGaugeRange11.Name = "GaugeRange3";
-            aGaugeRange11.OuterRadius = 85;
-            aGaugeRange11.StartValue = 12F;
-            this.GaugeDrillCurrent.GaugeRanges.Add(aGaugeRange9);
-            this.GaugeDrillCurrent.GaugeRanges.Add(aGaugeRange10);
-            this.GaugeDrillCurrent.GaugeRanges.Add(aGaugeRange11);
-            this.GaugeDrillCurrent.Location = new System.Drawing.Point(3, 158);
-            this.GaugeDrillCurrent.MaxValue = 15F;
-            this.GaugeDrillCurrent.MinValue = 0F;
-            this.GaugeDrillCurrent.Name = "GaugeDrillCurrent";
-            this.GaugeDrillCurrent.NeedleColor1 = System.Windows.Forms.AGaugeNeedleColor.Gray;
-            this.GaugeDrillCurrent.NeedleColor2 = System.Drawing.Color.LightGray;
-            this.GaugeDrillCurrent.NeedleRadius = 80;
-            this.GaugeDrillCurrent.NeedleType = System.Windows.Forms.NeedleType.Advance;
-            this.GaugeDrillCurrent.NeedleWidth = 2;
-            this.GaugeDrillCurrent.ScaleLinesInterColor = System.Drawing.Color.White;
-            this.GaugeDrillCurrent.ScaleLinesInterInnerRadius = 73;
-            this.GaugeDrillCurrent.ScaleLinesInterOuterRadius = 80;
-            this.GaugeDrillCurrent.ScaleLinesInterWidth = 1;
-            this.GaugeDrillCurrent.ScaleLinesMajorColor = System.Drawing.Color.White;
-            this.GaugeDrillCurrent.ScaleLinesMajorInnerRadius = 70;
-            this.GaugeDrillCurrent.ScaleLinesMajorOuterRadius = 80;
-            this.GaugeDrillCurrent.ScaleLinesMajorStepValue = 3F;
-            this.GaugeDrillCurrent.ScaleLinesMajorWidth = 2;
-            this.GaugeDrillCurrent.ScaleLinesMinorColor = System.Drawing.Color.LightGray;
-            this.GaugeDrillCurrent.ScaleLinesMinorInnerRadius = 75;
-            this.GaugeDrillCurrent.ScaleLinesMinorOuterRadius = 80;
-            this.GaugeDrillCurrent.ScaleLinesMinorTicks = 5;
-            this.GaugeDrillCurrent.ScaleLinesMinorWidth = 1;
-            this.GaugeDrillCurrent.ScaleNumbersColor = System.Drawing.Color.White;
-            this.GaugeDrillCurrent.ScaleNumbersFormat = null;
-            this.GaugeDrillCurrent.ScaleNumbersRadius = 90;
-            this.GaugeDrillCurrent.ScaleNumbersRotation = 90;
-            this.GaugeDrillCurrent.ScaleNumbersStartScaleLine = 1;
-            this.GaugeDrillCurrent.ScaleNumbersStepScaleLines = 1;
-            this.GaugeDrillCurrent.Size = new System.Drawing.Size(188, 149);
-            this.GaugeDrillCurrent.TabIndex = 2;
-            this.GaugeDrillCurrent.Text = "aGauge3";
-            this.GaugeDrillCurrent.Value = 0F;
-            // 
-            // GaugeSysCurrent
-            // 
-            this.GaugeSysCurrent.BaseArcColor = System.Drawing.Color.White;
-            this.GaugeSysCurrent.BaseArcRadius = 80;
-            this.GaugeSysCurrent.BaseArcStart = 160;
-            this.GaugeSysCurrent.BaseArcSweep = 220;
-            this.GaugeSysCurrent.BaseArcWidth = 3;
-            this.GaugeSysCurrent.Center = new System.Drawing.Point(93, 100);
-            this.GaugeSysCurrent.Dock = System.Windows.Forms.DockStyle.Fill;
-            aGaugeLabel4.Color = System.Drawing.Color.White;
-            aGaugeLabel4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            aGaugeLabel4.Name = "GaugeLabel1";
-            aGaugeLabel4.Position = new System.Drawing.Point(64, 120);
-            aGaugeLabel4.Text = "System (A)";
-            this.GaugeSysCurrent.GaugeLabels.Add(aGaugeLabel4);
-            aGaugeRange12.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
-            aGaugeRange12.EndValue = 5F;
-            aGaugeRange12.InnerRadius = 80;
-            aGaugeRange12.InRange = false;
-            aGaugeRange12.Name = "GaugeRange1";
-            aGaugeRange12.OuterRadius = 85;
-            aGaugeRange12.StartValue = 0F;
-            aGaugeRange13.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
-            aGaugeRange13.EndValue = 8F;
-            aGaugeRange13.InnerRadius = 80;
-            aGaugeRange13.InRange = false;
-            aGaugeRange13.Name = "GaugeRange2";
-            aGaugeRange13.OuterRadius = 85;
-            aGaugeRange13.StartValue = 5F;
-            aGaugeRange14.Color = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            aGaugeRange14.EndValue = 10F;
-            aGaugeRange14.InnerRadius = 80;
-            aGaugeRange14.InRange = false;
-            aGaugeRange14.Name = "GaugeRange3";
-            aGaugeRange14.OuterRadius = 85;
-            aGaugeRange14.StartValue = 8F;
-            this.GaugeSysCurrent.GaugeRanges.Add(aGaugeRange12);
-            this.GaugeSysCurrent.GaugeRanges.Add(aGaugeRange13);
-            this.GaugeSysCurrent.GaugeRanges.Add(aGaugeRange14);
-            this.GaugeSysCurrent.Location = new System.Drawing.Point(197, 3);
-            this.GaugeSysCurrent.MaxValue = 10F;
-            this.GaugeSysCurrent.MinValue = 0F;
-            this.GaugeSysCurrent.Name = "GaugeSysCurrent";
-            this.GaugeSysCurrent.NeedleColor1 = System.Windows.Forms.AGaugeNeedleColor.Gray;
-            this.GaugeSysCurrent.NeedleColor2 = System.Drawing.Color.LightGray;
-            this.GaugeSysCurrent.NeedleRadius = 80;
-            this.GaugeSysCurrent.NeedleType = System.Windows.Forms.NeedleType.Advance;
-            this.GaugeSysCurrent.NeedleWidth = 2;
-            this.GaugeSysCurrent.ScaleLinesInterColor = System.Drawing.Color.White;
-            this.GaugeSysCurrent.ScaleLinesInterInnerRadius = 73;
-            this.GaugeSysCurrent.ScaleLinesInterOuterRadius = 80;
-            this.GaugeSysCurrent.ScaleLinesInterWidth = 1;
-            this.GaugeSysCurrent.ScaleLinesMajorColor = System.Drawing.Color.White;
-            this.GaugeSysCurrent.ScaleLinesMajorInnerRadius = 70;
-            this.GaugeSysCurrent.ScaleLinesMajorOuterRadius = 80;
-            this.GaugeSysCurrent.ScaleLinesMajorStepValue = 2F;
-            this.GaugeSysCurrent.ScaleLinesMajorWidth = 2;
-            this.GaugeSysCurrent.ScaleLinesMinorColor = System.Drawing.Color.LightGray;
-            this.GaugeSysCurrent.ScaleLinesMinorInnerRadius = 75;
-            this.GaugeSysCurrent.ScaleLinesMinorOuterRadius = 80;
-            this.GaugeSysCurrent.ScaleLinesMinorTicks = 9;
-            this.GaugeSysCurrent.ScaleLinesMinorWidth = 1;
-            this.GaugeSysCurrent.ScaleNumbersColor = System.Drawing.Color.White;
-            this.GaugeSysCurrent.ScaleNumbersFormat = null;
-            this.GaugeSysCurrent.ScaleNumbersRadius = 90;
-            this.GaugeSysCurrent.ScaleNumbersRotation = 90;
-            this.GaugeSysCurrent.ScaleNumbersStartScaleLine = 1;
-            this.GaugeSysCurrent.ScaleNumbersStepScaleLines = 1;
-            this.GaugeSysCurrent.Size = new System.Drawing.Size(188, 149);
-            this.GaugeSysCurrent.TabIndex = 0;
-            this.GaugeSysCurrent.Text = "Total System Current";
-            this.GaugeSysCurrent.Value = 0F;
+            this.cartesianChart1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cartesianChart1.Location = new System.Drawing.Point(3, 313);
+            this.cartesianChart1.Name = "cartesianChart1";
+            this.cartesianChart1.Size = new System.Drawing.Size(382, 180);
+            this.cartesianChart1.TabIndex = 1;
+            this.cartesianChart1.Text = "DataGraph";
             // 
             // Debugging
             // 
@@ -540,7 +233,7 @@
             this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15F));
             this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 65F));
-            this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 158F));
+            this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 159F));
             this.PacketGenLayout.Controls.Add(this.TimestampTitle, 0, 0);
             this.PacketGenLayout.Controls.Add(this.IDTitle, 1, 0);
             this.PacketGenLayout.Controls.Add(this.IDTextbox, 1, 1);
@@ -608,7 +301,7 @@
             this.DataTextbox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.DataTextbox.Location = new System.Drawing.Point(213, 20);
             this.DataTextbox.Name = "DataTextbox";
-            this.DataTextbox.Size = new System.Drawing.Size(385, 20);
+            this.DataTextbox.Size = new System.Drawing.Size(384, 20);
             this.DataTextbox.TabIndex = 4;
             this.DataTextbox.TextChanged += new System.EventHandler(this.DataTextbox_TextChanged);
             // 
@@ -619,7 +312,7 @@
             this.DataTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.DataTitle.Location = new System.Drawing.Point(213, 0);
             this.DataTitle.Name = "DataTitle";
-            this.DataTitle.Size = new System.Drawing.Size(385, 17);
+            this.DataTitle.Size = new System.Drawing.Size(384, 17);
             this.DataTitle.TabIndex = 5;
             this.DataTitle.Text = "Data";
             // 
@@ -691,7 +384,7 @@
             this.InterpretationData.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.InterpretationData.Location = new System.Drawing.Point(213, 82);
             this.InterpretationData.Name = "InterpretationData";
-            this.InterpretationData.Size = new System.Drawing.Size(385, 13);
+            this.InterpretationData.Size = new System.Drawing.Size(384, 13);
             this.InterpretationData.TabIndex = 10;
             this.InterpretationData.Text = "Unknown";
             // 
@@ -700,9 +393,9 @@
             this.PacketConstructStatus.AutoSize = true;
             this.PacketConstructStatus.Dock = System.Windows.Forms.DockStyle.Fill;
             this.PacketConstructStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.PacketConstructStatus.Location = new System.Drawing.Point(604, 82);
+            this.PacketConstructStatus.Location = new System.Drawing.Point(603, 82);
             this.PacketConstructStatus.Name = "PacketConstructStatus";
-            this.PacketConstructStatus.Size = new System.Drawing.Size(153, 13);
+            this.PacketConstructStatus.Size = new System.Drawing.Size(154, 13);
             this.PacketConstructStatus.TabIndex = 11;
             this.PacketConstructStatus.Text = "Unknown";
             // 
@@ -714,13 +407,13 @@
             this.tableLayoutPanel3.Controls.Add(this.SendPacketBtn, 0, 1);
             this.tableLayoutPanel3.Controls.Add(this.ClientSelector, 0, 0);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(601, 17);
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(600, 17);
             this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.RowCount = 2;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(159, 65);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(160, 65);
             this.tableLayoutPanel3.TabIndex = 12;
             // 
             // SendPacketBtn
@@ -730,7 +423,7 @@
             this.SendPacketBtn.Location = new System.Drawing.Point(3, 35);
             this.SendPacketBtn.Name = "SendPacketBtn";
             this.SendPacketBtn.Padding = new System.Windows.Forms.Padding(5);
-            this.SendPacketBtn.Size = new System.Drawing.Size(153, 25);
+            this.SendPacketBtn.Size = new System.Drawing.Size(154, 25);
             this.SendPacketBtn.TabIndex = 5;
             this.SendPacketBtn.Text = "Send";
             this.SendPacketBtn.Click += new System.EventHandler(this.SendPacketBtn_Click);
@@ -742,7 +435,7 @@
             this.ClientSelector.FormattingEnabled = true;
             this.ClientSelector.Location = new System.Drawing.Point(3, 3);
             this.ClientSelector.Name = "ClientSelector";
-            this.ClientSelector.Size = new System.Drawing.Size(153, 21);
+            this.ClientSelector.Size = new System.Drawing.Size(154, 21);
             this.ClientSelector.TabIndex = 6;
             // 
             // SendAsUDP
@@ -750,7 +443,7 @@
             this.SendAsUDP.AutoSize = true;
             this.SendAsUDP.Checked = true;
             this.SendAsUDP.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.SendAsUDP.Location = new System.Drawing.Point(604, 0);
+            this.SendAsUDP.Location = new System.Drawing.Point(603, 0);
             this.SendAsUDP.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
             this.SendAsUDP.Name = "SendAsUDP";
             this.SendAsUDP.Size = new System.Drawing.Size(49, 17);
@@ -840,14 +533,89 @@
             this.UIUpdate.Interval = 33;
             this.UIUpdate.Tick += new System.EventHandler(this.UIUpdate_Tick);
             // 
-            // cartesianChart1
+            // GaugeSysVoltage
             // 
-            this.cartesianChart1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.cartesianChart1.Location = new System.Drawing.Point(3, 313);
-            this.cartesianChart1.Name = "cartesianChart1";
-            this.cartesianChart1.Size = new System.Drawing.Size(382, 180);
-            this.cartesianChart1.TabIndex = 1;
-            this.cartesianChart1.Text = "cartesianChart1";
+            this.GaugeSysVoltage.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.GaugeSysVoltage.Location = new System.Drawing.Point(3, 23);
+            this.GaugeSysVoltage.Name = "GaugeSysVoltage";
+            this.GaugeSysVoltage.Size = new System.Drawing.Size(188, 129);
+            this.GaugeSysVoltage.TabIndex = 4;
+            this.GaugeSysVoltage.Text = "angularGauge1";
+            // 
+            // GaugeSysCurrent
+            // 
+            this.GaugeSysCurrent.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.GaugeSysCurrent.Location = new System.Drawing.Point(197, 23);
+            this.GaugeSysCurrent.Name = "GaugeSysCurrent";
+            this.GaugeSysCurrent.Size = new System.Drawing.Size(188, 129);
+            this.GaugeSysCurrent.TabIndex = 5;
+            this.GaugeSysCurrent.Text = "angularGauge1";
+            // 
+            // GaugeDrillCurrent
+            // 
+            this.GaugeDrillCurrent.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.GaugeDrillCurrent.Location = new System.Drawing.Point(3, 178);
+            this.GaugeDrillCurrent.Name = "GaugeDrillCurrent";
+            this.GaugeDrillCurrent.Size = new System.Drawing.Size(188, 129);
+            this.GaugeDrillCurrent.TabIndex = 6;
+            this.GaugeDrillCurrent.Text = "angularGauge1";
+            // 
+            // GaugeRailCurrent
+            // 
+            this.GaugeRailCurrent.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.GaugeRailCurrent.Location = new System.Drawing.Point(197, 178);
+            this.GaugeRailCurrent.Name = "GaugeRailCurrent";
+            this.GaugeRailCurrent.Size = new System.Drawing.Size(188, 129);
+            this.GaugeRailCurrent.TabIndex = 7;
+            this.GaugeRailCurrent.Text = "angularGauge1";
+            // 
+            // LabSysVoltage
+            // 
+            this.LabSysVoltage.AutoSize = true;
+            this.LabSysVoltage.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.LabSysVoltage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.LabSysVoltage.Location = new System.Drawing.Point(3, 0);
+            this.LabSysVoltage.Name = "LabSysVoltage";
+            this.LabSysVoltage.Size = new System.Drawing.Size(188, 20);
+            this.LabSysVoltage.TabIndex = 9;
+            this.LabSysVoltage.Text = "Supply (V)";
+            this.LabSysVoltage.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            // 
+            // darkLabel1
+            // 
+            this.darkLabel1.AutoSize = true;
+            this.darkLabel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.darkLabel1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.darkLabel1.Location = new System.Drawing.Point(3, 155);
+            this.darkLabel1.Name = "darkLabel1";
+            this.darkLabel1.Size = new System.Drawing.Size(188, 20);
+            this.darkLabel1.TabIndex = 10;
+            this.darkLabel1.Text = "Drill (A)";
+            this.darkLabel1.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            // 
+            // darkLabel2
+            // 
+            this.darkLabel2.AutoSize = true;
+            this.darkLabel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.darkLabel2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.darkLabel2.Location = new System.Drawing.Point(197, 0);
+            this.darkLabel2.Name = "darkLabel2";
+            this.darkLabel2.Size = new System.Drawing.Size(188, 20);
+            this.darkLabel2.TabIndex = 11;
+            this.darkLabel2.Text = "System (A)";
+            this.darkLabel2.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            // 
+            // darkLabel3
+            // 
+            this.darkLabel3.AutoSize = true;
+            this.darkLabel3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.darkLabel3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.darkLabel3.Location = new System.Drawing.Point(197, 155);
+            this.darkLabel3.Name = "darkLabel3";
+            this.darkLabel3.Size = new System.Drawing.Size(188, 20);
+            this.darkLabel3.TabIndex = 12;
+            this.darkLabel3.Text = "Rail (A)";
+            this.darkLabel3.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             // 
             // MainWindow
             // 
@@ -865,6 +633,7 @@
             this.Control.ResumeLayout(false);
             this.tableLayoutPanel5.ResumeLayout(false);
             this.GaugeTable.ResumeLayout(false);
+            this.GaugeTable.PerformLayout();
             this.Debugging.ResumeLayout(false);
             this.DebugList.ResumeLayout(false);
             this.PacketGenBox.ResumeLayout(false);
@@ -914,10 +683,14 @@
         private System.Windows.Forms.CheckBox SendAsUDP;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;
         private System.Windows.Forms.TableLayoutPanel GaugeTable;
-        private System.Windows.Forms.AGauge GaugeSysCurrent;
-        private System.Windows.Forms.AGauge GaugeDrillCurrent;
-        private System.Windows.Forms.AGauge GaugeRailCurrent;
-        private System.Windows.Forms.AGauge GaugeSysVoltage;
         private LiveCharts.WinForms.CartesianChart cartesianChart1;
+        private LiveCharts.WinForms.AngularGauge GaugeRailCurrent;
+        private LiveCharts.WinForms.AngularGauge GaugeDrillCurrent;
+        private LiveCharts.WinForms.AngularGauge GaugeSysCurrent;
+        private LiveCharts.WinForms.AngularGauge GaugeSysVoltage;
+        private DarkUI.Controls.DarkLabel darkLabel3;
+        private DarkUI.Controls.DarkLabel darkLabel2;
+        private DarkUI.Controls.DarkLabel darkLabel1;
+        private DarkUI.Controls.DarkLabel LabSysVoltage;
     }
 }
