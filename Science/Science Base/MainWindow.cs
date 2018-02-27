@@ -19,8 +19,129 @@ namespace Science_Base
         public MainWindow()
         {
             InitializeComponent();
+            InitWindow();
             this.EmergencyStopBtn.NotifyDefault(false);
             this.UIUpdate.Enabled = true;
+        }
+
+        private void InitWindow()
+        {
+            // Supply Voltage
+            this.GaugeSysVoltage.FromValue = 22;
+            this.GaugeSysVoltage.ToValue = 30;
+            this.GaugeSysVoltage.Wedge = 240;
+            this.GaugeSysVoltage.LabelsStep = 1;
+            this.GaugeSysVoltage.TickStep = 0.25;
+            this.GaugeSysVoltage.Value = 22;
+            this.GaugeSysVoltage.SectionsInnerRadius = 0.96;
+            this.GaugeSysVoltage.Sections.Add(new AngularSection() // Low Red
+            {
+                FromValue = 22,
+                ToValue = 22.5,
+                Fill = new SolidColorBrush(Color.FromRgb(0xD1, 0x26, 0x26))
+            });
+            this.GaugeSysVoltage.Sections.Add(new AngularSection() // Low Yellow
+            {
+                FromValue = 22.5,
+                ToValue = 23.5,
+                Fill = new SolidColorBrush(Color.FromRgb(0xD1, 0xD1, 0x26))
+            });
+            this.GaugeSysVoltage.Sections.Add(new AngularSection() // Green
+            {
+                FromValue = 23.5,
+                ToValue = 28.5,
+                Fill = new SolidColorBrush(Color.FromRgb(0x26, 0xD1, 0x26))
+            });
+            this.GaugeSysVoltage.Sections.Add(new AngularSection() // High Yellow
+            {
+                FromValue = 28.5,
+                ToValue = 29.25,
+                Fill = new SolidColorBrush(Color.FromRgb(0xD1, 0xD1, 0x26))
+            });
+            this.GaugeSysVoltage.Sections.Add(new AngularSection() // High Red
+            {
+                FromValue = 29.25,
+                ToValue = 30,
+                Fill = new SolidColorBrush(Color.FromRgb(0xD1, 0x26, 0x26))
+            });
+
+            // System Current
+            this.GaugeSysCurrent.FromValue = 0;
+            this.GaugeSysCurrent.ToValue = 10;
+            this.GaugeSysCurrent.Wedge = 240;
+            this.GaugeSysCurrent.LabelsStep = 2;
+            this.GaugeSysCurrent.TickStep = 0.25;
+            this.GaugeSysCurrent.SectionsInnerRadius = 0.96;
+            this.GaugeSysCurrent.Sections.Add(new AngularSection() // Green
+            {
+                FromValue = 0,
+                ToValue = 6,
+                Fill = new SolidColorBrush(Color.FromRgb(0x26, 0xD1, 0x26))
+            });
+            this.GaugeSysCurrent.Sections.Add(new AngularSection() // High Yellow
+            {
+                FromValue = 6,
+                ToValue = 8,
+                Fill = new SolidColorBrush(Color.FromRgb(0xD1, 0xD1, 0x26))
+            });
+            this.GaugeSysCurrent.Sections.Add(new AngularSection() // High Red
+            {
+                FromValue = 8,
+                ToValue = 10,
+                Fill = new SolidColorBrush(Color.FromRgb(0xD1, 0x26, 0x26))
+            });
+
+            // Drill Current
+            this.GaugeDrillCurrent.FromValue = 0;
+            this.GaugeDrillCurrent.ToValue = 15;
+            this.GaugeDrillCurrent.Wedge = 240;
+            this.GaugeDrillCurrent.LabelsStep = 3;
+            this.GaugeDrillCurrent.TickStep = 0.5;
+            this.GaugeDrillCurrent.SectionsInnerRadius = 0.96;
+            this.GaugeDrillCurrent.Sections.Add(new AngularSection() // Green
+            {
+                FromValue = 0,
+                ToValue = 9,
+                Fill = new SolidColorBrush(Color.FromRgb(0x26, 0xD1, 0x26))
+            });
+            this.GaugeDrillCurrent.Sections.Add(new AngularSection() // High Yellow
+            {
+                FromValue = 9,
+                ToValue = 12,
+                Fill = new SolidColorBrush(Color.FromRgb(0xD1, 0xD1, 0x26))
+            });
+            this.GaugeDrillCurrent.Sections.Add(new AngularSection() // High Red
+            {
+                FromValue = 12,
+                ToValue = 15,
+                Fill = new SolidColorBrush(Color.FromRgb(0xD1, 0x26, 0x26))
+            });
+
+            // Rail Current
+            this.GaugeRailCurrent.FromValue = 0;
+            this.GaugeRailCurrent.ToValue = 60;
+            this.GaugeRailCurrent.Wedge = 240;
+            this.GaugeRailCurrent.LabelsStep = 10;
+            this.GaugeRailCurrent.TickStep = 2;
+            this.GaugeRailCurrent.SectionsInnerRadius = 0.96;
+            this.GaugeRailCurrent.Sections.Add(new AngularSection() // Green
+            {
+                FromValue = 0,
+                ToValue = 35,
+                Fill = new SolidColorBrush(Color.FromRgb(0x26, 0xD1, 0x26))
+            });
+            this.GaugeRailCurrent.Sections.Add(new AngularSection() // High Yellow
+            {
+                FromValue = 35,
+                ToValue = 45,
+                Fill = new SolidColorBrush(Color.FromRgb(0xD1, 0xD1, 0x26))
+            });
+            this.GaugeRailCurrent.Sections.Add(new AngularSection() // High Red
+            {
+                FromValue = 45,
+                ToValue = 60,
+                Fill = new SolidColorBrush(Color.FromRgb(0xD1, 0x26, 0x26))
+            });
         }
 
         public void StartData()
@@ -40,7 +161,7 @@ namespace Science_Base
             {
                 Values = new ChartValues<DataUnit>(),
                 Stroke = new SolidColorBrush(Color.FromRgb(0x81, 0x14, 0x26)),
-                Fill = new SolidColorBrush(Color.FromArgb(0x7F, 0x81, 0x14, 0x26))
+                Fill = new SolidColorBrush(Color.FromArgb(0x3F, 0x81, 0x14, 0x26))
             };
             this.cartesianChart1.Series.Add(Series);
             this.cartesianChart1.AxisX.Add(XAxis);
