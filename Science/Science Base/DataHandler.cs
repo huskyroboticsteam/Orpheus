@@ -10,13 +10,13 @@ namespace Science_Base
     public static class DataHandler
     {
 
-        public static List<DataUnit> RandomData;
+        public static DataSet RandomData;
         private static Random Random;
 
         public static void Start()
         {
             Random = new Random();
-            RandomData = new List<DataUnit>(500);
+            RandomData = new DataSet("Random", new string[] { "RandNumber" }, 500);
             Parse.SetParseHandler(ScienceConstants.Packets.GND_SENSOR, PacketGroundSensor);
             Thread DataAdder = new Thread(new ThreadStart(DoAdds));
             DataAdder.Start();
@@ -36,16 +36,16 @@ namespace Science_Base
         private static void DoAdds()
         {
             Log.Output(Log.Severity.INFO, Log.Source.GUI, "Beginning data addition.");
-            for (int i = 0; i < 20; i++)
+            Thread.Sleep(5000);
+            for (int i = 0; i < 60; i++)
             {
                 Thread.Sleep(500);
                 DataUnit ToAdd = new DataUnit("Garbage")
                 {
                     { "Time", DateTime.Now },
-                    { "RandNumber", Random.Next(100) }
+                    { "RandNumber", (int)Math.Round(Math.Sin(i * Math.PI / 20) * 50 + 50) }
                 };
                 lock(RandomData) { RandomData.Add(ToAdd); }
-                BaseMain.Window.UpdateGraph();
             }
         }
 

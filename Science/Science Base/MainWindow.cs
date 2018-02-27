@@ -10,6 +10,7 @@ using Science.Library;
 using LiveCharts.Configurations;
 using LiveCharts.Wpf;
 using LiveCharts;
+using System.Windows.Media;
 
 namespace Science_Base
 {
@@ -24,26 +25,45 @@ namespace Science_Base
 
         public void StartData()
         {
-            Axis XAxis = new Axis() { MinValue = DateTime.Now.Ticks, MaxValue = DateTime.Now.AddSeconds(15).Ticks };
-            CartesianMapper<DataUnit> Mapper = Mappers.Xy<DataUnit>()
-                .X(x => x.GetValue<DateTime>("Time").Ticks)
-                .Y(y => y.GetValue<int>("RandNumber"));
-            LineSeries Series = new LineSeries(Mapper);
-            Series.Values = new ChartValues<DataUnit>(DataHandler.RandomData);
+            Axis XAxis = new Axis()
+            {
+                //MinValue = DateTime.Now.AddSeconds(5).Ticks,
+                //MaxValue = DateTime.Now.AddSeconds(35).Ticks,
+                LabelFormatter = value => new DateTime((long)value).ToString("T")
+            };
+            Axis YAxis = new Axis()
+            {
+                MinValue = 0,
+                MaxValue = 100
+            };
+            LineSeries Series = new LineSeries(DataSet.GetMapper("RandNumber"))
+            {
+                Values = new ChartValues<DataUnit>(),
+                Stroke = new SolidColorBrush(Color.FromRgb(0x81, 0x14, 0x26)),
+                Fill = new SolidColorBrush(Color.FromArgb(0x7F, 0x81, 0x14, 0x26))
+            };
             this.cartesianChart1.Series.Add(Series);
             this.cartesianChart1.AxisX.Add(XAxis);
-            this.cartesianChart1.DisableAnimations = true;
+            this.cartesianChart1.AxisY.Add(YAxis);
+            //this.cartesianChart1.DisableAnimations = true;
+            DataHandler.RandomData.ItemAdd += this.DataAdded;
         }
 
-        public void UpdateGraph()
+        public void DataAdded(object Sender, DataEvent Event)
+        {
+            this.cartesianChart1.Series.First().Values.Add(Event.Unit);
+        }
+
+        /*public void UpdateGraph()
         {
             Invoke((MethodInvoker)delegate
             {
-        this.cartesianChart1.Series.First().Values = new ChartValues<DataUnit>(DataHandler.RandomData);
+
+                this.cartesianChart1.Series.First().Values = new ChartValues<DataUnit>(DataHandler.RandomData);
                 this.cartesianChart1.Update();
                 Log.Output(Log.Severity.INFO, Log.Source.GUI, "Updating graph");
             });
-        }
+        }*/
 
         private void EmergencyStopClick(object sender, EventArgs e)
         {

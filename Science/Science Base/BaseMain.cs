@@ -23,7 +23,7 @@ namespace Science_Base
 
             Window = new MainWindow();
             Application.EnableVisualStyles();
-            //Server.Start(ScienceConstants.DEFAULT_PORT_TCP, ScienceConstants.DEFAULT_PORT_UDP);
+            Server.Start(ScienceConstants.DEFAULT_PORT_TCP, ScienceConstants.DEFAULT_PORT_UDP);
             Server.ClientConnectionChange += Window.UpdateClientList;
             DataHandler.Start();
             Window.StartData();
