@@ -11,6 +11,8 @@ using LiveCharts.Configurations;
 using LiveCharts.Wpf;
 using LiveCharts;
 using System.Windows.Media;
+using System.Drawing.Imaging;
+using System.Drawing;
 
 namespace Science_Base
 {
@@ -22,10 +24,21 @@ namespace Science_Base
             InitWindow();
             this.EmergencyStopBtn.NotifyDefault(false);
             this.UIUpdate.Enabled = true;
+            SetMode(this.pictureBox1, 0);
+            SetMode(this.pictureBox2, 1);
+            SetMode(this.pictureBox3, 2);
         }
 
         private void InitWindow()
         {
+            SolidColorBrush Red = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0xD1, 0x26, 0x26));
+            SolidColorBrush Yellow = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0xD1, 0xD1, 0x26));
+            SolidColorBrush Green = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x26, 0xD1, 0x26));
+            Red.Freeze();
+            Yellow.Freeze();
+            Green.Freeze();
+
+            this.DataGraph.AnimationsSpeed = TimeSpan.FromMilliseconds(100);
             // Supply Voltage
             this.GaugeSysVoltage.FromValue = 22;
             this.GaugeSysVoltage.ToValue = 30;
@@ -38,31 +51,31 @@ namespace Science_Base
             {
                 FromValue = 22,
                 ToValue = 22.5,
-                Fill = new SolidColorBrush(Color.FromRgb(0xD1, 0x26, 0x26))
+                Fill = Red
             });
             this.GaugeSysVoltage.Sections.Add(new AngularSection() // Low Yellow
             {
                 FromValue = 22.5,
                 ToValue = 23.5,
-                Fill = new SolidColorBrush(Color.FromRgb(0xD1, 0xD1, 0x26))
+                Fill = Yellow
             });
             this.GaugeSysVoltage.Sections.Add(new AngularSection() // Green
             {
                 FromValue = 23.5,
                 ToValue = 28.5,
-                Fill = new SolidColorBrush(Color.FromRgb(0x26, 0xD1, 0x26))
+                Fill = Green
             });
             this.GaugeSysVoltage.Sections.Add(new AngularSection() // High Yellow
             {
                 FromValue = 28.5,
                 ToValue = 29.25,
-                Fill = new SolidColorBrush(Color.FromRgb(0xD1, 0xD1, 0x26))
+                Fill = Yellow
             });
             this.GaugeSysVoltage.Sections.Add(new AngularSection() // High Red
             {
                 FromValue = 29.25,
                 ToValue = 30,
-                Fill = new SolidColorBrush(Color.FromRgb(0xD1, 0x26, 0x26))
+                Fill = Red
             });
 
             // System Current
@@ -76,19 +89,19 @@ namespace Science_Base
             {
                 FromValue = 0,
                 ToValue = 6,
-                Fill = new SolidColorBrush(Color.FromRgb(0x26, 0xD1, 0x26))
+                Fill = Green
             });
             this.GaugeSysCurrent.Sections.Add(new AngularSection() // High Yellow
             {
                 FromValue = 6,
                 ToValue = 8,
-                Fill = new SolidColorBrush(Color.FromRgb(0xD1, 0xD1, 0x26))
+                Fill = Yellow
             });
             this.GaugeSysCurrent.Sections.Add(new AngularSection() // High Red
             {
                 FromValue = 8,
                 ToValue = 10,
-                Fill = new SolidColorBrush(Color.FromRgb(0xD1, 0x26, 0x26))
+                Fill = Red
             });
 
             // Drill Current
@@ -102,19 +115,19 @@ namespace Science_Base
             {
                 FromValue = 0,
                 ToValue = 9,
-                Fill = new SolidColorBrush(Color.FromRgb(0x26, 0xD1, 0x26))
+                Fill = Green
             });
             this.GaugeDrillCurrent.Sections.Add(new AngularSection() // High Yellow
             {
                 FromValue = 9,
                 ToValue = 12,
-                Fill = new SolidColorBrush(Color.FromRgb(0xD1, 0xD1, 0x26))
+                Fill = Yellow
             });
             this.GaugeDrillCurrent.Sections.Add(new AngularSection() // High Red
             {
                 FromValue = 12,
                 ToValue = 15,
-                Fill = new SolidColorBrush(Color.FromRgb(0xD1, 0x26, 0x26))
+                Fill = Red
             });
 
             // Rail Current
@@ -128,20 +141,65 @@ namespace Science_Base
             {
                 FromValue = 0,
                 ToValue = 35,
-                Fill = new SolidColorBrush(Color.FromRgb(0x26, 0xD1, 0x26))
+                Fill = Green
             });
             this.GaugeRailCurrent.Sections.Add(new AngularSection() // High Yellow
             {
                 FromValue = 35,
                 ToValue = 45,
-                Fill = new SolidColorBrush(Color.FromRgb(0xD1, 0xD1, 0x26))
+                Fill = Yellow
             });
             this.GaugeRailCurrent.Sections.Add(new AngularSection() // High Red
             {
                 FromValue = 45,
                 ToValue = 60,
-                Fill = new SolidColorBrush(Color.FromRgb(0xD1, 0x26, 0x26))
+                Fill = Red
             });
+        }
+
+        public void SetMode(PictureBox Box, byte Mode)
+        {
+            float[][] Good =
+            {
+                new float[] { 0, 0, 0, 0, 0 },
+                new float[] { 0, 0.8F, 0, 0, 0 },
+                new float[] { 0, 0, 0, 0, 0 },
+                new float[] { 0, 0, 0, 1, 0 },
+                new float[] { 0, 0, 0, 0, 0 }
+            };
+
+            float[][] Warning =
+{
+                new float[] { 0.8F, 0, 0, 0, 0 },
+                new float[] { 0, 0.8F, 0, 0, 0 },
+                new float[] { 0, 0, 0, 0, 0 },
+                new float[] { 0, 0, 0, 1, 0 },
+                new float[] { 0, 0, 0, 0, 0 }
+            };
+
+            float[][] Error =
+{
+                new float[] { 0.8F, 0, 0, 0, 0 },
+                new float[] { 0, 0, 0, 0, 0 },
+                new float[] { 0, 0, 0, 0, 0 },
+                new float[] { 0, 0, 0, 1, 0 },
+                new float[] { 0, 0, 0, 0, 0 }
+            };
+
+            ColorMatrix Matrix;
+            switch(Mode)
+            {
+                case 0: Matrix = new ColorMatrix(Good); break;
+                case 1: Matrix = new ColorMatrix(Warning); break;
+                default: Matrix = new ColorMatrix(Error); break;
+            }
+            ImageAttributes Attributes = new ImageAttributes();
+            Attributes.SetColorMatrix(Matrix);
+            Image Image = Box.Image;
+            Graphics Graphics = Graphics.FromImage(Image);
+            Rectangle Output = new Rectangle(0, 0, Image.Width, Image.Height);
+            Graphics.DrawImage(Image, Output, 0, 0, Image.Width, Image.Height, GraphicsUnit.Pixel, Attributes);
+            Box.Image = Image;
         }
 
         public void StartData()
@@ -150,29 +208,34 @@ namespace Science_Base
             {
                 //MinValue = DateTime.Now.AddSeconds(5).Ticks,
                 //MaxValue = DateTime.Now.AddSeconds(35).Ticks,
-                LabelFormatter = value => new DateTime((long)value).ToString("T")
+                LabelFormatter = value => new DateTime((long)value).ToString("T"),
+                DisableAnimations = true
             };
             Axis YAxis = new Axis()
             {
                 MinValue = 0,
                 MaxValue = 100
             };
+            SolidColorBrush Red = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x81, 0x14, 0x26));
+            SolidColorBrush Back = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0x3F, 0x81, 0x14, 0x26));
+            Red.Freeze();
+            Back.Freeze();
             LineSeries Series = new LineSeries(DataSet.GetMapper("RandNumber"))
             {
                 Values = new ChartValues<DataUnit>(),
-                Stroke = new SolidColorBrush(Color.FromRgb(0x81, 0x14, 0x26)),
-                Fill = new SolidColorBrush(Color.FromArgb(0x3F, 0x81, 0x14, 0x26))
+                Stroke = Red,
+                Fill = Back
             };
-            this.cartesianChart1.Series.Add(Series);
-            this.cartesianChart1.AxisX.Add(XAxis);
-            this.cartesianChart1.AxisY.Add(YAxis);
-            //this.cartesianChart1.DisableAnimations = true;
+            this.DataGraph.Series.Add(Series);
+            this.DataGraph.AxisX.Add(XAxis);
+            this.DataGraph.AxisY.Add(YAxis);
+            this.DataGraph.DisableAnimations = true;
             DataHandler.RandomData.ItemAdd += this.DataAdded;
         }
 
         public void DataAdded(object Sender, DataEvent Event)
         {
-            this.cartesianChart1.Series.First().Values.Add(Event.Unit);
+            this.DataGraph.Series.First().Values.Add(Event.Unit);
         }
 
         /*public void UpdateGraph()
