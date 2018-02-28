@@ -52,6 +52,7 @@
     <Compile Include="RoverMain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Systems\Sample.cs" />
+    <Compile Include="Systems\SysSensors.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

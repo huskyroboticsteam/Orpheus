@@ -6,8 +6,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Scarlet.Communications;
 using Scarlet.Components;
+using Scarlet.Components.Sensors;
 using Scarlet.IO;
 using Scarlet.IO.RaspberryPi;
+using Scarlet.Utilities;
 using Science.Library;
 
 namespace Science.Systems
@@ -54,7 +56,15 @@ namespace Science.Systems
                 this.DrillSensor.UpdateState();
                 this.RailSensor.UpdateState();
 
-                byte[] Data; // TODO: Add sensor data!
+                double Rail = this.RailSensor.GetCurrent();
+                double Drill = this.DrillSensor.GetCurrent();
+                double SysA = this.SystemSensor.GetCurrent();
+                double SysV = this.SystemSensor.GetBusVoltage();
+                double SysSV = this.SystemSensor.GetShuntVoltage();
+
+                Log.Output(Log.Severity.INFO, Log.Source.NETWORK, "sysA:" + SysA + ",railA:" + Rail + ",drlA:" + Drill + ",sysV:" + SysV + ",sysshnV:" + SysSV + ",working?" + this.SystemSensor.Test());
+
+                byte[] Data = UtilData.ToBytes(SysA).Concat(UtilData.ToBytes(Rail)).Concat(UtilData.ToBytes(Drill)).Concat(UtilData.ToBytes(SysV)).Concat(UtilData.ToBytes(Sample.Ticks)).ToArray();
                 Packet Packet = new Packet(new Message(ScienceConstants.Packets.SYS_SENSOR, Data), false);
                 Client.Send(Packet);
             }
