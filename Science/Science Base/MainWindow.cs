@@ -392,5 +392,19 @@ namespace Science_Base
                 else { SetMode(this.StatusImgNetwork, Resources.Network, 2); }
             });
         }
+
+        private void trackBar1_ValueChanged(object sender, EventArgs e)
+        {
+            Science_Base.Controls.DrillSpeedChange(this.DrillSpeed.Value * (this.DrillReverse.Checked ? -1 : 1));
+            this.DrillReverse.Enabled = (this.DrillSpeed.Value == 0 || !Science_Base.Controls.IsDrillEnabled);
+        }
+
+        private void darkButton1_Click(object sender, EventArgs e)
+        {
+            Science_Base.Controls.IsDrillEnabled = !Science_Base.Controls.IsDrillEnabled;
+            this.DrillToggle.Text = Science_Base.Controls.IsDrillEnabled ? "STOP" : "START";
+            Science_Base.Controls.DrillSpeedChange(this.DrillSpeed.Value * (this.DrillReverse.Checked ? -1 : 1));
+            this.DrillReverse.Enabled = (this.DrillSpeed.Value == 0 || !Science_Base.Controls.IsDrillEnabled);
+        }
     }
 }
