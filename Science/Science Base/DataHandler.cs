@@ -21,6 +21,7 @@ namespace Science_Base
             //RandomData = new DataSet("Random", new string[] { "RandNumber" }, 500);
             ThermocoupleData = new DataSet("Thermocouple", new string[] { "IntTemp" }, 500);
             Parse.SetParseHandler(ScienceConstants.Packets.GND_SENSOR, PacketGroundSensor);
+            Parse.SetParseHandler(ScienceConstants.Packets.SYS_SENSOR, PacketSysSensor);
             //Thread DataAdder = new Thread(new ThreadStart(DoAdds));
             //DataAdder.Start();
         }
@@ -40,6 +41,21 @@ namespace Science_Base
                 { "Time", DateTime.Now },
                 { "IntTemp", MAX31855.ConvertInternalFromRaw(Thermocouple) }
             });
+        }
+
+        public static void PacketSysSensor(Packet Packet)
+        {
+            if (Packet == null || Packet.Data == null || Packet.Data.Payload == null || Packet.Data.Payload.Length != 40)
+            {
+                Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "System sensor packet invalid. Discarding.");
+                return;
+            }
+            double SysCurrent = UtilData.ToDouble(UtilMain.SubArray(Packet.Data.Payload, 0, 8));
+            double RailCurrent = UtilData.ToDouble(UtilMain.SubArray(Packet.Data.Payload, 8, 8));
+            double DrillCurrent = UtilData.ToDouble(UtilMain.SubArray(Packet.Data.Payload, 16, 8));
+            double SysVoltage = UtilData.ToDouble(UtilMain.SubArray(Packet.Data.Payload, 24, 8));
+            DateTime Sample = new DateTime(UtilData.ToLong(UtilMain.SubArray(Packet.Data.Payload, 32, 8)));
+            Log.Output(Log.Severity.INFO, Log.Source.GUI, "Got sysA:" + SysCurrent + ", RailA:" + RailCurrent + ", DrlA:" + DrillCurrent + ", SysV:" + SysVoltage);
         }
 
         /*private static void DoAdds()
