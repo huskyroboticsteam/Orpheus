@@ -75,6 +75,16 @@
             this.StatusImgSystem = new System.Windows.Forms.PictureBox();
             this.SecTimer = new System.Windows.Forms.Timer(this.components);
             this.UIUpdate = new System.Windows.Forms.Timer(this.components);
+            this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
+            this.trackBar1 = new System.Windows.Forms.TrackBar();
+            this.darkButton1 = new DarkUI.Controls.DarkButton();
+            this.DrillReverse = new DarkUI.Controls.DarkCheckBox();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.trackBar2 = new System.Windows.Forms.TrackBar();
+            this.tableLayoutPanel9 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.Control.SuspendLayout();
@@ -92,6 +102,13 @@
             ((System.ComponentModel.ISupportInitialize)(this.StatusImgNetwork)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.StatusImgPower)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.StatusImgSystem)).BeginInit();
+            this.tableLayoutPanel7.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            this.tableLayoutPanel8.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
+            this.groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
+            this.tableLayoutPanel9.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -146,6 +163,7 @@
             this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel5.Controls.Add(this.GaugeTable, 1, 0);
             this.tableLayoutPanel5.Controls.Add(this.DataGraph, 0, 1);
+            this.tableLayoutPanel5.Controls.Add(this.tableLayoutPanel7, 0, 0);
             this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel5.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel5.Margin = new System.Windows.Forms.Padding(0);
@@ -680,6 +698,144 @@
             this.UIUpdate.Interval = 33;
             this.UIUpdate.Tick += new System.EventHandler(this.UIUpdate_Tick);
             // 
+            // tableLayoutPanel7
+            // 
+            this.tableLayoutPanel7.ColumnCount = 2;
+            this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel7.Controls.Add(this.groupBox2, 1, 0);
+            this.tableLayoutPanel7.Controls.Add(this.groupBox3, 0, 0);
+            this.tableLayoutPanel7.Controls.Add(this.groupBox4, 1, 1);
+            this.tableLayoutPanel7.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel7.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel7.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanel7.Name = "tableLayoutPanel7";
+            this.tableLayoutPanel7.RowCount = 2;
+            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 60F));
+            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 40F));
+            this.tableLayoutPanel7.Size = new System.Drawing.Size(388, 310);
+            this.tableLayoutPanel7.TabIndex = 2;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.tableLayoutPanel8);
+            this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox2.ForeColor = System.Drawing.Color.White;
+            this.groupBox2.Location = new System.Drawing.Point(197, 3);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(188, 180);
+            this.groupBox2.TabIndex = 1;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Drill";
+            // 
+            // tableLayoutPanel8
+            // 
+            this.tableLayoutPanel8.ColumnCount = 2;
+            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel8.Controls.Add(this.trackBar1, 0, 0);
+            this.tableLayoutPanel8.Controls.Add(this.darkButton1, 1, 2);
+            this.tableLayoutPanel8.Controls.Add(this.DrillReverse, 0, 2);
+            this.tableLayoutPanel8.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel8.Location = new System.Drawing.Point(3, 16);
+            this.tableLayoutPanel8.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanel8.Name = "tableLayoutPanel8";
+            this.tableLayoutPanel8.RowCount = 3;
+            this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
+            this.tableLayoutPanel8.Size = new System.Drawing.Size(182, 161);
+            this.tableLayoutPanel8.TabIndex = 1;
+            // 
+            // trackBar1
+            // 
+            this.trackBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanel8.SetColumnSpan(this.trackBar1, 2);
+            this.trackBar1.Location = new System.Drawing.Point(3, 3);
+            this.trackBar1.Maximum = 100;
+            this.trackBar1.Name = "trackBar1";
+            this.trackBar1.Size = new System.Drawing.Size(176, 45);
+            this.trackBar1.TabIndex = 0;
+            this.trackBar1.TickFrequency = 10;
+            this.trackBar1.TickStyle = System.Windows.Forms.TickStyle.Both;
+            // 
+            // darkButton1
+            // 
+            this.darkButton1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.darkButton1.Location = new System.Drawing.Point(92, 137);
+            this.darkButton1.Margin = new System.Windows.Forms.Padding(1);
+            this.darkButton1.Name = "darkButton1";
+            this.darkButton1.Padding = new System.Windows.Forms.Padding(5);
+            this.darkButton1.Size = new System.Drawing.Size(89, 23);
+            this.darkButton1.TabIndex = 1;
+            this.darkButton1.Text = "START";
+            // 
+            // DrillReverse
+            // 
+            this.DrillReverse.AutoSize = true;
+            this.DrillReverse.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.DrillReverse.Location = new System.Drawing.Point(3, 139);
+            this.DrillReverse.Name = "DrillReverse";
+            this.DrillReverse.Size = new System.Drawing.Size(85, 19);
+            this.DrillReverse.TabIndex = 2;
+            this.DrillReverse.Text = "Reverse";
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.tableLayoutPanel9);
+            this.groupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox3.ForeColor = System.Drawing.Color.White;
+            this.groupBox3.Location = new System.Drawing.Point(3, 3);
+            this.groupBox3.Name = "groupBox3";
+            this.tableLayoutPanel7.SetRowSpan(this.groupBox3, 2);
+            this.groupBox3.Size = new System.Drawing.Size(188, 304);
+            this.groupBox3.TabIndex = 2;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Rail";
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox4.ForeColor = System.Drawing.Color.White;
+            this.groupBox4.Location = new System.Drawing.Point(197, 189);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(188, 118);
+            this.groupBox4.TabIndex = 3;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Sample";
+            // 
+            // trackBar2
+            // 
+            this.trackBar2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.trackBar2.Location = new System.Drawing.Point(3, 3);
+            this.trackBar2.Name = "trackBar2";
+            this.trackBar2.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tableLayoutPanel9.SetRowSpan(this.trackBar2, 6);
+            this.trackBar2.Size = new System.Drawing.Size(45, 279);
+            this.trackBar2.TabIndex = 0;
+            // 
+            // tableLayoutPanel9
+            // 
+            this.tableLayoutPanel9.ColumnCount = 2;
+            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40F));
+            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 60F));
+            this.tableLayoutPanel9.Controls.Add(this.trackBar2, 0, 0);
+            this.tableLayoutPanel9.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel9.Location = new System.Drawing.Point(3, 16);
+            this.tableLayoutPanel9.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanel9.Name = "tableLayoutPanel9";
+            this.tableLayoutPanel9.RowCount = 6;
+            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
+            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
+            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
+            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
+            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
+            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
+            this.tableLayoutPanel9.Size = new System.Drawing.Size(182, 285);
+            this.tableLayoutPanel9.TabIndex = 0;
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -712,6 +868,15 @@
             ((System.ComponentModel.ISupportInitialize)(this.StatusImgNetwork)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.StatusImgPower)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.StatusImgSystem)).EndInit();
+            this.tableLayoutPanel7.ResumeLayout(false);
+            this.groupBox2.ResumeLayout(false);
+            this.tableLayoutPanel8.ResumeLayout(false);
+            this.tableLayoutPanel8.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
+            this.groupBox3.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();
+            this.tableLayoutPanel9.ResumeLayout(false);
+            this.tableLayoutPanel9.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -763,5 +928,15 @@
         private System.Windows.Forms.PictureBox StatusImgNetwork;
         private System.Windows.Forms.PictureBox StatusImgPower;
         private System.Windows.Forms.PictureBox StatusImgSystem;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel7;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel8;
+        private System.Windows.Forms.TrackBar trackBar1;
+        private DarkUI.Controls.DarkButton darkButton1;
+        private DarkUI.Controls.DarkCheckBox DrillReverse;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel9;
+        private System.Windows.Forms.TrackBar trackBar2;
     }
 }
