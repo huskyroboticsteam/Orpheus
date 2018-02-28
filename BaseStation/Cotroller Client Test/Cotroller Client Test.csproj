@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{717939F0-9BDC-4D66-99B5-AE34D586488E}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
-    <RootNamespace>HuskyRobotics.BaseStation</RootNamespace>
-    <AssemblyName>BaseStation</AssemblyName>
+    <ProjectGuid>{E1987E62-47E6-426E-BC25-0C551AEC4CB2}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Cotroller_Client_Test</RootNamespace>
+    <AssemblyName>Cotroller Client Test</AssemblyName>
     <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -32,36 +32,26 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject>HuskyRobotics.BaseStation.Start.StartBaseStation</StartupObject>
-  </PropertyGroup>
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="StartBaseStation.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\BaseServer\BaseServer.csproj">
-      <Project>{5fca414a-cf38-44cb-888d-95d151a5c662}</Project>
-      <Name>BaseServer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MainWindow\UserInterface.csproj">
-      <Project>{722b3498-9988-4667-b02c-c9d15d288657}</Project>
-      <Name>UserInterface</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Utilities\Utilities.csproj">
-      <Project>{a6dfdff4-614f-4225-8f75-c81c6765f23e}</Project>
-      <Name>Utilities</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="PresentationFramework" />
-    <Reference Include="Scarlet">
-      <HintPath>..\..\lib\Scarlet.dll</HintPath>
+    <Reference Include="Scarlet, Version=0.3.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HuskyRobotics.Scarlet.0.3.1\lib\Scarlet.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="WindowsBase" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

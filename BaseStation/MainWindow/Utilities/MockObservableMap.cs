@@ -1,11 +1,14 @@
 ﻿using HuskyRobotics.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace HuskyRobotics.UI
 {
-    public class MockObservableMap : ObservableMap<float>
+    public class MockObservableMap : ObservableDictionary<String, MeasuredValue<double>>
     {
         private IList<string> fields = new List<string> {
             "chasis/steeringAngle",
@@ -19,22 +22,23 @@ namespace HuskyRobotics.UI
 
         public MockObservableMap()
         {
-            UpdateValues();
-            updater = new Timer(UpdateValues, null, 400, 400);
-        }
-        
-        private void UpdateValues()
-        {
-            UpdateValues(null);
+            updateValues();
+            updater = new Timer(updateValues, null, 400, 400);
         }
 
-        private void UpdateValues(object state) 
+        private void updateValues()
         {
-            Random rad = new Random();
-            foreach (string field in fields) {
-                var currentValue = ContainsKey(field) ? GetValue(field) : rad.NextDouble();
+            updateValues(null);
+        }
+
+        private void updateValues(object state)
+        {
+            var rad = new Random();
+            foreach (string field in fields)
+            {
+                var currentValue = ContainsKey(field) ? GetValue(field).Value : rad.NextDouble();
                 var newValue = Math.Min(Math.Max(currentValue + (rad.NextDouble() - .5) * .1, 0), 1);
-                PutValue(field, (float)newValue);
+                GetValueDefault(field, () => new MeasuredValue<double>()).Value = newValue;
             }
         }
     }
