@@ -19,15 +19,23 @@ namespace Science_Base
 {
     public partial class MainWindow : DarkForm
     {
-        public static SolidColorBrush Scarlet = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x81, 0x14, 0x26));
-        public static SolidColorBrush ScarletBack = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0x3F, 0x81, 0x14, 0x26));
+        public static SolidColorBrush ScarletColour = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x81, 0x14, 0x26));
+        public static SolidColorBrush ScarletBackColour = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0x3F, 0x81, 0x14, 0x26));
+        public static SolidColorBrush TextColour = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0xCC, 0xCC, 0xCC));
+        public static SolidColorBrush GaugeRedColour = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0xD1, 0x26, 0x26));
+        public static SolidColorBrush GaugeYellowColour = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0xD1, 0xD1, 0x26));
+        public static SolidColorBrush GaugeGreenColour = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x26, 0xD1, 0x26));
 
         private ChartManager Charts;
 
         public MainWindow()
         {
-            Scarlet.Freeze();
-            ScarletBack.Freeze();
+            ScarletColour.Freeze();
+            ScarletBackColour.Freeze();
+            TextColour.Freeze();
+            GaugeRedColour.Freeze();
+            GaugeYellowColour.Freeze();
+            GaugeGreenColour.Freeze();
 
             InitializeComponent();
             InitWindow();
@@ -42,17 +50,6 @@ namespace Science_Base
 
         private void InitWindow()
         {
-            SolidColorBrush Red = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0xD1, 0x26, 0x26));
-            SolidColorBrush Yellow = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0xD1, 0xD1, 0x26));
-            SolidColorBrush Green = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x26, 0xD1, 0x26));
-            SolidColorBrush Gray = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0xCC, 0xCC, 0xCC));
-            Red.Freeze();
-            Yellow.Freeze();
-            Green.Freeze();
-
-            this.ChartLeft.AnimationsSpeed = TimeSpan.FromMilliseconds(100);
-            this.ChartRight.AnimationsSpeed = TimeSpan.FromMilliseconds(100);
-            
             // Supply Voltage
             this.GaugeSysVoltage.FromValue = 22;
             this.GaugeSysVoltage.ToValue = 30;
@@ -61,37 +58,37 @@ namespace Science_Base
             this.GaugeSysVoltage.TickStep = 0.25;
             this.GaugeSysVoltage.Value = 22;
             this.GaugeSysVoltage.SectionsInnerRadius = 0.96;
-            this.GaugeSysVoltage.Base.Foreground = Red; // TODO: See if this change works
-            this.GaugeSysVoltage.NeedleFill = Gray;
+            this.GaugeSysVoltage.Base.Foreground = TextColour;
+            this.GaugeSysVoltage.NeedleFill = TextColour;
             this.GaugeSysVoltage.Sections.Add(new AngularSection() // Low Red
             {
                 FromValue = 22,
                 ToValue = 22.5,
-                Fill = Red
+                Fill = GaugeRedColour
             });
             this.GaugeSysVoltage.Sections.Add(new AngularSection() // Low Yellow
             {
                 FromValue = 22.5,
                 ToValue = 23.5,
-                Fill = Yellow
+                Fill = GaugeYellowColour
             });
             this.GaugeSysVoltage.Sections.Add(new AngularSection() // Green
             {
                 FromValue = 23.5,
                 ToValue = 28.5,
-                Fill = Green
+                Fill = GaugeGreenColour
             });
             this.GaugeSysVoltage.Sections.Add(new AngularSection() // High Yellow
             {
                 FromValue = 28.5,
                 ToValue = 29.25,
-                Fill = Yellow
+                Fill = GaugeYellowColour
             });
             this.GaugeSysVoltage.Sections.Add(new AngularSection() // High Red
             {
                 FromValue = 29.25,
                 ToValue = 30,
-                Fill = Red
+                Fill = GaugeRedColour
             });
 
             // System Current
@@ -101,24 +98,25 @@ namespace Science_Base
             this.GaugeSysCurrent.LabelsStep = 2;
             this.GaugeSysCurrent.TickStep = 0.25;
             this.GaugeSysCurrent.SectionsInnerRadius = 0.96;
-            this.GaugeSysCurrent.NeedleFill = Gray;
+            this.GaugeSysCurrent.Base.Foreground = TextColour;
+            this.GaugeSysCurrent.NeedleFill = TextColour;
             this.GaugeSysCurrent.Sections.Add(new AngularSection() // Green
             {
                 FromValue = 0,
                 ToValue = 6,
-                Fill = Green
+                Fill = GaugeGreenColour
             });
             this.GaugeSysCurrent.Sections.Add(new AngularSection() // High Yellow
             {
                 FromValue = 6,
                 ToValue = 8,
-                Fill = Yellow
+                Fill = GaugeYellowColour
             });
             this.GaugeSysCurrent.Sections.Add(new AngularSection() // High Red
             {
                 FromValue = 8,
                 ToValue = 10,
-                Fill = Red
+                Fill = GaugeRedColour
             });
 
             // Drill Current
@@ -128,24 +126,25 @@ namespace Science_Base
             this.GaugeDrillCurrent.LabelsStep = 3;
             this.GaugeDrillCurrent.TickStep = 0.5;
             this.GaugeDrillCurrent.SectionsInnerRadius = 0.96;
-            this.GaugeDrillCurrent.NeedleFill = Gray;
+            this.GaugeDrillCurrent.Base.Foreground = TextColour;
+            this.GaugeDrillCurrent.NeedleFill = TextColour;
             this.GaugeDrillCurrent.Sections.Add(new AngularSection() // Green
             {
                 FromValue = 0,
                 ToValue = 9,
-                Fill = Green
+                Fill = GaugeGreenColour
             });
             this.GaugeDrillCurrent.Sections.Add(new AngularSection() // High Yellow
             {
                 FromValue = 9,
                 ToValue = 12,
-                Fill = Yellow
+                Fill = GaugeYellowColour
             });
             this.GaugeDrillCurrent.Sections.Add(new AngularSection() // High Red
             {
                 FromValue = 12,
                 ToValue = 15,
-                Fill = Red
+                Fill = GaugeRedColour
             });
 
             // Rail Current
@@ -155,25 +154,31 @@ namespace Science_Base
             this.GaugeRailCurrent.LabelsStep = 10;
             this.GaugeRailCurrent.TickStep = 2;
             this.GaugeRailCurrent.SectionsInnerRadius = 0.96;
-            this.GaugeRailCurrent.NeedleFill = Gray;
+            this.GaugeRailCurrent.Base.Foreground = TextColour;
+            this.GaugeRailCurrent.NeedleFill = TextColour;
             this.GaugeRailCurrent.Sections.Add(new AngularSection() // Green
             {
                 FromValue = 0,
                 ToValue = 35,
-                Fill = Green
+                Fill = GaugeGreenColour
             });
             this.GaugeRailCurrent.Sections.Add(new AngularSection() // High Yellow
             {
                 FromValue = 35,
                 ToValue = 45,
-                Fill = Yellow
+                Fill = GaugeYellowColour
             });
             this.GaugeRailCurrent.Sections.Add(new AngularSection() // High Red
             {
                 FromValue = 45,
                 ToValue = 60,
-                Fill = Red
+                Fill = GaugeRedColour
             });
+
+            
+            this.ChartDataChooser.DisplayMember = "SeriesName";
+            this.ChartDataChooser.ValueMember = null;
+            this.ChartDataChooser.DataSource = DataHandler.GetSeries();
         }
 
         public void SetMode(PictureBox Box, Image Original, byte Mode)
@@ -399,5 +404,8 @@ namespace Science_Base
                 this.GaugeRailCurrent.Value = RailCurrent;
             });
         }
+
+        private void ChartClearLeft_Click(object sender, EventArgs e) => this.Charts.Left.Clear();
+        private void ChartClearRight_Click(object sender, EventArgs e) => this.Charts.Right.Clear();
     }
 }
