@@ -3,6 +3,14 @@ Contains the code that will run on the base station computer, mainly the user in
 along with the server code that will communicate with rover to control it and receive 
 information from it.
 
+## Project Layout
+The BaseStation project contains the entry point of the base station in the
+HuskyRobotics.BaseStation.StartBaseStation class. The user interface
+components are contained in the UserInterface project. The VideoStreamer
+project is for video streaming UI elements. Utilities contains methods
+for use by all base station projects. The BaseServer project is for
+server logic, but may be merged with the BaseStation project.
+
 ## UI Functions
  - Navigation
  - Diagnostics
@@ -29,9 +37,5 @@ information from it.
  - separate windows
  - Always on top option
  
-## Required Libraries (include dll files)
- - VLC Video player
-	- nVLC.Declarations
-	- nVLC.Implementation
-	- nVLC.LibVlcWrapper
- - Nlog
+## Required Libraries
+ - GStreamer must be installed for VideoStreamer to work
