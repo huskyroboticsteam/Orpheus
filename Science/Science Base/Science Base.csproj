@@ -66,9 +66,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseMain.cs" />
+    <Compile Include="ChartManager.cs" />
     <Compile Include="Controls.cs" />
     <Compile Include="DataHandler.cs" />
-    <Compile Include="DataSet.cs" />
+    <Compile Include="Data.cs" />
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>
