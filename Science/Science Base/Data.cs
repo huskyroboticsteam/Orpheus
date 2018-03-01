@@ -30,6 +30,8 @@ namespace Science_Base
             this.Data = new ChartValues<Datum<DataType>>();
         }
 
+        public override string ToString() => this.SeriesName;
+
         public CartesianMapper<Datum<DataType>> GetMapper()
         {
             return Mappers.Xy<Datum<DataType>>()

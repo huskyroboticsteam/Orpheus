@@ -32,6 +32,11 @@ namespace Science_Base
             new Thread(new ThreadStart(DoAdds)).Start();
         }
 
+        public static object[] GetSeries()
+        {
+            return new object[] { ThermoInt, ThermoExt, UV, AirPollution, SupplyVoltage, SystemCurrent, DrillCurrent, RailCurrent, RandomData };
+        }
+
         public static void PacketGroundSensor(Packet Packet)
         {
             if(Packet == null || Packet.Data == null || Packet.Data.Payload == null || Packet.Data.Payload.Length != 8)

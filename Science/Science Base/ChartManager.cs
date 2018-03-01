@@ -38,8 +38,9 @@ namespace Science_Base
             LiveCharts.Wpf.LineSeries ChartSeries = new LiveCharts.Wpf.LineSeries(Series.GetMapper())
             {
                 Values = Series.Data,
-                Stroke = MainWindow.Scarlet,
-                Fill = MainWindow.ScarletBack
+                Stroke = MainWindow.ScarletColour,
+                Fill = MainWindow.ScarletBackColour,
+                PointGeometry = null
             };
             this.Chart.Series.Add(ChartSeries);
         }
