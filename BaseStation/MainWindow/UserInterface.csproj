@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{722B3498-9988-4667-B02C-C9D15D288657}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Library</OutputType>
     <RootNamespace>HuskyRobotics.UI</RootNamespace>
     <AssemblyName>HuskyRobotics.UI</AssemblyName>
     <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
@@ -60,6 +60,7 @@
     <Compile Include="MapDisplay.xaml.cs">
       <DependentUpon>MapDisplay.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MapTileDownloadManager.cs" />
     <Compile Include="Settings\RemoteDevice.cs" />
     <Compile Include="Settings\Settings.cs" />
     <Compile Include="Settings\SettingsFile.cs" />

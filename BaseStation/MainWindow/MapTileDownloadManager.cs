@@ -6,7 +6,6 @@ using HuskyRobotics.Utilities;
 using System.Security.Cryptography;
 
 // make sure there is a folder named MapTiles in the working directory
-// google API key: AIzaSyDr7Tuv6bar9jkYbz23b3jv0RlHLnhtzxU
 // https://msdn.microsoft.com/en-us/library/bb259689.aspx#Map map system (its bing but google
 // uses the same system)
 // https://google-developers.appspot.com/maps/documentation/static-maps/intro#Zoomlevels google
@@ -64,7 +63,7 @@ namespace HuskyRobotics.UI
                 }
             }
 
-            public Configuration(Tuple<double, double> coords, Tuple<int, int> imgDim, int scale = 2, int zoom = 1, string maptype = "satellite")
+            public Configuration(Tuple<double, double> coords, Tuple<int, int> imgDim, int zoom = 1, int scale = 2, string maptype = "satellite")
             {
                 Coords = coords;
                 ImgDim = imgDim;
