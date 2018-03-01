@@ -26,7 +26,6 @@ namespace Science_Base
             Server.Start(ScienceConstants.DEFAULT_PORT_TCP, ScienceConstants.DEFAULT_PORT_UDP);
             Server.ClientConnectionChange += Window.UpdateClientList;
             DataHandler.Start();
-            Window.StartData();
             Application.Run(Window);
         }
     }

@@ -19,8 +19,16 @@ namespace Science_Base
 {
     public partial class MainWindow : DarkForm
     {
+        public static SolidColorBrush Scarlet = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x81, 0x14, 0x26));
+        public static SolidColorBrush ScarletBack = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0x3F, 0x81, 0x14, 0x26));
+
+        private ChartManager Charts;
+
         public MainWindow()
         {
+            Scarlet.Freeze();
+            ScarletBack.Freeze();
+
             InitializeComponent();
             InitWindow();
             this.EmergencyStopBtn.NotifyDefault(false);
@@ -28,6 +36,8 @@ namespace Science_Base
             SetMode(this.StatusImgNetwork, Resources.Network, 2);
             SetMode(this.StatusImgPower, Resources.Power, 3);
             SetMode(this.StatusImgSystem, Resources.CPU, 3);
+            this.Charts = new ChartManager(this.ChartLeft, this.ChartRight, this.ChartDataChooser);
+            this.Charts.Left.AddSeries(DataHandler.RandomData);
         }
 
         private void InitWindow()
@@ -40,8 +50,8 @@ namespace Science_Base
             Yellow.Freeze();
             Green.Freeze();
 
-            this.DataGraph.AnimationsSpeed = TimeSpan.FromMilliseconds(100);
-            this.DataGraphSec.AnimationsSpeed = TimeSpan.FromMilliseconds(100);
+            this.ChartLeft.AnimationsSpeed = TimeSpan.FromMilliseconds(100);
+            this.ChartRight.AnimationsSpeed = TimeSpan.FromMilliseconds(100);
             
             // Supply Voltage
             this.GaugeSysVoltage.FromValue = 22;
@@ -51,7 +61,7 @@ namespace Science_Base
             this.GaugeSysVoltage.TickStep = 0.25;
             this.GaugeSysVoltage.Value = 22;
             this.GaugeSysVoltage.SectionsInnerRadius = 0.96;
-            this.GaugeSysVoltage.ForeColor = System.Drawing.Color.FromArgb(0x7F, 0xCC, 0xCC, 0xCC);
+            this.GaugeSysVoltage.Base.Foreground = Red; // TODO: See if this change works
             this.GaugeSysVoltage.NeedleFill = Gray;
             this.GaugeSysVoltage.Sections.Add(new AngularSection() // Low Red
             {
@@ -219,69 +229,6 @@ namespace Science_Base
             Rectangle Output = new Rectangle(0, 0, Image.Width, Image.Height);
             Graphics.DrawImage(Image, Output, 0, 0, Image.Width, Image.Height, GraphicsUnit.Pixel, Attributes);
             Box.Image = Image;
-        }
-
-        public void StartData()
-        {
-            Axis XAxis = new Axis()
-            {
-                //MinValue = DateTime.Now.AddSeconds(5).Ticks,
-                //MaxValue = DateTime.Now.AddSeconds(35).Ticks,
-                LabelFormatter = value => new DateTime((long)value).ToString("T"),
-                DisableAnimations = true
-            };
-            Axis YAxis = new Axis()
-            {
-                //MinValue = 0,
-                //MaxValue = 100
-                Title = "UV Light (µm/cm²)"
-            };
-            SolidColorBrush Red = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x81, 0x14, 0x26));
-            SolidColorBrush Back = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0x3F, 0x81, 0x14, 0x26));
-            Red.Freeze();
-            Back.Freeze();
-            LineSeries Series = new LineSeries(DataSet<int>.GetMapper("UV"))
-            {
-                Values = new ChartValues<DataUnit>(),
-                Stroke = Red,
-                Fill = Back
-            };
-            this.DataGraph.Series.Add(Series);
-            this.DataGraph.AxisX.Add(XAxis);
-            this.DataGraph.AxisY.Add(YAxis);
-            this.DataGraph.DisableAnimations = true;
-            DataHandler.UVData.ItemAdd += this.UVAdd;
-
-            Axis XAxisSec = new Axis()
-            {
-                LabelFormatter = value => new DateTime((long)value).ToString("T"),
-                DisableAnimations = true
-            };
-            Axis YAxisSec = new Axis()
-            {
-                Title = "Temperature (°C)"
-            };
-            LineSeries SeriesSec = new LineSeries(DataSet<float>.GetMapper("ExtTemp"))
-            {
-                Values = new ChartValues<DataUnit>(),
-                Stroke = Red,
-                Fill = Back
-            };
-            this.DataGraphSec.Series.Add(SeriesSec);
-            this.DataGraphSec.AxisX.Add(XAxisSec);
-            this.DataGraphSec.AxisY.Add(YAxisSec);
-            this.DataGraphSec.DisableAnimations = true;
-            DataHandler.ThermocoupleData.ItemAdd += this.ThermoAdd;
-        }
-
-        public void ThermoAdd(object Sender, DataEvent Event)
-        {
-            this.DataGraphSec.Series.First().Values.Add(Event.Unit);
-        }
-
-        public void UVAdd(object sender, DataEvent Event)
-        {
-            this.DataGraph.Series.First().Values.Add(Event.Unit);
         }
 
         /*public void UpdateGraph()
