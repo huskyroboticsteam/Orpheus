@@ -61,10 +61,12 @@ namespace Science.Systems
                 double SysA = this.SystemSensor.GetCurrent();
                 double SysV = this.SystemSensor.GetBusVoltage();
                 double SysSV = this.SystemSensor.GetShuntVoltage();
+                double DrlSV = this.DrillSensor.GetShuntVoltage();
 
-                Log.Output(Log.Severity.INFO, Log.Source.NETWORK, "sysA:" + SysA + ",railA:" + Rail + ",drlA:" + Drill + ",sysV:" + SysV + ",sysshnV:" + SysSV + ",working?" + this.SystemSensor.Test());
+                Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Sys A:" + SysA + ", Drill A:" + Drill + ", Sys V:" + SysV + ", SysShunt V:" + SysSV + ", Working:" + this.SystemSensor.Test());
+                Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Calculated currents: Sys:" + (SysSV / 0.150) + ", Drill:" + (DrlSV / 0.010));
 
-                byte[] Data = UtilData.ToBytes(SysA).Concat(UtilData.ToBytes(Rail)).Concat(UtilData.ToBytes(Drill)).Concat(UtilData.ToBytes(SysV)).Concat(UtilData.ToBytes(Sample.Ticks)).ToArray();
+                byte[] Data = UtilData.ToBytes(SysSV / 0.150).Concat(UtilData.ToBytes(DrlSV / 0.010)).Concat(UtilData.ToBytes(SysV)).Concat(UtilData.ToBytes(Sample.Ticks)).ToArray();
                 Packet Packet = new Packet(new Message(ScienceConstants.Packets.SYS_SENSOR, Data), false);
                 Client.Send(Packet);
             }

@@ -34,6 +34,7 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.Control = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
+            this.DataGraphSec = new LiveCharts.WinForms.CartesianChart();
             this.GaugeTable = new System.Windows.Forms.TableLayoutPanel();
             this.darkLabel3 = new DarkUI.Controls.DarkLabel();
             this.darkLabel2 = new DarkUI.Controls.DarkLabel();
@@ -43,7 +44,6 @@
             this.GaugeDrillCurrent = new LiveCharts.WinForms.AngularGauge();
             this.GaugeSysCurrent = new LiveCharts.WinForms.AngularGauge();
             this.GaugeSysVoltage = new LiveCharts.WinForms.AngularGauge();
-            this.DataGraph = new LiveCharts.WinForms.CartesianChart();
             this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
@@ -85,6 +85,7 @@
             this.StatusImgSystem = new System.Windows.Forms.PictureBox();
             this.SecTimer = new System.Windows.Forms.Timer(this.components);
             this.UIUpdate = new System.Windows.Forms.Timer(this.components);
+            this.DataGraph = new LiveCharts.WinForms.CartesianChart();
             this.tableLayoutPanel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.Control.SuspendLayout();
@@ -161,8 +162,9 @@
             this.tableLayoutPanel5.ColumnCount = 2;
             this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel5.Controls.Add(this.GaugeTable, 1, 0);
             this.tableLayoutPanel5.Controls.Add(this.DataGraph, 0, 1);
+            this.tableLayoutPanel5.Controls.Add(this.DataGraphSec, 1, 1);
+            this.tableLayoutPanel5.Controls.Add(this.GaugeTable, 1, 0);
             this.tableLayoutPanel5.Controls.Add(this.tableLayoutPanel7, 0, 0);
             this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel5.Location = new System.Drawing.Point(0, 0);
@@ -173,6 +175,15 @@
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 37.5F));
             this.tableLayoutPanel5.Size = new System.Drawing.Size(776, 496);
             this.tableLayoutPanel5.TabIndex = 0;
+            // 
+            // DataGraphSec
+            // 
+            this.DataGraphSec.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.DataGraphSec.Location = new System.Drawing.Point(391, 313);
+            this.DataGraphSec.Name = "DataGraphSec";
+            this.DataGraphSec.Size = new System.Drawing.Size(382, 180);
+            this.DataGraphSec.TabIndex = 3;
+            this.DataGraphSec.Text = "Graph2";
             // 
             // GaugeTable
             // 
@@ -278,20 +289,12 @@
             // GaugeSysVoltage
             // 
             this.GaugeSysVoltage.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.GaugeSysVoltage.ForeColor = System.Drawing.Color.White;
             this.GaugeSysVoltage.Location = new System.Drawing.Point(3, 23);
             this.GaugeSysVoltage.Name = "GaugeSysVoltage";
             this.GaugeSysVoltage.Size = new System.Drawing.Size(188, 129);
             this.GaugeSysVoltage.TabIndex = 4;
             this.GaugeSysVoltage.Text = "angularGauge1";
-            // 
-            // DataGraph
-            // 
-            this.DataGraph.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.DataGraph.Location = new System.Drawing.Point(3, 313);
-            this.DataGraph.Name = "DataGraph";
-            this.DataGraph.Size = new System.Drawing.Size(382, 180);
-            this.DataGraph.TabIndex = 1;
-            this.DataGraph.Text = "DataGraph";
             // 
             // tableLayoutPanel7
             // 
@@ -838,6 +841,15 @@
             this.UIUpdate.Interval = 33;
             this.UIUpdate.Tick += new System.EventHandler(this.UIUpdate_Tick);
             // 
+            // DataGraph
+            // 
+            this.DataGraph.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.DataGraph.Location = new System.Drawing.Point(3, 313);
+            this.DataGraph.Name = "DataGraph";
+            this.DataGraph.Size = new System.Drawing.Size(382, 180);
+            this.DataGraph.TabIndex = 4;
+            this.DataGraph.Text = "DataGraph";
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -917,7 +929,6 @@
         private System.Windows.Forms.CheckBox SendAsUDP;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;
         private System.Windows.Forms.TableLayoutPanel GaugeTable;
-        private LiveCharts.WinForms.CartesianChart DataGraph;
         private LiveCharts.WinForms.AngularGauge GaugeRailCurrent;
         private LiveCharts.WinForms.AngularGauge GaugeDrillCurrent;
         private LiveCharts.WinForms.AngularGauge GaugeSysCurrent;
@@ -940,5 +951,7 @@
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel9;
         private System.Windows.Forms.TrackBar trackBar2;
+        private LiveCharts.WinForms.CartesianChart DataGraphSec;
+        private LiveCharts.WinForms.CartesianChart DataGraph;
     }
 }
