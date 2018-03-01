@@ -21,14 +21,16 @@ namespace Science
         public IOHandler()
         {
             RaspberryPi.Initialize();
-            //this.I2C = new I2CBusPi();
-            //this.PWMGenHighFreq = new PCA9685(this.I2C, 0x4C);
-            //this.PWMGenLowFreq = new PCA9685(this.I2C, 0x4B);
+            this.I2C = new I2CBusPi();
+            this.PWMGenHighFreq = new PCA9685(this.I2C, 0x4C);
+            this.PWMGenLowFreq = new PCA9685(this.I2C, 0x4B);
+            this.PWMGenHighFreq.SetFrequency(333);
+            this.PWMGenLowFreq.SetFrequency(50);
 
             //this.RailController = new Rail(this.PWMGenHighFreq.Outputs[1], new DigitalInPi(11));
-            //this.DrillController = new Drill(this.PWMGenHighFreq.Outputs[0], this.PWMGenLowFreq.Outputs[0]);
+            this.DrillController = new Drill(this.PWMGenHighFreq.Outputs[0], this.PWMGenLowFreq.Outputs[0]);
             //this.SampleController = new Sample(this.PWMGenLowFreq.Outputs[1]);
-            //this.LEDController = new LEDs(this.PWMGenLowFreq.Outputs, this.PWMGenHighFreq.Outputs);
+            this.LEDController = new LEDs(this.PWMGenLowFreq.Outputs, this.PWMGenHighFreq.Outputs);
             this.AuxSensors = new AuxSensors();
         }
 
@@ -38,9 +40,9 @@ namespace Science
         public void InitializeSystems()
         {
             //this.RailController.Initialize();
-            //this.DrillController.Initialize();
+            this.DrillController.Initialize();
             //this.SampleController.Initialize();
-            //this.LEDController.Initialize();
+            this.LEDController.Initialize();
             this.AuxSensors.Initialize();
         }
 
@@ -50,18 +52,18 @@ namespace Science
         public void EmergencyStop()
         {
             //this.RailController.EmergencyStop();
-            //this.DrillController.EmergencyStop();
+            this.DrillController.EmergencyStop();
             //this.SampleController.EmergencyStop();
-            //this.LEDController.EmergencyStop();
+            this.LEDController.EmergencyStop();
             this.AuxSensors.EmergencyStop();
         }
 
         public void UpdateStates()
         {
             //this.RailController.UpdateState();
-            //this.DrillController.UpdateState();
+            this.DrillController.UpdateState();
             //this.SampleController.UpdateState();
-            //this.LEDController.UpdateState();
+            this.LEDController.UpdateState();
             this.AuxSensors.UpdateState();
         }
     }

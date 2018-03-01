@@ -35,11 +35,14 @@ namespace Science_Base
             SolidColorBrush Red = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0xD1, 0x26, 0x26));
             SolidColorBrush Yellow = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0xD1, 0xD1, 0x26));
             SolidColorBrush Green = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x26, 0xD1, 0x26));
+            SolidColorBrush Gray = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0xCC, 0xCC, 0xCC));
             Red.Freeze();
             Yellow.Freeze();
             Green.Freeze();
 
             this.DataGraph.AnimationsSpeed = TimeSpan.FromMilliseconds(100);
+            this.DataGraphSec.AnimationsSpeed = TimeSpan.FromMilliseconds(100);
+            
             // Supply Voltage
             this.GaugeSysVoltage.FromValue = 22;
             this.GaugeSysVoltage.ToValue = 30;
@@ -48,6 +51,8 @@ namespace Science_Base
             this.GaugeSysVoltage.TickStep = 0.25;
             this.GaugeSysVoltage.Value = 22;
             this.GaugeSysVoltage.SectionsInnerRadius = 0.96;
+            this.GaugeSysVoltage.ForeColor = System.Drawing.Color.FromArgb(0x7F, 0xCC, 0xCC, 0xCC);
+            this.GaugeSysVoltage.NeedleFill = Gray;
             this.GaugeSysVoltage.Sections.Add(new AngularSection() // Low Red
             {
                 FromValue = 22,
@@ -86,6 +91,7 @@ namespace Science_Base
             this.GaugeSysCurrent.LabelsStep = 2;
             this.GaugeSysCurrent.TickStep = 0.25;
             this.GaugeSysCurrent.SectionsInnerRadius = 0.96;
+            this.GaugeSysCurrent.NeedleFill = Gray;
             this.GaugeSysCurrent.Sections.Add(new AngularSection() // Green
             {
                 FromValue = 0,
@@ -112,6 +118,7 @@ namespace Science_Base
             this.GaugeDrillCurrent.LabelsStep = 3;
             this.GaugeDrillCurrent.TickStep = 0.5;
             this.GaugeDrillCurrent.SectionsInnerRadius = 0.96;
+            this.GaugeDrillCurrent.NeedleFill = Gray;
             this.GaugeDrillCurrent.Sections.Add(new AngularSection() // Green
             {
                 FromValue = 0,
@@ -138,6 +145,7 @@ namespace Science_Base
             this.GaugeRailCurrent.LabelsStep = 10;
             this.GaugeRailCurrent.TickStep = 2;
             this.GaugeRailCurrent.SectionsInnerRadius = 0.96;
+            this.GaugeRailCurrent.NeedleFill = Gray;
             this.GaugeRailCurrent.Sections.Add(new AngularSection() // Green
             {
                 FromValue = 0,
@@ -226,12 +234,13 @@ namespace Science_Base
             {
                 //MinValue = 0,
                 //MaxValue = 100
+                Title = "UV Light (µm/cm²)"
             };
             SolidColorBrush Red = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x81, 0x14, 0x26));
             SolidColorBrush Back = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0x3F, 0x81, 0x14, 0x26));
             Red.Freeze();
             Back.Freeze();
-            LineSeries Series = new LineSeries(DataSet.GetMapper("IntTemp"))
+            LineSeries Series = new LineSeries(DataSet<int>.GetMapper("UV"))
             {
                 Values = new ChartValues<DataUnit>(),
                 Stroke = Red,
@@ -241,10 +250,36 @@ namespace Science_Base
             this.DataGraph.AxisX.Add(XAxis);
             this.DataGraph.AxisY.Add(YAxis);
             this.DataGraph.DisableAnimations = true;
-            DataHandler.ThermocoupleData.ItemAdd += this.DataAdded;
+            DataHandler.UVData.ItemAdd += this.UVAdd;
+
+            Axis XAxisSec = new Axis()
+            {
+                LabelFormatter = value => new DateTime((long)value).ToString("T"),
+                DisableAnimations = true
+            };
+            Axis YAxisSec = new Axis()
+            {
+                Title = "Temperature (°C)"
+            };
+            LineSeries SeriesSec = new LineSeries(DataSet<float>.GetMapper("ExtTemp"))
+            {
+                Values = new ChartValues<DataUnit>(),
+                Stroke = Red,
+                Fill = Back
+            };
+            this.DataGraphSec.Series.Add(SeriesSec);
+            this.DataGraphSec.AxisX.Add(XAxisSec);
+            this.DataGraphSec.AxisY.Add(YAxisSec);
+            this.DataGraphSec.DisableAnimations = true;
+            DataHandler.ThermocoupleData.ItemAdd += this.ThermoAdd;
         }
 
-        public void DataAdded(object Sender, DataEvent Event)
+        public void ThermoAdd(object Sender, DataEvent Event)
+        {
+            this.DataGraphSec.Series.First().Values.Add(Event.Unit);
+        }
+
+        public void UVAdd(object sender, DataEvent Event)
         {
             this.DataGraph.Series.First().Values.Add(Event.Unit);
         }
@@ -405,6 +440,17 @@ namespace Science_Base
             this.DrillToggle.Text = Science_Base.Controls.IsDrillEnabled ? "STOP" : "START";
             Science_Base.Controls.DrillSpeedChange(this.DrillSpeed.Value * (this.DrillReverse.Checked ? -1 : 1));
             this.DrillReverse.Enabled = (this.DrillSpeed.Value == 0 || !Science_Base.Controls.IsDrillEnabled);
+        }
+
+        public void UpdateGauges(double SupplyVoltage, double SystemCurrent, double DrillCurrent, double RailCurrent)
+        {
+            Invoke((MethodInvoker)delegate
+            {
+                this.GaugeSysVoltage.Value = SupplyVoltage;
+                this.GaugeSysCurrent.Value = SystemCurrent;
+                this.GaugeDrillCurrent.Value = DrillCurrent;
+                this.GaugeRailCurrent.Value = RailCurrent;
+            });
         }
     }
 }

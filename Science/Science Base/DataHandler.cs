@@ -12,15 +12,18 @@ namespace Science_Base
     {
 
         //public static DataSet RandomData;
-        public static DataSet ThermocoupleData;
+        public static DataSet<float> ThermocoupleData;
+        public static DataSet<int> UVData;
         private static Random Random;
 
         public static void Start()
         {
             Random = new Random();
             //RandomData = new DataSet("Random", new string[] { "RandNumber" }, 500);
-            ThermocoupleData = new DataSet("Thermocouple", new string[] { "IntTemp" }, 500);
+            ThermocoupleData = new DataSet<float>("Thermocouple", new string[] { "IntTemp", "ExtTemp" }, 500);
+            UVData = new DataSet<int>("UV", new string[] { "UV" }, 500);
             Parse.SetParseHandler(ScienceConstants.Packets.GND_SENSOR, PacketGroundSensor);
+            Parse.SetParseHandler(ScienceConstants.Packets.SYS_SENSOR, PacketSysSensor);
             //Thread DataAdder = new Thread(new ThreadStart(DoAdds));
             //DataAdder.Start();
         }
@@ -38,8 +41,30 @@ namespace Science_Base
             ThermocoupleData.Add(new DataUnit("MAX31855")
             {
                 { "Time", DateTime.Now },
-                { "IntTemp", MAX31855.ConvertInternalFromRaw(Thermocouple) }
+                { "IntTemp", MAX31855.ConvertInternalFromRaw(Thermocouple) },
+                { "ExtTemp", MAX31855.ConvertExternalFromRaw(Thermocouple) }
             });
+            UVData.Add(new DataUnit("VEML6070")
+            {
+                { "Time", DateTime.Now },
+                { "UV", UVLight }
+            });
+
+        }
+
+        public static void PacketSysSensor(Packet Packet)
+        {
+            if (Packet == null || Packet.Data == null || Packet.Data.Payload == null || Packet.Data.Payload.Length != 32)
+            {
+                Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "System sensor packet invalid. Discarding.");
+                return;
+            }
+            double SysCurrent = UtilData.ToDouble(UtilMain.SubArray(Packet.Data.Payload, 0, 8));
+            double DrillCurrent = UtilData.ToDouble(UtilMain.SubArray(Packet.Data.Payload, 8, 8));
+            double SysVoltage = UtilData.ToDouble(UtilMain.SubArray(Packet.Data.Payload, 16, 8));
+            DateTime Sample = new DateTime(UtilData.ToLong(UtilMain.SubArray(Packet.Data.Payload, 24, 8)));
+            Log.Output(Log.Severity.INFO, Log.Source.GUI, "Got sysA:" + SysCurrent + ", DrlA:" + DrillCurrent + ", SysV:" + SysVoltage);
+            BaseMain.Window.UpdateGauges(SysVoltage, SysCurrent, DrillCurrent, 0);
         }
 
         /*private static void DoAdds()

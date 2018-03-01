@@ -6,8 +6,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Scarlet.Communications;
 using Scarlet.Components;
+using Scarlet.Components.Sensors;
 using Scarlet.IO;
 using Scarlet.IO.RaspberryPi;
+using Scarlet.Utilities;
 using Science.Library;
 
 namespace Science.Systems
@@ -54,7 +56,17 @@ namespace Science.Systems
                 this.DrillSensor.UpdateState();
                 this.RailSensor.UpdateState();
 
-                byte[] Data; // TODO: Add sensor data!
+                double Rail = this.RailSensor.GetCurrent();
+                double Drill = this.DrillSensor.GetCurrent();
+                double SysA = this.SystemSensor.GetCurrent();
+                double SysV = this.SystemSensor.GetBusVoltage();
+                double SysSV = this.SystemSensor.GetShuntVoltage();
+                double DrlSV = this.DrillSensor.GetShuntVoltage();
+
+                Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Sys A:" + SysA + ", Drill A:" + Drill + ", Sys V:" + SysV + ", SysShunt V:" + SysSV + ", Working:" + this.SystemSensor.Test());
+                Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Calculated currents: Sys:" + (SysSV / 0.150) + ", Drill:" + (DrlSV / 0.010));
+
+                byte[] Data = UtilData.ToBytes(SysSV / 0.150).Concat(UtilData.ToBytes(DrlSV / 0.010)).Concat(UtilData.ToBytes(SysV)).Concat(UtilData.ToBytes(Sample.Ticks)).ToArray();
                 Packet Packet = new Packet(new Message(ScienceConstants.Packets.SYS_SENSOR, Data), false);
                 Client.Send(Packet);
             }

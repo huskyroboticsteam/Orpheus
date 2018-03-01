@@ -6,7 +6,7 @@ using Scarlet.Utilities;
 
 namespace Science_Base
 {
-    public class DataSet
+    public class DataSet<DataType>
     {
         private List<DataUnit> Data;
         public readonly string Name;
@@ -33,7 +33,13 @@ namespace Science_Base
         {
             return Mappers.Xy<DataUnit>()
                 .X(du => du.GetValue<DateTime>("Time").Ticks)
-                .Y(du => du.GetValue<float>(SeriesName));
+                .Y(du => GetYVal(du, SeriesName));
+        }
+
+        public static double GetYVal(DataUnit Data, string SeriesName)
+        {
+            DataType Val = Data.GetValue<DataType>(SeriesName);
+            return double.Parse(Val.ToString());
         }
     }
 
