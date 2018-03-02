@@ -84,7 +84,7 @@ namespace HuskyRobotics.UI
         // and configuration for the center tile
         public static void DownloadNewTileSet(Tuple<int, int> tilingDim, Configuration config, String mapSetName)
         {
-            String fileName = Directory.GetCurrentDirectory().ToString() + @"\Images\" + mapSetName + ".evm";
+            String fileName = Directory.GetCurrentDirectory().ToString() + @"\Images\" + mapSetName + ".map";
             using (StreamWriter file = new StreamWriter(fileName))
             {
                 Tuple<int, int> centerPoint = MapConversion.LatLongToPixelXY(config.Coords.Item1,
@@ -107,7 +107,8 @@ namespace HuskyRobotics.UI
                             (centerPoint.Item1 + (i * config.ImgDim.Item1), centerPoint.Item2
                             + (j * config.ImgDim.Item2), config.Zoom);
                         config.Coords = newCoords;
-                        file.WriteLine(i + "," + j + "|" + Fetch(config));
+                        string imageName = Fetch(config);
+                        file.WriteLine(i + "," + j + "|" + imageName);
                     }
                 }
             }
@@ -116,16 +117,13 @@ namespace HuskyRobotics.UI
         // pulls a single map tile from google maps returns the hash code used for the file name.
         public static String Fetch(Configuration config)
         {
-            String requestTile = "https://maps.googleapis.com/maps/api/staticmap?" + config.ToString();
+            String requestUrl = "https://maps.googleapis.com/maps/api/staticmap?" + config.ToString();
 
-            HttpWebRequest request = WebRequest.CreateHttp(requestTile);
+            HttpWebRequest request = WebRequest.CreateHttp(requestUrl);
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
             Stream input = response.GetResponseStream();
-
-            MemoryStream buffer;
-
             // writes to the buffer stream
-            using (buffer = new MemoryStream())
+            using (MemoryStream buffer = new MemoryStream())
             {
                 input.CopyTo(buffer);
                 //hash code generator
