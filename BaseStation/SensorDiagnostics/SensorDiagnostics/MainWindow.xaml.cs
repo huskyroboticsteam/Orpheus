@@ -27,16 +27,17 @@ namespace HuskyRobotics.UI
     public partial class sensorHistoryGraph : UserControl
     {
 
+        public SeriesCollection seriesCollection { get; set; } // Data to be displayed
+        public Func<double, string> YFormatter { get; set; } // Yaxis format
+        public Func<double, string> XFormatter { get; set; } // Xaxis format
+        private const string LogFilesLocation = "Logs"; // Location of files to be read
+        private const char Delimiter = ','; // Delimiter for file
+        private int selectedFile; // File currently selected
+        private FileInfo[] data; // Content of File selected
 
-
-        public SeriesCollection seriesCollection { get; set; }
-        public Func<double, string> YFormatter { get; set; }
-        public Func<double, string> XFormatter { get; set; }
-        private const string LogFilesLocation = "Logs";
-        private const char Delimiter = ',';
-        private int selectedFile;
-        private FileInfo[] data;
-
+        /// <summary>
+        /// Constructor: Sets up ui
+        /// </summary>
         public sensorHistoryGraph()
         {
             InitializeComponent();
@@ -47,6 +48,9 @@ namespace HuskyRobotics.UI
             YFormatter = valueX => valueX.ToString("0.##");
         }
 
+        /// <summary>
+        /// retrieves the files from the specified folder location
+        /// </summary>
         private void getData()
         {
             DirectoryInfo di = new DirectoryInfo(LogFilesLocation);
@@ -62,6 +66,9 @@ namespace HuskyRobotics.UI
 
         }
 
+        /// <summary>
+        /// Populates the dropbox with filenames for the user to select
+        /// </summary>
         private void makeDropBox()
         {
             for (int i = 0; i < data.Length; i++)
@@ -72,6 +79,9 @@ namespace HuskyRobotics.UI
             }
         }
 
+        /// <summary>
+        /// Updates the graph populating it with data from the currently selected file
+        /// </summary>
         private void updateGraph()
         {
             seriesCollection.Clear();
@@ -100,10 +110,14 @@ namespace HuskyRobotics.UI
                     Values = new ChartValues<double>(sensorValues[i])
                 });
             }
-            Console.Write("test");
             DataContext = this;
         }
 
+        /// <summary>
+        /// Called when the combobox selection is changed
+        /// </summary>
+        /// <param name="sender">Should just be the combobox on the ui</param>
+        /// <param name="e">Should just be the event called when the combobox selection is changed</param>
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             selectedFile = Selection.SelectedIndex;
