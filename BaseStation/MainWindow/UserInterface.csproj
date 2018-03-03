@@ -60,6 +60,7 @@
     <Compile Include="MapDisplay.xaml.cs">
       <DependentUpon>MapDisplay.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MapTileDownloadManager.cs" />
     <Compile Include="Settings\RemoteDevice.cs" />
     <Compile Include="Settings\Settings.cs" />
     <Compile Include="Settings\SettingsFile.cs" />
