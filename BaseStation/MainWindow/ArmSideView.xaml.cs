@@ -21,13 +21,13 @@ namespace HuskyRobotics.UI
     /// <summary>
     /// Interaction logic for SideArmView.xaml
     /// </summary>
-    public partial class SideArmView : UserControl
+    public partial class ArmSideView : UserControl
     {
         private ObservableCollection<double> SetpointLocationX { get; set; }
         private ObservableCollection<double> SetpointLocationY { get; set; }
 
         public double Scale { get; } = 5;
-
+        
         private Armature _setpointArmature;
         public Armature SetpointArmature {
             get => _setpointArmature;
@@ -44,7 +44,7 @@ namespace HuskyRobotics.UI
             }
         }
 
-        public SideArmView()
+        public ArmSideView()
         {
             InitializeComponent();
         }

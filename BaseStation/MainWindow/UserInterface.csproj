@@ -38,6 +38,9 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HuskyRobotics.Arm">
+      <HintPath>..\..\Arm\ArmControl\bin\Debug\HuskyRobotics.Arm.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -66,6 +69,9 @@
     <Compile Include="Settings\SettingsPanel.xaml.cs">
       <DependentUpon>SettingsPanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ArmSideView.xaml.cs">
+      <DependentUpon>ArmSideView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Utilities\MockObservableMap.cs" />
     <Compile Include="Utilities\ProportionToDegree.cs" />
     <Compile Include="RoverView.xaml.cs">
@@ -92,6 +98,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Settings\SettingsPanel.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ArmSideView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
