@@ -6,18 +6,20 @@
              xmlns:local="clr-namespace:HuskyRobotics.UI"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <Canvas>
-        <Line Stroke="Black" X1="{Binding ActualLocationX[0]}" Y1="{Binding ActualLocationY[0]}" X2="{Binding ActualLocationX[1]}" Y2="{Binding ActualLocationY[1]}" />
-        <Line Stroke="Black" X1="{Binding ActualLocationX[1]}" Y1="{Binding ActualLocationY[1]}" X2="{Binding ActualLocationX[2]}" Y2="{Binding ActualLocationY[2]}" />
-        <Line Stroke="Black" X1="{Binding ActualLocationX[2]}" Y1="{Binding ActualLocationY[2]}" X2="{Binding ActualLocationX[3]}" Y2="{Binding ActualLocationY[3]}" />
+    <Viewbox Stretch="Uniform">
+        <Canvas Name="Canvas" Height="100" Width="100" Background="Transparent">
+            <!--<Line Stroke="Black" X1="{Binding ActualLocationX[0]}" Y1="{Binding ActualLocationY[0]}" X2="{Binding ActualLocationX[1]}" Y2="{Binding ActualLocationY[1]}" />
+            <Line Stroke="Black" X1="{Binding ActualLocationX[1]}" Y1="{Binding ActualLocationY[1]}" X2="{Binding ActualLocationX[2]}" Y2="{Binding ActualLocationY[2]}" />
+            <Line Stroke="Black" X1="{Binding ActualLocationX[2]}" Y1="{Binding ActualLocationY[2]}" X2="{Binding ActualLocationX[3]}" Y2="{Binding ActualLocationY[3]}" />-->
 
-        <Line Stroke="Gray" X1="{Binding SetpointLocationX[0]}" Y1="{Binding SetpointLocationY[0]}" X2="{Binding SetpointLocationX[1]}" Y2="{Binding SetpointLocationY[1]}" />
-        <Line Stroke="Gray" X1="{Binding SetpointLocationX[1]}" Y1="{Binding SetpointLocationY[1]}" X2="{Binding SetpointLocationX[2]}" Y2="{Binding SetpointLocationY[2]}" />
-        <Line Stroke="Gray" X1="{Binding SetpointLocationX[2]}" Y1="{Binding SetpointLocationY[2]}" X2="{Binding SetpointLocationX[3]}" Y2="{Binding SetpointLocationY[3]}" />
-        <Ellipse Stroke="Red" Width="6" Height="6" Canvas.Top="{Binding Setpoint.Item1}" Canvas.Left="{Binding Setpoint.Item2}">
-            <Ellipse.RenderTransform>
-                <TranslateTransform X="-3" Y="-3"/>
-            </Ellipse.RenderTransform>
-        </Ellipse>
-    </Canvas>
+            <Line Stroke="Gray" X1="{Binding SetpointLocationX[0]}" Y1="{Binding SetpointLocationY[0]}" X2="{Binding SetpointLocationX[1]}" Y2="{Binding SetpointLocationY[1]}" />
+            <Line Stroke="Gray" X1="{Binding SetpointLocationX[1]}" Y1="{Binding SetpointLocationY[1]}" X2="{Binding SetpointLocationX[2]}" Y2="{Binding SetpointLocationY[2]}" />
+            <Line Stroke="Gray" X1="{Binding SetpointLocationX[2]}" Y1="{Binding SetpointLocationY[2]}" X2="{Binding SetpointLocationX[3]}" Y2="{Binding SetpointLocationY[3]}" />
+            <!--<Ellipse Stroke="Red" Width="6" Height="6" Canvas.Top="{Binding Setpoint.Item1}" Canvas.Left="{Binding Setpoint.Item2}">
+                <Ellipse.RenderTransform>
+                    <TranslateTransform X="-3" Y="-3"/>
+                </Ellipse.RenderTransform>
+            </Ellipse>-->
+        </Canvas>
+    </Viewbox>
 </UserControl>

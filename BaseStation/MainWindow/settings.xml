@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Settings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <PuttyPath>C:\Program Files (x86)\PuTTY\putty.exe</PuttyPath>
+  <Devices>
+    <Name>eohuhoent</Name>
+    <Address>htoneuhtoe</Address>
+  </Devices>
+  <Devices>
+    <Name>oeue</Name>
+    <Address />
+  </Devices>
 </Settings>
