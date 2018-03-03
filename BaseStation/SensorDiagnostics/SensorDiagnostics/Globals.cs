@@ -7,9 +7,13 @@ using Scarlet;
 using Scarlet.Components;
 using Scarlet.Components.Motors;
 using Scarlet.Components.Sensors;
-namespace FlatRobot
+namespace SensorDiagnostics
 {
-    static class Global
+    /// <summary>
+    /// THis class is simply a reference to all the components that need to be kept track of
+    /// allowing for organization of components
+    /// </summary>
+    static class Globals
     {
 
         //Physical component references

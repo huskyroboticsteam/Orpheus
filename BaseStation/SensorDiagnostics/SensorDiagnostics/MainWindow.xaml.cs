@@ -41,11 +41,11 @@ namespace HuskyRobotics.UI
         public sensorHistoryGraph()
         {
             InitializeComponent();
+            YFormatter = valueY => valueY.ToString("0.##");
+            XFormatter = valueX => valueX.ToString("0.##");
             seriesCollection = new SeriesCollection();
             getData();
             makeDropBox();
-            YFormatter = valueY => valueY.ToString("0.##");
-            YFormatter = valueX => valueX.ToString("0.##");
         }
 
         /// <summary>
