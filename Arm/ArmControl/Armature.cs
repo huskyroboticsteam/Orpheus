@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 
@@ -138,7 +139,7 @@ namespace HuskyRobotics.Arm
         }
     }
 
-    public class Armature
+    public class Armature : INotifyPropertyChanged
     {
         public float[] CurrentRolls { get; private set; }
         public float[] CurrentPitches { get; private set; }
@@ -153,6 +154,8 @@ namespace HuskyRobotics.Arm
         private float[] RollSums;
         private float[] PitchSums;
         private float[] YawSums;
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         //Takes an array of ArmParts (which can be conveniently constructed
         //using tuples) and initializes the Arm. Following this constructor,
@@ -240,6 +243,13 @@ namespace HuskyRobotics.Arm
                     2 * YawX * (TX - X) - 2 * YawZ * (TZ - Z));
         }
 
+        private void NotifyChanged()
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("CurrentRolls"));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("CurrentPitches"));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("CurrentYaws"));
+        }
+
         //Takes an angle in radians and ensures it is between
         //0 and 2 * PI
         private static float EnsureStandardForm(float Angle)
@@ -298,6 +308,8 @@ namespace HuskyRobotics.Arm
                     CurrentYaws[j] = Math.Max(Math.Min(CurrentYaws[j], Params[j].MaxYaw), Params[j].MinYaw);
                 }
             }
+
+            NotifyChanged();
 
             //for (int j = 0; j < Params.Length; j++)
             //    Console.WriteLine($"{CurrentRolls[j]}, {CurrentPitches[j]}, {CurrentYaws[j]}");

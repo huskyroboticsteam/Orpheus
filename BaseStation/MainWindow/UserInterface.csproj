@@ -69,9 +69,6 @@
     <Compile Include="Settings\SettingsPanel.xaml.cs">
       <DependentUpon>SettingsPanel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ArmSideView.xaml.cs">
-      <DependentUpon>ArmSideView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Utilities\MockObservableMap.cs" />
     <Compile Include="Utilities\ProportionToDegree.cs" />
     <Compile Include="RoverView.xaml.cs">
@@ -81,6 +78,9 @@
       <SubType>Designer</SubType>
       <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
+    <Compile Include="SideArmView.xaml.cs">
+      <DependentUpon>SideArmView.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -104,6 +104,10 @@
     <Page Include="ArmSideView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SideArmView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
