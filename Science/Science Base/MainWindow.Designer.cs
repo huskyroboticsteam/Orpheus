@@ -47,7 +47,6 @@
             this.GaugeSysVoltage = new LiveCharts.WinForms.AngularGauge();
             this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.ChartDataChooser = new System.Windows.Forms.ListBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
             this.DrillSpeed = new System.Windows.Forms.TrackBar();
@@ -58,6 +57,9 @@
             this.trackBar2 = new System.Windows.Forms.TrackBar();
             this.ChartClearRight = new DarkUI.Controls.DarkButton();
             this.ChartClearLeft = new DarkUI.Controls.DarkButton();
+            this.ChartDataChooser = new System.Windows.Forms.ListView();
+            this.ChartAddLeft = new DarkUI.Controls.DarkButton();
+            this.ChartAddRight = new DarkUI.Controls.DarkButton();
             this.Debugging = new System.Windows.Forms.TabPage();
             this.DebugList = new System.Windows.Forms.TableLayoutPanel();
             this.PacketGenBox = new System.Windows.Forms.GroupBox();
@@ -181,6 +183,7 @@
             // 
             // ChartLeft
             // 
+            this.ChartLeft.AllowDrop = true;
             this.ChartLeft.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ChartLeft.Location = new System.Drawing.Point(3, 418);
             this.ChartLeft.Name = "ChartLeft";
@@ -190,6 +193,7 @@
             // 
             // ChartRight
             // 
+            this.ChartRight.AllowDrop = true;
             this.ChartRight.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ChartRight.Location = new System.Drawing.Point(503, 418);
             this.ChartRight.Name = "ChartRight";
@@ -315,18 +319,21 @@
             this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel7.Controls.Add(this.groupBox4, 0, 0);
-            this.tableLayoutPanel7.Controls.Add(this.ChartDataChooser, 0, 1);
             this.tableLayoutPanel7.Controls.Add(this.groupBox2, 2, 0);
             this.tableLayoutPanel7.Controls.Add(this.groupBox3, 2, 1);
-            this.tableLayoutPanel7.Controls.Add(this.ChartClearRight, 1, 2);
-            this.tableLayoutPanel7.Controls.Add(this.ChartClearLeft, 0, 2);
+            this.tableLayoutPanel7.Controls.Add(this.ChartClearRight, 1, 3);
+            this.tableLayoutPanel7.Controls.Add(this.ChartClearLeft, 0, 3);
+            this.tableLayoutPanel7.Controls.Add(this.ChartDataChooser, 0, 1);
+            this.tableLayoutPanel7.Controls.Add(this.ChartAddLeft, 0, 2);
+            this.tableLayoutPanel7.Controls.Add(this.ChartAddRight, 1, 2);
             this.tableLayoutPanel7.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel7.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel7.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel7.Name = "tableLayoutPanel7";
-            this.tableLayoutPanel7.RowCount = 3;
+            this.tableLayoutPanel7.RowCount = 4;
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 30F));
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 70F));
+            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
             this.tableLayoutPanel7.Size = new System.Drawing.Size(500, 415);
             this.tableLayoutPanel7.TabIndex = 2;
@@ -338,23 +345,10 @@
             this.groupBox4.ForeColor = System.Drawing.Color.White;
             this.groupBox4.Location = new System.Drawing.Point(3, 3);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(244, 111);
+            this.groupBox4.Size = new System.Drawing.Size(244, 104);
             this.groupBox4.TabIndex = 9;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Sample";
-            // 
-            // ChartDataChooser
-            // 
-            this.ChartDataChooser.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.tableLayoutPanel7.SetColumnSpan(this.ChartDataChooser, 2);
-            this.ChartDataChooser.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ChartDataChooser.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.ChartDataChooser.FormattingEnabled = true;
-            this.ChartDataChooser.Location = new System.Drawing.Point(3, 126);
-            this.ChartDataChooser.Margin = new System.Windows.Forms.Padding(3, 9, 3, 1);
-            this.ChartDataChooser.Name = "ChartDataChooser";
-            this.ChartDataChooser.Size = new System.Drawing.Size(244, 264);
-            this.ChartDataChooser.TabIndex = 6;
             // 
             // groupBox2
             // 
@@ -363,7 +357,7 @@
             this.groupBox2.ForeColor = System.Drawing.Color.White;
             this.groupBox2.Location = new System.Drawing.Point(253, 3);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(244, 111);
+            this.groupBox2.Size = new System.Drawing.Size(244, 104);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Drill";
@@ -384,7 +378,7 @@
             this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
             this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.tableLayoutPanel8.Size = new System.Drawing.Size(238, 92);
+            this.tableLayoutPanel8.Size = new System.Drawing.Size(238, 85);
             this.tableLayoutPanel8.TabIndex = 1;
             // 
             // DrillSpeed
@@ -395,7 +389,7 @@
             this.DrillSpeed.Location = new System.Drawing.Point(3, 3);
             this.DrillSpeed.Maximum = 100;
             this.DrillSpeed.Name = "DrillSpeed";
-            this.DrillSpeed.Size = new System.Drawing.Size(232, 36);
+            this.DrillSpeed.Size = new System.Drawing.Size(232, 29);
             this.DrillSpeed.TabIndex = 0;
             this.DrillSpeed.TickFrequency = 10;
             this.DrillSpeed.TickStyle = System.Windows.Forms.TickStyle.Both;
@@ -404,7 +398,7 @@
             // DrillToggle
             // 
             this.DrillToggle.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.DrillToggle.Location = new System.Drawing.Point(120, 68);
+            this.DrillToggle.Location = new System.Drawing.Point(120, 61);
             this.DrillToggle.Margin = new System.Windows.Forms.Padding(1);
             this.DrillToggle.Name = "DrillToggle";
             this.DrillToggle.Padding = new System.Windows.Forms.Padding(5);
@@ -417,7 +411,7 @@
             // 
             this.DrillReverse.AutoSize = true;
             this.DrillReverse.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.DrillReverse.Location = new System.Drawing.Point(3, 70);
+            this.DrillReverse.Location = new System.Drawing.Point(3, 63);
             this.DrillReverse.Name = "DrillReverse";
             this.DrillReverse.Size = new System.Drawing.Size(113, 19);
             this.DrillReverse.TabIndex = 2;
@@ -428,10 +422,10 @@
             this.groupBox3.Controls.Add(this.tableLayoutPanel9);
             this.groupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox3.ForeColor = System.Drawing.Color.White;
-            this.groupBox3.Location = new System.Drawing.Point(253, 120);
+            this.groupBox3.Location = new System.Drawing.Point(253, 113);
             this.groupBox3.Name = "groupBox3";
-            this.tableLayoutPanel7.SetRowSpan(this.groupBox3, 2);
-            this.groupBox3.Size = new System.Drawing.Size(244, 292);
+            this.tableLayoutPanel7.SetRowSpan(this.groupBox3, 3);
+            this.groupBox3.Size = new System.Drawing.Size(244, 299);
             this.groupBox3.TabIndex = 2;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Rail";
@@ -453,7 +447,7 @@
             this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
             this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
             this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
-            this.tableLayoutPanel9.Size = new System.Drawing.Size(238, 273);
+            this.tableLayoutPanel9.Size = new System.Drawing.Size(238, 280);
             this.tableLayoutPanel9.TabIndex = 1;
             // 
             // trackBar2
@@ -464,7 +458,7 @@
             this.trackBar2.Name = "trackBar2";
             this.trackBar2.Orientation = System.Windows.Forms.Orientation.Vertical;
             this.tableLayoutPanel9.SetRowSpan(this.trackBar2, 6);
-            this.trackBar2.Size = new System.Drawing.Size(45, 267);
+            this.trackBar2.Size = new System.Drawing.Size(45, 274);
             this.trackBar2.TabIndex = 0;
             // 
             // ChartClearRight
@@ -490,6 +484,44 @@
             this.ChartClearLeft.TabIndex = 8;
             this.ChartClearLeft.Text = "Clear Left";
             this.ChartClearLeft.Click += new System.EventHandler(this.ChartClearLeft_Click);
+            // 
+            // ChartDataChooser
+            // 
+            this.ChartDataChooser.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.tableLayoutPanel7.SetColumnSpan(this.ChartDataChooser, 2);
+            this.ChartDataChooser.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ChartDataChooser.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.ChartDataChooser.Location = new System.Drawing.Point(3, 119);
+            this.ChartDataChooser.Margin = new System.Windows.Forms.Padding(3, 9, 3, 1);
+            this.ChartDataChooser.Name = "ChartDataChooser";
+            this.ChartDataChooser.Size = new System.Drawing.Size(244, 248);
+            this.ChartDataChooser.TabIndex = 10;
+            this.ChartDataChooser.UseCompatibleStateImageBehavior = false;
+            this.ChartDataChooser.View = System.Windows.Forms.View.List;
+            // 
+            // ChartAddLeft
+            // 
+            this.ChartAddLeft.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ChartAddLeft.Location = new System.Drawing.Point(5, 369);
+            this.ChartAddLeft.Margin = new System.Windows.Forms.Padding(5, 1, 2, 1);
+            this.ChartAddLeft.Name = "ChartAddLeft";
+            this.ChartAddLeft.Padding = new System.Windows.Forms.Padding(5);
+            this.ChartAddLeft.Size = new System.Drawing.Size(118, 21);
+            this.ChartAddLeft.TabIndex = 11;
+            this.ChartAddLeft.Text = "Add Left";
+            this.ChartAddLeft.Click += new System.EventHandler(this.ChartAddLeft_Click);
+            // 
+            // ChartAddRight
+            // 
+            this.ChartAddRight.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ChartAddRight.Location = new System.Drawing.Point(127, 369);
+            this.ChartAddRight.Margin = new System.Windows.Forms.Padding(2, 1, 5, 1);
+            this.ChartAddRight.Name = "ChartAddRight";
+            this.ChartAddRight.Padding = new System.Windows.Forms.Padding(5);
+            this.ChartAddRight.Size = new System.Drawing.Size(118, 21);
+            this.ChartAddRight.TabIndex = 12;
+            this.ChartAddRight.Text = "Add Right";
+            this.ChartAddRight.Click += new System.EventHandler(this.ChartAddRight_Click);
             // 
             // Debugging
             // 
@@ -542,7 +574,7 @@
             this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15F));
             this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 65F));
-            this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 160F));
+            this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 164F));
             this.PacketGenLayout.Controls.Add(this.TimestampTitle, 0, 0);
             this.PacketGenLayout.Controls.Add(this.IDTitle, 1, 0);
             this.PacketGenLayout.Controls.Add(this.IDTextbox, 1, 1);
@@ -610,7 +642,7 @@
             this.DataTextbox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.DataTextbox.Location = new System.Drawing.Point(290, 20);
             this.DataTextbox.Name = "DataTextbox";
-            this.DataTextbox.Size = new System.Drawing.Size(529, 20);
+            this.DataTextbox.Size = new System.Drawing.Size(527, 20);
             this.DataTextbox.TabIndex = 4;
             this.DataTextbox.TextChanged += new System.EventHandler(this.DataTextbox_TextChanged);
             // 
@@ -621,7 +653,7 @@
             this.DataTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.DataTitle.Location = new System.Drawing.Point(290, 0);
             this.DataTitle.Name = "DataTitle";
-            this.DataTitle.Size = new System.Drawing.Size(529, 17);
+            this.DataTitle.Size = new System.Drawing.Size(527, 17);
             this.DataTitle.TabIndex = 5;
             this.DataTitle.Text = "Data";
             // 
@@ -693,7 +725,7 @@
             this.InterpretationData.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.InterpretationData.Location = new System.Drawing.Point(290, 124);
             this.InterpretationData.Name = "InterpretationData";
-            this.InterpretationData.Size = new System.Drawing.Size(529, 13);
+            this.InterpretationData.Size = new System.Drawing.Size(527, 13);
             this.InterpretationData.TabIndex = 10;
             this.InterpretationData.Text = "Unknown";
             // 
@@ -702,9 +734,9 @@
             this.PacketConstructStatus.AutoSize = true;
             this.PacketConstructStatus.Dock = System.Windows.Forms.DockStyle.Fill;
             this.PacketConstructStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.PacketConstructStatus.Location = new System.Drawing.Point(825, 124);
+            this.PacketConstructStatus.Location = new System.Drawing.Point(823, 124);
             this.PacketConstructStatus.Name = "PacketConstructStatus";
-            this.PacketConstructStatus.Size = new System.Drawing.Size(156, 13);
+            this.PacketConstructStatus.Size = new System.Drawing.Size(158, 13);
             this.PacketConstructStatus.TabIndex = 11;
             this.PacketConstructStatus.Text = "Unknown";
             // 
@@ -716,13 +748,13 @@
             this.tableLayoutPanel3.Controls.Add(this.SendPacketBtn, 0, 1);
             this.tableLayoutPanel3.Controls.Add(this.ClientSelector, 0, 0);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(822, 17);
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(820, 17);
             this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.RowCount = 2;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(162, 107);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(164, 107);
             this.tableLayoutPanel3.TabIndex = 12;
             // 
             // SendPacketBtn
@@ -732,7 +764,7 @@
             this.SendPacketBtn.Location = new System.Drawing.Point(3, 56);
             this.SendPacketBtn.Name = "SendPacketBtn";
             this.SendPacketBtn.Padding = new System.Windows.Forms.Padding(5);
-            this.SendPacketBtn.Size = new System.Drawing.Size(156, 25);
+            this.SendPacketBtn.Size = new System.Drawing.Size(158, 25);
             this.SendPacketBtn.TabIndex = 5;
             this.SendPacketBtn.Text = "Send";
             this.SendPacketBtn.Click += new System.EventHandler(this.SendPacketBtn_Click);
@@ -744,7 +776,7 @@
             this.ClientSelector.FormattingEnabled = true;
             this.ClientSelector.Location = new System.Drawing.Point(3, 3);
             this.ClientSelector.Name = "ClientSelector";
-            this.ClientSelector.Size = new System.Drawing.Size(156, 21);
+            this.ClientSelector.Size = new System.Drawing.Size(158, 21);
             this.ClientSelector.TabIndex = 6;
             // 
             // SendAsUDP
@@ -752,7 +784,7 @@
             this.SendAsUDP.AutoSize = true;
             this.SendAsUDP.Checked = true;
             this.SendAsUDP.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.SendAsUDP.Location = new System.Drawing.Point(825, 0);
+            this.SendAsUDP.Location = new System.Drawing.Point(823, 0);
             this.SendAsUDP.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
             this.SendAsUDP.Name = "SendAsUDP";
             this.SendAsUDP.Size = new System.Drawing.Size(49, 17);
@@ -993,7 +1025,6 @@
         private LiveCharts.WinForms.CartesianChart ChartLeft;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel9;
         private System.Windows.Forms.TrackBar trackBar2;
-        private System.Windows.Forms.ListBox ChartDataChooser;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel8;
         private System.Windows.Forms.TrackBar DrillSpeed;
@@ -1002,5 +1033,8 @@
         private DarkUI.Controls.DarkButton ChartClearRight;
         private DarkUI.Controls.DarkButton ChartClearLeft;
         private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.ListView ChartDataChooser;
+        private DarkUI.Controls.DarkButton ChartAddLeft;
+        private DarkUI.Controls.DarkButton ChartAddRight;
     }
 }

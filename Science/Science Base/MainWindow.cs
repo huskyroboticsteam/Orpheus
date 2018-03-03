@@ -44,7 +44,7 @@ namespace Science_Base
             SetMode(this.StatusImgNetwork, Resources.Network, 2);
             SetMode(this.StatusImgPower, Resources.Power, 3);
             SetMode(this.StatusImgSystem, Resources.CPU, 3);
-            this.Charts = new ChartManager(this.ChartLeft, this.ChartRight, this.ChartDataChooser);
+            this.Charts = new ChartManager(this.ChartLeft, this.ChartRight, null);
             this.Charts.Left.AddSeries(DataHandler.RandomData);
         }
 
@@ -175,10 +175,13 @@ namespace Science_Base
                 Fill = GaugeRedColour
             });
 
-            
-            this.ChartDataChooser.DisplayMember = "SeriesName";
-            this.ChartDataChooser.ValueMember = null;
-            this.ChartDataChooser.DataSource = DataHandler.GetSeries();
+            ListViewItem[] Items = new ListViewItem[DataHandler.GetSeries().Length];
+            for (int i = 0; i < Items.Length; i++)
+            {
+                Items[i] = new ListViewItem(DataHandler.GetSeries()[i].ToString());
+                Items[i].Tag = DataHandler.GetSeries()[i];
+            }
+            this.ChartDataChooser.Items.AddRange(Items);
         }
 
         public void SetMode(PictureBox Box, Image Original, byte Mode)
@@ -407,5 +410,21 @@ namespace Science_Base
 
         private void ChartClearLeft_Click(object sender, EventArgs e) => this.Charts.Left.Clear();
         private void ChartClearRight_Click(object sender, EventArgs e) => this.Charts.Right.Clear();
+
+        private void ChartAddLeft_Click(object sender, EventArgs e)
+        {
+            foreach(int Selected in this.ChartDataChooser.SelectedIndices)
+            {
+                this.Charts.Left.AddByIndex(Selected);
+            }
+        }
+
+        private void ChartAddRight_Click(object sender, EventArgs e)
+        {
+            foreach (int Selected in this.ChartDataChooser.SelectedIndices)
+            {
+                this.Charts.Right.AddByIndex(Selected);
+            }
+        }
     }
 }

@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LiveCharts.WinForms;
+using Scarlet.Utilities;
 
 namespace Science_Base
 {
@@ -25,10 +27,12 @@ namespace Science_Base
             };
             this.Chart.AxisX.Add(X);
             this.Chart.DisableAnimations = true;
+            this.Chart.AllowDrop = true;
         }
 
         public void AddSeries<T>(DataSeries<T> Series)
         {
+            Log.Output(Log.Severity.INFO, Log.Source.GUI, "Adding series, current series count:" + this.Chart.Series.Count);
             LiveCharts.Wpf.Axis Y = new LiveCharts.Wpf.Axis()
             {
                 Title = Series.AxisLabel
@@ -43,6 +47,17 @@ namespace Science_Base
                 PointGeometry = null
             };
             this.Chart.Series.Add(ChartSeries);
+        }
+
+        // Thanks Sasha!
+        public void AddByIndex(int Index)
+        {
+            object Series = DataHandler.GetSeries()[Index];
+            Type type = Series.GetType();
+            Type Generic = type.GetGenericArguments()[0];
+            MethodInfo Info = this.GetType().GetMethod("AddSeries");
+            Info = Info.MakeGenericMethod(Generic);
+            Info.Invoke(this, new object[] { Series });
         }
 
         public void Clear()
