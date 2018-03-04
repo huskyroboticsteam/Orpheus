@@ -54,21 +54,23 @@ namespace Science_Base
 
         public static void PacketSysSensor(Packet Packet)
         {
-            if (Packet == null || Packet.Data == null || Packet.Data.Payload == null || Packet.Data.Payload.Length != 32)
+            if (Packet == null || Packet.Data == null || Packet.Data.Payload == null || Packet.Data.Payload.Length != 40)
             {
                 Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "System sensor packet invalid. Discarding.");
                 return;
             }
             double SysA = UtilData.ToDouble(UtilMain.SubArray(Packet.Data.Payload, 0, 8));
             double DrillA = UtilData.ToDouble(UtilMain.SubArray(Packet.Data.Payload, 8, 8));
-            double SysV = UtilData.ToDouble(UtilMain.SubArray(Packet.Data.Payload, 16, 8));
-            DateTime Sample = new DateTime(UtilData.ToLong(UtilMain.SubArray(Packet.Data.Payload, 24, 8)));
+            double RailA = UtilData.ToDouble(UtilMain.SubArray(Packet.Data.Payload, 16, 8));
+            double SysV = UtilData.ToDouble(UtilMain.SubArray(Packet.Data.Payload, 24, 8));
+
+            DateTime Sample = new DateTime(UtilData.ToLong(UtilMain.SubArray(Packet.Data.Payload, 32, 8)));
             //Log.Output(Log.Severity.INFO, Log.Source.GUI, "Got sysA:" + SysCurrent + ", DrlA:" + DrillCurrent + ", SysV:" + SysVoltage);
-            BaseMain.Window.UpdateGauges(SysV, SysA, DrillA, 0);
+            BaseMain.Window.UpdateGauges(SysV, SysA, DrillA, RailA);
             SupplyVoltage.Data.Add(new Datum<double>(Sample, SysV));
             SystemCurrent.Data.Add(new Datum<double>(Sample, SysA));
             DrillCurrent.Data.Add(new Datum<double>(Sample, DrillA));
-            //RailCurrent.Data.Add(new Datum<double>(Sample, RailA));
+            RailCurrent.Data.Add(new Datum<double>(Sample, RailA));
         }
 
         private static void DoAdds()
@@ -80,6 +82,7 @@ namespace Science_Base
                 RandomData.Data.Add(new Datum<int>(DateTime.Now, Random.Next(100)));
             }
             Log.Output(Log.Severity.INFO, Log.Source.GUI, "Data addition ended.");
+            
         }
 
     }
