@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
@@ -12,10 +13,11 @@ namespace HuskyRobotics.UI
 {
     public class Settings : INotifyPropertyChanged
     {
-
         /// <summary>
         /// Maps device names to their addresses
         /// </summary>
+        private ObservableCollection<string> _mapSets = new ObservableCollection<string>();
+        private string _currentMap;
         private ObservableCollection<RemoteDevice> _devices = new ObservableCollection<RemoteDevice>();
         private String _puttyPath = @"C:\Program Files (x86)\PuTTY\putty.exe";
 
@@ -29,6 +31,10 @@ namespace HuskyRobotics.UI
         public IEnumerable<RemoteDevice> Devices {
             get => _devices;
         }
+        
+        public IEnumerable<string> MapSets {
+            get => _mapSets;
+        }
 
         public String PuttyPath {
             get => _puttyPath;
@@ -38,13 +44,35 @@ namespace HuskyRobotics.UI
             }
         }
 
+        public String CurrentMap {
+            get => _currentMap;
+            set {
+                _currentMap = value;
+                NotifyChanged("CurrentMap");
+            }
+        }
+
         // For serialization only
         [XmlElement("Devices"), Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public List<RemoteDevice> DevicesSurrogate { get => _devices.ToList(); set => _devices = new ObservableCollection<RemoteDevice>(value); }
-
+        
         public Settings()
         {
             _devices.CollectionChanged += CollectionListener("Devices");
+            _mapSets = new ObservableCollection<string>();
+
+            // will be factored out later 
+            string[] files = Directory.GetFiles
+                (Directory.GetCurrentDirectory() + @"\Images", "*.map");
+            foreach (string file in files)
+            {
+                _mapSets.Add(Path.GetFileName(file));
+            }
+
+            if (_mapSets.Count != 0) {
+                _currentMap = _mapSets[0];
+            }
+            
         }
 
         private NotifyCollectionChangedEventHandler CollectionListener(string collectionName)

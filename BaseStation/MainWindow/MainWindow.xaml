@@ -47,7 +47,7 @@
                         <Label Content="Waypoints" />
                         <ListView></ListView>
                     </StackPanel>
-                    <ui:MapDisplay />
+                    <ui:MapDisplay x:Name="Map"/>
                 </DockPanel>
             </TabItem>
             <TabItem Header="Settings">

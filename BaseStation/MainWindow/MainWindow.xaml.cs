@@ -14,14 +14,24 @@ namespace HuskyRobotics.UI {
 		public Settings Settings { get => SettingsFile.Settings; }
 		public ObservableDictionary<string, MeasuredValue<double>> Properties { get; }
 
+
 		public MainWindow() {
 			Properties = new MockObservableMap();
 			InitializeComponent();
 			WindowState = WindowState.Maximized;
 			DataContext = this;
+            Settings.PropertyChanged += SettingChanged;
 		}
 
-		private void PuTTY_Button_Click(object sender, RoutedEventArgs e) {
+        private void SettingChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName.Equals("CurrentMap"))
+            {
+                Map.DisplayMap(Settings.CurrentMap);
+            } 
+        }
+
+        private void PuTTY_Button_Click(object sender, RoutedEventArgs e) {
 			if (File.Exists(Settings.PuttyPath)) {
 				var process = new Process();
 				process.StartInfo.FileName = Settings.PuttyPath;
