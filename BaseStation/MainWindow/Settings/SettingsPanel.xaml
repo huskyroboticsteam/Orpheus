@@ -19,14 +19,37 @@
             <Label Content="PuTTY Path:" />
             <TextBox Text="{Binding PuttyPath}" />
         </StackPanel>
-        <StackPanel Margin="3">
+        <StackPanel Margin="3" Width="280">
             <Label Content="Load Existing Map:"/>
             <ComboBox ItemsSource="{Binding MapSets}" SelectedValue="{Binding CurrentMap}"/>
             <Label Content="Add new map set:"/>
-            <DockPanel>
-                <Label />
-                <Label />
-            </DockPanel>
+            <StackPanel Orientation="Horizontal" Margin="2">
+                <Label Content="Set Name:"/>
+                <TextBox Width="100" Height="21" Text=""/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="2">
+                <Label Content="Latitude:"/>
+                <TextBox Width="70" Height="21" Text=""/>
+                <Label Content="Longitude:"/>
+                <TextBox Width="70" Height="21" Text=""/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="2">
+                <Label Content="Tiling Width:"/>
+                <TextBox Width="50" Height="21" Text=""/>
+                <Label Content="Tiling Height:"/>
+                <TextBox Width="50" Height="21" Text=""/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="2">
+                <Label Content="Scale:"/>
+                <TextBox Width="50" Height="21" Text="{Binding Config.Scale}"/>
+                <Label Content="Zoom:"/>
+                <TextBox Width="50" Height="21" Text=""/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="2">
+                <Label Content="Map Type:"/>
+                <TextBox Width="100" Height="21" Text=""/>
+            </StackPanel>
+            <Button Content="Get Map" Click="Button_Click"/>
         </StackPanel>
     </StackPanel>
     <!--</ScrollViewer>-->

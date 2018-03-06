@@ -52,6 +52,8 @@ namespace HuskyRobotics.UI
             }
         }
 
+        public MapTileDownloadManager.Configuration Config;
+
         // For serialization only
         [XmlElement("Devices"), Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public List<RemoteDevice> DevicesSurrogate { get => _devices.ToList(); set => _devices = new ObservableCollection<RemoteDevice>(value); }
@@ -60,7 +62,8 @@ namespace HuskyRobotics.UI
         {
             _devices.CollectionChanged += CollectionListener("Devices");
             _mapSets = new ObservableCollection<string>();
-
+            Config = new MapTileDownloadManager.Configuration
+                (new MutableTuple<double, double>(), new MutableTuple<int, int>(300, 300));
             // will be factored out later 
             string[] files = Directory.GetFiles
                 (Directory.GetCurrentDirectory() + @"\Images", "*.map");
@@ -68,6 +71,7 @@ namespace HuskyRobotics.UI
             {
                 _mapSets.Add(Path.GetFileName(file));
             }
+            //
 
             if (_mapSets.Count != 0) {
                 _currentMap = _mapSets[0];

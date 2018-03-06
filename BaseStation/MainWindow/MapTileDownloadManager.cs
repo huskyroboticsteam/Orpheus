@@ -27,7 +27,9 @@ namespace HuskyRobotics.UI
             public int Scale
             {
                 get { return _scale; }
-                set { if (value == 1 || value == 2) _scale = value; }
+                set {
+                    if (value == 1 || value == 2) _scale = value;
+                }
             }
             private int _zoom;
             public int Zoom
@@ -45,14 +47,14 @@ namespace HuskyRobotics.UI
                       value.Equals("terrain") || value.Equals("hybrid")) _mapType = value;
                 }
             }
-            private Tuple<int, int> _imgDim;
-            public Tuple<int, int> ImgDim
+            private MutableTuple<int, int> _imgDim;
+            public MutableTuple<int, int> ImgDim
             {
                 get { return _imgDim; }
                 set { if (value.Item1 > 0 && value.Item2 > 0) _imgDim = value; }
             }
-            private Tuple<double, double> _coords;
-            public Tuple<double, double> Coords
+            private MutableTuple<double, double> _coords;
+            public MutableTuple<double, double> Coords
             {
                 get { return _coords; }
                 set
@@ -63,7 +65,7 @@ namespace HuskyRobotics.UI
                 }
             }
 
-            public Configuration(Tuple<double, double> coords, Tuple<int, int> imgDim, int zoom = 1, int scale = 2, string maptype = "satellite")
+            public Configuration(MutableTuple<double, double> coords, MutableTuple<int, int> imgDim, int zoom = 1, int scale = 2, string maptype = "satellite")
             {
                 Coords = coords;
                 ImgDim = imgDim;
@@ -82,12 +84,12 @@ namespace HuskyRobotics.UI
 
         // gets the tile set of maps with the given coords of the center, width and height of tiling
         // and configuration for the center tile
-        public static void DownloadNewTileSet(Tuple<int, int> tilingDim, Configuration config, String mapSetName)
+        public static void DownloadNewTileSet(MutableTuple<int, int> tilingDim, Configuration config, String mapSetName)
         {
             String fileName = Directory.GetCurrentDirectory().ToString() + @"\Images\" + mapSetName + ".map";
             using (StreamWriter file = new StreamWriter(fileName))
             {
-                Tuple<int, int> centerPoint = MapConversion.LatLongToPixelXY(config.Coords.Item1,
+                MutableTuple<int, int> centerPoint = MapConversion.LatLongToPixelXY(config.Coords.Item1,
                     config.Coords.Item2, config.Zoom);
 
                 file.WriteLine(config.ImgDim.Item1 + "x" + config.ImgDim.Item2 + "|" + config.Zoom + "|"
@@ -103,7 +105,7 @@ namespace HuskyRobotics.UI
                 {
                     for (int j = starty; j <= tilingDim.Item2 / 2; j++)
                     {
-                        Tuple<double, double> newCoords = MapConversion.PixelXYToLatLong
+                        MutableTuple<double, double> newCoords = MapConversion.PixelXYToLatLong
                             (centerPoint.Item1 + (i * config.ImgDim.Item1), centerPoint.Item2
                             + (j * config.ImgDim.Item2), config.Zoom);
                         config.Coords = newCoords;

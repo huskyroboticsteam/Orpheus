@@ -31,7 +31,6 @@ namespace HuskyRobotics.UI
         {
             ClearCanvas();
             // load in individual images
-            // var path = Path.Combine(System.Environment.CurrentDirectory, "Images", "map.jpg");
             // TODO get the path from the settings
             if (File.Exists(Directory.GetCurrentDirectory() + @"\Images\" + mapSetFile))
             {

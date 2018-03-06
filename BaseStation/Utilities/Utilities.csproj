@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="MapConversion.cs" />
     <Compile Include="MeasuredValue.cs" />
+    <Compile Include="MutableTuple.cs" />
     <Compile Include="ObservableDictionary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
