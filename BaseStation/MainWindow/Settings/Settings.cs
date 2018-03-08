@@ -44,6 +44,8 @@ namespace HuskyRobotics.UI
             }
         }
 
+        public String MapSetName { get; set; }
+
         public String CurrentMap {
             get => _currentMap;
             set {
@@ -52,7 +54,7 @@ namespace HuskyRobotics.UI
             }
         }
 
-        public MapTileDownloadManager.Configuration Config;
+        public MapTileDownloadManager.Configuration Config { get; private set; }
 
         // For serialization only
         [XmlElement("Devices"), Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
@@ -63,20 +65,23 @@ namespace HuskyRobotics.UI
             _devices.CollectionChanged += CollectionListener("Devices");
             _mapSets = new ObservableCollection<string>();
             Config = new MapTileDownloadManager.Configuration
-                (new MutableTuple<double, double>(), new MutableTuple<int, int>(300, 300));
-            // will be factored out later 
+                (new Tuple<double, double>(0, 0), new Tuple<int, int>(300, 300));
+            MapSetName = "New Map";
+            initMapFiles();
+            if (_mapSets.Count != 0) {
+                _currentMap = _mapSets[0];
+            }
+            
+        }
+
+        private void initMapFiles()
+        {
             string[] files = Directory.GetFiles
                 (Directory.GetCurrentDirectory() + @"\Images", "*.map");
             foreach (string file in files)
             {
                 _mapSets.Add(Path.GetFileName(file));
             }
-            //
-
-            if (_mapSets.Count != 0) {
-                _currentMap = _mapSets[0];
-            }
-            
         }
 
         private NotifyCollectionChangedEventHandler CollectionListener(string collectionName)

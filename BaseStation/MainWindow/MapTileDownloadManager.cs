@@ -4,6 +4,7 @@ using System.IO;
 using System.Collections.Generic;
 using HuskyRobotics.Utilities;
 using System.Security.Cryptography;
+using System.ComponentModel;
 
 // make sure there is a folder named MapTiles in the working directory
 // https://msdn.microsoft.com/en-us/library/bb259689.aspx#Map map system (its bing but google
@@ -24,6 +25,13 @@ namespace HuskyRobotics.UI
             private const double MaxLongitude = 180;
 
             private int _scale;
+            private int _zoom;
+            private string _mapType;
+            private double _latitude;
+            private double _longitude;
+            private int _imgWidth;
+            private int _imgheight;
+
             public int Scale
             {
                 get { return _scale; }
@@ -31,44 +39,50 @@ namespace HuskyRobotics.UI
                     if (value == 1 || value == 2) _scale = value;
                 }
             }
-            private int _zoom;
             public int Zoom
             {
                 get { return _zoom; }
-                set { if (value >= 0 && value <= 21) _zoom = value; }
+                set {
+                    if (value >= 0 && value <= 21) _zoom = value;
+                }
             }
-            private string _mapType;
             public string MapType
             {
                 get { return _mapType; }
                 set
                 {
+                    value = value.ToLower();
                     if (value.Equals("roadmap") || value.Equals("satellite") ||
                       value.Equals("terrain") || value.Equals("hybrid")) _mapType = value;
                 }
             }
-            private MutableTuple<int, int> _imgDim;
-            public MutableTuple<int, int> ImgDim
-            {
-                get { return _imgDim; }
-                set { if (value.Item1 > 0 && value.Item2 > 0) _imgDim = value; }
+            public double Latitude { get { return _latitude; }
+                set {
+                    if (value >= MinLatitude && value <= MaxLatitude) _latitude = value;
+                }
             }
-            private MutableTuple<double, double> _coords;
-            public MutableTuple<double, double> Coords
-            {
-                get { return _coords; }
-                set
-                {
-                    if (value.Item1 >= MinLatitude && value.Item1 <= MaxLatitude &&
-                        value.Item2 >= MinLongitude && value.Item2 <= MaxLongitude)
-                        _coords = value;
+            public double Longitude { get { return _longitude; }
+                set {
+                    if (value >= MinLongitude && value <= MaxLongitude) _longitude = value;
+                }
+            }
+            public int ImgWidth { get { return _imgWidth; }
+                set {
+                    if (value > 0) _imgWidth = value;
+                }
+            }
+            public int ImgHeight { get { return _imgheight; }
+                set {
+                    if (value > 0) _imgheight = value;
                 }
             }
 
-            public Configuration(MutableTuple<double, double> coords, MutableTuple<int, int> imgDim, int zoom = 1, int scale = 2, string maptype = "satellite")
+            public Configuration(Tuple<double, double> coords, Tuple<int, int> imgDim, int zoom = 1, int scale = 2, string maptype = "satellite")
             {
-                Coords = coords;
-                ImgDim = imgDim;
+                Latitude = coords.Item1;
+                Longitude = coords.Item2;
+                ImgWidth = imgDim.Item1;
+                ImgHeight = imgDim.Item2;
                 Scale = scale;
                 Zoom = zoom;
                 MapType = maptype;
@@ -77,22 +91,22 @@ namespace HuskyRobotics.UI
             // returns the string representation of the configuration
             public override String ToString()
             {
-                return "center=" + Coords.Item1 + "," + Coords.Item2 + "&size=" + ImgDim.Item1 + "x"
-                    + ImgDim.Item2 + "&scale=" + Scale + "&zoom=" + Zoom + "&maptype=" + MapType;
+                return "center=" + Latitude + "," + Longitude + "&size=" + ImgWidth + "x"
+                    + ImgHeight + "&scale=" + Scale + "&zoom=" + Zoom + "&maptype=" + MapType;
             }
         }
 
         // gets the tile set of maps with the given coords of the center, width and height of tiling
         // and configuration for the center tile
-        public static void DownloadNewTileSet(MutableTuple<int, int> tilingDim, Configuration config, String mapSetName)
+        public static void DownloadNewTileSet(Tuple<int, int> tilingDim, Configuration config, String mapSetName)
         {
             String fileName = Directory.GetCurrentDirectory().ToString() + @"\Images\" + mapSetName + ".map";
             using (StreamWriter file = new StreamWriter(fileName))
             {
-                MutableTuple<int, int> centerPoint = MapConversion.LatLongToPixelXY(config.Coords.Item1,
-                    config.Coords.Item2, config.Zoom);
+                Tuple<int, int> centerPoint = MapConversion.LatLongToPixelXY(config.Latitude,
+                    config.Longitude, config.Zoom);
 
-                file.WriteLine(config.ImgDim.Item1 + "x" + config.ImgDim.Item2 + "|" + config.Zoom + "|"
+                file.WriteLine(config.ImgWidth + "x" + config.ImgHeight + "|" + config.Zoom + "|"
                     + config.Scale + "|" + config.MapType);
 
                 // center of the tiling is 0,0
@@ -105,10 +119,11 @@ namespace HuskyRobotics.UI
                 {
                     for (int j = starty; j <= tilingDim.Item2 / 2; j++)
                     {
-                        MutableTuple<double, double> newCoords = MapConversion.PixelXYToLatLong
-                            (centerPoint.Item1 + (i * config.ImgDim.Item1), centerPoint.Item2
-                            + (j * config.ImgDim.Item2), config.Zoom);
-                        config.Coords = newCoords;
+                        Tuple<double, double> newCoords = MapConversion.PixelXYToLatLong
+                            (centerPoint.Item1 + (i * config.ImgWidth), centerPoint.Item2
+                            + (j * config.ImgHeight), config.Zoom);
+                        config.Latitude = newCoords.Item1;
+                        config.Longitude = newCoords.Item2;
                         string imageName = Fetch(config);
                         file.WriteLine(i + "," + j + "|" + imageName);
                     }

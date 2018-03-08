@@ -25,13 +25,19 @@
             <Label Content="Add new map set:"/>
             <StackPanel Orientation="Horizontal" Margin="2">
                 <Label Content="Set Name:"/>
-                <TextBox Width="100" Height="21" Text=""/>
+                <TextBox Width="100" Height="21" Text="{Binding MapSetName}"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="2">
                 <Label Content="Latitude:"/>
-                <TextBox Width="70" Height="21" Text=""/>
+                <TextBox Width="70" Height="21" Text="{Binding Config.Latitude}"/>
                 <Label Content="Longitude:"/>
-                <TextBox Width="70" Height="21" Text=""/>
+                <TextBox Width="70" Height="21" Text="{Binding Config.Longitude}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="2">
+                <Label Content="Image Width:"/>
+                <TextBox Width="50" Height="21" Text="{Binding Config.ImgWidth}"/>
+                <Label Content="Image Height:"/>
+                <TextBox Width="50" Height="21" Text="{Binding Config.ImgHeight}"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="2">
                 <Label Content="Tiling Width:"/>
@@ -43,11 +49,11 @@
                 <Label Content="Scale:"/>
                 <TextBox Width="50" Height="21" Text="{Binding Config.Scale}"/>
                 <Label Content="Zoom:"/>
-                <TextBox Width="50" Height="21" Text=""/>
+                <TextBox Width="50" Height="21" Text="{Binding Config.Zoom}"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="2">
                 <Label Content="Map Type:"/>
-                <TextBox Width="100" Height="21" Text=""/>
+                <TextBox Width="100" Height="21" Text="{Binding Config.MapType}"/>
             </StackPanel>
             <Button Content="Get Map" Click="Button_Click"/>
         </StackPanel>

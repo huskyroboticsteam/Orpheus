@@ -72,7 +72,7 @@ namespace HuskyRobotics.Utilities
         /// <param name="longitude">Longitude of the point, in degrees.</param>
         /// <param name="levelOfDetail">Level of detail, from 1 (lowest detail)
         /// to 23 (highest detail).</param>
-        public static MutableTuple<int, int> LatLongToPixelXY(double latitude, double longitude, int levelOfDetail)
+        public static Tuple<int, int> LatLongToPixelXY(double latitude, double longitude, int levelOfDetail)
         {
             latitude = Clip(latitude, MinLatitude, MaxLatitude);
             longitude = Clip(longitude, MinLongitude, MaxLongitude);
@@ -85,11 +85,11 @@ namespace HuskyRobotics.Utilities
             int pixelX = (int)Clip(x * mapSize + 0.5, 0, mapSize - 1);
             int pixelY = (int)Clip(y * mapSize + 0.5, 0, mapSize - 1);
 
-            return new MutableTuple<int, int>(pixelX, pixelY);
+            return new Tuple<int, int>(pixelX, pixelY);
         }
 
         // the same as the other version of this method but takes a tuple instead of two doubles
-        public static MutableTuple<int, int> LatLongToPixelXY(MutableTuple<double, double> point, int levelOfDetail)
+        public static Tuple<int, int> LatLongToPixelXY(Tuple<double, double> point, int levelOfDetail)
         {
             return LatLongToPixelXY(point.Item1, point.Item2, levelOfDetail);
         }
@@ -102,7 +102,7 @@ namespace HuskyRobotics.Utilities
         /// <param name="pixelY">Y coordinates of the point, in pixels.</param>
         /// <param name="levelOfDetail">Level of detail, from 1 (lowest detail)
         /// to 23 (highest detail).</param>
-        public static MutableTuple<double, double> PixelXYToLatLong(int pixelX, int pixelY, int levelOfDetail)
+        public static Tuple<double, double> PixelXYToLatLong(int pixelX, int pixelY, int levelOfDetail)
         {
             double mapSize = MapSize(levelOfDetail);
             double x = (Clip(pixelX, 0, mapSize - 1) / mapSize) - 0.5;
@@ -111,11 +111,11 @@ namespace HuskyRobotics.Utilities
             double latitude = 90 - 360 * Math.Atan(Math.Exp(-y * 2 * Math.PI)) / Math.PI;
             double longitude = 360 * x;
 
-            return new MutableTuple<double, double>(latitude, longitude);
+            return new Tuple<double, double>(latitude, longitude);
         }
 
         // same as the other method but takes a tuple instead of two ints
-        public static MutableTuple<double, double> PixelXYToLatLong(MutableTuple<int, int> point, int levelOfDetail)
+        public static Tuple<double, double> PixelXYToLatLong(Tuple<int, int> point, int levelOfDetail)
         {
             return PixelXYToLatLong(point.Item1, point.Item2, levelOfDetail);
         }
