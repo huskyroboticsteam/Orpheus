@@ -10,6 +10,12 @@ using System.Xml.Serialization;
 
 namespace HuskyRobotics.UI
 {
+    /// All settings should have a reasonable default.
+    /// 
+    /// Any change in any setting values, or any of their descendants should eventially call ValueChanged.
+    /// 
+    /// Every setting should also call PropertyChanged so we implement INotifyPropertyChanged
+    ///
     public class Settings : INotifyPropertyChanged
     {
 
