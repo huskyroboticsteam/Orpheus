@@ -2,6 +2,7 @@
 using System.Windows.Media;
 using LiveCharts;
 using LiveCharts.Configurations;
+using LiveCharts.Geared;
 using Scarlet.Utilities;
 
 namespace Science_Base
@@ -20,14 +21,14 @@ namespace Science_Base
         public string AxisLabel { get; set; } // e.g. "°C"
         public string DataUnitEntry { get; set; } // e.g. "IntTemp"
         public Color Colour { get; set; }
-        public ChartValues<Datum<DataType>> Data { get; set; }
+        public GearedValues<Datum<DataType>> Data { get; set; }
 
         public DataSeries(string Name, string Label = null)
         {
             this.SeriesName = Name;
             this.AxisLabel = Label;
             this.Colour = Color.FromRgb(0x81, 0x14, 0x26);
-            this.Data = new ChartValues<Datum<DataType>>();
+            this.Data = new GearedValues<Datum<DataType>>();
         }
 
         public override string ToString() => this.SeriesName;
@@ -51,7 +52,8 @@ namespace Science_Base
 
         private double GetYVal(Datum<DataType> Datum)
         {
-            return double.Parse(Datum.Data.ToString()); // TODO: This is extremely terrible.
+            return Convert.ToDouble(Datum.Data);
+            //return double.Parse(Datum.Data.ToString()); // TODO: This is extremely terrible.
         }
     }
 }
