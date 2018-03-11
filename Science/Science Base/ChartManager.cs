@@ -27,6 +27,7 @@ namespace Science_Base
                 LabelFormatter = value => new DateTime((long)value).ToString("T")
             };
             this.Chart.AxisX.Add(X);
+            this.Chart.AxisY.Clear();
             this.Chart.DisableAnimations = true;
             this.Chart.AllowDrop = true;
         }

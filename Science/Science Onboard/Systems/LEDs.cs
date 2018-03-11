@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Scarlet.Components;
 using Scarlet.Components.Outputs;
 using Scarlet.IO;
+using static Scarlet.Components.Outputs.PCA9685;
 
 namespace Science.Systems
 {
@@ -24,6 +26,11 @@ namespace Science.Systems
             this.Lights[5] = new RGBLED(LowFreqChannels[9], LowFreqChannels[8], LowFreqChannels[7]);
             this.Lights[6] = new RGBLED(LowFreqChannels[12], LowFreqChannels[11], LowFreqChannels[10]);
             this.Lights[7] = new RGBLED(LowFreqChannels[15], LowFreqChannels[14], LowFreqChannels[13]);
+            for (int i = 4; i < 16; i++)
+            {
+                ((PWMOutputPCA9685)HighFreqChannels[i]).Reset();
+                ((PWMOutputPCA9685)LowFreqChannels[i]).Reset();
+            }
         }
 
         public void EmergencyStop()
@@ -38,7 +45,28 @@ namespace Science.Systems
 
         public void Initialize()
         {
+            foreach (RGBLED LED in this.Lights) { LED.SetEnabled(false); }
             foreach (RGBLED LED in this.Lights) { LED.SetOutput(0x811426); }
+            foreach (RGBLED LED in this.Lights) { LED.SetEnabled(true); }
+            new Thread(new ThreadStart(DoBlink)).Start();
+        }
+
+        private void DoBlink()
+        {
+            int i = 0;
+            foreach (RGBLED LED in this.Lights) { LED.SetEnabled(true); }
+            while (true)
+            {
+                foreach (RGBLED LED in this.Lights)
+                {
+                    byte Red = (byte)((Math.Sin(i * 0.3F) + 1) * 0.5 * 0xFF);
+                    byte Green = (byte)((Math.Sin(i * 0.4F) + 1) * 0.5 * 0xFF);
+                    byte Blue = (byte)((Math.Sin(i * 0.5F) + 1) * 0.5 * 0xFF);
+                    LED.SetOutput((uint)(Blue << 16 | Green << 8 | Red));
+                }
+                Thread.Sleep(50);
+                i++;
+            }
         }
 
         public void UpdateState()
