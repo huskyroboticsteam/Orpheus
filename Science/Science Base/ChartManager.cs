@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using LiveCharts.Geared;
 using LiveCharts.WinForms;
 using Scarlet.Utilities;
 
@@ -39,7 +40,7 @@ namespace Science_Base
             };
             this.Chart.AxisY.Add(Y);
 
-            LiveCharts.Wpf.LineSeries ChartSeries = new LiveCharts.Wpf.LineSeries(Series.GetMapper())
+            GLineSeries ChartSeries = new GLineSeries(Series.GetMapper())
             {
                 Values = Series.Data,
                 Stroke = MainWindow.ScarletColour,
