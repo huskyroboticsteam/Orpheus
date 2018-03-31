@@ -67,6 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArmSideView.cs" />
+    <Compile Include="ArmTopView.cs" />
     <Compile Include="ArmView.xaml.cs">
       <DependentUpon>ArmView.xaml</DependentUpon>
     </Compile>

@@ -29,7 +29,7 @@ namespace HuskyRobotics.UI
         public ArmView()
         {
             InitializeComponent();
-
+            
             DataContext = this;
             SizeChanged += Resized;
             PreviewMouseMove += MouseMotion;
@@ -119,6 +119,8 @@ namespace HuskyRobotics.UI
                 SetpointDisplayX = new ObservableCollection<double>(new List<double>(new double[_setpointArmature.Params.Length + 1]));
                 SetpointDisplayY = new ObservableCollection<double>(new List<double>(new double[_setpointArmature.Params.Length + 1]));
                 RefreshLocations();
+
+                Setpoint = (0, 0, 0);
             }
         }
         
@@ -166,7 +168,10 @@ namespace HuskyRobotics.UI
         {
             Point location = e.GetPosition(Canvas);
 
-            Setpoint = UnprojectCanvas(ScreenToModel(new Tuple<double, double>(location.X, location.Y)));
+            if (e.LeftButton == MouseButtonState.Pressed && Math.Pow(location.X - SetpointDisplay.Item1, 2) + Math.Pow(location.Y - SetpointDisplay.Item2, 2) < 36)
+            {
+                Setpoint = UnprojectCanvas(ScreenToModel(new Tuple<double, double>(location.X, location.Y)));
+            }
         }
 
         private void UpdateSetpointArmature(object sender, PropertyChangedEventArgs e)
