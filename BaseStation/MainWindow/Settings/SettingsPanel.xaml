@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HuskyRobotics.UI"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="700">
     <!--<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">-->
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
         <StackPanel Margin="3">
@@ -25,7 +25,7 @@
             <Label Content="Add new map set:"/>
             <StackPanel Orientation="Horizontal" Margin="2">
                 <Label Content="Set Name:"/>
-                <TextBox Width="100" Height="21" Text="{Binding MapSetName}"/>
+                <TextBox Width="100" Height="21" Text="{Binding Config.MapSetName}"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="2">
                 <Label Content="Latitude:"/>
@@ -41,9 +41,9 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="2">
                 <Label Content="Tiling Width:"/>
-                <TextBox Width="50" Height="21" Text=""/>
+                <TextBox Width="50" Height="21" Text="{Binding Config.TilingWidth}"/>
                 <Label Content="Tiling Height:"/>
-                <TextBox Width="50" Height="21" Text=""/>
+                <TextBox Width="50" Height="21" Text="{Binding Config.TilingHeight}"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="2">
                 <Label Content="Scale:"/>
@@ -55,7 +55,7 @@
                 <Label Content="Map Type:"/>
                 <TextBox Width="100" Height="21" Text="{Binding Config.MapType}"/>
             </StackPanel>
-            <Button Content="Get Map" Click="Button_Click"/>
+            <Button Content="Get Map" Click="Button_GetMap"/>
         </StackPanel>
     </StackPanel>
     <!--</ScrollViewer>-->

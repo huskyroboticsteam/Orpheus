@@ -36,8 +36,13 @@ namespace HuskyRobotics.UI
             {
                 using (StreamReader file = new StreamReader(Directory.GetCurrentDirectory() + @"\Images\" + mapSetFile))
                 {
-                    //first line specifies some config of map(not needed for now)
                     string line = file.ReadLine();
+                    string[] config = line.Split('|');
+                    string[] imgDim = config[0].Split('x');
+                    int imgWidth = 1;
+                    int imgHeight = 1;
+                    Int32.TryParse(imgDim[0], out imgWidth);
+                    Int32.TryParse(imgDim[1], out imgHeight);
                     while ((line = file.ReadLine()) != null)
                     {
                         string[] parts = line.Split('|');
@@ -46,7 +51,7 @@ namespace HuskyRobotics.UI
                         int y = 0;
                         Int32.TryParse(location[0], out x);
                         Int32.TryParse(location[1], out y);
-                        addImage(Directory.GetCurrentDirectory() + @"\Images\" + parts[1] + ".jpg", x, y);
+                        addImage(Directory.GetCurrentDirectory() + @"\Images\" + parts[1] + ".jpg", x, y, imgWidth, imgHeight);
                     }
                 }
             }
@@ -54,13 +59,13 @@ namespace HuskyRobotics.UI
 
         // adds an image to the canvas with the given file location and the coords of where
         // on the canvas it goes
-        private void addImage(String location, int x, int y)
+        private void addImage(String location, int x, int y, int width, int height)
         {
             var uri = new Uri(location, UriKind.Absolute);
             var bitmap = new BitmapImage(uri);
-            var image = new Image { Source = bitmap, Width = 300, Height = 300 };
-            Canvas.SetLeft(image, x * 299);
-            Canvas.SetTop(image, y * 299);
+            var image = new Image { Source = bitmap, Width = width, Height = height };
+            Canvas.SetLeft(image, x * (width - 1));
+            Canvas.SetTop(image, y * (height - 1));
             canvas.Children.Add(image);
             allImages.Add(image);
         }

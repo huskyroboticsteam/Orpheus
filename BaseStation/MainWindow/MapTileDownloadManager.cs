@@ -6,7 +6,7 @@ using HuskyRobotics.Utilities;
 using System.Security.Cryptography;
 using System.ComponentModel;
 
-// make sure there is a folder named MapTiles in the working directory
+// make sure there is a folder named Images in the working directory
 // https://msdn.microsoft.com/en-us/library/bb259689.aspx#Map map system (its bing but google
 // uses the same system)
 // https://google-developers.appspot.com/maps/documentation/static-maps/intro#Zoomlevels google
@@ -31,6 +31,8 @@ namespace HuskyRobotics.UI
             private double _longitude;
             private int _imgWidth;
             private int _imgheight;
+            private int _tilingWidth;
+            private int _tilingHeight;
 
             public int Scale
             {
@@ -76,20 +78,35 @@ namespace HuskyRobotics.UI
                     if (value > 0) _imgheight = value;
                 }
             }
+            public int TilingWidth { get { return _tilingWidth; }
+                set {
+                    if (value > 0) _tilingWidth = value;
+                }
+            }
+            public int TilingHeight { get { return _tilingHeight; }
+                set {
+                    if (value > 0) _tilingHeight = value;
+                }
+            }
 
-            public Configuration(Tuple<double, double> coords, Tuple<int, int> imgDim, int zoom = 1, int scale = 2, string maptype = "satellite")
+            public string MapSetName { get; set; }
+            
+            public Configuration()
             {
-                Latitude = coords.Item1;
-                Longitude = coords.Item2;
-                ImgWidth = imgDim.Item1;
-                ImgHeight = imgDim.Item2;
-                Scale = scale;
-                Zoom = zoom;
-                MapType = maptype;
+                Latitude = 0;
+                Longitude = 0;
+                ImgWidth = 300;
+                ImgHeight = 300;
+                Scale = 2;
+                Zoom = 1;
+                MapType = "satellite";
+                MapSetName = "New Map";
+                TilingWidth = 2;
+                TilingHeight = 2;
             }
 
             // returns the string representation of the configuration
-            public override String ToString()
+            public override string ToString()
             {
                 return "center=" + Latitude + "," + Longitude + "&size=" + ImgWidth + "x"
                     + ImgHeight + "&scale=" + Scale + "&zoom=" + Zoom + "&maptype=" + MapType;
@@ -98,9 +115,9 @@ namespace HuskyRobotics.UI
 
         // gets the tile set of maps with the given coords of the center, width and height of tiling
         // and configuration for the center tile
-        public static void DownloadNewTileSet(Tuple<int, int> tilingDim, Configuration config, String mapSetName)
+        public static void DownloadNewTileSet(Configuration config)
         {
-            String fileName = Directory.GetCurrentDirectory().ToString() + @"\Images\" + mapSetName + ".map";
+            String fileName = Directory.GetCurrentDirectory().ToString() + @"\Images\" + config.MapSetName + ".map";
             using (StreamWriter file = new StreamWriter(fileName))
             {
                 Tuple<int, int> centerPoint = MapConversion.LatLongToPixelXY(config.Latitude,
@@ -110,14 +127,14 @@ namespace HuskyRobotics.UI
                     + config.Scale + "|" + config.MapType);
 
                 // center of the tiling is 0,0
-                int startx = -tilingDim.Item1 / 2;
-                int starty = -tilingDim.Item2 / 2;
-                if (tilingDim.Item1 % 2 == 0) startx++;
-                if (tilingDim.Item2 % 2 == 0) starty++;
+                int startx = -config.TilingWidth / 2;
+                int starty = -config.TilingHeight / 2;
+                if (config.TilingWidth % 2 == 0) startx++;
+                if (config.TilingHeight % 2 == 0) starty++;
 
-                for (int i = startx; i <= tilingDim.Item1 / 2; i++)
+                for (int i = startx; i <= config.TilingWidth / 2; i++)
                 {
-                    for (int j = starty; j <= tilingDim.Item2 / 2; j++)
+                    for (int j = starty; j <= config.TilingHeight / 2; j++)
                     {
                         Tuple<double, double> newCoords = MapConversion.PixelXYToLatLong
                             (centerPoint.Item1 + (i * config.ImgWidth), centerPoint.Item2

@@ -14,7 +14,6 @@ namespace HuskyRobotics.UI {
 		public Settings Settings { get => SettingsFile.Settings; }
 		public ObservableDictionary<string, MeasuredValue<double>> Properties { get; }
 
-
 		public MainWindow() {
 			Properties = new MockObservableMap();
 			InitializeComponent();

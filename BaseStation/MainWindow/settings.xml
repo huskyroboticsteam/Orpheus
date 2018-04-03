@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Settings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <PuttyPath>C:\Program Files (x86)\PuTTY\putty.exe</PuttyPath>
-  <Devices>
-    <Name>dfdf</Name>
-    <Address>gdgfg</Address>
-  </Devices>
-  <Devices>
-    <Name />
-    <Address>fgfgd</Address>
-  </Devices>
-  <Devices>
-    <Name />
-    <Address>fgd</Address>
-  </Devices>
-  <MapSets>test 1</MapSets>
-  <MapSets>test 2</MapSets>
+  <CurrentMap>map.map</CurrentMap>
+  <Config>
+    <Scale>2</Scale>
+    <Zoom>18</Zoom>
+    <MapType>satellite</MapType>
+    <Latitude>47.650659845955182</Latitude>
+    <Longitude>-122.30234205722809</Longitude>
+    <ImgWidth>500</ImgWidth>
+    <ImgHeight>500</ImgHeight>
+    <TilingWidth>2</TilingWidth>
+    <TilingHeight>2</TilingHeight>
+    <MapSetName>map</MapSetName>
+  </Config>
 </Settings>

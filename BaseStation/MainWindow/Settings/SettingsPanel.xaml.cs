@@ -23,15 +23,17 @@ namespace HuskyRobotics.UI
     /// </summary>
     public partial class SettingsPanel : UserControl
     {
-
         public SettingsPanel()
         {
             InitializeComponent();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void Button_GetMap(object sender, RoutedEventArgs e)
         {
-
+            Settings settings = (Settings)DataContext;
+            MapTileDownloadManager.DownloadNewTileSet(settings.Config);
+            settings.initMapFiles();
+            settings.CurrentMap = settings.Config.MapSetName + ".map";
         }
     }
 }
