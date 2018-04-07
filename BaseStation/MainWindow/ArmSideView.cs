@@ -24,14 +24,14 @@ namespace HuskyRobotics.UI
     /// </summary>
     public partial class ArmSideView : ArmView
     {
-        protected override (double, double) ProjectCanvas((double, double, double) input)
+        protected override (float, float) ProjectCanvas((float, float, float) input)
         {
             return (input.Item1, input.Item2);
         }
 
-        protected override (double, double, double) UnprojectCanvas((double, double) input)
+        protected override (float, float, float) UnprojectCanvas((float, float) input, (float, float, float) setpoint)
         {
-            return (input.Item1, input.Item2, 0);
+            return (input.Item1, input.Item2, setpoint.Item3);
         }
     }
 }

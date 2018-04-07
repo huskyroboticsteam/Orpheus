@@ -144,6 +144,17 @@ namespace HuskyRobotics.Arm
         public float[] CurrentRolls { get; private set; }
         public float[] CurrentPitches { get; private set; }
         public float[] CurrentYaws { get; private set; }
+        public (float, float, float) _setpoint;
+        public (float, float, float) Setpoint {
+            get {
+                return _setpoint;
+            }
+            set {
+                _setpoint = value;
+                MoveTo(_setpoint.Item1, _setpoint.Item2, _setpoint.Item3);
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Setpoint"));
+            }
+        }
 
         public ArmPart[] Params { get; private set; }
 
@@ -277,7 +288,7 @@ namespace HuskyRobotics.Arm
         //Moves the arm to the target X, Y, and Z. The angles of each
         //arm part will be stored in CurrentRoll, CurrentPitch, and 
         //CurrentYaw. 
-        public void MoveTo(float X, float Y, float Z)
+        private void MoveTo(float X, float Y, float Z)
         {
             const float LearningRate = 0.00005f;
             const int Iterations = 40;
