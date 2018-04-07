@@ -24,6 +24,8 @@ namespace Science_Base
         public static DataSeries<int> RandomData = new DataSeries<int>("Random", "Rubbish");
         private static Random Random;
 
+        public static DataSeries<double> AIn = new DataSeries<double>("Analogue Input", "Input (V)");
+
         public static void Start()
         {
             Random = new Random();
@@ -34,12 +36,12 @@ namespace Science_Base
 
         public static object[] GetSeries()
         {
-            return new object[] { ThermoInt, ThermoExt, UV, AirPollution, SupplyVoltage, SystemCurrent, DrillCurrent, RailCurrent, RandomData };
+            return new object[] { ThermoInt, ThermoExt, UV, AirPollution, SupplyVoltage, SystemCurrent, DrillCurrent, RailCurrent, RandomData, AIn };
         }
 
         public static void PacketGroundSensor(Packet Packet)
         {
-            if(Packet == null || Packet.Data == null || Packet.Data.Payload == null || Packet.Data.Payload.Length != 8)
+            if(Packet == null || Packet.Data == null || Packet.Data.Payload == null || Packet.Data.Payload.Length != 16)
             {
                 Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Ground sensor packet invalid. Discarding.");
                 return;
@@ -47,9 +49,11 @@ namespace Science_Base
             //float SoilMoisture = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 0, 4));
             int UVLight = UtilData.ToInt(UtilMain.SubArray(Packet.Data.Payload, 0, 4));
             uint ThermocoupleData = UtilData.ToUInt(UtilMain.SubArray(Packet.Data.Payload, 4, 4));
+            double AInData = UtilData.ToDouble(UtilMain.SubArray(Packet.Data.Payload, 8, 8));
             ThermoExt.Data.Add(new Datum<float>(DateTime.Now, MAX31855.ConvertExternalFromRaw(ThermocoupleData)));
             ThermoInt.Data.Add(new Datum<float>(DateTime.Now, MAX31855.ConvertInternalFromRaw(ThermocoupleData)));
             UV.Data.Add(new Datum<int>(DateTime.Now, UVLight));
+            AIn.Data.Add(new Datum<double>(DateTime.Now, AInData));
         }
 
         public static void PacketSysSensor(Packet Packet)
