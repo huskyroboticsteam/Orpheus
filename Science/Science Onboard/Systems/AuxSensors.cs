@@ -21,7 +21,7 @@ namespace Science.Systems
         private II2CBus I2C1;
 
         // Intermediate devices
-        //private TLV2544ID ADC;
+        private TLV2544ID ADC;
 
         // Sensor endpoints
         private MAX31855 Thermocouple;
@@ -29,6 +29,7 @@ namespace Science.Systems
         //private BME280 Atmospheric;
         //private MQ135 AirQuality;
         //private VH400 SoilMoisture;
+        private IAnalogueIn AIn;
 
         public AuxSensors()
         {
@@ -44,12 +45,16 @@ namespace Science.Systems
             this.SPI0 = new SPIBusPi(0);
             this.I2C1 = new I2CBusPi();
 
-            //this.ADC = new TLV2544ID(SPI0, new DigitalOutPi(16));
+            TLV2544ID.Configuration Config = TLV2544ID.DefaultConfiguration;
+            //Config.InternalReferenceMode = true;
+
+            this.ADC = new TLV2544ID(this.SPI0, new DigitalOutPi(16), Config);
 
             this.Thermocouple = new MAX31855(this.SPI0, new DigitalOutPi(18));
             this.UVLight = new VEML6070(this.I2C1);
             //this.AirQuality = new MQ135(this.ADC.GetInputs[0]);
             //this.SoilMoisture = new VH400(this.ADC.GetInputs[1]);
+            this.AIn = this.ADC.Inputs[1];
 
             this.TakeReadings = true;
         }
@@ -63,7 +68,8 @@ namespace Science.Systems
                 DateTime Sample = DateTime.Now;
                 this.Thermocouple.UpdateState();
                 this.UVLight.UpdateState();
-                byte[] Data = UtilData.ToBytes(this.UVLight.GetReading()).Concat(UtilData.ToBytes(this.Thermocouple.GetRawData())).ToArray();
+                ((TLV2544ID.TLV2544IDInput)this.AIn).UpdateState();
+                byte[] Data = UtilData.ToBytes(this.UVLight.GetReading()).Concat(UtilData.ToBytes(this.Thermocouple.GetRawData())).Concat(UtilData.ToBytes(this.AIn.GetInput())).ToArray();
                 Packet Packet = new Packet(new Message(ScienceConstants.Packets.GND_SENSOR, Data), false);
                 Client.Send(Packet);
             }
