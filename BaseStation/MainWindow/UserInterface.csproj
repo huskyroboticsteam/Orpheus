@@ -57,6 +57,7 @@
     <Compile Include="ConsoleView.xaml.cs">
       <DependentUpon>ConsoleView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MapConfiguration.cs" />
     <Compile Include="MapDisplay.xaml.cs">
       <DependentUpon>MapDisplay.xaml</DependentUpon>
     </Compile>

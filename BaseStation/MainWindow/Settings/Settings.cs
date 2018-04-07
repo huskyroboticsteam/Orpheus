@@ -16,8 +16,7 @@ namespace HuskyRobotics.UI
         /// <summary>
         /// Maps device names to their addresses
         /// </summary>
-        private ObservableCollection<string> _mapSets = new ObservableCollection<string>();
-        private string _currentMap;
+        private string _currentMapFile;
         private ObservableCollection<RemoteDevice> _devices = new ObservableCollection<RemoteDevice>();
         private String _puttyPath = @"C:\Program Files (x86)\PuTTY\putty.exe";
 
@@ -31,10 +30,6 @@ namespace HuskyRobotics.UI
         public IEnumerable<RemoteDevice> Devices {
             get => _devices;
         }
-        
-        public IEnumerable<string> MapSets {
-            get => _mapSets;
-        }
 
         public String PuttyPath {
             get => _puttyPath;
@@ -44,15 +39,14 @@ namespace HuskyRobotics.UI
             }
         }
 
-        public String CurrentMap {
-            get => _currentMap;
+        public String CurrentMapFile {
+            get => _currentMapFile;
             set {
-                _currentMap = value;
-                NotifyChanged("CurrentMap");
+                _currentMapFile = value;
+                NotifyChanged("CurrentMapFile");
             }
         }
 
-        public MapTileDownloadManager.Configuration Config { get; set; }
 
         // For serialization only
         [XmlElement("Devices"), Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
@@ -61,24 +55,6 @@ namespace HuskyRobotics.UI
         public Settings()
         {
             _devices.CollectionChanged += CollectionListener("Devices");
-            _mapSets = new ObservableCollection<string>();
-            Config = new MapTileDownloadManager.Configuration();
-            initMapFiles();
-            if (_mapSets.Count != 0) {
-                _currentMap = _mapSets[0];
-            }
-            
-        }
-
-        public void initMapFiles()
-        {
-            _mapSets.Clear();
-            string[] files = Directory.GetFiles
-                (Directory.GetCurrentDirectory() + @"\Images", "*.map");
-            foreach (string file in files)
-            {
-                _mapSets.Add(Path.GetFileName(file));
-            }
         }
 
         private NotifyCollectionChangedEventHandler CollectionListener(string collectionName)

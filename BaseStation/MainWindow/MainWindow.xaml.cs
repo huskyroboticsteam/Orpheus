@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows.Controls;
 using HuskyRobotics.Utilities;
+using System.Linq;
 
 namespace HuskyRobotics.UI {
 	/// <summary>
@@ -20,13 +21,24 @@ namespace HuskyRobotics.UI {
 			WindowState = WindowState.Maximized;
 			DataContext = this;
             Settings.PropertyChanged += SettingChanged;
+            SettingPanel.Settings = Settings;
+            if (!Directory.Exists(Settings.CurrentMapFile))
+            {
+                string[] mapFiles = Directory.GetFiles
+                    (Directory.GetCurrentDirectory() + @"\Images", "*.map");
+                if (mapFiles.Count() != 0)
+                {
+                    Settings.CurrentMapFile = Path.GetFileName(mapFiles[0]);
+                }
+            }
+            Map.DisplayMap(Settings.CurrentMapFile);
 		}
 
         private void SettingChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName.Equals("CurrentMap"))
+            if (e.PropertyName.Equals("CurrentMapFile"))
             {
-                Map.DisplayMap(Settings.CurrentMap);
+                Map.DisplayMap(Settings.CurrentMapFile);
             } 
         }
 

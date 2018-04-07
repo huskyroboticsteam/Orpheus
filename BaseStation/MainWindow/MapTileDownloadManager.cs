@@ -16,106 +16,9 @@ namespace HuskyRobotics.UI
 {
     public static class MapTileDownloadManager
     {
-        // a class to hold the configuration for the map dowload, formated as specified by google
-        public class Configuration
-        {
-            private const double MinLatitude = -85.05112878;
-            private const double MaxLatitude = 85.05112878;
-            private const double MinLongitude = -180;
-            private const double MaxLongitude = 180;
-
-            private int _scale;
-            private int _zoom;
-            private string _mapType;
-            private double _latitude;
-            private double _longitude;
-            private int _imgWidth;
-            private int _imgheight;
-            private int _tilingWidth;
-            private int _tilingHeight;
-
-            public int Scale
-            {
-                get { return _scale; }
-                set {
-                    if (value == 1 || value == 2) _scale = value;
-                }
-            }
-            public int Zoom
-            {
-                get { return _zoom; }
-                set {
-                    if (value >= 0 && value <= 21) _zoom = value;
-                }
-            }
-            public string MapType
-            {
-                get { return _mapType; }
-                set
-                {
-                    value = value.ToLower();
-                    if (value.Equals("roadmap") || value.Equals("satellite") ||
-                      value.Equals("terrain") || value.Equals("hybrid")) _mapType = value;
-                }
-            }
-            public double Latitude { get { return _latitude; }
-                set {
-                    if (value >= MinLatitude && value <= MaxLatitude) _latitude = value;
-                }
-            }
-            public double Longitude { get { return _longitude; }
-                set {
-                    if (value >= MinLongitude && value <= MaxLongitude) _longitude = value;
-                }
-            }
-            public int ImgWidth { get { return _imgWidth; }
-                set {
-                    if (value > 0) _imgWidth = value;
-                }
-            }
-            public int ImgHeight { get { return _imgheight; }
-                set {
-                    if (value > 0) _imgheight = value;
-                }
-            }
-            public int TilingWidth { get { return _tilingWidth; }
-                set {
-                    if (value > 0) _tilingWidth = value;
-                }
-            }
-            public int TilingHeight { get { return _tilingHeight; }
-                set {
-                    if (value > 0) _tilingHeight = value;
-                }
-            }
-
-            public string MapSetName { get; set; }
-            
-            public Configuration()
-            {
-                Latitude = 0;
-                Longitude = 0;
-                ImgWidth = 300;
-                ImgHeight = 300;
-                Scale = 2;
-                Zoom = 1;
-                MapType = "satellite";
-                MapSetName = "New Map";
-                TilingWidth = 2;
-                TilingHeight = 2;
-            }
-
-            // returns the string representation of the configuration
-            public override string ToString()
-            {
-                return "center=" + Latitude + "," + Longitude + "&size=" + ImgWidth + "x"
-                    + ImgHeight + "&scale=" + Scale + "&zoom=" + Zoom + "&maptype=" + MapType;
-            }
-        }
-
         // gets the tile set of maps with the given coords of the center, width and height of tiling
         // and configuration for the center tile
-        public static void DownloadNewTileSet(Configuration config)
+        public static void DownloadNewTileSet(MapConfiguration config)
         {
             String fileName = Directory.GetCurrentDirectory().ToString() + @"\Images\" + config.MapSetName + ".map";
             using (StreamWriter file = new StreamWriter(fileName))
@@ -149,9 +52,9 @@ namespace HuskyRobotics.UI
         }
 
         // pulls a single map tile from google maps returns the hash code used for the file name.
-        public static String Fetch(Configuration config)
+        public static String Fetch(MapConfiguration config)
         {
-            String requestUrl = "https://maps.googleapis.com/maps/api/staticmap?" + config.ToString();
+            String requestUrl = "https://maps.googleapis.com/maps/api/staticmap?" + config.URLParams();
 
             HttpWebRequest request = WebRequest.CreateHttp(requestUrl);
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
