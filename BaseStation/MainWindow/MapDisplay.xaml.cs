@@ -24,48 +24,57 @@ namespace HuskyRobotics.UI
         public MapDisplay()
         {
             InitializeComponent();
-            DisplayMap();
+            DisplayMap("test.map");
         }
 
-        private void DisplayMap()
+        public void DisplayMap(string mapSetFile)
         {
+            ClearCanvas();
             // load in individual images
-            // var path = Path.Combine(System.Environment.CurrentDirectory, "Images", "map.jpg");
             // TODO get the path from the settings
-            if (!File.Exists(Directory.GetCurrentDirectory() + @"\Images\test.map"))
+            if (File.Exists(Directory.GetCurrentDirectory() + @"\Images\" + mapSetFile))
             {
-                MapTileDownloadManager.Configuration config = new MapTileDownloadManager.Configuration
-                (new Tuple<double, double>(47.653683, -122.304836), new Tuple<int, int>(300, 300), 19);
-                MapTileDownloadManager.DownloadNewTileSet(new Tuple<int, int>(20, 20), config, "test");
-            }
-             using (StreamReader file = new StreamReader(Directory.GetCurrentDirectory() + @"\Images\test.map"))
-            {
-                //first line specifies some config of map(not needed for now)
-                string line = file.ReadLine();
-                while ((line = file.ReadLine()) != null)
+                using (StreamReader file = new StreamReader(Directory.GetCurrentDirectory() + @"\Images\" + mapSetFile))
                 {
-                    string[] parts = line.Split('|');
-                    string[] location = parts[0].Split(',');
-                    int x = 0;
-                    int y = 0;
-                    Int32.TryParse(location[0], out x);
-                    Int32.TryParse(location[1], out y);
-                    addImage(Directory.GetCurrentDirectory() + @"\Images\" + parts[1] + ".jpg", x, y);
+                    string line = file.ReadLine();
+                    string[] config = line.Split('|');
+                    string[] imgDim = config[0].Split('x');
+                    int imgWidth = 1;
+                    int imgHeight = 1;
+                    Int32.TryParse(imgDim[0], out imgWidth);
+                    Int32.TryParse(imgDim[1], out imgHeight);
+                    while ((line = file.ReadLine()) != null)
+                    {
+                        string[] parts = line.Split('|');
+                        string[] location = parts[0].Split(',');
+                        int x = 0;
+                        int y = 0;
+                        Int32.TryParse(location[0], out x);
+                        Int32.TryParse(location[1], out y);
+                        addImage(Directory.GetCurrentDirectory() + @"\Images\" + parts[1] + ".jpg", x, y, imgWidth, imgHeight);
+                    }
                 }
             }
         }
 
         // adds an image to the canvas with the given file location and the coords of where
         // on the canvas it goes
-        private void addImage(String location, int x, int y)
+        private void addImage(String location, int x, int y, int width, int height)
         {
             var uri = new Uri(location, UriKind.Absolute);
             var bitmap = new BitmapImage(uri);
-            var image = new Image { Source = bitmap, Width = 300, Height = 300 };
-            Canvas.SetLeft(image, x * 300);
-            Canvas.SetTop(image, y * 300);
+            var image = new Image { Source = bitmap, Width = width, Height = height };
+            Canvas.SetLeft(image, x * (width - 1));
+            Canvas.SetTop(image, y * (height - 1));
             canvas.Children.Add(image);
             allImages.Add(image);
+        }
+
+        // removes all images from the map display canvas
+        private void ClearCanvas()
+        {
+            canvas.Children.Clear();
+            allImages.Clear();
         }
 
         private Point mousePosition;

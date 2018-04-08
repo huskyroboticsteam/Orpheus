@@ -47,11 +47,11 @@
                         <Label Content="Waypoints" />
                         <ListView></ListView>
                     </StackPanel>
-                    <ui:MapDisplay />
+                    <ui:MapDisplay x:Name="Map"/>
                 </DockPanel>
             </TabItem>
             <TabItem Header="Settings">
-                <ui:SettingsPanel DataContext="{Binding Settings}"/>
+                <ui:SettingsPanel x:Name="SettingPanel"/>
             </TabItem>
             <TabItem Header="Console">
                 <ui:ConsoleView Grid.Column="3"></ui:ConsoleView>
