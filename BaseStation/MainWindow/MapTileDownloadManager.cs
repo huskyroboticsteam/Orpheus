@@ -5,12 +5,16 @@ using System.Collections.Generic;
 using HuskyRobotics.Utilities;
 using System.Security.Cryptography;
 using System.ComponentModel;
+using System.Drawing;
+using ImageProcessor.Imaging.Formats;
+using ImageProcessor;
 
 // make sure there is a folder named Images in the working directory
 // https://msdn.microsoft.com/en-us/library/bb259689.aspx#Map map system (its bing but google
 // uses the same system)
 // https://google-developers.appspot.com/maps/documentation/static-maps/intro#Zoomlevels google
 // tile download documentation
+// Image factory documentation: http://imageprocessor.org/imageprocessor/imagefactory/#about
 
 namespace HuskyRobotics.UI
 {
@@ -69,12 +73,33 @@ namespace HuskyRobotics.UI
                 byte[] hash = sha.ComputeHash(buffer);
                 var bufferHash = BitConverter.ToString(hash).Replace("-", String.Empty).Substring(0, 16);
                 Console.WriteLine(bufferHash);
-                String fileName = Directory.GetCurrentDirectory().ToString()+ @"\Images\" + bufferHash + ".jpg";
+                String fileName = Directory.GetCurrentDirectory().ToString()+ @"\Images\" + bufferHash + ".png";
                 buffer.Position = 0;
                 using (var file = File.Create(fileName))
                 {
                     buffer.CopyTo(file);
-                    return bufferHash;
+                }
+                CropImage(fileName, config);
+                return bufferHash;
+            }
+        }
+        
+        private static void CropImage(string file, MapConfiguration config)
+        {
+            // this was done all to the documentation
+            byte[] photoBytes = File.ReadAllBytes(file);
+            ISupportedImageFormat format = new PngFormat();
+            Size size = new Size(config.ImgWidth * config.Scale, config.ImgHeight * config.Scale);
+            Rectangle crop = new Rectangle(new Point(0, 0), size);
+            using (MemoryStream inStream = new MemoryStream(photoBytes))
+            {
+                using (ImageFactory imageFactory = new ImageFactory(preserveExifData: true))
+                {
+                    imageFactory.Load(inStream)
+                                .Crop(crop)
+                                .Resize(size)
+                                .Format(format)
+                                .Save(file);
                 }
             }
         }

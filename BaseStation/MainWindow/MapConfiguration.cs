@@ -139,7 +139,7 @@ namespace HuskyRobotics.UI
         public string URLParams()
         {
             return "center=" + Latitude + "," + Longitude + "&size=" + ImgWidth + "x"
-                + ImgHeight + "&scale=" + Scale + "&zoom=" + Zoom + "&maptype=" + MapType;
+                + (ImgHeight + 60) + "&scale=" + Scale + "&zoom=" + Zoom + "&maptype=" + MapType;
         }
     }
 }
