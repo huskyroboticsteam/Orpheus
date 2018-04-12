@@ -74,6 +74,7 @@
     <Compile Include="ConsoleView.xaml.cs">
       <DependentUpon>ConsoleView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MapConfiguration.cs" />
     <Compile Include="MapDisplay.xaml.cs">
       <DependentUpon>MapDisplay.xaml</DependentUpon>
     </Compile>
@@ -154,9 +155,6 @@
       <Project>{97cc5515-a095-48eb-9ec2-ac134eb4a79c}</Project>
       <Name>VideoStreamer</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\map.jpg" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="settings.xml" />

@@ -9,4 +9,5 @@
     <Name>oeue</Name>
     <Address />
   </Devices>
+  <CurrentMapFile>test.map</CurrentMapFile>
 </Settings>

@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using HuskyRobotics.Utilities;
 using HuskyRobotics.Arm;
 using System;
+using System.Linq;
 
 namespace HuskyRobotics.UI {
 	/// <summary>
@@ -23,7 +24,7 @@ namespace HuskyRobotics.UI {
             InitializeComponent();
             WindowState = WindowState.Maximized;
 			DataContext = this;
-
+			
             double degToRad = Math.PI / 180;
             ArmSideViewer.SetpointArmature = 
                 new Armature((0, 0, Math.PI / 2, Math.PI / 2, -4 * Math.PI, 4 * Math.PI, 6.8),
@@ -33,9 +34,29 @@ namespace HuskyRobotics.UI {
 
             ArmTopViewer.SetpointArmature = ArmSideViewer.SetpointArmature;
 
+            Settings.PropertyChanged += SettingChanged;
+            SettingPanel.Settings = Settings;
+            if (!Directory.Exists(Settings.CurrentMapFile))
+            {
+                string[] mapFiles = Directory.GetFiles
+                    (Directory.GetCurrentDirectory() + @"\Images", "*.map");
+                if (mapFiles.Count() != 0)
+                {
+                    Settings.CurrentMapFile = Path.GetFileName(mapFiles[0]);
+                }
+            }
+            Map.DisplayMap(Settings.CurrentMapFile);
+		}
+
+        private void SettingChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName.Equals("CurrentMapFile"))
+            {
+                Map.DisplayMap(Settings.CurrentMapFile);
+            } 
         }
 
-		private void PuTTY_Button_Click(object sender, RoutedEventArgs e) {
+        private void PuTTY_Button_Click(object sender, RoutedEventArgs e) {
 			if (File.Exists(Settings.PuttyPath)) {
 				var process = new Process();
 				process.StartInfo.FileName = Settings.PuttyPath;
