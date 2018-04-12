@@ -75,32 +75,24 @@ namespace HuskyRobotics.UI
                 Console.WriteLine(bufferHash);
                 String fileName = Directory.GetCurrentDirectory().ToString()+ @"\Images\" + bufferHash + ".png";
                 buffer.Position = 0;
-                using (var file = File.Create(fileName))
-                {
-                    buffer.CopyTo(file);
-                }
-                CropImage(fileName, config);
+                CropImage(fileName, config, buffer);
                 return bufferHash;
             }
         }
         
-        private static void CropImage(string file, MapConfiguration config)
+        private static void CropImage(string file, MapConfiguration config, MemoryStream inStream)
         {
             // this was done all to the documentation
-            byte[] photoBytes = File.ReadAllBytes(file);
             ISupportedImageFormat format = new PngFormat();
             Size size = new Size(config.ImgWidth * config.Scale, config.ImgHeight * config.Scale);
             Rectangle crop = new Rectangle(new Point(0, 0), size);
-            using (MemoryStream inStream = new MemoryStream(photoBytes))
+            using (ImageFactory imageFactory = new ImageFactory(preserveExifData: true))
             {
-                using (ImageFactory imageFactory = new ImageFactory(preserveExifData: true))
-                {
-                    imageFactory.Load(inStream)
-                                .Crop(crop)
-                                .Resize(size)
-                                .Format(format)
-                                .Save(file);
-                }
+                imageFactory.Load(inStream)
+                            .Crop(crop)
+                            .Resize(size)
+                            .Format(format)
+                            .Save(file);
             }
         }
     }
