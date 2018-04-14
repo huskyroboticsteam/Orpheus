@@ -16,6 +16,11 @@ namespace HuskyRobotics.UI
 {
     public static class MapTileDownloadManager
     {
+        public static void DownloadNewTileSet(MapConfiguration config)
+        {
+            DownloadNewTileSet(config, null);
+        }
+
         // gets the tile set of maps with the given coords of the center, width and height of tiling
         // and configuration for the center tile
         public static void DownloadNewTileSet(MapConfiguration config, BackgroundWorker worker)

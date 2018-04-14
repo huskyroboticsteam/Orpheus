@@ -66,14 +66,14 @@ namespace HuskyRobotics.UI
             var image = new Image { Source = bitmap, Width = width, Height = height };
             Canvas.SetLeft(image, x * (width - 1));
             Canvas.SetTop(image, y * (height - 1));
-            canvas.Children.Add(image);
+            MapCanvas.Children.Add(image);
             allImages.Add(image);
         }
 
         // removes all images from the map display canvas
         private void ClearCanvas()
         {
-            canvas.Children.Clear();
+            MapCanvas.Children.Clear();
             allImages.Clear();
         }
 
@@ -84,19 +84,21 @@ namespace HuskyRobotics.UI
         private void CanvasMouseButtonDown(object sender, MouseButtonEventArgs e)
         {
             dragging = true;
-            mousePosition = e.GetPosition(canvas);
+            mousePosition = e.GetPosition(MapCanvas);
+            e.MouseDevice.Capture(MapCanvas);
         }
 
         private void CanvasMouseButtonUp(object sender, MouseButtonEventArgs e)
         {
             dragging = false;
+            e.MouseDevice.Capture(null); // Release capture
         }
 
         private void CanvasMouseMove(object sender, MouseEventArgs e)
         {
             if (dragging)
             {
-                var position = e.GetPosition(canvas);
+                var position = e.GetPosition(MapCanvas);
                 var offset = position - mousePosition;
                 mousePosition = position;
                 for (int i = 0; i < allImages.Count; i++)
@@ -106,6 +108,15 @@ namespace HuskyRobotics.UI
                 }
 
             }
+        }
+
+        private void CanvasMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            double scale = Math.Pow(1.5, -e.Delta/20.0);
+            var position = e.GetPosition(MapCanvas);
+            var matrix = MapCanvas.RenderTransform.Value;
+            matrix.ScaleAtPrepend(scale, scale, position.X, position.Y);
+            MapCanvas.RenderTransform = new MatrixTransform(matrix);
         }
     }
 }
