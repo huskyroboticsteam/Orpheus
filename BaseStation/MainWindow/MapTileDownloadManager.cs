@@ -18,7 +18,7 @@ namespace HuskyRobotics.UI
     {
         // gets the tile set of maps with the given coords of the center, width and height of tiling
         // and configuration for the center tile
-        public static void DownloadNewTileSet(MapConfiguration config)
+        public static void DownloadNewTileSet(MapConfiguration config, BackgroundWorker worker)
         {
             String fileName = Directory.GetCurrentDirectory().ToString() + @"\Images\" + config.MapSetName + ".map";
             using (StreamWriter file = new StreamWriter(fileName))
@@ -34,30 +34,51 @@ namespace HuskyRobotics.UI
                 int starty = -config.TilingHeight / 2;
                 if (config.TilingWidth % 2 == 0) startx++;
                 if (config.TilingHeight % 2 == 0) starty++;
+                int numberDownloaded = 0;
 
                 for (int i = startx; i <= config.TilingWidth / 2; i++)
                 {
                     for (int j = starty; j <= config.TilingHeight / 2; j++)
                     {
+                        if (worker != null)
+                        {
+                            worker.ReportProgress(numberDownloaded);
+                        }
+
                         Tuple<double, double> newCoords = MapConversion.PixelXYToLatLong
                             (centerPoint.Item1 + (i * config.ImgWidth), centerPoint.Item2
                             + (j * config.ImgHeight), config.Zoom);
                         config.Latitude = newCoords.Item1;
                         config.Longitude = newCoords.Item2;
                         string imageName = Fetch(config);
-                        file.WriteLine(i + "," + j + "|" + imageName);
+                        if (imageName != null)
+                        {
+                            file.WriteLine(i + "," + j + "|" + imageName);
+                        }
+
+                        numberDownloaded++;
                     }
                 }
             }
         }
 
         // pulls a single map tile from google maps returns the hash code used for the file name.
+        // Will return null if the image was not downloaded
         public static String Fetch(MapConfiguration config)
         {
             String requestUrl = "https://maps.googleapis.com/maps/api/staticmap?" + config.URLParams();
 
             HttpWebRequest request = WebRequest.CreateHttp(requestUrl);
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            HttpWebResponse response;
+            try
+            {
+                response = (HttpWebResponse)request.GetResponse();
+            } catch (WebException ex)
+            {
+                Console.WriteLine(ex.Status + " " + ex.Message);
+                return null;
+            }
+
             Stream input = response.GetResponseStream();
             // writes to the buffer stream
             using (MemoryStream buffer = new MemoryStream())
@@ -70,6 +91,12 @@ namespace HuskyRobotics.UI
                 var bufferHash = BitConverter.ToString(hash).Replace("-", String.Empty).Substring(0, 16);
                 Console.WriteLine(bufferHash);
                 String fileName = Directory.GetCurrentDirectory().ToString()+ @"\Images\" + bufferHash + ".jpg";
+
+                if (File.Exists(fileName))
+                {
+                    return bufferHash; // Already saved the file
+                }
+
                 buffer.Position = 0;
                 using (var file = File.Create(fileName))
                 {

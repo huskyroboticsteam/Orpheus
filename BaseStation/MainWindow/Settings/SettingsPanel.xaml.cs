@@ -72,9 +72,25 @@ namespace HuskyRobotics.UI
 
         private void Button_GetMap(object sender, RoutedEventArgs e)
         {
-            MapTileDownloadManager.DownloadNewTileSet(MapConfig);
-            initMapFiles();
-            Settings.CurrentMapFile = MapConfig.MapSetName + ".map";
+            MapStatus.Content = "Downloading map...";
+
+            var bgw = new BackgroundWorker();
+            bgw.WorkerReportsProgress = true;
+            bgw.DoWork += (worker, _) =>
+            {
+                MapTileDownloadManager.DownloadNewTileSet(MapConfig, worker as BackgroundWorker);
+            };
+            bgw.ProgressChanged += (_, progress) =>
+            {
+                MapStatus.Content = "Downloading " + progress.ProgressPercentage + " of " + MapConfig.TilingHeight * MapConfig.TilingWidth;
+            };
+            bgw.RunWorkerCompleted += (_, __) =>
+            {
+                initMapFiles();
+                Settings.CurrentMapFile = MapConfig.MapSetName + ".map";
+                MapStatus.Content = Settings.CurrentMapFile + " downloaded!";
+            };
+            bgw.RunWorkerAsync();
         }
     }
 }
