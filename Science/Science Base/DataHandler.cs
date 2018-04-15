@@ -24,7 +24,7 @@ namespace Science_Base
         public static DataSeries<int> RandomData = new DataSeries<int>("Random", "Rubbish");
         private static Random Random;
 
-        public static DataSeries<double> AIn = new DataSeries<double>("Analogue Input", "Input (V)");
+        public static DataSeries<double> AIn = new DataSeries<double>("Analogue Input", "Input (Vb)");
 
         public static void Start()
         {

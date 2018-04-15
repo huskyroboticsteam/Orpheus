@@ -23,7 +23,7 @@ namespace Science
             RaspberryPi.Initialize();
             this.I2C = new I2CBusPi();
             this.PWMGenHighFreq = new PCA9685(this.I2C, 0x4C, -1, PCA9685.OutputInvert.Inverted, PCA9685.OutputDriverMode.OpenDrain);
-            this.PWMGenLowFreq = new PCA9685(this.I2C, 0x4B, -1, PCA9685.OutputInvert.Inverted, PCA9685.OutputDriverMode.OpenDrain);
+            this.PWMGenLowFreq = new PCA9685(this.I2C, 0x74, -1, PCA9685.OutputInvert.Inverted, PCA9685.OutputDriverMode.OpenDrain);
             this.PWMGenHighFreq.SetFrequency(333);
             this.PWMGenLowFreq.SetFrequency(50);
 
