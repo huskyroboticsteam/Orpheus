@@ -47,6 +47,7 @@ namespace Science.Systems
         {
             foreach (RGBLED LED in this.Lights) { LED.SetEnabled(false); }
             foreach (RGBLED LED in this.Lights) { LED.SetOutput(0x811426); }
+            foreach (RGBLED LED in this.Lights) { LED.RedScale = 0.05F; LED.GreenScale = 0.05F; LED.BlueScale = 0.05F; }
             foreach (RGBLED LED in this.Lights) { LED.SetEnabled(true); }
             new Thread(new ThreadStart(DoBlink)).Start();
         }

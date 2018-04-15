@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using Scarlet.Communications;
 using Scarlet.Components;
+using Scarlet.Components.Inputs;
 using Scarlet.Components.Sensors;
 using Scarlet.IO;
 using Scarlet.IO.RaspberryPi;
