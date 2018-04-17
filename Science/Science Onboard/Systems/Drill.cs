@@ -12,7 +12,7 @@ namespace Science.Systems
 {
     public class Drill : ISubsystem
     {
-        private const float MOTOR_MAX_SPEED = 0.2F;
+        private const float MOTOR_MAX_SPEED = 1F;
 
         /*private bool P_DoorOpen;
         public bool DoorOpen
@@ -28,17 +28,14 @@ namespace Science.Systems
         private TalonMC MotorCtrl;
         //private Servo DoorServo;
         private IPWMOutput Out;
-        private LimitSwitch LimitSwitch;
 
         public Drill(IPWMOutput MotorPWM, IPWMOutput ServoPWM)
         {
             this.Out = MotorPWM;
             ((Scarlet.Components.Outputs.PCA9685.PWMOutputPCA9685)MotorPWM).Reset();
-            //this.MotorCtrl = new TalonMC(MotorPWM, MOTOR_MAX_SPEED);
+            ((Scarlet.Components.Outputs.PCA9685.PWMOutputPCA9685)MotorPWM).SetPolarity(true);
+            this.MotorCtrl = new TalonMC(MotorPWM, MOTOR_MAX_SPEED);
             //this.DoorServo = new Servo(ServoPWM);
-            //this.LimitSwitch = new LimitSwitch(new DigitalInPi(11));
-            //this.LimitSwitch.SwitchToggle += this.SwitchToggle;
-            new Thread(new ThreadStart(DoDrive)).Start();
         }
 
         public void SwitchToggle(object Sender, EventArgs evt)
@@ -57,30 +54,17 @@ namespace Science.Systems
             
         }
 
-        public void SetSpeed(byte Percent, bool Reverse)
+        public void SetSpeed(float Speed, bool Enable)
         {
-            Log.Output(Log.Severity.DEBUG, Log.Source.MOTORS, "Drill outputting " + (Reverse ? "-" : "") + Percent + "%.");
-            //this.MotorCtrl.SetSpeed((Percent / 100) * (Reverse ? -1 : 1));
-            //this.MotorCtrl.SetEnabled(Percent != 0);
-            this.Out.SetOutput(0.4F);
-            this.Out.SetEnabled(true);
+            this.MotorCtrl.SetSpeed(Speed);
+            //this.Out.SetOutput(0.5F);
+            //this.Out.SetEnabled(true);
+            this.MotorCtrl.SetEnabled(Enable);
         }
 
         public void UpdateState()
         {
             
-        }
-
-        private void DoDrive()
-        {
-            int i = 0;
-            while (true)
-            {
-                SetSpeed((byte)((Math.Sin(i * 0.25F) + 1) * 20), false);
-                //this.LimitSwitch.UpdateState();
-                Thread.Sleep(50);
-                i++;
-            }
         }
 
         public void Initialize()
