@@ -18,7 +18,7 @@ namespace Science
         public static void ParseControlPacket(Packet Packet)
         {
             if (Packet == null || Packet.Data == null || Packet.Data.Payload == null || Packet.Data.Payload.Length != 2) { Log.Output(Log.Severity.WARNING, Log.Source.MOTORS, "Control packet invalid length."); }
-            RoverMain.IOHandler.DrillController.SetSpeed(Packet.Data.Payload[0], Packet.Data.Payload[1] == 0);
+            RoverMain.IOHandler.DrillController.SetSpeed(Packet.Data.Payload[0] / 100.0F * ((Packet.Data.Payload[1] == 0) ? 1 : -1), true);
         }
 
         public static void ParseErrorPacket(Packet Error)
