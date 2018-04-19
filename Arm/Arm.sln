@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.16
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArmControl", "ArmControl\ArmControl.csproj", "{3BD4FE75-ACA8-4CEF-96BF-21C0CDEF3B52}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArmVisualizer", "ArmVisualizer\ArmVisualizer.csproj", "{DCF2211E-30FC-4502-8DF3-0DD1209F87ED}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3BD4FE75-ACA8-4CEF-96BF-21C0CDEF3B52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BD4FE75-ACA8-4CEF-96BF-21C0CDEF3B52}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BD4FE75-ACA8-4CEF-96BF-21C0CDEF3B52}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BD4FE75-ACA8-4CEF-96BF-21C0CDEF3B52}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DCF2211E-30FC-4502-8DF3-0DD1209F87ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCF2211E-30FC-4502-8DF3-0DD1209F87ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCF2211E-30FC-4502-8DF3-0DD1209F87ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCF2211E-30FC-4502-8DF3-0DD1209F87ED}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {09086CEA-0EDA-485C-9A81-B317119F220D}
+	EndGlobalSection
+EndGlobal
