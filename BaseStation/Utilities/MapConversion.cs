@@ -88,6 +88,12 @@ namespace HuskyRobotics.Utilities
             return new Tuple<int, int>(pixelX, pixelY);
         }
 
+        // the same as the other version of this method but takes a tuple instead of two doubles
+        public static Tuple<int, int> LatLongToPixelXY(Tuple<double, double> point, int levelOfDetail)
+        {
+            return LatLongToPixelXY(point.Item1, point.Item2, levelOfDetail);
+        }
+
         /// <summary>
         /// Converts a pixel from pixel XY coordinates at a specified level of detail
         /// into latitude/longitude WGS-84 coordinates (in degrees).
@@ -106,7 +112,12 @@ namespace HuskyRobotics.Utilities
             double longitude = 360 * x;
 
             return new Tuple<double, double>(latitude, longitude);
+        }
 
+        // same as the other method but takes a tuple instead of two ints
+        public static Tuple<double, double> PixelXYToLatLong(Tuple<int, int> point, int levelOfDetail)
+        {
+            return PixelXYToLatLong(point.Item1, point.Item2, levelOfDetail);
         }
     }
 }

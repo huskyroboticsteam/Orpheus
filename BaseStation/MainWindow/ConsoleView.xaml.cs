@@ -15,7 +15,7 @@ namespace HuskyRobotics.UI
 			AddChild(child);
 			child.FontFamily = new System.Windows.Media.FontFamily("consolas");
 			child.FontSize = 16;
-			Console.SetOut(new ConsoleWriter(child, this));
+			Console.SetOut(new ConsoleWriter(child, this, Console.Out));
 			InitializeComponent();
         }
 
@@ -24,23 +24,28 @@ namespace HuskyRobotics.UI
 
 			private readonly TextBlock view;
 			private readonly ScrollViewer scroll;
+            private readonly TextWriter oldOut;
 
-			public ConsoleWriter(TextBlock view, ScrollViewer scroll) {
+			public ConsoleWriter(TextBlock view, ScrollViewer scroll, TextWriter oldOut) {
 				this.view = view;
 				this.scroll = scroll;
+                this.oldOut = oldOut;
 			}
 
  			public override Encoding Encoding => Encoding.UTF8;
 
 			public override void Write(char value) {
+                oldOut.Write(value);
 				view.Dispatcher.BeginInvoke(new Action(() => {
 					view.Text += value;
 					UpdateView();
 				}));
 			}
 
-			public override void Write(string value) {
-				view.Dispatcher.BeginInvoke(new Action(() => {
+			public override void Write(string value)
+            {
+                oldOut.Write(value);
+                view.Dispatcher.BeginInvoke(new Action(() => {
 					view.Text += value;
 					UpdateView();
 				}));

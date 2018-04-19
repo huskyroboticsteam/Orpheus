@@ -4,18 +4,25 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
 
 namespace HuskyRobotics.UI
 {
+    /// All settings should have a reasonable default.
+    /// 
+    /// Any change in any setting values, or any of their descendants should eventially call ValueChanged.
+    /// 
+    /// Every setting should also call PropertyChanged so we implement INotifyPropertyChanged
+    ///
     public class Settings : INotifyPropertyChanged
     {
-
         /// <summary>
         /// Maps device names to their addresses
         /// </summary>
+        private string _currentMapFile;
         private ObservableCollection<RemoteDevice> _devices = new ObservableCollection<RemoteDevice>();
         private String _puttyPath = @"C:\Program Files (x86)\PuTTY\putty.exe";
 
@@ -38,10 +45,19 @@ namespace HuskyRobotics.UI
             }
         }
 
+        public String CurrentMapFile {
+            get => _currentMapFile;
+            set {
+                _currentMapFile = value;
+                NotifyChanged("CurrentMapFile");
+            }
+        }
+
+
         // For serialization only
         [XmlElement("Devices"), Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public List<RemoteDevice> DevicesSurrogate { get => _devices.ToList(); set => _devices = new ObservableCollection<RemoteDevice>(value); }
-
+        
         public Settings()
         {
             _devices.CollectionChanged += CollectionListener("Devices");
