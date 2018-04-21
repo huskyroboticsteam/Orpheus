@@ -1,0 +1,10 @@
+﻿<Application x:Class="Wpf.CartesianChart.ConstantChanges"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+             xmlns:local="clr-namespace:Wpf.CartesianChart.ConstantChanges"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             StartupUri="ConstantChangesChart.xaml">
+    <Application.Resources>
+    </Application.Resources>
+</Application>

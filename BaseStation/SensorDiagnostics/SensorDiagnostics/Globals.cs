@@ -7,7 +7,7 @@ using Scarlet;
 using Scarlet.Components;
 using Scarlet.Components.Motors;
 using Scarlet.Components.Sensors;
-namespace SensorDiagnostics
+namespace HuskyRobotics
 {
     /// <summary>
     /// THis class is simply a reference to all the components that need to be kept track of

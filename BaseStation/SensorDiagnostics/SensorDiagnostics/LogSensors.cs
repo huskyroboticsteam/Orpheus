@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using HuskyRobotics.UI;
 using Scarlet;
 using Scarlet.Components;
 using Scarlet.Components.Sensors;
 using Scarlet.Utilities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.IO;
 
-namespace SensorDiagnostics
+namespace HuskyRobotics
 {
     /// <summary>
     /// Logs all sensors in the Global class
@@ -18,18 +19,27 @@ namespace SensorDiagnostics
     static class LogSensors
     {
         private static List<DataLog> outputs = new List<DataLog>();
-        public static void logSensors()
+        private static Dictionary<string, DataUnit> LastReadings = new Dictionary<string,DataUnit>();
+        public static Dictionary<string,DataUnit> logSensors()
         {
             Dictionary<string, int> sensorCount = new Dictionary<string, int>();
             ISensor s;
             for (int i = 0; i < Globals.sensors.Count; i++)
             {
                 s = Globals.sensors[i];
-                if (!sensorCount.Keys.Contains(s.GetType().Name)) { sensorCount.Add(s.GetType().Name, 0); }
-                if (i > outputs.Count) { outputs.Add(new DataLog(DateTime.Today.ToString() + "_" + s.GetType().Name + "_" + sensorCount[s.GetType().Name])); }
-                outputs[i].Output(s.GetData());
+                DataUnit data = s.GetData();
+                if (!sensorCount.Keys.Contains(s.GetType().Name)) {
+                    sensorCount.Add(s.GetType().Name, 0);
+                }
+                if (i >= outputs.Count) {
+                    outputs.Add(new DataLog(data.System +"_"+ s.GetType().Name + "_" + sensorCount[s.GetType().Name]));
+                    LastReadings.Add(s.GetType().Name+sensorCount[s.GetType().Name],null);
+                }
+                LastReadings[s.GetType().Name+sensorCount[s.GetType().Name]]=data;
+                outputs[i].Output(data);
                 sensorCount[s.GetType().Name]++;
             }
+            return LastReadings;
         }
     }
 }
