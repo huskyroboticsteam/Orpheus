@@ -24,7 +24,6 @@ namespace HuskyRobotics.UI
         public MapDisplay()
         {
             InitializeComponent();
-            DisplayMap("test.map");
         }
 
         public void DisplayMap(string mapSetFile)
@@ -51,7 +50,7 @@ namespace HuskyRobotics.UI
                         int y = 0;
                         Int32.TryParse(location[0], out x);
                         Int32.TryParse(location[1], out y);
-                        addImage(Directory.GetCurrentDirectory() + @"\Images\" + parts[1] + ".jpg", x, y, imgWidth, imgHeight);
+                        addImage(Directory.GetCurrentDirectory() + @"\Images\" + parts[1] + ".png", x, y, imgWidth, imgHeight);
                     }
                 }
             }
