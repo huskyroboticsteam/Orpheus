@@ -55,7 +55,8 @@
                 <Label Content="Map Type:"/>
                 <TextBox Width="100" Height="21" Text="{Binding MapConfig.MapType}"/>
             </StackPanel>
-            <Button Content="Get Map" Click="Button_GetMap"/>
+            <Button Content="Get Map" Click="Button_GetMap" Name="MapDownloadButton"/>
+            <Label Name="MapStatus" />
         </StackPanel>
     </StackPanel>
     <!--</ScrollViewer>-->
