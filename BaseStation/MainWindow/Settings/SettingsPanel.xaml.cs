@@ -73,6 +73,7 @@ namespace HuskyRobotics.UI
         private void Button_GetMap(object sender, RoutedEventArgs e)
         {
             MapStatus.Content = "Downloading map...";
+            MapDownloadButton.IsEnabled = false;
 
             var bgw = new BackgroundWorker();
             bgw.WorkerReportsProgress = true;
@@ -86,6 +87,7 @@ namespace HuskyRobotics.UI
             };
             bgw.RunWorkerCompleted += (_, __) =>
             {
+                MapDownloadButton.IsEnabled = true;
                 initMapFiles();
                 Settings.CurrentMapFile = MapConfig.MapSetName + ".map";
                 MapStatus.Content = Settings.CurrentMapFile + " downloaded!";
