@@ -36,8 +36,8 @@
                             <ColumnDefinition Width="220" />
                         </Grid.ColumnDefinitions>
                         <ui:RoverView Grid.Column="0"></ui:RoverView>
-                        <ui:RoverView Grid.Column="1"></ui:RoverView>
-                        <ui:RoverView Grid.Column="2"></ui:RoverView>
+                        <ui:ArmSideView x:Name="ArmSideViewer" Grid.Column="1"></ui:ArmSideView>
+                        <ui:ArmTopView x:Name="ArmTopViewer" Grid.Column="2"></ui:ArmTopView>
                         <StackPanel Grid.Column="3" Orientation="Vertical">
                             <Label Content="Devices" />
                             <Button Content="Connect with PuTTY" Click="PuTTY_Button_Click"></Button>
@@ -47,11 +47,11 @@
                         <Label Content="Waypoints" />
                         <ListView></ListView>
                     </StackPanel>
-                    <ui:MapDisplay />
+                    <ui:MapDisplay x:Name="Map"/>
                 </DockPanel>
             </TabItem>
             <TabItem Header="Settings">
-                <ui:SettingsPanel DataContext="{Binding Settings}"/>
+                <ui:SettingsPanel x:Name="SettingPanel"/>
             </TabItem>
             <TabItem Header="Console">
                 <ui:ConsoleView Grid.Column="3"></ui:ConsoleView>

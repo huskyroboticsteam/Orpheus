@@ -2,6 +2,7 @@
 using HuskyRobotics.UI;
 using System.Threading;
 using System.Windows;
+using Scarlet.Utilities;
 
 /// <summary>
 /// Contains the entry point to the base station system.
@@ -15,12 +16,12 @@ namespace HuskyRobotics.BaseStation.Start {
         /// <param name="args">command-line arguments</param>
 		[STAThread]
         public static void Main(String[] args) {
-			//temporary example code
-			new Thread(StartServer).Start();
-			Application app = new Application();
-			app.Exit += (sd, ev) => Scarlet.Communications.Server.Stop();
+            //temporary example code
+            new Thread(StartServer).Start();
+            Application app = new Application();
+            app.Exit += (sd, ev) => Scarlet.Communications.Server.Stop();
 			app.Run(new MainWindow());
-		}
+        }
 
 		private static void StartServer() {
 			Scarlet.Communications.Server.Start(50000, 50000);
