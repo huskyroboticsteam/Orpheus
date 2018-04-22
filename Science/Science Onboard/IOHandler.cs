@@ -14,6 +14,7 @@ namespace Science
         public readonly Sample SampleController;
         public readonly LEDs LEDController;
         public readonly AuxSensors AuxSensors;
+        public readonly SysSensors SysSensors;
 
         private II2CBus I2C;
         private PCA9685 PWMGenLowFreq, PWMGenHighFreq;
@@ -32,6 +33,7 @@ namespace Science
             //this.SampleController = new Sample(this.PWMGenLowFreq.Outputs[1]);
             this.LEDController = new LEDs(this.PWMGenLowFreq.Outputs, this.PWMGenHighFreq.Outputs);
             this.AuxSensors = new AuxSensors();
+            this.SysSensors = new SysSensors();
         }
 
         /// <summary>
@@ -44,6 +46,7 @@ namespace Science
             //this.SampleController.Initialize();
             this.LEDController.Initialize();
             this.AuxSensors.Initialize();
+            this.SysSensors.Initialize();
         }
 
         /// <summary>
@@ -56,6 +59,7 @@ namespace Science
             //this.SampleController.EmergencyStop();
             this.LEDController.EmergencyStop();
             this.AuxSensors.EmergencyStop();
+            this.SysSensors.Initialize();
         }
 
         public void UpdateStates()
@@ -65,6 +69,7 @@ namespace Science
             //this.SampleController.UpdateState();
             this.LEDController.UpdateState();
             this.AuxSensors.UpdateState();
+            this.SysSensors.UpdateState();
         }
     }
 }
