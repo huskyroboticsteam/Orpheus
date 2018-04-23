@@ -5,6 +5,7 @@
 #include <Windows.h>
 
 GstElement *pipeline;
+GMainLoop *main_loop;
 
 typedef struct _CustomData {
 	gboolean is_live;
@@ -12,59 +13,63 @@ typedef struct _CustomData {
 	GMainLoop *loop;
 } CustomData;
 
-static void cb_message(GstBus *bus, GstMessage *msg, CustomData *data) {
-	switch (GST_MESSAGE_TYPE(msg)) {
-	case GST_MESSAGE_ERROR: {
-		GError *err;
-		gchar *debug;
-
-		gst_message_parse_error(msg, &err, &debug);
-		g_print("Error: %s\n", err->message);
-		g_error_free(err);
-		g_free(debug);
-
-		gst_element_set_state(data->pipeline, GST_STATE_READY);
-		g_main_loop_quit(data->loop);
-		break;
-	}
-	case GST_MESSAGE_EOS:
-		/* end-of-stream */
-		printf("EOS\n");
-		gst_element_set_state(data->pipeline, GST_STATE_READY);
-		g_main_loop_quit(data->loop);
-		break;
-	case GST_MESSAGE_BUFFERING: {
-		gint percent = 0;
-
-		/* If the stream is live, we do not care about buffering. */
-		if (data->is_live) break;
-
-		gst_message_parse_buffering(msg, &percent);
-		g_print("Buffering (%3d%%)\r", percent);
-		/* Wait until buffering is complete before start/resume playing */
-		if (percent < 100)
-			gst_element_set_state(data->pipeline, GST_STATE_PAUSED);
-		else
-			gst_element_set_state(data->pipeline, GST_STATE_PLAYING);
-		break;
-	}
-	case GST_MESSAGE_CLOCK_LOST:
-		/* Get a new clock */
-		gst_element_set_state(data->pipeline, GST_STATE_PAUSED);
-		gst_element_set_state(data->pipeline, GST_STATE_PLAYING);
-		break;
-	default:
-		/* Unhandled message */
-		break;
-	}
-}
+//static void cb_message(GstBus *bus, GstMessage *msg, CustomData *data) {
+//	switch (GST_MESSAGE_TYPE(msg)) {
+//	case GST_MESSAGE_ERROR: {
+//		GError *err;
+//		gchar *debug;
+//
+//		gst_message_parse_error(msg, &err, &debug);
+//		g_print("Error: %s\n", err->message);
+//		g_error_free(err);
+//		g_free(debug);
+//
+//		gst_element_set_state(data->pipeline, GST_STATE_READY);
+//		g_main_loop_quit(data->loop);
+//		break;
+//	}
+//	case GST_MESSAGE_EOS:
+//		/* end-of-stream */
+//		printf("EOS\n");
+//		gst_element_set_state(data->pipeline, GST_STATE_READY);
+//		g_main_loop_quit(data->loop);
+//		break;
+//	case GST_MESSAGE_BUFFERING: {
+//		gint percent = 0;
+//
+//		/* If the stream is live, we do not care about buffering. */
+//		if (data->is_live) break;
+//
+//		gst_message_parse_buffering(msg, &percent);
+//		g_print("Buffering (%3d%%)\r", percent);
+//		/* Wait until buffering is complete before start/resume playing */
+//		if (percent < 100)
+//			gst_element_set_state(data->pipeline, GST_STATE_PAUSED);
+//		else
+//			gst_element_set_state(data->pipeline, GST_STATE_PLAYING);
+//		break;
+//	}
+//	case GST_MESSAGE_CLOCK_LOST:
+//		/* Get a new clock */
+//		gst_element_set_state(data->pipeline, GST_STATE_PAUSED);
+//		gst_element_set_state(data->pipeline, GST_STATE_PLAYING);
+//		break;
+//	default:
+//		/* Unhandled message */
+//		break;
+//	}
+//}
 
 
 int sigintHandler(DWORD sig) {
 
 	switch (sig) {
 	case CTRL_C_EVENT:
+		printf("Control C\n");
 		gst_element_send_event(pipeline, gst_event_new_eos());
+		gst_element_send_event(pipeline, gst_event_new_eos());
+		gst_element_set_state(pipeline, GST_STATE_READY);
+		g_main_loop_quit(main_loop);
 		break;
 	}
 	return TRUE;
@@ -75,7 +80,6 @@ int main(int argc, char *argv[])
 {
 	GstBus *bus;
 	GstStateChangeReturn ret;
-	GMainLoop *main_loop;
 	CustomData data = {};
 	GstElement *udp, *depay, *parse, *mux, *filesink;
 	GstCaps *caps;
@@ -112,10 +116,7 @@ int main(int argc, char *argv[])
 	gst_bin_add_many(GST_BIN(pipeline), udp, depay, parse, mux, filesink, NULL);
 
 	/* Link the elements together in order and make sure they actually fit together */
-	if (gst_element_link_many(udp, depay, parse, mux, filesink, NULL) != TRUE)
-	{
-		return -1;
-	}
+	if (gst_element_link_many(udp, depay, parse, mux, filesink, NULL) != TRUE) { return -1; }
 
 	/* Force pipeline to forward EOS to all elements */
 	g_object_set(GST_BIN(pipeline), "message-forward", TRUE, NULL);
@@ -138,9 +139,10 @@ int main(int argc, char *argv[])
 	data.loop = main_loop;
 	data.pipeline = pipeline;
 
-	gst_bus_add_signal_watch(bus);
-	g_signal_connect(bus, "message", G_CALLBACK(cb_message), &data);
+	//gst_bus_add_signal_watch(bus);
+	//g_signal_connect(bus, "message", G_CALLBACK(cb_message), &data);
 
+	printf("Memes1\n");
 	g_main_loop_run(main_loop);
 
 	/* Free resources */
@@ -148,5 +150,6 @@ int main(int argc, char *argv[])
 	gst_object_unref(bus);
 	gst_element_set_state(pipeline, GST_STATE_NULL);
 	gst_object_unref(pipeline);
+	printf("Memes2\n");
 	return 0;
 }
