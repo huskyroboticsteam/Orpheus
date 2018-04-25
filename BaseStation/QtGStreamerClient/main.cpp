@@ -10,7 +10,7 @@
 #include "mainwindow.h"
 
 GstElement *pipeline;
-GstElement *udp, *depay, *parse, *dec, *sink;
+GstElement *udp, *jitter, *depay, *parse, *dec, *sink;
 GstCaps *caps;
 
 static void
@@ -19,6 +19,7 @@ setup_pipeline()
     /* prepare the pipeline */
     pipeline = gst_pipeline_new("pipeline");
     udp = gst_element_factory_make("udpsrc", "udp");
+    jitter = gst_element_factory_make("rtpjitterbuffer", "jitter");
     depay = gst_element_factory_make("rtph264depay", "depay");
     parse = gst_element_factory_make("h264parse", "parse");
     dec = gst_element_factory_make("openh264dec", "dec");
@@ -34,10 +35,10 @@ setup_pipeline()
     g_object_set(G_OBJECT(udp), "caps", caps, NULL);
 
     /* Add created elements to the pipeline in the given order */
-    gst_bin_add_many(GST_BIN(pipeline), udp, depay, parse, dec, sink, NULL);
+    gst_bin_add_many(GST_BIN(pipeline), udp, jitter, depay, parse, dec, sink, NULL);
 
     /* Link the elements together in order and make sure they actually fit together */
-    if (gst_element_link_many(udp, depay, parse, dec, sink, NULL) != 1) {
+    if (gst_element_link_many(udp, jitter, depay, parse, dec, sink, NULL) != 1) {
         printf("%p %p %p %p %p\n", udp, depay, parse, dec, sink);
         exit(-1);
     }
@@ -48,8 +49,8 @@ int main(int argc, char *argv[])
     gst_init (&argc, &argv);
     QApplication app(argc, argv);
 
-    // Server: gst-launch-1.0 videotestsrc ! "video/x-raw, format=(string)I420, width=(int)1280, height=(int)720" ! openh264enc ! h264parse ! rtph264pay ! udpsink host=127.0.0.1 port=5555
-    // Client: gst-launch-1.0 -vvv -e udpsrc caps=\"application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264\" port=5555 ! rtph264depay ! h264parse ! openh264dec ! d3dvideosink
+    // Server: gst-launch-1.0 videotestsrc ! "video/x-raw, format=(string)I420, width=(int)1280, height=(int)720" ! videoscale ! 'video/x-raw, width=640, height=340' ! openh264enc ! h264parse ! rtph264pay ! udpsink host=127.0.0.1 port=5555
+    // Client: gst-launch-1.0 -vvv -e udpsrc caps=\"application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264\" port=5555 ! rtpjitterbuffer ! rtph264depay ! h264parse ! openh264dec ! d3dvideosink
     setup_pipeline();
 
     /* prepare the ui */
