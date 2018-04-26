@@ -23,21 +23,28 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 GstreamerDir=c:/gstreamer/1.0/x86_64
+OpenCVDir=c:/opencv/build
 
 INCLUDEPATH = $${GstreamerDir}/include/gstreamer-1.0
 INCLUDEPATH += $${GstreamerDir}/include/glib-2.0
 INCLUDEPATH += $${GstreamerDir}/lib/glib-2.0/include
 INCLUDEPATH += $${GstreamerDir}/lib/gstreamer-1.0/include
+INCLUDEPATH += $${OpenCVDir}/include
 
 LIBS = $${GstreamerDir}/lib/gstreamer-1.0.lib
 LIBS += $${GstreamerDir}/lib/*.lib
+LIBS += $${OpenCVDir}/x64/vc15/lib/*.lib
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp
+        mainwindow.cpp \
+    videowidget.cpp \
+    image.cpp
 
 HEADERS += \
-        mainwindow.h
+        mainwindow.h \
+    videowidget.h \
+    image.h
 
 FORMS += \
         mainwindow.ui
