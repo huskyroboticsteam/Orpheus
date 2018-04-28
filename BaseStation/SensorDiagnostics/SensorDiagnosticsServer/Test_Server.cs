@@ -1,17 +1,8 @@
-﻿using Scarlet;
-using Scarlet.Components;
-using Scarlet.Components.Sensors;
-using Scarlet.IO;
-using Scarlet.IO.BeagleBone;
-using Scarlet.Communications;
+﻿using Scarlet.Communications;
 using Scarlet.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using Scarlet.Utilities;
 using System.Windows;
 using HuskyRobotics.UI;
 
@@ -36,17 +27,22 @@ namespace HuskyRobotics
             string data = UtilData.ToString(packet.Data.Payload);
             List<DataUnit> info = new List<DataUnit>();
             data = data.Substring(0,data.Length-1);
-            string[] sysSplit = data.Split('|');
-            string[] temp = sysSplit[1].Split(',');
-            string[] temp2;
-            DataUnit tempUnit = new DataUnit("temp");
-            foreach (string s in temp)
+            string[] sensSplit = data.Split(';');
+            foreach (string s in sensSplit)
             {
-                temp2 = s.Split('=');
-                tempUnit.Add<double>(temp2[0],Convert.ToDouble(temp2[1]));
+                string sens = s.Substring(0, s.Length - 1);
+                string[] sysSplit = sens.Split('|');
+                string[] values = sysSplit[1].Split(',');
+                string[] temp2;
+                DataUnit tempUnit = new DataUnit("GraphPacket");
+                foreach (string v in values)
+                {
+                    temp2 = v.Split('=');
+                    tempUnit.Add<double>(temp2[0], Convert.ToDouble(temp2[1]));
+                }
+                tempUnit.System = sysSplit[0];
+                info.Add(tempUnit);
             }
-            tempUnit.System = sysSplit[0];
-            info.Add(tempUnit);
             uc.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
             {
                 uc.updateGraph(info);

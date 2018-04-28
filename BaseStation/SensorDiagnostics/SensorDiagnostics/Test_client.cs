@@ -40,46 +40,15 @@ namespace HuskyRobotics
             Globals.sensors.Add(magnetomiter);
             //Globals.sensors.Add(gps);
             Client.Start("192.168.0.1", 1025, 1026, "BBB");
-            for (int i = 0; i < 2; i++) {
-                foreach (ISensor s in Globals.sensors)
-                {
-                    s.UpdateState();
+            while (true) { 
+                for (int i = 0; i < 2; i++) {
+                    foreach (ISensor s in Globals.sensors)
+                    {
+                        s.UpdateState();
+                    }
+                    LogSensors.logSensors();
                 }
-                LogSensors.logSensors();
-            }
-            DataLog test = new DataLog("test");
-            DataUnit testUnit = new DataUnit("test")
-            {
-                { "a", 10},
-                { "b", 20},
-                { "c", 30}
-            };
-            testUnit.SetSystem("testsys");
-            test.Output(testUnit);
-            Random rnd = new Random();
-            while (true)
-            {
-                testUnit = new DataUnit("test")
-            {
-                { "a", rnd.NextDouble() * 100},
-                { "b", rnd.NextDouble() * 100},
-                { "c", rnd.NextDouble() * 100}
-            };
-                Packet MyPack = new Packet(0x65,false);
-                Type[] dicTypes = testUnit.Values.GetType().GetGenericArguments();
-                Type valueType = dicTypes[1];
-                MyPack.AppendData(UtilData.ToBytes(testUnit.System));
-                MyPack.AppendData(UtilData.ToBytes("|"));
-                foreach (string key in testUnit.Keys) {
-                    MyPack.AppendData(UtilData.ToBytes(key));
-                    MyPack.AppendData(UtilData.ToBytes("="));
-                    MyPack.AppendData(UtilData.ToBytes(Convert.ToString(testUnit.GetValue<ValueType>(key))));
-                    MyPack.AppendData(UtilData.ToBytes(","));
-                    Console.Write(UtilData.ToString(MyPack.Data.Payload));
-                }       
-                Console.WriteLine(MyPack.Data);
-                Client.Send(MyPack);
-                Thread.Sleep(500);
+                    Thread.Sleep(200);
             }
         }
     }
