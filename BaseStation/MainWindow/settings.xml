@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Settings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <PuttyPath>C:\Program Files (x86)\PuTTY\putty.exe</PuttyPath>
-  <CurrentMapFile>New Map.map</CurrentMapFile>
+  <CurrentMapFile>UWsat.map</CurrentMapFile>
+  <Devices>
+    <Name />
+    <Address />
+  </Devices>
 </Settings>
