@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -50,7 +52,7 @@ namespace HuskyRobotics.UI
                         int y = 0;
                         Int32.TryParse(location[0], out x);
                         Int32.TryParse(location[1], out y);
-                        addImage(Directory.GetCurrentDirectory() + @"\Images\" + parts[1] + ".png", x, y, imgWidth, imgHeight);
+                        addImage(Directory.GetCurrentDirectory() + @"\Images\" + parts[1] + ".jpg", x, y, imgWidth, imgHeight);
                     }
                 }
             }
@@ -78,7 +80,33 @@ namespace HuskyRobotics.UI
 
         private Point mousePosition;
         private List<Image> allImages = new List<Image>();
+        private List<Image> waypointIcons= new List<Image>();
         private bool dragging = false;
+
+        private ObservableCollection<Waypoint> _waypoints;
+        public ObservableCollection<Waypoint> Waypoints { get => _waypoints;
+            set {
+                _waypoints.CollectionChanged -= WaypointsChanged;
+                _waypoints = value;
+                _waypoints.CollectionChanged += WaypointsChanged;
+            }
+        }
+
+        private void WaypointsChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            foreach (var oldIcon in waypointIcons) {
+                MapCanvas.Children.Remove(oldIcon);
+            }
+
+            foreach (var waypoint in Waypoints)
+            {
+                var waypointIcon = new Image { Source = new BitmapImage(new Uri("waypoint.png")) };
+                Canvas.SetLeft(waypointIcon, 0); // TODO align with the GPS coordinates
+                Canvas.SetTop(waypointIcon, 0);
+                MapCanvas.Children.Add(waypointIcon);
+                allImages.Add(waypointIcon);
+            }            
+        }
 
         private void CanvasMouseButtonDown(object sender, MouseButtonEventArgs e)
         {
