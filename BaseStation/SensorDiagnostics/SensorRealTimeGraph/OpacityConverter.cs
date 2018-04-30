@@ -5,6 +5,10 @@ using System.Windows.Data;
 
 namespace HuskyRobotics.UI
 {
+    /// <summary>
+    /// This class allows for plots to be toggled
+    /// Retrieved from lvcharts.net
+    /// </summary>
     public class OpacityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

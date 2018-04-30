@@ -13,24 +13,25 @@ namespace HuskyRobotics.UI
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
+    /// This class is used to graph sensor values recieved from the BBB in real time
     /// </summary>
-    public partial class sensorRealTimeGraph : UserControl, INotifyPropertyChanged
+    public partial class SensorRealTimeGraph : UserControl, INotifyPropertyChanged
     {
-        private DateTime lastUpdate { get; set; }
-        private double _axisMax;
-        private double _axisMin;
-        private List<DataUnit> lastSensorReadings { get; set; }
+        private DateTime lastUpdate { get; set; } //the last time the graph was updated
+        private double _axisMax; //maximum time value
+        private double _axisMin; //minimum time value
+        private List<DataUnit> lastSensorReadings { get; set; } //holds the previous sensor readings.
         public SeriesCollection seriesCollection { get; set; } // Data to be displayed
         public SeriesCollection exampleSeriesCollection { get; set; } // Example Data used for testing
         public Func<double, string> YFormatter { get; set; } // Yaxis format
         public Func<double, string> DateTimeFormatter { get; set; } // Xaxis format
-        public double AxisStep { get; set; }
-        public double AxisUnit { get; set; }
-        private Random rnd = new Random();
+        public double AxisStep { get; set; } //steps between time axis ticks
+        public double AxisUnit { get; set; } //Units for the time axis
+        private Random rnd = new Random(); //random num generator used for testing.
         /// <summary>
         /// Constructor: Sets up ui
         /// </summary>
-        public sensorRealTimeGraph()
+        public SensorRealTimeGraph()
         {
             InitializeComponent();
             lastSensorReadings = new List<DataUnit>();
@@ -47,21 +48,23 @@ namespace HuskyRobotics.UI
             //this is not always necessary, but it can prevent wrong labeling
             AxisUnit = TimeSpan.TicksPerSecond;
             SetAxisLimits(DateTime.Now);
-            seriesCollection = new SeriesCollection
-            {
-            };
+            seriesCollection = new SeriesCollection{};
             DataContext = this;
             lastUpdate = DateTime.Now;
             updateGraph();
         }
 
+        /// <summary>
+        /// Temporary method that generates random values for testing purposes
+        /// </summary>
         public void tempMethod()
         {
-            seriesCollection[0].Values.Add(rnd.NextDouble() * 100);
-            seriesCollection[0].Values.RemoveAt(0);
+            exampleSeriesCollection[0].Values.Add(rnd.NextDouble() * 100);
+            exampleSeriesCollection[0].Values.RemoveAt(0);
         }
 
-        public double AxisMax
+
+        public double AxisMax //maximum for time axis
         {
             get { return _axisMax; }
             set
@@ -70,7 +73,7 @@ namespace HuskyRobotics.UI
                 OnPropertyChanged("AxisMax");
             }
         }
-        public double AxisMin
+        public double AxisMin //minimum for time axis
         {
             get { return _axisMin; }
             set
@@ -80,19 +83,30 @@ namespace HuskyRobotics.UI
             }
         }
 
+        /// <summary>
+        /// This method sets the scope of the graph to be a certain distance ahead and behind the current time
+        /// </summary>
+        /// <param name="now"></param>
         private void SetAxisLimits(DateTime now)
         {
-            AxisMax = now.Ticks + TimeSpan.FromSeconds(1).Ticks; // lets force the axis to be 1 second ahead
-            AxisMin = now.Ticks - TimeSpan.FromSeconds(8).Ticks; // and 8 seconds behind
+            AxisMax = now.Ticks + TimeSpan.FromSeconds(1).Ticks; // forces axis to be 1 second ahead
+            AxisMin = now.Ticks - TimeSpan.FromSeconds(8).Ticks; // forces axis to be 8 seconds behind
         }
 
+        /// <summary>
+        /// updates the last readings of the graph. then updates the graph
+        /// </summary>
+        /// <param name="sensorReadings"></param>
         public void updateGraph( List<DataUnit> sensorReadings)
         {
             lastSensorReadings = sensorReadings;
             updateGraph();
         }
 
-         public void updateGraph()
+        /// <summary>
+        /// breaks the last sensor readings data unit into values that can be graphed and plots them.
+        /// </summary>
+         private void updateGraph()
          {
             DateTime now = DateTime.Now;
             if (now.Subtract(lastUpdate).Seconds >=1)
@@ -129,6 +143,12 @@ namespace HuskyRobotics.UI
                 lastUpdate = now;
             }
         }
+
+        /// <summary>
+        /// Allows the user to click plots on and off
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ListBox_OnPreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             var item = ItemsControl.ContainerFromElement(lBox, (DependencyObject)e.OriginalSource) as ListBoxItem;
@@ -140,7 +160,10 @@ namespace HuskyRobotics.UI
                 : Visibility.Visible;
         }
         public event PropertyChangedEventHandler PropertyChanged;
-
+        /// <summary>
+        /// onPropertyChanged Event handler.
+        /// </summary>
+        /// <param name="propertyName"></param>
         protected virtual void OnPropertyChanged(string propertyName = null)
         {
             if (PropertyChanged != null)

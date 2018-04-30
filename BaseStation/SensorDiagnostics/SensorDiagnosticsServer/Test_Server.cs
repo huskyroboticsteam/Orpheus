@@ -4,13 +4,15 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Windows;
-using HuskyRobotics.UI;
 
-namespace HuskyRobotics
+namespace HuskyRobotics.UI
 {
+    /// <summary>
+    /// This Class is just used as a test server in order to recieve data from the BBB and send it to the real time graph.
+    /// </summary>
     class Test_Server
     {
-        public static sensorRealTimeGraph uc = new sensorRealTimeGraph();
+        public static SensorRealTimeGraph sensorRealTimeGraph = new SensorRealTimeGraph(); //The Graph
         [STAThread]
         static void Main(string[] args)
         {
@@ -18,10 +20,14 @@ namespace HuskyRobotics
             Application app = new Application();
             app.Exit += (sd, ev) => Scarlet.Communications.Server.Stop();
             Window host = new Window();
-            host.Content = uc;
+            host.Content = sensorRealTimeGraph;
             app.Run(host);
-
         }
+
+        /// <summary>
+        /// This method parses the packet of sensor data into a Dataunit that can be used by the graph.
+        /// </summary>
+        /// <param name="packet">This packet should be formatted: {system}|{valueName}={value},{valueName}={value};repeat</param>
         public static void ParseSensorPacket(Packet packet)
         {
             string data = UtilData.ToString(packet.Data.Payload);
@@ -43,19 +49,18 @@ namespace HuskyRobotics
                 tempUnit.System = sysSplit[0];
                 info.Add(tempUnit);
             }
-            uc.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+            sensorRealTimeGraph.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
             {
-                uc.updateGraph(info);
+                sensorRealTimeGraph.updateGraph(info);
             }));
         }
+        /// <summary>
+        /// This method starts the scarlet server
+        /// </summary>
         private static void StartServer()
         {
             Server.Start(1025, 1026, 256);
             Parse.SetParseHandler(0x65, ParseSensorPacket);
-        }
-        private static void update()
-        {
-
         }
     }
 }

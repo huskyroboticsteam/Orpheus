@@ -24,7 +24,7 @@ namespace HuskyRobotics.UI
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class sensorHistoryGraph : UserControl
+    public partial class SensorHistoryGraph : UserControl
     {
 
         public SeriesCollection seriesCollection { get; set; } // Data to be displayed
@@ -38,7 +38,7 @@ namespace HuskyRobotics.UI
         /// <summary>
         /// Constructor: Sets up ui
         /// </summary>
-        public sensorHistoryGraph()
+        public SensorHistoryGraph()
         {
             InitializeComponent();
             YFormatter = valueY => valueY.ToString("0.##");
