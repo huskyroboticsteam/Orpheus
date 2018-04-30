@@ -38,13 +38,11 @@ LIBS += $${OpenCVDir}/x64/vc15/lib/*.lib
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    videowidget.cpp \
-    image.cpp
+    videowidget.cpp
 
 HEADERS += \
         mainwindow.h \
-    videowidget.h \
-    image.h
+    videowidget.h
 
 FORMS += \
         mainwindow.ui
