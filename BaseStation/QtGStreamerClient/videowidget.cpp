@@ -8,7 +8,7 @@ using namespace std;
 
 VideoWidget::VideoWidget(QWidget *parent) : QWidget(parent), timer(this), capture(stream, CAP_GSTREAMER)
 {
-    connect(timer, SIGNAL(timeout()), this, SLOT(queryFrame()));
+    connect(this->timer, SIGNAL(timeout()), this, SLOT(queryFrame()));
     this->timer.start(50);
 }
 
@@ -74,7 +74,7 @@ VideoWidget::buildImage(Mat in_frame)
 
     mixChannels(a, g, v);
 
-    return new QImage();
+    return new QImage(rgba.data, this->frame->width, this->frame->height, QImage::Format_RGB32);;
 }
 
 void
