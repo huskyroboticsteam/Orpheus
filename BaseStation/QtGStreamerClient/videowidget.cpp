@@ -8,7 +8,7 @@ using namespace std;
 
 VideoWidget::VideoWidget(QWidget *parent) : QWidget(parent), timer(this), capture(stream, CAP_GSTREAMER)
 {
-    connect(this->timer, SIGNAL(timeout()), this, SLOT(queryFrame()));
+    connect(&(this->timer), SIGNAL(timeout()), this, SLOT(queryFrame()));
     this->timer.start(50);
 }
 
