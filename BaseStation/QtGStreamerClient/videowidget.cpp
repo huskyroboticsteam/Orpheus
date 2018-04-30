@@ -56,11 +56,9 @@ VideoWidget::buildImage(Mat in_frame)
     vector<Mat> first;
     first.push_back(inp);
     first.push_back(alpha);
-    InputArray a(first);
 
     vector<Mat> second;
     second.push_back(rgba);
-    InputArray g(second);
 
     vector<int> v;
     v.push_back(0);
@@ -70,9 +68,9 @@ VideoWidget::buildImage(Mat in_frame)
     v.push_back(2);
     v.push_back(2);
     v.push_back(3);
-    v.push_back(4);
+    v.push_back(3);
 
-    mixChannels(a, g, v);
+    mixChannels(first, second, v);
 
     return new QImage(rgba.data, this->frame->width, this->frame->height, QImage::Format_RGB32);;
 }
