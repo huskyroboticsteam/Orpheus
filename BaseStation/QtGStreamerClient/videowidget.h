@@ -14,13 +14,14 @@ public:
 
 private:
     void paintEvent(QPaintEvent *event);
-    QImage buildImage(cv::Mat frame);
+    QImage * buildImage(cv::Mat in_frame);
     void queryFrame();
 
 private:
-    QImage image;
+    QImage *image;
     QTimer timer;
     cv::VideoCapture capture;
+    IplImage *frame;
 
 signals:
 
