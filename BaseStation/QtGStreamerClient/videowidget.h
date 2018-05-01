@@ -16,17 +16,18 @@ public:
 private:
     void paintEvent(QPaintEvent *event);
     QImage * buildImage(cv::Mat in_frame);
-    void queryFrame();
 
 private:
     QImage *image;
     QTimer timer;
-    cv::VideoCapture capture;
+    cv::VideoCapture *capture;
     IplImage *frame;
 
 signals:
 
 public slots:
+    void queryFrame();
+
 };
 
 #endif // VIDEOWIDGET_H

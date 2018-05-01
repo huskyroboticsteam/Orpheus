@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "videowidget.h"
 
 namespace Ui {
 class MainWindow;
@@ -18,6 +19,7 @@ public:
 private:
     void closeEvent(QCloseEvent *event);
     Ui::MainWindow *ui;
+    VideoWidget *video_widget;
 };
 
 #endif // MAINWINDOW_H

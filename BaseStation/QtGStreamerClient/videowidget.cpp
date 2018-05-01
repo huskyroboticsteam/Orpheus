@@ -2,14 +2,17 @@
 #include <QPainter>
 
 #define stream "udpsrc caps=\"application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264\" port=5555 ! rtpjitterbuffer ! rtph264depay ! h264parse ! openh264dec ! appsink"
+#define stream "videotestsrc ! appsink"
 
 using namespace cv;
 using namespace std;
 
-VideoWidget::VideoWidget(QWidget *parent) : QWidget(parent), timer(this), capture(stream, CAP_GSTREAMER)
+VideoWidget::VideoWidget(QWidget *parent) : QWidget(parent),
+    timer(this),
+    capture(new VideoCapture(stream, CAP_GSTREAMER))
 {
     connect(&(this->timer), SIGNAL(timeout()), this, SLOT(queryFrame()));
-    this->timer.start(50);
+    this->timer.start(5000);
 }
 
 VideoWidget::~VideoWidget()
@@ -78,22 +81,9 @@ VideoWidget::buildImage(Mat in_frame)
 void
 VideoWidget::queryFrame()
 {
+    printf("Read frame\n");
     Mat frame;
-    this->capture.read(frame);
+    this->capture->read(frame);
     this->image = this->buildImage(frame);
     this->update();
 }
-
-////set(rgba, 1, 2, 3, 4);
-////mixChannels();
-
-////rgba.tostring
-//QImage::
-//}
-
-//std::string Image::_matToString(Mat &frame) {
-//int total = frame.size().width * frame.size().height * frame.channels();
-//std::vector<uchar> data(frame.ptr(), frame.ptr() + total);
-//std::string s = new std::string(data.begin(), data.end());
-//return s;
-//}
