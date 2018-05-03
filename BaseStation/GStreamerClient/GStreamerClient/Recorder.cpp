@@ -1,8 +1,8 @@
 #include <cstdio> 
 #include <gst/gst.h>
-#include <gst/app/gstappsink.h>
 #include <cstring>
 #include <Windows.h>
+#include <signal.h>
 
 GstElement *pipeline;
 GMainLoop *main_loop;
@@ -61,7 +61,7 @@ typedef struct _CustomData {
 //}
 
 
-int sigintHandler(DWORD sig) {
+void sigintHandler(int sig) {
 
 	switch (sig) {
 	case CTRL_C_EVENT:
@@ -72,7 +72,6 @@ int sigintHandler(DWORD sig) {
 		g_main_loop_quit(main_loop);
 		break;
 	}
-	return TRUE;
 }
 
 
@@ -85,7 +84,8 @@ int main(int argc, char *argv[])
 	GstCaps *caps;
 
 	/* Set up callback to catch Ctrl-C event in console */
-	SetConsoleCtrlHandler((PHANDLER_ROUTINE)sigintHandler, TRUE);	
+	signal(SIGINT, &sigintHandler);
+	//SetConsoleCtrlHandler((PHANDLER_ROUTINE)sigintHandler, TRUE);
 
 	/* Initialize GStreamer */
 	gst_init(&argc, &argv);
