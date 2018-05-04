@@ -55,7 +55,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SensorDiagnostics\SensorRealTimeGraph\SensorRealTimeGraph.csproj">
+    <ProjectReference Include="..\SensorRealTimeGraph\SensorRealTimeGraph.csproj">
       <Project>{89AF1702-7D86-4364-91B1-F1A027AF8AA8}</Project>
       <Name>SensorRealTimeGraph</Name>
     </ProjectReference>
