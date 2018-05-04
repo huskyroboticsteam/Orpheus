@@ -8,6 +8,8 @@ using System.IO;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Threading;
+using System.Threading;
+using VideoStreamer;
 
 // this program is a video player that uses G-streamer through the console with file saving
 // capabilities.
@@ -45,6 +47,8 @@ namespace HuskyRobotics.UI.VideoStreamer {
 		}
 
 		public VideoDisplay() {
+            Gst.Application.Init();
+
 			recordingTime = new DispatcherTimer();
 			recordingTime.Tick += new EventHandler(dispatcherTimer_Tick);
 			recordingTime.Interval = new TimeSpan(0, 0, 1);
@@ -100,20 +104,22 @@ namespace HuskyRobotics.UI.VideoStreamer {
 		// plays the video streams in their own windows and if already playing will close them
 		private void ButtonLaunch(object sender, RoutedEventArgs e) {
 			if (playing) {
-				playing = false;
-				btnLaunch.Content = "Launch";
-				closeAllPlayers();
+				//playing = false;
+				//btnLaunch.Content = "Launch";
+				//closeAllPlayers();
 			} else {
-				if (File.Exists(@"C:\gstreamer\1.0\x86_64\bin\gst-launch-1.0.exe")) {
-					playing = true;
-					btnLaunch.Content = "Stahp";
-					players = new Process[ports.Count];
-					for (int i = 0; i < ports.Count; i++) {
-						startStreamPlayer(ports.ElementAt(i), ref players[i]);
-					}
-				} else {
-					System.Windows.MessageBox.Show(@"Please ensure that gst-launch-1.0.exe is located in C:\gstreamer\1.0\x86_64\bin\");
-				}
+                NewWindowHandler(sender, e);
+                playing = true;
+				//if (File.Exists(@"C:\gstreamer\1.0\x86_64\bin\gst-launch-1.0.exe")) {
+				//	playing = true;
+				//	btnLaunch.Content = "Stahp";
+				//	players = new Process[ports.Count];
+				//	for (int i = 0; i < ports.Count; i++) {
+				//		startStreamPlayer(ports.ElementAt(i), ref players[i]);
+				//	}
+				//} else {
+				//	System.Windows.MessageBox.Show(@"Please ensure that gst-launch-1.0.exe is located in C:\gstreamer\1.0\x86_64\bin\");
+				//}
 			}
 		}
 
@@ -175,7 +181,7 @@ namespace HuskyRobotics.UI.VideoStreamer {
 		// because they must be closed by Ctrl+C
 		// ports will be re-written to file in case of edits made
 		private void Window_Closing(object sender, EventArgs e) {
-			System.Windows.MessageBox.Show("Please close all recording streams using Ctrl+C");
+			MessageBox.Show("Please close all recording streams using Ctrl+C");
 			try {
 				closeAllPlayers();
 			} catch { }
@@ -186,5 +192,20 @@ namespace HuskyRobotics.UI.VideoStreamer {
 			}
 			saver.Close();
 		}
-	}
+
+        private void NewWindowHandler(object sender, RoutedEventArgs e)
+        {
+            Thread newWindowThread = new Thread(new ThreadStart(ThreadStartingPoint));
+            newWindowThread.SetApartmentState(ApartmentState.STA);
+            newWindowThread.IsBackground = true;
+            newWindowThread.Start();
+        }
+
+        private void ThreadStartingPoint()
+        {
+            VideoWindow tempWindow = new VideoWindow();
+            tempWindow.Show();
+            Dispatcher.Run();
+        }
+    }
 }
