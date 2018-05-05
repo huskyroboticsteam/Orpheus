@@ -33,6 +33,33 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.Control = new System.Windows.Forms.TabPage();
+            this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
+            this.ChartLeft = new LiveCharts.WinForms.CartesianChart();
+            this.ChartRight = new LiveCharts.WinForms.CartesianChart();
+            this.GaugeTable = new System.Windows.Forms.TableLayoutPanel();
+            this.darkLabel3 = new DarkUI.Controls.DarkLabel();
+            this.darkLabel2 = new DarkUI.Controls.DarkLabel();
+            this.darkLabel1 = new DarkUI.Controls.DarkLabel();
+            this.LabSysVoltage = new DarkUI.Controls.DarkLabel();
+            this.GaugeRailCurrent = new LiveCharts.WinForms.AngularGauge();
+            this.GaugeDrillCurrent = new LiveCharts.WinForms.AngularGauge();
+            this.GaugeSysCurrent = new LiveCharts.WinForms.AngularGauge();
+            this.GaugeSysVoltage = new LiveCharts.WinForms.AngularGauge();
+            this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
+            this.DrillSpeed = new System.Windows.Forms.TrackBar();
+            this.DrillToggle = new DarkUI.Controls.DarkButton();
+            this.DrillReverse = new DarkUI.Controls.DarkCheckBox();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.tableLayoutPanel9 = new System.Windows.Forms.TableLayoutPanel();
+            this.trackBar2 = new System.Windows.Forms.TrackBar();
+            this.ChartClearRight = new DarkUI.Controls.DarkButton();
+            this.ChartClearLeft = new DarkUI.Controls.DarkButton();
+            this.ChartDataChooser = new System.Windows.Forms.ListView();
+            this.ChartAddLeft = new DarkUI.Controls.DarkButton();
+            this.ChartAddRight = new DarkUI.Controls.DarkButton();
             this.Debugging = new System.Windows.Forms.TabPage();
             this.DebugList = new System.Windows.Forms.TableLayoutPanel();
             this.PacketGenBox = new System.Windows.Forms.GroupBox();
@@ -58,14 +85,24 @@
             this.StatsPacketQueueOut = new DarkUI.Controls.DarkLabel();
             this.StatsPacketQueueIn = new DarkUI.Controls.DarkLabel();
             this.EmergencyStopBtn = new System.Windows.Forms.Button();
+            this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
+            this.StatusImgNetwork = new System.Windows.Forms.PictureBox();
+            this.StatusImgPower = new System.Windows.Forms.PictureBox();
+            this.StatusImgSystem = new System.Windows.Forms.PictureBox();
             this.SecTimer = new System.Windows.Forms.Timer(this.components);
             this.UIUpdate = new System.Windows.Forms.Timer(this.components);
-            this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
-            this.GaugeTable = new System.Windows.Forms.TableLayoutPanel();
-            this.aGauge1 = new System.Windows.Forms.AGauge();
             this.tableLayoutPanel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.Control.SuspendLayout();
+            this.tableLayoutPanel5.SuspendLayout();
+            this.GaugeTable.SuspendLayout();
+            this.tableLayoutPanel7.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            this.tableLayoutPanel8.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.DrillSpeed)).BeginInit();
+            this.groupBox3.SuspendLayout();
+            this.tableLayoutPanel9.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
             this.Debugging.SuspendLayout();
             this.DebugList.SuspendLayout();
             this.PacketGenBox.SuspendLayout();
@@ -74,8 +111,10 @@
             this.tableLayoutPanel3.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
-            this.tableLayoutPanel5.SuspendLayout();
-            this.GaugeTable.SuspendLayout();
+            this.tableLayoutPanel6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.StatusImgNetwork)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.StatusImgPower)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.StatusImgSystem)).BeginInit();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -87,6 +126,7 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.Controls.Add(this.tabControl1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.EmergencyStopBtn, 1, 1);
+            this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel6, 0, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
@@ -94,7 +134,7 @@
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 39F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(784, 561);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1008, 729);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // tabControl1
@@ -108,7 +148,7 @@
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.Padding = new System.Drawing.Point(0, 0);
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(784, 522);
+            this.tabControl1.Size = new System.Drawing.Size(1008, 690);
             this.tabControl1.TabIndex = 0;
             // 
             // Control
@@ -118,9 +158,370 @@
             this.Control.Location = new System.Drawing.Point(4, 22);
             this.Control.Margin = new System.Windows.Forms.Padding(0);
             this.Control.Name = "Control";
-            this.Control.Size = new System.Drawing.Size(776, 496);
+            this.Control.Size = new System.Drawing.Size(1000, 664);
             this.Control.TabIndex = 0;
             this.Control.Text = "Control";
+            // 
+            // tableLayoutPanel5
+            // 
+            this.tableLayoutPanel5.ColumnCount = 2;
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel5.Controls.Add(this.ChartLeft, 0, 1);
+            this.tableLayoutPanel5.Controls.Add(this.ChartRight, 1, 1);
+            this.tableLayoutPanel5.Controls.Add(this.GaugeTable, 1, 0);
+            this.tableLayoutPanel5.Controls.Add(this.tableLayoutPanel7, 0, 0);
+            this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel5.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel5.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanel5.Name = "tableLayoutPanel5";
+            this.tableLayoutPanel5.RowCount = 2;
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 62.5F));
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 37.5F));
+            this.tableLayoutPanel5.Size = new System.Drawing.Size(1000, 664);
+            this.tableLayoutPanel5.TabIndex = 0;
+            // 
+            // ChartLeft
+            // 
+            this.ChartLeft.AllowDrop = true;
+            this.ChartLeft.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ChartLeft.Location = new System.Drawing.Point(3, 418);
+            this.ChartLeft.Name = "ChartLeft";
+            this.ChartLeft.Size = new System.Drawing.Size(494, 243);
+            this.ChartLeft.TabIndex = 4;
+            this.ChartLeft.Text = "DataGraph";
+            // 
+            // ChartRight
+            // 
+            this.ChartRight.AllowDrop = true;
+            this.ChartRight.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ChartRight.Location = new System.Drawing.Point(503, 418);
+            this.ChartRight.Name = "ChartRight";
+            this.ChartRight.Size = new System.Drawing.Size(494, 243);
+            this.ChartRight.TabIndex = 3;
+            this.ChartRight.Text = "Graph2";
+            // 
+            // GaugeTable
+            // 
+            this.GaugeTable.ColumnCount = 2;
+            this.GaugeTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.GaugeTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.GaugeTable.Controls.Add(this.darkLabel3, 1, 2);
+            this.GaugeTable.Controls.Add(this.darkLabel2, 1, 0);
+            this.GaugeTable.Controls.Add(this.darkLabel1, 0, 2);
+            this.GaugeTable.Controls.Add(this.LabSysVoltage, 0, 0);
+            this.GaugeTable.Controls.Add(this.GaugeRailCurrent, 1, 3);
+            this.GaugeTable.Controls.Add(this.GaugeDrillCurrent, 0, 3);
+            this.GaugeTable.Controls.Add(this.GaugeSysCurrent, 1, 1);
+            this.GaugeTable.Controls.Add(this.GaugeSysVoltage, 0, 1);
+            this.GaugeTable.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.GaugeTable.Location = new System.Drawing.Point(500, 0);
+            this.GaugeTable.Margin = new System.Windows.Forms.Padding(0);
+            this.GaugeTable.Name = "GaugeTable";
+            this.GaugeTable.RowCount = 4;
+            this.GaugeTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.GaugeTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.GaugeTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.GaugeTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.GaugeTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.GaugeTable.Size = new System.Drawing.Size(500, 415);
+            this.GaugeTable.TabIndex = 0;
+            // 
+            // darkLabel3
+            // 
+            this.darkLabel3.AutoSize = true;
+            this.darkLabel3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.darkLabel3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.darkLabel3.Location = new System.Drawing.Point(253, 207);
+            this.darkLabel3.Name = "darkLabel3";
+            this.darkLabel3.Size = new System.Drawing.Size(244, 20);
+            this.darkLabel3.TabIndex = 12;
+            this.darkLabel3.Text = "Rail (A)";
+            this.darkLabel3.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            // 
+            // darkLabel2
+            // 
+            this.darkLabel2.AutoSize = true;
+            this.darkLabel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.darkLabel2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.darkLabel2.Location = new System.Drawing.Point(253, 0);
+            this.darkLabel2.Name = "darkLabel2";
+            this.darkLabel2.Size = new System.Drawing.Size(244, 20);
+            this.darkLabel2.TabIndex = 11;
+            this.darkLabel2.Text = "System (A)";
+            this.darkLabel2.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            // 
+            // darkLabel1
+            // 
+            this.darkLabel1.AutoSize = true;
+            this.darkLabel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.darkLabel1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.darkLabel1.Location = new System.Drawing.Point(3, 207);
+            this.darkLabel1.Name = "darkLabel1";
+            this.darkLabel1.Size = new System.Drawing.Size(244, 20);
+            this.darkLabel1.TabIndex = 10;
+            this.darkLabel1.Text = "Drill (A)";
+            this.darkLabel1.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            // 
+            // LabSysVoltage
+            // 
+            this.LabSysVoltage.AutoSize = true;
+            this.LabSysVoltage.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.LabSysVoltage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.LabSysVoltage.Location = new System.Drawing.Point(3, 0);
+            this.LabSysVoltage.Name = "LabSysVoltage";
+            this.LabSysVoltage.Size = new System.Drawing.Size(244, 20);
+            this.LabSysVoltage.TabIndex = 9;
+            this.LabSysVoltage.Text = "Supply (V)";
+            this.LabSysVoltage.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            // 
+            // GaugeRailCurrent
+            // 
+            this.GaugeRailCurrent.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.GaugeRailCurrent.Location = new System.Drawing.Point(253, 230);
+            this.GaugeRailCurrent.Name = "GaugeRailCurrent";
+            this.GaugeRailCurrent.Size = new System.Drawing.Size(244, 182);
+            this.GaugeRailCurrent.TabIndex = 7;
+            this.GaugeRailCurrent.Text = "angularGauge1";
+            // 
+            // GaugeDrillCurrent
+            // 
+            this.GaugeDrillCurrent.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.GaugeDrillCurrent.Location = new System.Drawing.Point(3, 230);
+            this.GaugeDrillCurrent.Name = "GaugeDrillCurrent";
+            this.GaugeDrillCurrent.Size = new System.Drawing.Size(244, 182);
+            this.GaugeDrillCurrent.TabIndex = 6;
+            this.GaugeDrillCurrent.Text = "angularGauge1";
+            // 
+            // GaugeSysCurrent
+            // 
+            this.GaugeSysCurrent.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.GaugeSysCurrent.Location = new System.Drawing.Point(253, 23);
+            this.GaugeSysCurrent.Name = "GaugeSysCurrent";
+            this.GaugeSysCurrent.Size = new System.Drawing.Size(244, 181);
+            this.GaugeSysCurrent.TabIndex = 5;
+            this.GaugeSysCurrent.Text = "angularGauge1";
+            // 
+            // GaugeSysVoltage
+            // 
+            this.GaugeSysVoltage.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.GaugeSysVoltage.ForeColor = System.Drawing.Color.White;
+            this.GaugeSysVoltage.Location = new System.Drawing.Point(3, 23);
+            this.GaugeSysVoltage.Name = "GaugeSysVoltage";
+            this.GaugeSysVoltage.Size = new System.Drawing.Size(244, 181);
+            this.GaugeSysVoltage.TabIndex = 4;
+            this.GaugeSysVoltage.Text = "angularGauge1";
+            // 
+            // tableLayoutPanel7
+            // 
+            this.tableLayoutPanel7.ColumnCount = 3;
+            this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel7.Controls.Add(this.groupBox4, 0, 0);
+            this.tableLayoutPanel7.Controls.Add(this.groupBox2, 2, 0);
+            this.tableLayoutPanel7.Controls.Add(this.groupBox3, 2, 1);
+            this.tableLayoutPanel7.Controls.Add(this.ChartClearRight, 1, 3);
+            this.tableLayoutPanel7.Controls.Add(this.ChartClearLeft, 0, 3);
+            this.tableLayoutPanel7.Controls.Add(this.ChartDataChooser, 0, 1);
+            this.tableLayoutPanel7.Controls.Add(this.ChartAddLeft, 0, 2);
+            this.tableLayoutPanel7.Controls.Add(this.ChartAddRight, 1, 2);
+            this.tableLayoutPanel7.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel7.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel7.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanel7.Name = "tableLayoutPanel7";
+            this.tableLayoutPanel7.RowCount = 4;
+            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 30F));
+            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 70F));
+            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
+            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
+            this.tableLayoutPanel7.Size = new System.Drawing.Size(500, 415);
+            this.tableLayoutPanel7.TabIndex = 2;
+            // 
+            // groupBox4
+            // 
+            this.tableLayoutPanel7.SetColumnSpan(this.groupBox4, 2);
+            this.groupBox4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox4.ForeColor = System.Drawing.Color.White;
+            this.groupBox4.Location = new System.Drawing.Point(3, 3);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(244, 104);
+            this.groupBox4.TabIndex = 9;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Sample";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.tableLayoutPanel8);
+            this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox2.ForeColor = System.Drawing.Color.White;
+            this.groupBox2.Location = new System.Drawing.Point(253, 3);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(244, 104);
+            this.groupBox2.TabIndex = 1;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Drill";
+            // 
+            // tableLayoutPanel8
+            // 
+            this.tableLayoutPanel8.ColumnCount = 2;
+            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel8.Controls.Add(this.DrillSpeed, 0, 0);
+            this.tableLayoutPanel8.Controls.Add(this.DrillToggle, 1, 2);
+            this.tableLayoutPanel8.Controls.Add(this.DrillReverse, 0, 2);
+            this.tableLayoutPanel8.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel8.Location = new System.Drawing.Point(3, 16);
+            this.tableLayoutPanel8.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanel8.Name = "tableLayoutPanel8";
+            this.tableLayoutPanel8.RowCount = 3;
+            this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
+            this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
+            this.tableLayoutPanel8.Size = new System.Drawing.Size(238, 85);
+            this.tableLayoutPanel8.TabIndex = 1;
+            // 
+            // DrillSpeed
+            // 
+            this.DrillSpeed.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanel8.SetColumnSpan(this.DrillSpeed, 2);
+            this.DrillSpeed.Location = new System.Drawing.Point(3, 3);
+            this.DrillSpeed.Maximum = 100;
+            this.DrillSpeed.Name = "DrillSpeed";
+            this.DrillSpeed.Size = new System.Drawing.Size(232, 29);
+            this.DrillSpeed.TabIndex = 0;
+            this.DrillSpeed.TickFrequency = 10;
+            this.DrillSpeed.TickStyle = System.Windows.Forms.TickStyle.Both;
+            this.DrillSpeed.ValueChanged += new System.EventHandler(this.trackBar1_ValueChanged);
+            // 
+            // DrillToggle
+            // 
+            this.DrillToggle.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.DrillToggle.Location = new System.Drawing.Point(120, 61);
+            this.DrillToggle.Margin = new System.Windows.Forms.Padding(1);
+            this.DrillToggle.Name = "DrillToggle";
+            this.DrillToggle.Padding = new System.Windows.Forms.Padding(5);
+            this.DrillToggle.Size = new System.Drawing.Size(117, 23);
+            this.DrillToggle.TabIndex = 1;
+            this.DrillToggle.Text = "START";
+            this.DrillToggle.Click += new System.EventHandler(this.darkButton1_Click);
+            // 
+            // DrillReverse
+            // 
+            this.DrillReverse.AutoSize = true;
+            this.DrillReverse.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.DrillReverse.Location = new System.Drawing.Point(3, 63);
+            this.DrillReverse.Name = "DrillReverse";
+            this.DrillReverse.Size = new System.Drawing.Size(113, 19);
+            this.DrillReverse.TabIndex = 2;
+            this.DrillReverse.Text = "Reverse";
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.tableLayoutPanel9);
+            this.groupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox3.ForeColor = System.Drawing.Color.White;
+            this.groupBox3.Location = new System.Drawing.Point(253, 113);
+            this.groupBox3.Name = "groupBox3";
+            this.tableLayoutPanel7.SetRowSpan(this.groupBox3, 3);
+            this.groupBox3.Size = new System.Drawing.Size(244, 299);
+            this.groupBox3.TabIndex = 2;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Rail";
+            // 
+            // tableLayoutPanel9
+            // 
+            this.tableLayoutPanel9.ColumnCount = 2;
+            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40F));
+            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 60F));
+            this.tableLayoutPanel9.Controls.Add(this.trackBar2, 0, 0);
+            this.tableLayoutPanel9.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel9.Location = new System.Drawing.Point(3, 16);
+            this.tableLayoutPanel9.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanel9.Name = "tableLayoutPanel9";
+            this.tableLayoutPanel9.RowCount = 6;
+            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
+            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
+            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
+            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
+            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
+            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
+            this.tableLayoutPanel9.Size = new System.Drawing.Size(238, 280);
+            this.tableLayoutPanel9.TabIndex = 1;
+            // 
+            // trackBar2
+            // 
+            this.trackBar2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.trackBar2.Location = new System.Drawing.Point(3, 3);
+            this.trackBar2.Name = "trackBar2";
+            this.trackBar2.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tableLayoutPanel9.SetRowSpan(this.trackBar2, 6);
+            this.trackBar2.Size = new System.Drawing.Size(45, 274);
+            this.trackBar2.TabIndex = 0;
+            // 
+            // ChartClearRight
+            // 
+            this.ChartClearRight.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ChartClearRight.Location = new System.Drawing.Point(127, 392);
+            this.ChartClearRight.Margin = new System.Windows.Forms.Padding(2, 1, 5, 1);
+            this.ChartClearRight.Name = "ChartClearRight";
+            this.ChartClearRight.Padding = new System.Windows.Forms.Padding(5);
+            this.ChartClearRight.Size = new System.Drawing.Size(118, 22);
+            this.ChartClearRight.TabIndex = 7;
+            this.ChartClearRight.Text = "Clear Right";
+            this.ChartClearRight.Click += new System.EventHandler(this.ChartClearRight_Click);
+            // 
+            // ChartClearLeft
+            // 
+            this.ChartClearLeft.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ChartClearLeft.Location = new System.Drawing.Point(5, 392);
+            this.ChartClearLeft.Margin = new System.Windows.Forms.Padding(5, 1, 2, 1);
+            this.ChartClearLeft.Name = "ChartClearLeft";
+            this.ChartClearLeft.Padding = new System.Windows.Forms.Padding(5);
+            this.ChartClearLeft.Size = new System.Drawing.Size(118, 22);
+            this.ChartClearLeft.TabIndex = 8;
+            this.ChartClearLeft.Text = "Clear Left";
+            this.ChartClearLeft.Click += new System.EventHandler(this.ChartClearLeft_Click);
+            // 
+            // ChartDataChooser
+            // 
+            this.ChartDataChooser.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.tableLayoutPanel7.SetColumnSpan(this.ChartDataChooser, 2);
+            this.ChartDataChooser.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ChartDataChooser.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.ChartDataChooser.Location = new System.Drawing.Point(3, 119);
+            this.ChartDataChooser.Margin = new System.Windows.Forms.Padding(3, 9, 3, 1);
+            this.ChartDataChooser.Name = "ChartDataChooser";
+            this.ChartDataChooser.Size = new System.Drawing.Size(244, 248);
+            this.ChartDataChooser.TabIndex = 10;
+            this.ChartDataChooser.UseCompatibleStateImageBehavior = false;
+            this.ChartDataChooser.View = System.Windows.Forms.View.List;
+            // 
+            // ChartAddLeft
+            // 
+            this.ChartAddLeft.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ChartAddLeft.Location = new System.Drawing.Point(5, 369);
+            this.ChartAddLeft.Margin = new System.Windows.Forms.Padding(5, 1, 2, 1);
+            this.ChartAddLeft.Name = "ChartAddLeft";
+            this.ChartAddLeft.Padding = new System.Windows.Forms.Padding(5);
+            this.ChartAddLeft.Size = new System.Drawing.Size(118, 21);
+            this.ChartAddLeft.TabIndex = 11;
+            this.ChartAddLeft.Text = "Add Left";
+            this.ChartAddLeft.Click += new System.EventHandler(this.ChartAddLeft_Click);
+            // 
+            // ChartAddRight
+            // 
+            this.ChartAddRight.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ChartAddRight.Location = new System.Drawing.Point(127, 369);
+            this.ChartAddRight.Margin = new System.Windows.Forms.Padding(2, 1, 5, 1);
+            this.ChartAddRight.Name = "ChartAddRight";
+            this.ChartAddRight.Padding = new System.Windows.Forms.Padding(5);
+            this.ChartAddRight.Size = new System.Drawing.Size(118, 21);
+            this.ChartAddRight.TabIndex = 12;
+            this.ChartAddRight.Text = "Add Right";
+            this.ChartAddRight.Click += new System.EventHandler(this.ChartAddRight_Click);
             // 
             // Debugging
             // 
@@ -129,7 +530,7 @@
             this.Debugging.Location = new System.Drawing.Point(4, 22);
             this.Debugging.Margin = new System.Windows.Forms.Padding(0);
             this.Debugging.Name = "Debugging";
-            this.Debugging.Size = new System.Drawing.Size(776, 496);
+            this.Debugging.Size = new System.Drawing.Size(1000, 664);
             this.Debugging.TabIndex = 1;
             this.Debugging.Text = "Debugging";
             // 
@@ -150,7 +551,7 @@
             this.DebugList.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.DebugList.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.DebugList.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.DebugList.Size = new System.Drawing.Size(776, 496);
+            this.DebugList.Size = new System.Drawing.Size(1000, 664);
             this.DebugList.TabIndex = 0;
             // 
             // PacketGenBox
@@ -162,7 +563,7 @@
             this.PacketGenBox.Margin = new System.Windows.Forms.Padding(5);
             this.PacketGenBox.MinimumSize = new System.Drawing.Size(0, 100);
             this.PacketGenBox.Name = "PacketGenBox";
-            this.PacketGenBox.Size = new System.Drawing.Size(766, 114);
+            this.PacketGenBox.Size = new System.Drawing.Size(990, 156);
             this.PacketGenBox.TabIndex = 1;
             this.PacketGenBox.TabStop = false;
             this.PacketGenBox.Text = "Packet Builder";
@@ -173,7 +574,7 @@
             this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15F));
             this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 65F));
-            this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 153F));
+            this.PacketGenLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 164F));
             this.PacketGenLayout.Controls.Add(this.TimestampTitle, 0, 0);
             this.PacketGenLayout.Controls.Add(this.IDTitle, 1, 0);
             this.PacketGenLayout.Controls.Add(this.IDTextbox, 1, 1);
@@ -194,7 +595,7 @@
             this.PacketGenLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.PacketGenLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.PacketGenLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.PacketGenLayout.Size = new System.Drawing.Size(760, 95);
+            this.PacketGenLayout.Size = new System.Drawing.Size(984, 137);
             this.PacketGenLayout.TabIndex = 0;
             // 
             // TimestampTitle
@@ -204,7 +605,7 @@
             this.TimestampTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.TimestampTitle.Location = new System.Drawing.Point(3, 0);
             this.TimestampTitle.Name = "TimestampTitle";
-            this.TimestampTitle.Size = new System.Drawing.Size(115, 17);
+            this.TimestampTitle.Size = new System.Drawing.Size(158, 17);
             this.TimestampTitle.TabIndex = 0;
             this.TimestampTitle.Text = "Timestamp";
             // 
@@ -213,9 +614,9 @@
             this.IDTitle.AutoSize = true;
             this.IDTitle.Dock = System.Windows.Forms.DockStyle.Fill;
             this.IDTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.IDTitle.Location = new System.Drawing.Point(124, 0);
+            this.IDTitle.Location = new System.Drawing.Point(167, 0);
             this.IDTitle.Name = "IDTitle";
-            this.IDTitle.Size = new System.Drawing.Size(85, 17);
+            this.IDTitle.Size = new System.Drawing.Size(117, 17);
             this.IDTitle.TabIndex = 2;
             this.IDTitle.Text = "ID";
             // 
@@ -226,9 +627,9 @@
             this.IDTextbox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.IDTextbox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.IDTextbox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.IDTextbox.Location = new System.Drawing.Point(124, 20);
+            this.IDTextbox.Location = new System.Drawing.Point(167, 20);
             this.IDTextbox.Name = "IDTextbox";
-            this.IDTextbox.Size = new System.Drawing.Size(85, 20);
+            this.IDTextbox.Size = new System.Drawing.Size(117, 20);
             this.IDTextbox.TabIndex = 3;
             this.IDTextbox.TextChanged += new System.EventHandler(this.IDTextbox_TextChanged);
             // 
@@ -239,9 +640,9 @@
             this.DataTextbox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.DataTextbox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.DataTextbox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.DataTextbox.Location = new System.Drawing.Point(215, 20);
+            this.DataTextbox.Location = new System.Drawing.Point(290, 20);
             this.DataTextbox.Name = "DataTextbox";
-            this.DataTextbox.Size = new System.Drawing.Size(388, 20);
+            this.DataTextbox.Size = new System.Drawing.Size(527, 20);
             this.DataTextbox.TabIndex = 4;
             this.DataTextbox.TextChanged += new System.EventHandler(this.DataTextbox_TextChanged);
             // 
@@ -250,9 +651,9 @@
             this.DataTitle.AutoSize = true;
             this.DataTitle.Dock = System.Windows.Forms.DockStyle.Fill;
             this.DataTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.DataTitle.Location = new System.Drawing.Point(215, 0);
+            this.DataTitle.Location = new System.Drawing.Point(290, 0);
             this.DataTitle.Name = "DataTitle";
-            this.DataTitle.Size = new System.Drawing.Size(388, 17);
+            this.DataTitle.Size = new System.Drawing.Size(527, 17);
             this.DataTitle.TabIndex = 5;
             this.DataTitle.Text = "Data";
             // 
@@ -269,7 +670,7 @@
             this.tableLayoutPanel2.RowCount = 2;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(121, 65);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(164, 107);
             this.tableLayoutPanel2.TabIndex = 7;
             // 
             // UseCurrentTime
@@ -291,7 +692,7 @@
             this.TimestampTextbox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.TimestampTextbox.Location = new System.Drawing.Point(3, 3);
             this.TimestampTextbox.Name = "TimestampTextbox";
-            this.TimestampTextbox.Size = new System.Drawing.Size(115, 20);
+            this.TimestampTextbox.Size = new System.Drawing.Size(158, 20);
             this.TimestampTextbox.TabIndex = 2;
             this.TimestampTextbox.TextChanged += new System.EventHandler(this.TimestampTextbox_TextChanged);
             // 
@@ -300,9 +701,9 @@
             this.InterpretationTimestamp.AutoSize = true;
             this.InterpretationTimestamp.Dock = System.Windows.Forms.DockStyle.Fill;
             this.InterpretationTimestamp.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.InterpretationTimestamp.Location = new System.Drawing.Point(3, 82);
+            this.InterpretationTimestamp.Location = new System.Drawing.Point(3, 124);
             this.InterpretationTimestamp.Name = "InterpretationTimestamp";
-            this.InterpretationTimestamp.Size = new System.Drawing.Size(115, 13);
+            this.InterpretationTimestamp.Size = new System.Drawing.Size(158, 13);
             this.InterpretationTimestamp.TabIndex = 8;
             this.InterpretationTimestamp.Text = "Unknown";
             // 
@@ -311,9 +712,9 @@
             this.InterpretationID.AutoSize = true;
             this.InterpretationID.Dock = System.Windows.Forms.DockStyle.Fill;
             this.InterpretationID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.InterpretationID.Location = new System.Drawing.Point(124, 82);
+            this.InterpretationID.Location = new System.Drawing.Point(167, 124);
             this.InterpretationID.Name = "InterpretationID";
-            this.InterpretationID.Size = new System.Drawing.Size(85, 13);
+            this.InterpretationID.Size = new System.Drawing.Size(117, 13);
             this.InterpretationID.TabIndex = 9;
             this.InterpretationID.Text = "Unknown";
             // 
@@ -322,9 +723,9 @@
             this.InterpretationData.AutoSize = true;
             this.InterpretationData.Dock = System.Windows.Forms.DockStyle.Fill;
             this.InterpretationData.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.InterpretationData.Location = new System.Drawing.Point(215, 82);
+            this.InterpretationData.Location = new System.Drawing.Point(290, 124);
             this.InterpretationData.Name = "InterpretationData";
-            this.InterpretationData.Size = new System.Drawing.Size(388, 13);
+            this.InterpretationData.Size = new System.Drawing.Size(527, 13);
             this.InterpretationData.TabIndex = 10;
             this.InterpretationData.Text = "Unknown";
             // 
@@ -333,9 +734,9 @@
             this.PacketConstructStatus.AutoSize = true;
             this.PacketConstructStatus.Dock = System.Windows.Forms.DockStyle.Fill;
             this.PacketConstructStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.PacketConstructStatus.Location = new System.Drawing.Point(609, 82);
+            this.PacketConstructStatus.Location = new System.Drawing.Point(823, 124);
             this.PacketConstructStatus.Name = "PacketConstructStatus";
-            this.PacketConstructStatus.Size = new System.Drawing.Size(148, 13);
+            this.PacketConstructStatus.Size = new System.Drawing.Size(158, 13);
             this.PacketConstructStatus.TabIndex = 11;
             this.PacketConstructStatus.Text = "Unknown";
             // 
@@ -347,23 +748,23 @@
             this.tableLayoutPanel3.Controls.Add(this.SendPacketBtn, 0, 1);
             this.tableLayoutPanel3.Controls.Add(this.ClientSelector, 0, 0);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(606, 17);
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(820, 17);
             this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.RowCount = 2;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(154, 65);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(164, 107);
             this.tableLayoutPanel3.TabIndex = 12;
             // 
             // SendPacketBtn
             // 
             this.SendPacketBtn.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.SendPacketBtn.Location = new System.Drawing.Point(3, 35);
+            this.SendPacketBtn.Location = new System.Drawing.Point(3, 56);
             this.SendPacketBtn.Name = "SendPacketBtn";
             this.SendPacketBtn.Padding = new System.Windows.Forms.Padding(5);
-            this.SendPacketBtn.Size = new System.Drawing.Size(148, 25);
+            this.SendPacketBtn.Size = new System.Drawing.Size(158, 25);
             this.SendPacketBtn.TabIndex = 5;
             this.SendPacketBtn.Text = "Send";
             this.SendPacketBtn.Click += new System.EventHandler(this.SendPacketBtn_Click);
@@ -375,7 +776,7 @@
             this.ClientSelector.FormattingEnabled = true;
             this.ClientSelector.Location = new System.Drawing.Point(3, 3);
             this.ClientSelector.Name = "ClientSelector";
-            this.ClientSelector.Size = new System.Drawing.Size(148, 21);
+            this.ClientSelector.Size = new System.Drawing.Size(158, 21);
             this.ClientSelector.TabIndex = 6;
             // 
             // SendAsUDP
@@ -383,7 +784,7 @@
             this.SendAsUDP.AutoSize = true;
             this.SendAsUDP.Checked = true;
             this.SendAsUDP.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.SendAsUDP.Location = new System.Drawing.Point(609, 0);
+            this.SendAsUDP.Location = new System.Drawing.Point(823, 0);
             this.SendAsUDP.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
             this.SendAsUDP.Name = "SendAsUDP";
             this.SendAsUDP.Size = new System.Drawing.Size(49, 17);
@@ -396,10 +797,10 @@
             this.groupBox1.Controls.Add(this.tableLayoutPanel4);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.ForeColor = System.Drawing.Color.Gainsboro;
-            this.groupBox1.Location = new System.Drawing.Point(5, 129);
+            this.groupBox1.Location = new System.Drawing.Point(5, 171);
             this.groupBox1.Margin = new System.Windows.Forms.Padding(5);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(766, 114);
+            this.groupBox1.Size = new System.Drawing.Size(990, 156);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Base Status";
@@ -421,7 +822,7 @@
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(760, 95);
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(984, 137);
             this.tableLayoutPanel4.TabIndex = 0;
             // 
             // StatsPacketQueueOut
@@ -431,7 +832,7 @@
             this.StatsPacketQueueOut.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.StatsPacketQueueOut.Location = new System.Drawing.Point(3, 0);
             this.StatsPacketQueueOut.Name = "StatsPacketQueueOut";
-            this.StatsPacketQueueOut.Size = new System.Drawing.Size(184, 31);
+            this.StatsPacketQueueOut.Size = new System.Drawing.Size(240, 45);
             this.StatsPacketQueueOut.TabIndex = 0;
             this.StatsPacketQueueOut.Text = "Packet Queue Out: N/A";
             this.StatsPacketQueueOut.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -441,9 +842,9 @@
             this.StatsPacketQueueIn.AutoSize = true;
             this.StatsPacketQueueIn.Dock = System.Windows.Forms.DockStyle.Fill;
             this.StatsPacketQueueIn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.StatsPacketQueueIn.Location = new System.Drawing.Point(3, 31);
+            this.StatsPacketQueueIn.Location = new System.Drawing.Point(3, 45);
             this.StatsPacketQueueIn.Name = "StatsPacketQueueIn";
-            this.StatsPacketQueueIn.Size = new System.Drawing.Size(184, 31);
+            this.StatsPacketQueueIn.Size = new System.Drawing.Size(240, 45);
             this.StatsPacketQueueIn.TabIndex = 1;
             this.StatsPacketQueueIn.Text = "Packet Queue In: N/A";
             this.StatsPacketQueueIn.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -454,7 +855,7 @@
             this.EmergencyStopBtn.Dock = System.Windows.Forms.DockStyle.Fill;
             this.EmergencyStopBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.EmergencyStopBtn.ForeColor = System.Drawing.Color.White;
-            this.EmergencyStopBtn.Location = new System.Drawing.Point(320, 525);
+            this.EmergencyStopBtn.Location = new System.Drawing.Point(432, 693);
             this.EmergencyStopBtn.Name = "EmergencyStopBtn";
             this.EmergencyStopBtn.Padding = new System.Windows.Forms.Padding(5);
             this.EmergencyStopBtn.Size = new System.Drawing.Size(144, 33);
@@ -462,6 +863,60 @@
             this.EmergencyStopBtn.Text = "EMERGENCY STOP";
             this.EmergencyStopBtn.UseVisualStyleBackColor = false;
             this.EmergencyStopBtn.Click += new System.EventHandler(this.EmergencyStopClick);
+            // 
+            // tableLayoutPanel6
+            // 
+            this.tableLayoutPanel6.ColumnCount = 4;
+            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 40F));
+            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 40F));
+            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 40F));
+            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel6.Controls.Add(this.StatusImgNetwork, 0, 0);
+            this.tableLayoutPanel6.Controls.Add(this.StatusImgPower, 1, 0);
+            this.tableLayoutPanel6.Controls.Add(this.StatusImgSystem, 2, 0);
+            this.tableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel6.Location = new System.Drawing.Point(2, 692);
+            this.tableLayoutPanel6.Margin = new System.Windows.Forms.Padding(2);
+            this.tableLayoutPanel6.Name = "tableLayoutPanel6";
+            this.tableLayoutPanel6.RowCount = 1;
+            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel6.Size = new System.Drawing.Size(425, 35);
+            this.tableLayoutPanel6.TabIndex = 1000;
+            // 
+            // StatusImgNetwork
+            // 
+            this.StatusImgNetwork.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.StatusImgNetwork.Image = global::Science_Base.Properties.Resources.Network;
+            this.StatusImgNetwork.Location = new System.Drawing.Point(1, 1);
+            this.StatusImgNetwork.Margin = new System.Windows.Forms.Padding(1);
+            this.StatusImgNetwork.Name = "StatusImgNetwork";
+            this.StatusImgNetwork.Size = new System.Drawing.Size(38, 33);
+            this.StatusImgNetwork.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.StatusImgNetwork.TabIndex = 0;
+            this.StatusImgNetwork.TabStop = false;
+            // 
+            // StatusImgPower
+            // 
+            this.StatusImgPower.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.StatusImgPower.Image = global::Science_Base.Properties.Resources.Power;
+            this.StatusImgPower.Location = new System.Drawing.Point(41, 1);
+            this.StatusImgPower.Margin = new System.Windows.Forms.Padding(1);
+            this.StatusImgPower.Name = "StatusImgPower";
+            this.StatusImgPower.Size = new System.Drawing.Size(38, 33);
+            this.StatusImgPower.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.StatusImgPower.TabIndex = 1;
+            this.StatusImgPower.TabStop = false;
+            // 
+            // StatusImgSystem
+            // 
+            this.StatusImgSystem.Image = global::Science_Base.Properties.Resources.CPU;
+            this.StatusImgSystem.Location = new System.Drawing.Point(81, 1);
+            this.StatusImgSystem.Margin = new System.Windows.Forms.Padding(1);
+            this.StatusImgSystem.Name = "StatusImgSystem";
+            this.StatusImgSystem.Size = new System.Drawing.Size(38, 33);
+            this.StatusImgSystem.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.StatusImgSystem.TabIndex = 2;
+            this.StatusImgSystem.TabStop = false;
             // 
             // SecTimer
             // 
@@ -473,87 +928,11 @@
             this.UIUpdate.Interval = 33;
             this.UIUpdate.Tick += new System.EventHandler(this.UIUpdate_Tick);
             // 
-            // tableLayoutPanel5
-            // 
-            this.tableLayoutPanel5.ColumnCount = 2;
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel5.Controls.Add(this.GaugeTable, 1, 0);
-            this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel5.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel5.Margin = new System.Windows.Forms.Padding(0);
-            this.tableLayoutPanel5.Name = "tableLayoutPanel5";
-            this.tableLayoutPanel5.RowCount = 2;
-            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 62.5F));
-            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 37.5F));
-            this.tableLayoutPanel5.Size = new System.Drawing.Size(776, 496);
-            this.tableLayoutPanel5.TabIndex = 0;
-            // 
-            // GaugeTable
-            // 
-            this.GaugeTable.ColumnCount = 2;
-            this.GaugeTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.GaugeTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.GaugeTable.Controls.Add(this.aGauge1, 1, 0);
-            this.GaugeTable.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.GaugeTable.Location = new System.Drawing.Point(388, 0);
-            this.GaugeTable.Margin = new System.Windows.Forms.Padding(0);
-            this.GaugeTable.Name = "GaugeTable";
-            this.GaugeTable.RowCount = 3;
-            this.GaugeTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.GaugeTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.GaugeTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.GaugeTable.Size = new System.Drawing.Size(388, 310);
-            this.GaugeTable.TabIndex = 0;
-            // 
-            // aGauge1
-            // 
-            this.aGauge1.BaseArcColor = System.Drawing.Color.White;
-            this.aGauge1.BaseArcRadius = 80;
-            this.aGauge1.BaseArcStart = 190;
-            this.aGauge1.BaseArcSweep = 160;
-            this.aGauge1.BaseArcWidth = 3;
-            this.aGauge1.Center = new System.Drawing.Point(93, 100);
-            this.aGauge1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.aGauge1.Location = new System.Drawing.Point(197, 3);
-            this.aGauge1.MaxValue = 30F;
-            this.aGauge1.MinValue = 0F;
-            this.aGauge1.Name = "aGauge1";
-            this.aGauge1.NeedleColor1 = System.Windows.Forms.AGaugeNeedleColor.Gray;
-            this.aGauge1.NeedleColor2 = System.Drawing.Color.DimGray;
-            this.aGauge1.NeedleRadius = 80;
-            this.aGauge1.NeedleType = System.Windows.Forms.NeedleType.Advance;
-            this.aGauge1.NeedleWidth = 2;
-            this.aGauge1.ScaleLinesInterColor = System.Drawing.Color.White;
-            this.aGauge1.ScaleLinesInterInnerRadius = 73;
-            this.aGauge1.ScaleLinesInterOuterRadius = 80;
-            this.aGauge1.ScaleLinesInterWidth = 1;
-            this.aGauge1.ScaleLinesMajorColor = System.Drawing.Color.White;
-            this.aGauge1.ScaleLinesMajorInnerRadius = 70;
-            this.aGauge1.ScaleLinesMajorOuterRadius = 80;
-            this.aGauge1.ScaleLinesMajorStepValue = 5F;
-            this.aGauge1.ScaleLinesMajorWidth = 2;
-            this.aGauge1.ScaleLinesMinorColor = System.Drawing.Color.LightGray;
-            this.aGauge1.ScaleLinesMinorInnerRadius = 75;
-            this.aGauge1.ScaleLinesMinorOuterRadius = 80;
-            this.aGauge1.ScaleLinesMinorTicks = 9;
-            this.aGauge1.ScaleLinesMinorWidth = 1;
-            this.aGauge1.ScaleNumbersColor = System.Drawing.Color.White;
-            this.aGauge1.ScaleNumbersFormat = null;
-            this.aGauge1.ScaleNumbersRadius = 90;
-            this.aGauge1.ScaleNumbersRotation = 90;
-            this.aGauge1.ScaleNumbersStartScaleLine = 1;
-            this.aGauge1.ScaleNumbersStepScaleLines = 1;
-            this.aGauge1.Size = new System.Drawing.Size(188, 97);
-            this.aGauge1.TabIndex = 0;
-            this.aGauge1.Text = "aGauge1";
-            this.aGauge1.Value = 20F;
-            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(784, 561);
+            this.ClientSize = new System.Drawing.Size(1008, 729);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(540, 358);
@@ -563,6 +942,18 @@
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
             this.Control.ResumeLayout(false);
+            this.tableLayoutPanel5.ResumeLayout(false);
+            this.GaugeTable.ResumeLayout(false);
+            this.GaugeTable.PerformLayout();
+            this.tableLayoutPanel7.ResumeLayout(false);
+            this.groupBox2.ResumeLayout(false);
+            this.tableLayoutPanel8.ResumeLayout(false);
+            this.tableLayoutPanel8.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.DrillSpeed)).EndInit();
+            this.groupBox3.ResumeLayout(false);
+            this.tableLayoutPanel9.ResumeLayout(false);
+            this.tableLayoutPanel9.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();
             this.Debugging.ResumeLayout(false);
             this.DebugList.ResumeLayout(false);
             this.PacketGenBox.ResumeLayout(false);
@@ -574,8 +965,10 @@
             this.groupBox1.ResumeLayout(false);
             this.tableLayoutPanel4.ResumeLayout(false);
             this.tableLayoutPanel4.PerformLayout();
-            this.tableLayoutPanel5.ResumeLayout(false);
-            this.GaugeTable.ResumeLayout(false);
+            this.tableLayoutPanel6.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.StatusImgNetwork)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.StatusImgPower)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.StatusImgSystem)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -614,6 +1007,34 @@
         private System.Windows.Forms.CheckBox SendAsUDP;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;
         private System.Windows.Forms.TableLayoutPanel GaugeTable;
-        private System.Windows.Forms.AGauge aGauge1;
+        private LiveCharts.WinForms.AngularGauge GaugeRailCurrent;
+        private LiveCharts.WinForms.AngularGauge GaugeDrillCurrent;
+        private LiveCharts.WinForms.AngularGauge GaugeSysCurrent;
+        private LiveCharts.WinForms.AngularGauge GaugeSysVoltage;
+        private DarkUI.Controls.DarkLabel darkLabel3;
+        private DarkUI.Controls.DarkLabel darkLabel2;
+        private DarkUI.Controls.DarkLabel darkLabel1;
+        private DarkUI.Controls.DarkLabel LabSysVoltage;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel6;
+        private System.Windows.Forms.PictureBox StatusImgNetwork;
+        private System.Windows.Forms.PictureBox StatusImgPower;
+        private System.Windows.Forms.PictureBox StatusImgSystem;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel7;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private LiveCharts.WinForms.CartesianChart ChartRight;
+        private LiveCharts.WinForms.CartesianChart ChartLeft;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel9;
+        private System.Windows.Forms.TrackBar trackBar2;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel8;
+        private System.Windows.Forms.TrackBar DrillSpeed;
+        private DarkUI.Controls.DarkButton DrillToggle;
+        private DarkUI.Controls.DarkCheckBox DrillReverse;
+        private DarkUI.Controls.DarkButton ChartClearRight;
+        private DarkUI.Controls.DarkButton ChartClearLeft;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.ListView ChartDataChooser;
+        private DarkUI.Controls.DarkButton ChartAddLeft;
+        private DarkUI.Controls.DarkButton ChartAddRight;
     }
 }
