@@ -3,3 +3,5 @@
 
 #Ignore binaries
 Libraries/
+
+packages/
