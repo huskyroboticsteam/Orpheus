@@ -6,13 +6,14 @@
              xmlns:local="clr-namespace:HuskyRobotics.UI"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
-    <Canvas ClipToBounds="True">
+    <Canvas x:Name="OuterCanvas" ClipToBounds="True"
+            MouseLeftButtonDown="CanvasMouseButtonDown"
+            MouseLeftButtonUp="CanvasMouseButtonUp"
+            MouseMove="CanvasMouseMove"
+            MouseWheel="CanvasMouseWheel">
         <Canvas
-                x:Name="MapCanvas"
-                MouseLeftButtonDown="CanvasMouseButtonDown"
-                MouseLeftButtonUp="CanvasMouseButtonUp"
-                MouseMove="CanvasMouseMove"
-                MouseWheel="CanvasMouseWheel">
+                x:Name="MapCanvas">
         </Canvas>
+        <Button x:Name="ResetButton" Margin="10" Content="Reset Map" Padding="5" Click="ResetButton_Click"/>
     </Canvas>
 </UserControl>
