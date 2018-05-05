@@ -1,54 +1,45 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Net;
 using System.Threading;
-using BBBCSIO;
 using Scarlet.Communications;
-using Scarlet.Components;
-using Scarlet.Components.Motors;
-using Scarlet.Components.Sensors;
-using Scarlet.Filters;
-using Scarlet.IO;
-using Scarlet.IO.BeagleBone;
-using Scarlet.IO.RaspberryPi;
-using Scarlet.Science;
 using Scarlet.Utilities;
-using Science.Systems;
+using Science.Library;
 
 namespace Science
 {
 	class RoverMain
 	{
         public static IOHandler IOHandler { get; private set; }
-        private static string IP = Constants.DEFAULT_SERVER_IP;
-        private static int PortTCP = Constants.DEFAULT_PORT_TCP;
-        private static int PortUDP = Constants.DEFAULT_PORT_UDP;
-        private static BBBPinManager.ApplicationMode ApplyDevTree = BBBPinManager.ApplicationMode.APPLY_IF_NONE;
+        private static string IP = ScienceConstants.DEFAULT_SERVER_IP;
+        private static int PortTCP = ScienceConstants.DEFAULT_PORT_TCP;
+        private static int PortUDP = ScienceConstants.DEFAULT_PORT_UDP;
+
         private static Log.Severity LogLevel = Log.Severity.INFO;
 
         static void Main(string[] Args)
 		{
             ParseArgs(Args);
-            StateStore.Start("SciRover");
-            Log.SetGlobalOutputLevel(Log.Severity.DEBUG);
+            StateStore.Start(ScienceConstants.CLIENT_NAME);
+            Log.SetGlobalOutputLevel(LogLevel);
             //Log.SetSingleOutputLevel(Log.Source.NETWORK, Log.Severity.DEBUG);
             Log.ErrorCodes = ScienceErrors.ERROR_CODES;
             Log.SystemNames = ScienceErrors.SYSTEMS;
+            Log.Destination = Log.WriteDestination.ALL;
             Log.Begin();
             Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Science Station - Rover Side");
-            Client.Start(IP, PortTCP, PortUDP, "SciRover");
-            BeagleBone.Initialize(SystemMode.DEFAULT, true);
+            Client.Start(IP, PortTCP, PortUDP, ScienceConstants.CLIENT_NAME);
+            PacketHandler Handler = new PacketHandler();
+            //BeagleBone.Initialize(SystemMode.DEFAULT, true);
 
             IOHandler = new IOHandler();
-            IOHandler.InitializeSystems(ApplyDevTree);
-            ((Turntable)IOHandler.TurntableController).TargetAngle = 50;
+            IOHandler.InitializeSystems();
+            //((Turntable)IOHandler.TurntableController).TargetAngle = 50;
 
             while (Console.KeyAvailable) { Console.ReadKey(); } // Clear previous keypresses
             Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Press any key to exit.");
 
             while (!Console.KeyAvailable)
             {
-                IOHandler.UpdateStates();
+                //IOHandler.UpdateStates();
                 Thread.Sleep(20);
             }
             Environment.Exit(0);
@@ -82,15 +73,15 @@ namespace Science
                     Console.WriteLine("  -s|--server <IP> : Connects to the given server instead of the default.");
                     Console.WriteLine("  -pt|--port-tcp <Port> : Connects to the server via TCP using the given port instead of the default.");
                     Console.WriteLine("  -pu|--port-udp <Port> : Connects to the server via UDP using the given port instead of the default.");
-                    Console.WriteLine(" Device Tree (BBB):");
+                    /*Console.WriteLine(" Device Tree (BBB):");
                     Console.WriteLine("  --no-dt : Do not attempt to remove/add device tree overlays.");
                     Console.WriteLine("  --replace-dt : Remove all Scarlet DT overlays, then apply the new one. DANGEROUS!");
-                    Console.WriteLine("  --add-dt : Add device tree overlay even if there is one already.");
+                    Console.WriteLine("  --add-dt : Add device tree overlay even if there is one already.");*/
                 }
-                if(Args[i] == "--no-dt") { ApplyDevTree = BBBPinManager.ApplicationMode.NO_CHANGES; }
+                /*if(Args[i] == "--no-dt") { ApplyDevTree = BBBPinManager.ApplicationMode.NO_CHANGES; }
                 if(Args[i] == "--replace-dt") { ApplyDevTree = BBBPinManager.ApplicationMode.REMOVE_AND_APPLY; }
-                if(Args[i] == "--add-dt") { ApplyDevTree = BBBPinManager.ApplicationMode.APPLY_REGARDLESS; }
+                if(Args[i] == "--add-dt") { ApplyDevTree = BBBPinManager.ApplicationMode.APPLY_REGARDLESS; }*/
             }
         }
-	}
+    }
 }
