@@ -62,8 +62,13 @@ namespace HuskyRobotics.UI
         private void initMapFiles()
         {
             _mapSets.Clear();
+            string imageFolderPath = Directory.GetCurrentDirectory() + @"\Images";
+            if (!Directory.Exists(imageFolderPath))
+            {
+                Directory.CreateDirectory(imageFolderPath);
+            }
             string[] files = Directory.GetFiles
-                (Directory.GetCurrentDirectory() + @"\Images", "*.map");
+                (imageFolderPath, "*.map");
             foreach (string file in files)
             {
                 _mapSets.Add(System.IO.Path.GetFileName(file));
