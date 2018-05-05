@@ -2,9 +2,10 @@
 .DS_Store
 *.userprefs
 
-#Don't include compiled binaries
+#Don't include compiled binaries/libraries
 bin/
 obj/
+lib/
 
 #Don't include auto-downloaded packages
 packages
@@ -12,3 +13,5 @@ packages
 #Don't include visual studio metadata
 .vs/
 *.csproj.user
+*.suo
+*.pdb

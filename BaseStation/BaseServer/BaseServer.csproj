@@ -11,6 +11,7 @@
     <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -36,11 +37,18 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseServer.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="BBBCSIO, Version=1.6.0.0, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\HuskyRobotics.Scarlet.0.3.1\lib\BBBCSIO.dll</HintPath>
+    </Reference>
+    <Reference Include="Scarlet, Version=0.3.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HuskyRobotics.Scarlet.0.3.1\lib\Scarlet.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
