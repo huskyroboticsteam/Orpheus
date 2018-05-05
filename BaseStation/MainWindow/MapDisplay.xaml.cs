@@ -21,6 +21,7 @@ namespace HuskyRobotics.UI
     /// </summary>
     public partial class MapDisplay : UserControl
     {
+        private const double RESET_PADDING = 10;
         public MapDisplay()
         {
             InitializeComponent();
@@ -58,7 +59,7 @@ namespace HuskyRobotics.UI
 
         // adds an image to the canvas with the given file location and the coords of where
         // on the canvas it goes
-        private void AddImage(String location, int x, int y, int width, int height)
+        private void AddImage   (String location, int x, int y, int width, int height)
         {
             var uri = new Uri(location, UriKind.Absolute);
             var bitmap = new BitmapImage(uri);
@@ -111,6 +112,11 @@ namespace HuskyRobotics.UI
             var matrix = MapCanvas.RenderTransform.Value;
             matrix.ScaleAtPrepend(scale, scale, position.X, position.Y);
             MapCanvas.RenderTransform = new MatrixTransform(matrix);
+        }
+
+        private void ResetButton_Click(object sender, RoutedEventArgs e)
+        {
+            MapCanvas.RenderTransform = new MatrixTransform();
         }
     }
 }
