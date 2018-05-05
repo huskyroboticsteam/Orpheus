@@ -35,8 +35,8 @@ namespace HuskyRobotics.UI
                 Tuple<int, int> centerPoint = MapConversion.LatLongToPixelXY(config.Latitude,
                     config.Longitude, config.Zoom);
 
-                file.WriteLine(config.ImgWidth + "x" + config.ImgHeight + "|" + config.Zoom + "|"
-                    + config.Scale + "|" + config.MapType);
+                file.WriteLine(config.ImgWidth + "x" + config.ImgHeight + "|" + config.Latitude + ","
+                    + config.Longitude + "|" + config.Zoom + "|" + config.Scale + "|" + config.MapType);
 
                 // center of the tiling is 0,0
                 int startx = -config.TilingWidth / 2;
