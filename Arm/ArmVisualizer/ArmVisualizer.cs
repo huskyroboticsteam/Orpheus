@@ -67,8 +67,8 @@ namespace HuskyRobotics.Arm.Visualizer
         }
         private void MoveAndRedraw(object sender, MouseEventArgs e)
         {
-            setpoint = ScreenToModel(e.X, e.Y);
-            a.MoveTo(setpoint.Item1, setpoint.Item2, 0);
+            (float, float) tup = ScreenToModel(e.X, e.Y);
+            a.Setpoint = (tup.Item1, tup.Item2, 0);
             this.Invalidate();
         }
     }

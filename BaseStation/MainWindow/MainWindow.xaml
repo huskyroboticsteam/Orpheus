@@ -33,12 +33,14 @@
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="220" />
                         </Grid.ColumnDefinitions>
-                        <ui:RoverView Grid.Column="0"></ui:RoverView>
-                        <ui:ArmSideView x:Name="ArmSideViewer" Grid.Column="1"></ui:ArmSideView>
-                        <ui:ArmTopView x:Name="ArmTopViewer" Grid.Column="2"></ui:ArmTopView>
-                        <StackPanel Grid.Column="3" Orientation="Vertical">
+                        <ui:GamePadView Grid.Column="0" Margin="5"></ui:GamePadView>
+                        <ui:RoverView Grid.Column="1"></ui:RoverView>
+                        <ui:ArmSideView x:Name="ArmSideViewer" Grid.Column="2"></ui:ArmSideView>
+                        <ui:ArmTopView x:Name="ArmTopViewer" Grid.Column="3"></ui:ArmTopView>
+                        <StackPanel Grid.Column="4" Orientation="Vertical">
                             <Label Content="Devices" />
                             <Button Content="Connect with PuTTY" Click="PuTTY_Button_Click"></Button>
                         </StackPanel>
