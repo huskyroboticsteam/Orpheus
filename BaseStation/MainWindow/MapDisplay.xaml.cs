@@ -21,6 +21,7 @@ namespace HuskyRobotics.UI
     /// </summary>
     public partial class MapDisplay : UserControl
     {
+        private const double RESET_PADDING = 10;
         public MapDisplay()
         {
             InitializeComponent();
@@ -50,7 +51,7 @@ namespace HuskyRobotics.UI
                         int y = 0;
                         Int32.TryParse(location[0], out x);
                         Int32.TryParse(location[1], out y);
-                        addImage(Directory.GetCurrentDirectory() + @"\Images\" + parts[1] + ".jpg", x, y, imgWidth, imgHeight);
+                        AddImage(Directory.GetCurrentDirectory() + @"\Images\" + parts[1] + ".jpg", x, y, imgWidth, imgHeight);
                     }
                 }
             }
@@ -58,7 +59,7 @@ namespace HuskyRobotics.UI
 
         // adds an image to the canvas with the given file location and the coords of where
         // on the canvas it goes
-        private void addImage(String location, int x, int y, int width, int height)
+        private void AddImage   (String location, int x, int y, int width, int height)
         {
             var uri = new Uri(location, UriKind.Absolute);
             var bitmap = new BitmapImage(uri);
@@ -78,34 +79,29 @@ namespace HuskyRobotics.UI
 
         private Point mousePosition;
         private List<Image> allImages = new List<Image>();
-        private bool dragging = false;
 
         private void CanvasMouseButtonDown(object sender, MouseButtonEventArgs e)
         {
-            dragging = true;
-            mousePosition = e.GetPosition(MapCanvas);
+            mousePosition = e.GetPosition(OuterCanvas);
             e.MouseDevice.Capture(MapCanvas);
         }
 
         private void CanvasMouseButtonUp(object sender, MouseButtonEventArgs e)
         {
-            dragging = false;
             e.MouseDevice.Capture(null); // Release capture
         }
 
         private void CanvasMouseMove(object sender, MouseEventArgs e)
         {
-            if (dragging)
+            if (e.LeftButton == MouseButtonState.Pressed)
             {
-                var position = e.GetPosition(MapCanvas);
+                var position = e.GetPosition(OuterCanvas);
                 var offset = position - mousePosition;
                 mousePosition = position;
-                for (int i = 0; i < allImages.Count; i++)
-                {
-                    Canvas.SetLeft(allImages[i], Canvas.GetLeft(allImages[i]) + offset.X);
-                    Canvas.SetTop(allImages[i], Canvas.GetTop(allImages[i]) + offset.Y);
-                }
 
+                var matrix = MapCanvas.RenderTransform.Value;
+                matrix.Translate(offset.X, offset.Y);
+                MapCanvas.RenderTransform = new MatrixTransform(matrix);
             }
         }
 
@@ -116,6 +112,11 @@ namespace HuskyRobotics.UI
             var matrix = MapCanvas.RenderTransform.Value;
             matrix.ScaleAtPrepend(scale, scale, position.X, position.Y);
             MapCanvas.RenderTransform = new MatrixTransform(matrix);
+        }
+
+        private void ResetButton_Click(object sender, RoutedEventArgs e)
+        {
+            MapCanvas.RenderTransform = new MatrixTransform();
         }
     }
 }
