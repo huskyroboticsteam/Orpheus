@@ -12,8 +12,8 @@
             <Label Content="Devices:" />
             <DataGrid Name="Devices" Width="400" Height="200" ItemsSource="{Binding Settings.Devices}" CanUserAddRows="True" AutoGenerateColumns="False">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Binding="{Binding Settings.Name}" Header="Name" Width="*"/>
-                    <DataGridTextColumn Binding="{Binding Settigns.Address}" Header="Address" Width="*"/>
+                    <DataGridTextColumn Binding="{Binding Name}" Header="Name" Width="*"/>
+                    <DataGridTextColumn Binding="{Binding Address}" Header="Address" Width="*"/>
                 </DataGrid.Columns>
             </DataGrid>
             <Label Content="PuTTY Path:" />
