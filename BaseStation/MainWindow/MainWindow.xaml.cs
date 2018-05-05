@@ -50,7 +50,8 @@ namespace HuskyRobotics.UI {
             }
             Map.DisplayMap(Settings.CurrentMapFile);
             Map.Waypoints = Waypoints;
-
+            ArmSideViewer.ViewLabel.Content = "Arm Side";
+            ArmTopViewer.ViewLabel.Content = "Arm Top";
         }
 
         private void SettingChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -79,7 +80,7 @@ namespace HuskyRobotics.UI {
         {
             double lat, long_;
             if (Double.TryParse(WaypointLatInput.Text, out lat) &&
-                Double.TryParse(WaypointLatInput.Text, out long_)) {
+                Double.TryParse(WaypointLongInput.Text, out long_)) {
                 Waypoints.Add(new Waypoint(lat, long_, WaypointNameInput.Text));
 
                 WaypointNameInput.Text = "";
