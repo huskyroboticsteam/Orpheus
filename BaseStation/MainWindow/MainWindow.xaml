@@ -69,6 +69,17 @@
                                 <Button Padding="5" Margin="5" Content="Add Waypoint" Click="Add_Waypoint"/>
                                 <Button Padding="5" Margin="5" Content="Update Location" />
                             </StackPanel>
+                            <StackPanel>
+                                <Label Content="Video Streams: " />
+                                <Button Padding="5" Margin="5" Content="Launch" />
+                                <Button Padding="5" Margin="5" Content="Record" />
+                                <Menu>
+                                    <MenuItem Header="Menu">
+                                        <MenuItem Header="MenuItem1"/>
+                                        <MenuItem Header="MenuItem2"/>
+                                    </MenuItem>
+                                </Menu>
+                            </StackPanel>
                         </StackPanel>
                         <DataGrid ItemsSource="{Binding Waypoints}" CanUserDeleteRows="True" ColumnWidth="*" />
                     </DockPanel>
