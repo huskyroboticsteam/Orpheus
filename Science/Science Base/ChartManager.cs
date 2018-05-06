@@ -34,7 +34,7 @@ namespace Science_Base
 
         public void AddSeries<T>(DataSeries<T> Series)
         {
-            Log.Output(Log.Severity.INFO, Log.Source.GUI, "Adding series, current series count:" + this.Chart.Series.Count);
+            if (this.Chart.Series.Count == 0) { this.Chart.AxisY.Clear(); }
             LiveCharts.Wpf.Axis Y = new LiveCharts.Wpf.Axis()
             {
                 Title = Series.AxisLabel
