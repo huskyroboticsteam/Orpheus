@@ -89,6 +89,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="UIHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
