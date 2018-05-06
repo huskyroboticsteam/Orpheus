@@ -44,8 +44,8 @@ namespace Science_Base
             GLineSeries ChartSeries = new GLineSeries(Series.GetMapper())
             {
                 Values = Series.Data,
-                Stroke = MainWindow.ScarletColour,
-                Fill = MainWindow.ScarletBackColour,
+                Stroke = UIHelper.ScarletColour,
+                Fill = UIHelper.ScarletBackColour,
                 PointGeometry = null
             };
             this.Chart.Series.Add(ChartSeries);

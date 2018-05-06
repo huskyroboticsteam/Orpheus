@@ -45,7 +45,7 @@ namespace Science_Base
             Datum<DataType> Added = new Datum<DataType>
             {
                 Time = Unit.GetValue<DateTime>("Time"),
-                Data = Unit.GetValue<DataType>(DataUnitEntry)
+                Data = Unit.GetValue<DataType>(this.DataUnitEntry)
             };
             this.Data.Add(Added);
         }
@@ -53,7 +53,6 @@ namespace Science_Base
         private double GetYVal(Datum<DataType> Datum)
         {
             return Convert.ToDouble(Datum.Data);
-            //return double.Parse(Datum.Data.ToString()); // TODO: This is extremely terrible.
         }
     }
 }
