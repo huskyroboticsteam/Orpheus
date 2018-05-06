@@ -71,8 +71,6 @@ namespace Science.Systems
             }
         }
 
-        private static string NoteToStr(Note Note) => Note.ToString() + Note.Time + "," + Note.Length;
-
         private static float NoteToPercent(int Note)
         {
             float Frequency = 261.63F / (float)(Math.Pow(Math.Pow(2, (1.0 / 12)), 60 - Note));
