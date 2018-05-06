@@ -23,11 +23,6 @@ namespace Science.Systems
             
         }
 
-        public void EventTriggered(object Sender, EventArgs Event)
-        {
-
-        }
-
         public void Initialize()
         {
             

@@ -45,12 +45,17 @@ namespace Science
         /// </summary>
         public void InitializeSystems()
         {
-            //this.RailController.Initialize();
-            this.DrillController.Initialize();
-            //this.SampleController.Initialize();
+            // Fast
             this.LEDController.Initialize();
             this.AuxSensors.Initialize();
             this.SysSensors.Initialize();
+
+            // Motors (slow)
+            //this.RailController.Initialize();
+            this.DrillController.Initialize();
+            //this.SampleController.Initialize();
+            
+            // Dependents
             this.Music.Initialize();
         }
 

@@ -24,8 +24,6 @@ namespace Science.Systems
 
         public void EmergencyStop() { this.PlayerThread.Abort(); }
 
-        public void EventTriggered(object Sender, EventArgs Event) { }
-
         public void UpdateState() { }
 
         private void StartPlayer()

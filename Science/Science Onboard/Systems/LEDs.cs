@@ -38,11 +38,6 @@ namespace Science.Systems
             foreach(RGBLED LED in this.Lights) { LED.SetEnabled(false); }
         }
 
-        public void EventTriggered(object Sender, EventArgs Event)
-        {
-            
-        }
-
         public void Initialize()
         {
             foreach (RGBLED LED in this.Lights) { LED.SetEnabled(false); }
