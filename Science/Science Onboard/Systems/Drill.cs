@@ -49,11 +49,6 @@ namespace Science.Systems
             //this.DoorServo.SetEnabled(false);
         }
 
-        public void EventTriggered(object Sender, EventArgs Event)
-        {
-            
-        }
-
         public void SetSpeed(float Speed, bool Enable)
         {
             this.MotorCtrl.SetSpeed(Speed);

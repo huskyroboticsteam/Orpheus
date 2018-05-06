@@ -32,8 +32,6 @@ namespace Science.Systems
 
         public void EmergencyStop() { this.TakeReadings = false; }
 
-        public void EventTriggered(object Sender, EventArgs Event) { }
-
         public void Initialize()
         {
             this.I2C1 = new I2CBusPi();

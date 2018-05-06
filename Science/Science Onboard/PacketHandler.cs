@@ -9,7 +9,6 @@ namespace Science
 
         public PacketHandler()
         {
-            //Parse.SetParseHandler(ScienceConstants.Packets.WATCHDOG_PING, ParseWatchdog); // TODO: What are we doing with this?
             Parse.SetParseHandler(ScienceConstants.Packets.ERROR, ParseErrorPacket);
             Parse.SetParseHandler(ScienceConstants.Packets.EMERGENCY_STOP, ParseStopPacket);
             Parse.SetParseHandler(ScienceConstants.Packets.CONTROL, ParseControlPacket);
@@ -17,8 +16,10 @@ namespace Science
 
         public static void ParseControlPacket(Packet Packet)
         {
-            if (Packet == null || Packet.Data == null || Packet.Data.Payload == null || Packet.Data.Payload.Length != 2) { Log.Output(Log.Severity.WARNING, Log.Source.MOTORS, "Control packet invalid length."); }
-            RoverMain.IOHandler.DrillController.SetSpeed(Packet.Data.Payload[0] / 100.0F * ((Packet.Data.Payload[1] == 0) ? 1 : -1), true);
+            if (CheckPacket(Packet, 2, "Control"))
+            {
+                RoverMain.IOHandler.DrillController.SetSpeed(Packet.Data.Payload[0] / 100.0F * ((Packet.Data.Payload[1] == 0) ? 1 : -1), true);
+            }
         }
 
         public static void ParseErrorPacket(Packet Error)
@@ -32,9 +33,14 @@ namespace Science
             RoverMain.IOHandler.EmergencyStop();
         }
 
-        public static void ParseWatchdog(Packet WatchdogPacket)
+        private static bool CheckPacket(Packet Packet, int ExpectedLength, string PacketName)
         {
-            
+            if (Packet == null || Packet.Data == null || Packet.Data.Payload == null || Packet.Data.Payload.Length != ExpectedLength)
+            {
+                Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, PacketName + " packet invalid. Discarding.");
+                return false;
+            }
+            return true;
         }
     }
 }

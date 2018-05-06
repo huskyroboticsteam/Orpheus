@@ -39,8 +39,6 @@ namespace Science.Systems
 
         public void EmergencyStop() { this.TakeReadings = false; }
 
-        public void EventTriggered(object Sender, EventArgs Event) { }
-
         public void Initialize()
         {
             this.SPI0 = new SPIBusPi(0);
