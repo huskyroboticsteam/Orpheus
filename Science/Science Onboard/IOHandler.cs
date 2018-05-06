@@ -1,8 +1,10 @@
-﻿using Scarlet.Components;
+﻿using System;
+using Scarlet.Components;
 using Scarlet.Components.Outputs;
 using Scarlet.IO;
 using Scarlet.IO.BeagleBone;
 using Scarlet.IO.RaspberryPi;
+using Scarlet.Utilities;
 using Science.Systems;
 
 namespace Science
@@ -57,12 +59,26 @@ namespace Science
         /// </summary>
         public void EmergencyStop()
         {
-            //this.RailController.EmergencyStop();
-            this.DrillController.EmergencyStop();
-            //this.SampleController.EmergencyStop();
-            this.LEDController.EmergencyStop();
-            this.AuxSensors.EmergencyStop();
-            this.SysSensors.Initialize();
+            try { this.Music.EmergencyStop(); }
+            catch (Exception Exc) { Log.Output(Log.Severity.ERROR, Log.Source.SUBSYSTEM, "Music subsystem failed emergency stop!"); Log.Exception(Log.Source.SUBSYSTEM, Exc); }
+
+            try { this.RailController.EmergencyStop(); }
+            catch (Exception Exc) { Log.Output(Log.Severity.ERROR, Log.Source.SUBSYSTEM, "Rail subsystem failed emergency stop!"); Log.Exception(Log.Source.SUBSYSTEM, Exc); }
+
+            try { this.DrillController.EmergencyStop(); }
+            catch (Exception Exc) { Log.Output(Log.Severity.ERROR, Log.Source.SUBSYSTEM, "Drill subsystem failed emergency stop!"); Log.Exception(Log.Source.SUBSYSTEM, Exc); }
+
+            try { this.SampleController.EmergencyStop(); }
+            catch (Exception Exc) { Log.Output(Log.Severity.ERROR, Log.Source.SUBSYSTEM, "Sample subsystem failed emergency stop!"); Log.Exception(Log.Source.SUBSYSTEM, Exc); }
+
+            try { this.LEDController.EmergencyStop(); }
+            catch (Exception Exc) { Log.Output(Log.Severity.ERROR, Log.Source.SUBSYSTEM, "LED subsystem failed emergency stop!"); Log.Exception(Log.Source.SUBSYSTEM, Exc); }
+
+            try { this.AuxSensors.EmergencyStop(); }
+            catch (Exception Exc) { Log.Output(Log.Severity.ERROR, Log.Source.SUBSYSTEM, "Aux Sensor subsystem failed emergency stop!"); Log.Exception(Log.Source.SUBSYSTEM, Exc); }
+
+            try { this.SysSensors.Initialize(); }
+            catch (Exception Exc) { Log.Output(Log.Severity.ERROR, Log.Source.SUBSYSTEM, "System Sensor subsystem failed emergency stop!"); Log.Exception(Log.Source.SUBSYSTEM, Exc); }
         }
 
         public void UpdateStates()
