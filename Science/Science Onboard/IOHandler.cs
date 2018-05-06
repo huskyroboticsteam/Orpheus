@@ -15,6 +15,7 @@ namespace Science
         public readonly LEDs LEDController;
         public readonly AuxSensors AuxSensors;
         public readonly SysSensors SysSensors;
+        public readonly MusicPlayer Music;
 
         private II2CBus I2C;
         private PCA9685 PWMGenLowFreq, PWMGenHighFreq;
@@ -34,6 +35,7 @@ namespace Science
             this.LEDController = new LEDs(this.PWMGenLowFreq.Outputs, this.PWMGenHighFreq.Outputs);
             this.AuxSensors = new AuxSensors();
             this.SysSensors = new SysSensors();
+            this.Music = new MusicPlayer();
         }
 
         /// <summary>
@@ -47,6 +49,7 @@ namespace Science
             this.LEDController.Initialize();
             this.AuxSensors.Initialize();
             this.SysSensors.Initialize();
+            this.Music.Initialize();
         }
 
         /// <summary>
