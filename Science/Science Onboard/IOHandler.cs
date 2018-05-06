@@ -77,7 +77,7 @@ namespace Science
             try { this.AuxSensors.EmergencyStop(); }
             catch (Exception Exc) { Log.Output(Log.Severity.ERROR, Log.Source.SUBSYSTEM, "Aux Sensor subsystem failed emergency stop!"); Log.Exception(Log.Source.SUBSYSTEM, Exc); }
 
-            try { this.SysSensors.Initialize(); }
+            try { this.SysSensors.EmergencyStop(); }
             catch (Exception Exc) { Log.Output(Log.Severity.ERROR, Log.Source.SUBSYSTEM, "System Sensor subsystem failed emergency stop!"); Log.Exception(Log.Source.SUBSYSTEM, Exc); }
         }
 
