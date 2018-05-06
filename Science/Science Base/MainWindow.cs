@@ -5,45 +5,27 @@ using System;
 using System.Linq;
 using System.Windows.Forms;
 using System.Collections.Generic;
-using System.Net;
 using Science.Library;
-using LiveCharts.Configurations;
 using LiveCharts.Wpf;
-using LiveCharts;
-using System.Windows.Media;
-using System.Drawing.Imaging;
-using System.Drawing;
 using Science_Base.Properties;
 
 namespace Science_Base
 {
     public partial class MainWindow : DarkForm
     {
-        public static SolidColorBrush ScarletColour = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x81, 0x14, 0x26));
-        public static SolidColorBrush ScarletBackColour = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0x3F, 0x81, 0x14, 0x26));
-        public static SolidColorBrush TextColour = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0xCC, 0xCC, 0xCC));
-        public static SolidColorBrush GaugeRedColour = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0xD1, 0x26, 0x26));
-        public static SolidColorBrush GaugeYellowColour = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0xD1, 0xD1, 0x26));
-        public static SolidColorBrush GaugeGreenColour = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x26, 0xD1, 0x26));
-
         private ChartManager Charts;
 
         public MainWindow()
         {
-            ScarletColour.Freeze();
-            ScarletBackColour.Freeze();
-            TextColour.Freeze();
-            GaugeRedColour.Freeze();
-            GaugeYellowColour.Freeze();
-            GaugeGreenColour.Freeze();
+            UIHelper.Init();
 
             InitializeComponent();
             InitWindow();
             this.EmergencyStopBtn.NotifyDefault(false);
             this.UIUpdate.Enabled = true;
-            SetMode(this.StatusImgNetwork, Resources.Network, 2);
-            SetMode(this.StatusImgPower, Resources.Power, 3);
-            SetMode(this.StatusImgSystem, Resources.CPU, 3);
+            UIHelper.SetMode(this.StatusImgNetwork, Resources.Network, 2);
+            UIHelper.SetMode(this.StatusImgPower, Resources.Power, 3);
+            UIHelper.SetMode(this.StatusImgSystem, Resources.CPU, 3);
             this.Charts = new ChartManager(this.ChartLeft, this.ChartRight, null);
             this.Charts.Left.AddSeries(DataHandler.RandomData);
         }
@@ -58,37 +40,37 @@ namespace Science_Base
             this.GaugeSysVoltage.TickStep = 0.25;
             this.GaugeSysVoltage.Value = 22;
             this.GaugeSysVoltage.SectionsInnerRadius = 0.96;
-            this.GaugeSysVoltage.Base.Foreground = TextColour;
-            this.GaugeSysVoltage.NeedleFill = TextColour;
+            this.GaugeSysVoltage.Base.Foreground = UIHelper.TextColour;
+            this.GaugeSysVoltage.NeedleFill = UIHelper.TextColour;
             this.GaugeSysVoltage.Sections.Add(new AngularSection() // Low Red
             {
                 FromValue = 22,
                 ToValue = 22.5,
-                Fill = GaugeRedColour
+                Fill = UIHelper.GaugeRedColour
             });
             this.GaugeSysVoltage.Sections.Add(new AngularSection() // Low Yellow
             {
                 FromValue = 22.5,
                 ToValue = 23.5,
-                Fill = GaugeYellowColour
+                Fill = UIHelper.GaugeYellowColour
             });
             this.GaugeSysVoltage.Sections.Add(new AngularSection() // Green
             {
                 FromValue = 23.5,
                 ToValue = 28.5,
-                Fill = GaugeGreenColour
+                Fill = UIHelper.GaugeGreenColour
             });
             this.GaugeSysVoltage.Sections.Add(new AngularSection() // High Yellow
             {
                 FromValue = 28.5,
                 ToValue = 29.25,
-                Fill = GaugeYellowColour
+                Fill = UIHelper.GaugeYellowColour
             });
             this.GaugeSysVoltage.Sections.Add(new AngularSection() // High Red
             {
                 FromValue = 29.25,
                 ToValue = 30,
-                Fill = GaugeRedColour
+                Fill = UIHelper.GaugeRedColour
             });
 
             // System Current
@@ -98,25 +80,25 @@ namespace Science_Base
             this.GaugeSysCurrent.LabelsStep = 2;
             this.GaugeSysCurrent.TickStep = 0.25;
             this.GaugeSysCurrent.SectionsInnerRadius = 0.96;
-            this.GaugeSysCurrent.Base.Foreground = TextColour;
-            this.GaugeSysCurrent.NeedleFill = TextColour;
+            this.GaugeSysCurrent.Base.Foreground = UIHelper.TextColour;
+            this.GaugeSysCurrent.NeedleFill = UIHelper.TextColour;
             this.GaugeSysCurrent.Sections.Add(new AngularSection() // Green
             {
                 FromValue = 0,
                 ToValue = 6,
-                Fill = GaugeGreenColour
+                Fill = UIHelper.GaugeGreenColour
             });
             this.GaugeSysCurrent.Sections.Add(new AngularSection() // High Yellow
             {
                 FromValue = 6,
                 ToValue = 8,
-                Fill = GaugeYellowColour
+                Fill = UIHelper.GaugeYellowColour
             });
             this.GaugeSysCurrent.Sections.Add(new AngularSection() // High Red
             {
                 FromValue = 8,
                 ToValue = 10,
-                Fill = GaugeRedColour
+                Fill = UIHelper.GaugeRedColour
             });
 
             // Drill Current
@@ -126,25 +108,25 @@ namespace Science_Base
             this.GaugeDrillCurrent.LabelsStep = 3;
             this.GaugeDrillCurrent.TickStep = 0.5;
             this.GaugeDrillCurrent.SectionsInnerRadius = 0.96;
-            this.GaugeDrillCurrent.Base.Foreground = TextColour;
-            this.GaugeDrillCurrent.NeedleFill = TextColour;
+            this.GaugeDrillCurrent.Base.Foreground = UIHelper.TextColour;
+            this.GaugeDrillCurrent.NeedleFill = UIHelper.TextColour;
             this.GaugeDrillCurrent.Sections.Add(new AngularSection() // Green
             {
                 FromValue = 0,
                 ToValue = 9,
-                Fill = GaugeGreenColour
+                Fill = UIHelper.GaugeGreenColour
             });
             this.GaugeDrillCurrent.Sections.Add(new AngularSection() // High Yellow
             {
                 FromValue = 9,
                 ToValue = 12,
-                Fill = GaugeYellowColour
+                Fill = UIHelper.GaugeYellowColour
             });
             this.GaugeDrillCurrent.Sections.Add(new AngularSection() // High Red
             {
                 FromValue = 12,
                 ToValue = 15,
-                Fill = GaugeRedColour
+                Fill = UIHelper.GaugeRedColour
             });
 
             // Rail Current
@@ -154,25 +136,25 @@ namespace Science_Base
             this.GaugeRailCurrent.LabelsStep = 10;
             this.GaugeRailCurrent.TickStep = 2;
             this.GaugeRailCurrent.SectionsInnerRadius = 0.96;
-            this.GaugeRailCurrent.Base.Foreground = TextColour;
-            this.GaugeRailCurrent.NeedleFill = TextColour;
+            this.GaugeRailCurrent.Base.Foreground = UIHelper.TextColour;
+            this.GaugeRailCurrent.NeedleFill = UIHelper.TextColour;
             this.GaugeRailCurrent.Sections.Add(new AngularSection() // Green
             {
                 FromValue = 0,
                 ToValue = 35,
-                Fill = GaugeGreenColour
+                Fill = UIHelper.GaugeGreenColour
             });
             this.GaugeRailCurrent.Sections.Add(new AngularSection() // High Yellow
             {
                 FromValue = 35,
                 ToValue = 45,
-                Fill = GaugeYellowColour
+                Fill = UIHelper.GaugeYellowColour
             });
             this.GaugeRailCurrent.Sections.Add(new AngularSection() // High Red
             {
                 FromValue = 45,
                 ToValue = 60,
-                Fill = GaugeRedColour
+                Fill = UIHelper.GaugeRedColour
             });
 
             ListViewItem[] Items = new ListViewItem[DataHandler.GetSeries().Length];
@@ -183,72 +165,6 @@ namespace Science_Base
             }
             this.ChartDataChooser.Items.AddRange(Items);
         }
-
-        public void SetMode(PictureBox Box, Image Original, byte Mode)
-        {
-            float[][] Good =
-            {
-                new float[] { 0, 0, 0, 0, 0 },
-                new float[] { 0, 0.8F, 0, 0, 0 },
-                new float[] { 0, 0, 0, 0, 0 },
-                new float[] { 0, 0, 0, 1, 0 },
-                new float[] { 0, 0, 0, 0, 0 }
-            };
-
-            float[][] Warning =
-            {
-                new float[] { 0.8F, 0, 0, 0, 0 },
-                new float[] { 0, 0.8F, 0, 0, 0 },
-                new float[] { 0, 0, 0, 0, 0 },
-                new float[] { 0, 0, 0, 1, 0 },
-                new float[] { 0, 0, 0, 0, 0 }
-            };
-
-            float[][] Error =
-            {
-                new float[] { 0.8F, 0, 0, 0, 0 },
-                new float[] { 0, 0, 0, 0, 0 },
-                new float[] { 0, 0, 0, 0, 0 },
-                new float[] { 0, 0, 0, 1, 0 },
-                new float[] { 0, 0, 0, 0, 0 }
-            };
-
-            float[][] Default =
-            {
-                new float[] { 0.8F, 0, 0, 0, 0 },
-                new float[] { 0, 0.8F, 0, 0, 0 },
-                new float[] { 0, 0, 0.8F, 0, 0 },
-                new float[] { 0, 0, 0, 1, 0 },
-                new float[] { 0, 0, 0, 0, 0 }
-            };
-
-            ColorMatrix Matrix;
-            switch(Mode)
-            {
-                case 0: Matrix = new ColorMatrix(Good); break;
-                case 1: Matrix = new ColorMatrix(Warning); break;
-                case 2: Matrix = new ColorMatrix(Error); break;
-                default: Matrix = new ColorMatrix(Default); break;
-            }
-            ImageAttributes Attributes = new ImageAttributes();
-            Attributes.SetColorMatrix(Matrix);
-            Image Image = (Image)Original.Clone();
-            Graphics Graphics = Graphics.FromImage(Image);
-            Rectangle Output = new Rectangle(0, 0, Image.Width, Image.Height);
-            Graphics.DrawImage(Image, Output, 0, 0, Image.Width, Image.Height, GraphicsUnit.Pixel, Attributes);
-            Box.Image = Image;
-        }
-
-        /*public void UpdateGraph()
-        {
-            Invoke((MethodInvoker)delegate
-            {
-
-                this.cartesianChart1.Series.First().Values = new ChartValues<DataUnit>(DataHandler.RandomData);
-                this.cartesianChart1.Update();
-                Log.Output(Log.Severity.INFO, Log.Source.GUI, "Updating graph");
-            });
-        }*/
 
         private void EmergencyStopClick(object sender, EventArgs e)
         {
@@ -297,10 +213,7 @@ namespace Science_Base
                 ParsedTime = ParsedTime.AddSeconds(Convert.ToInt32(this.TimestampTextbox.Text.Replace(" ", ""), 16)).ToLocalTime();
                 this.InterpretationTimestamp.Text = ParsedTime.ToLongDateString() + " " + ParsedTime.ToLongTimeString() + " UTC";
             }
-            catch
-            {
-                this.InterpretationTimestamp.Text = "Unknown";
-            }
+            catch { this.InterpretationTimestamp.Text = "Unknown"; }
         }
 
         private void IDTextbox_TextChanged(object sender, EventArgs e)
@@ -310,10 +223,7 @@ namespace Science_Base
                 byte[] ID = UtilMain.StringToBytes(this.IDTextbox.Text);
                 this.InterpretationID.Text = "0x" + UtilMain.BytesToNiceString(new byte[] { ID.Last() }, false);
             }
-            catch
-            {
-                this.InterpretationID.Text = "Unknown";
-            }
+            catch { this.InterpretationID.Text = "Unknown"; }
         }
 
         private void DataTextbox_TextChanged(object sender, EventArgs e)
@@ -323,10 +233,7 @@ namespace Science_Base
                 byte[] Data = InterpretInput(this.DataTextbox.Text.ToCharArray());
                 this.InterpretationData.Text = "0x" + UtilMain.BytesToNiceString(Data, true);
             }
-            catch
-            {
-                this.InterpretationData.Text = "Unknown";
-            }
+            catch { this.InterpretationData.Text = "Unknown"; }
         }
 
         private void UseCurrentTime_CheckedChanged(object sender, EventArgs e)
@@ -336,15 +243,9 @@ namespace Science_Base
             UpdateTime();
         }
 
-        private void UpdateTime()
-        {
-            this.TimestampTextbox.Text = UtilMain.BytesToNiceString(Packet.GetCurrentTime(), true);
-        }
+        private void UpdateTime() { this.TimestampTextbox.Text = UtilMain.BytesToNiceString(Packet.GetCurrentTime(), true); }
 
-        private void SecTimer_Tick(object sender, EventArgs e)
-        {
-            UpdateTime();
-        }
+        private void SecTimer_Tick(object sender, EventArgs e) { UpdateTime(); }
 
         private byte[] InterpretInput(char[] Input)
         {
@@ -378,8 +279,8 @@ namespace Science_Base
             {
                 this.ClientSelector.Items.Clear();
                 this.ClientSelector.Items.AddRange(Server.GetClients().ToArray());
-                if (Server.GetClients().Contains(ScienceConstants.CLIENT_NAME)) { SetMode(this.StatusImgNetwork, Resources.Network, 0); }
-                else { SetMode(this.StatusImgNetwork, Resources.Network, 2); }
+                if (Server.GetClients().Contains(ScienceConstants.CLIENT_NAME)) { UIHelper.SetMode(this.StatusImgNetwork, Resources.Network, 0); }
+                else { UIHelper.SetMode(this.StatusImgNetwork, Resources.Network, 2); }
             });
         }
 
@@ -413,18 +314,12 @@ namespace Science_Base
 
         private void ChartAddLeft_Click(object sender, EventArgs e)
         {
-            foreach(int Selected in this.ChartDataChooser.SelectedIndices)
-            {
-                this.Charts.Left.AddByIndex(Selected);
-            }
+            foreach(int Selected in this.ChartDataChooser.SelectedIndices) { this.Charts.Left.AddByIndex(Selected); }
         }
 
         private void ChartAddRight_Click(object sender, EventArgs e)
         {
-            foreach (int Selected in this.ChartDataChooser.SelectedIndices)
-            {
-                this.Charts.Right.AddByIndex(Selected);
-            }
+            foreach (int Selected in this.ChartDataChooser.SelectedIndices) { this.Charts.Right.AddByIndex(Selected); }
         }
     }
 }
