@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SensorHistoryGraph", "Senso
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SensorRealTimeGraph", "SensorDiagnostics\SensorRealTimeGraph\SensorRealTimeGraph.csproj", "{89AF1702-7D86-4364-91B1-F1A027AF8AA8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PTZCamera", "PTZCamera\PTZCamera.csproj", "{0506B166-5028-4C08-B98E-3C3B1F1E75DE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{89AF1702-7D86-4364-91B1-F1A027AF8AA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{89AF1702-7D86-4364-91B1-F1A027AF8AA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{89AF1702-7D86-4364-91B1-F1A027AF8AA8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0506B166-5028-4C08-B98E-3C3B1F1E75DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0506B166-5028-4C08-B98E-3C3B1F1E75DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0506B166-5028-4C08-B98E-3C3B1F1E75DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0506B166-5028-4C08-B98E-3C3B1F1E75DE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
