@@ -9,7 +9,6 @@ using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using System.Threading;
-using VideoStreamer;
 
 // this program is a video player that uses G-streamer through the console with file saving
 // capabilities.
@@ -108,7 +107,7 @@ namespace HuskyRobotics.UI.VideoStreamer {
 				//btnLaunch.Content = "Launch";
 				//closeAllPlayers();
 			} else {
-                NewWindowHandler(sender, e);
+                //NewWindowHandler(sender, e);
                 playing = true;
 				//if (File.Exists(@"C:\gstreamer\1.0\x86_64\bin\gst-launch-1.0.exe")) {
 				//	playing = true;
@@ -193,19 +192,19 @@ namespace HuskyRobotics.UI.VideoStreamer {
 			saver.Close();
 		}
 
-        private void NewWindowHandler(object sender, RoutedEventArgs e)
-        {
-            Thread newWindowThread = new Thread(new ThreadStart(ThreadStartingPoint));
-            newWindowThread.SetApartmentState(ApartmentState.STA);
-            newWindowThread.IsBackground = true;
-            newWindowThread.Start();
-        }
+        //private void NewWindowHandler(object sender, RoutedEventArgs e)
+        //{
+        //    Thread newWindowThread = new Thread(new ThreadStart(ThreadStartingPoint));
+        //    newWindowThread.SetApartmentState(ApartmentState.STA);
+        //    newWindowThread.IsBackground = true;
+        //    newWindowThread.Start();
+        //}
 
-        private void ThreadStartingPoint()
-        {
-            VideoWindow tempWindow = new VideoWindow();
-            tempWindow.Show();
-            Dispatcher.Run();
-        }
+        //private void ThreadStartingPoint()
+        //{
+        //    VideoWindow tempWindow = new VideoWindow();
+        //    tempWindow.Show();
+        //    Dispatcher.Run();
+        //}
     }
 }

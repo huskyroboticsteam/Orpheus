@@ -1,13 +1,15 @@
 ﻿using System.Windows;
 using System.Diagnostics;
 using System.IO;
-using System.Windows.Controls;
 using HuskyRobotics.Utilities;
 using HuskyRobotics.Arm;
 using System;
 using System.Linq;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using System.Threading;
+using System.Collections.Generic;
+using System.Windows.Controls;
 
 namespace HuskyRobotics.UI {
 	/// <summary>
@@ -24,6 +26,7 @@ namespace HuskyRobotics.UI {
 
 		public MainWindow()
         {
+            Gst.Application.Init();
             Properties = new MockObservableMap();
             InitializeComponent();
             WindowState = WindowState.Maximized;
@@ -90,11 +93,43 @@ namespace HuskyRobotics.UI {
             }
         }
 
-        private void Test(object sender, RoutedEventArgs e)
+        private void LaunchStream(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("Here");
-            VideoStream v = new VideoStream("Memes", "0");
-            this.Streams.Add(v);
+            NewWindowHandler(sender, e);
+        }
+
+        private void NewWindowHandler(object sender, RoutedEventArgs e)
+        {
+            Thread newWindowThread = new Thread(new ThreadStart(ThreadStartingPoint));
+            newWindowThread.SetApartmentState(ApartmentState.STA);
+            newWindowThread.IsBackground = true;
+            newWindowThread.Start();
+        }
+
+        private void ThreadStartingPoint()
+        {
+            ComboBoxItem typeItem = (ComboBoxItem) StreamSelect.SelectedItem;
+            string value = typeItem.Content.ToString();
+            Console.WriteLine(value);
+            int port = 0;
+
+            List<VideoDevice> devices = Settings.VideoDevices.ToList();
+            foreach (VideoDevice v in devices)
+            {
+                if (v.Name.Equals(value))
+                {
+                    port = Convert.ToInt32(v.Port);
+                }
+            }
+
+            Console.WriteLine("Port: " + port);
+            if (port != 0)
+            {
+                VideoStreamer.VideoWindow tempWindow = new VideoStreamer.VideoWindow(port);
+                tempWindow.Show();
+                tempWindow.StartStream();
+                System.Windows.Threading.Dispatcher.Run();
+            }    
         }
     }
 }

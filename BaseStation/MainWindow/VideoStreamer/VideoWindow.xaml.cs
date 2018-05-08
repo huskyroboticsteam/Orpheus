@@ -7,9 +7,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Windows.Controls;
-using System.Windows.Threading;
-using System.Threading;
 using Gst;
 using Gst.Video;
 using System.Windows.Interop;
@@ -21,63 +18,61 @@ namespace HuskyRobotics.UI.VideoStreamer
     /// </summary>
     public partial class VideoWindow : Window
     {
-        public VideoWindow()
+        private Pipeline Pipeline;
+        private Element UDP = ElementFactory.Make("udpsrc");
+        private Element JitterBuffer = ElementFactory.Make("rtpjitterbuffer");
+        private Element Depay = ElementFactory.Make("rtph264depay");
+        private Element Parse = ElementFactory.Make("h264parse");
+        private Element Dec = ElementFactory.Make("openh264dec");
+        private Element Sink = ElementFactory.Make("d3dvideosink");
+        private Caps Caps = Caps.FromString("application/x-rtp, media=video, clock-rate=90000, encoding-name=H264");
+        private int Port;
+        private int Buffering;
+
+        /// <summary>
+        /// A window that is separate from the main UI and plays a GStreamer RTP feed.
+        /// </summary>
+        /// <param name="Port"> The port that the RTP stream is sending data to. </param>
+        /// <param name="Buffering"> The time in milliseconds of buffering of the feed. </param>
+        public VideoWindow(int Port, int Buffering = 200)
         {
-            Pipeline pipeline = new Pipeline();
+            this.Port = Port;
+            this.Buffering = Buffering;
+            Pipeline = new Pipeline();
 
-            Element udp = ElementFactory.Make("udpsrc");
-            Element jitterbuffer = ElementFactory.Make("rtpjitterbuffer");
-            Element depay = ElementFactory.Make("rtph264depay");
-            Element parse = ElementFactory.Make("h264parse");
-            Element dec = ElementFactory.Make("openh264dec");
-            Element sink = ElementFactory.Make("d3dvideosink");
-            Caps caps = Caps.FromString("application/x-rtp, media=video, clock-rate=90000, encoding-name=H264");
+            Window window = GetWindow(this);
+            WindowInteropHelper wih = new WindowInteropHelper(this);
+            wih.EnsureHandle(); // Generate Window Handle if current HWND is NULL (always occurs because background window)
+            VideoOverlayAdapter overlay = new VideoOverlayAdapter(Sink.Handle);
+            overlay.WindowHandle = wih.Handle;
 
-            udp["port"] = 5555;
-            udp["caps"] = caps;
+            UDP["port"] = Port;
+            UDP["caps"] = Caps;
 
-            pipeline.Add(udp, jitterbuffer, depay, parse, dec, sink);
-            Element.Link(udp, jitterbuffer, depay, parse, dec, sink);
+            JitterBuffer["latency"] = Buffering;
 
-            pipeline.SetState(State.Null);
+            Pipeline.Add(UDP, JitterBuffer, Depay, Parse, Dec, Sink);
+            Element.Link(UDP, JitterBuffer, Depay, Parse, Dec, Sink);
 
-            pipeline.Bus.EnableSyncMessageEmission();
-            pipeline.Bus.AddSignalWatch();
-            pipeline.Bus.SyncMessage += SyncMessageHandler;
+            Pipeline.SetState(State.Null);
 
-            StateChangeReturn s = pipeline.SetState(State.Playing);
-
+            Closing += OnCloseEvent;
             InitializeComponent();
         }
 
-        private void SyncMessageHandler(object bus, SyncMessageArgs args)
+        /// <summary>
+        /// Window (this) must be visible before this method is called.
+        /// </summary>
+        public void StartStream()
         {
-            Message msg = args.Message;
+            StateChangeReturn s = Pipeline.SetState(State.Playing);
+        }
 
-            if (!Gst.Video.Global.IsVideoOverlayPrepareWindowHandleMessage(msg))
-                return;
-
-            Element src = msg.Src as Element;
-            if (src == null)
-                return;
-
-            try
-            {
-                src["force-aspect-ratio"] = true;
-            }
-
-            catch (PropertyNotFoundException) { }
-            Element overlay = null;
-            if (src is Bin)
-                overlay = ((Bin)src).GetByInterface(VideoOverlayAdapter.GType);
-
-            VideoOverlayAdapter adapter = new VideoOverlayAdapter(overlay.Handle);
-
-            Window window = GetWindow(this);
-            var wih = new WindowInteropHelper(window);
-            adapter.WindowHandle = wih.Handle;
-
-            adapter.HandleEvents(true);
+        private void OnCloseEvent(object sender, CancelEventArgs e)
+        {
+            // Cleanup
+            Pipeline.SetState(State.Null);
+            Pipeline.Unref();
         }
     }
 }
