@@ -120,7 +120,7 @@ namespace HuskyRobotics.UI
             foreach (var oldIcon in waypointIcons) {
                 MapCanvas.Children.Remove(oldIcon);
             }
-
+            
             foreach (var waypoint in Waypoints)
             {
                 var waypointIcon = new Image { Source = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"/waypoint.png", UriKind.Absolute)) };
@@ -128,7 +128,7 @@ namespace HuskyRobotics.UI
                 Canvas.SetLeft(waypointIcon, (ImageWidth / 2) + (pixelCoords.Item1 - CenterPixelX));
                 Canvas.SetTop(waypointIcon, (ImageHeight / 2) + (pixelCoords.Item2 - CenterPixelY));
                 MapCanvas.Children.Add(waypointIcon);
-                allImages.Add(waypointIcon);
+                waypointIcons.Add(waypointIcon);
             }            
         }
 
@@ -159,7 +159,7 @@ namespace HuskyRobotics.UI
 
         private void CanvasMouseWheel(object sender, MouseWheelEventArgs e)
         {
-            double scale = Math.Pow(1.5, -e.Delta/20.0);
+            double scale = Math.Pow(1.1, -e.Delta/20.0);
             var position = e.GetPosition(MapCanvas);
             var matrix = MapCanvas.RenderTransform.Value;
             matrix.ScaleAtPrepend(scale, scale, position.X, position.Y);
