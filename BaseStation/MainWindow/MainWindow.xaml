@@ -79,7 +79,6 @@
                                 </DataGrid>
                                 <StackPanel Orientation="Horizontal">
                                     <Button Padding="5" Margin="5" Content="Launch" Click="LaunchStream" />
-                                    <Button Padding="5" Margin="5" Content="Record" />
                                 </StackPanel>
                                 <ComboBox Name="StreamSelect" Padding="5" Margin="5" ItemsSource="{Binding Settings.VideoDevices}">
                                     <ComboBox.ItemTemplate>

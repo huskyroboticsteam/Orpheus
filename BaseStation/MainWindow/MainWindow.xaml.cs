@@ -104,7 +104,7 @@ namespace HuskyRobotics.UI {
             if (StreamSelect.SelectedItem != null)
             {
                 VideoDevice selection = (VideoDevice) StreamSelect.SelectedItem;
-                Streams.Add(new VideoStream(selection.Name, "Not Recording"));
+                Streams.Add(new VideoStream(selection.Name, "Video Player Window"));
 
                 Thread newWindowThread = new Thread(() => ThreadStartingPoint(Convert.ToInt32(selection.Port)));
                 newWindowThread.SetApartmentState(ApartmentState.STA);
@@ -113,7 +113,7 @@ namespace HuskyRobotics.UI {
             }
             else
             {
-                // Show error message to use indicating that selection must be made
+                // Show error message indicating that selection must be made
             }
             
         }
