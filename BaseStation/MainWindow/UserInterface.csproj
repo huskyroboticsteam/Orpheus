@@ -113,9 +113,6 @@
       <DependentUpon>RoverView.xaml</DependentUpon>
     </Compile>
     <Compile Include="VideoStreamer\VideoStream.cs" />
-    <Compile Include="VideoStreamer\VideoStreamer.xaml.cs">
-      <DependentUpon>VideoStreamer.xaml</DependentUpon>
-    </Compile>
     <Compile Include="VideoStreamer\VideoWindow.xaml.cs">
       <DependentUpon>VideoWindow.xaml</DependentUpon>
     </Compile>
@@ -149,10 +146,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Settings\SettingsPanel.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="VideoStreamer\VideoStreamer.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

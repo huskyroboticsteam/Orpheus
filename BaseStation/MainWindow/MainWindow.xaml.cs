@@ -101,36 +101,29 @@ namespace HuskyRobotics.UI {
 
         private void NewWindowHandler(object sender, RoutedEventArgs e)
         {
-            Thread newWindowThread = new Thread(new ThreadStart(ThreadStartingPoint));
-            newWindowThread.SetApartmentState(ApartmentState.STA);
-            newWindowThread.IsBackground = true;
-            newWindowThread.Start();
+            if (StreamSelect.SelectedItem != null)
+            {
+                VideoDevice selection = (VideoDevice) StreamSelect.SelectedItem;
+                Streams.Add(new VideoStream(selection.Name, "Not Recording"));
+
+                Thread newWindowThread = new Thread(() => ThreadStartingPoint(Convert.ToInt32(selection.Port)));
+                newWindowThread.SetApartmentState(ApartmentState.STA);
+                newWindowThread.IsBackground = true;
+                newWindowThread.Start();
+            }
+            else
+            {
+                // Show error message to use indicating that selection must be made
+            }
+            
         }
 
-        private void ThreadStartingPoint()
+        private void ThreadStartingPoint(int Port)
         {
-            ComboBoxItem typeItem = (ComboBoxItem) StreamSelect.SelectedItem;
-            string value = typeItem.Content.ToString();
-            Console.WriteLine(value);
-            int port = 0;
-
-            List<VideoDevice> devices = Settings.VideoDevices.ToList();
-            foreach (VideoDevice v in devices)
-            {
-                if (v.Name.Equals(value))
-                {
-                    port = Convert.ToInt32(v.Port);
-                }
-            }
-
-            Console.WriteLine("Port: " + port);
-            if (port != 0)
-            {
-                VideoStreamer.VideoWindow tempWindow = new VideoStreamer.VideoWindow(port);
-                tempWindow.Show();
-                tempWindow.StartStream();
-                System.Windows.Threading.Dispatcher.Run();
-            }    
+            VideoStreamer.VideoWindow tempWindow = new VideoStreamer.VideoWindow(Port);
+            tempWindow.Show();
+            tempWindow.StartStream();
+            System.Windows.Threading.Dispatcher.Run();
         }
     }
 }
