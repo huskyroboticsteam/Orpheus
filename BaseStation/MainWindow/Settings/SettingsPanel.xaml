@@ -73,7 +73,7 @@
           </StackPanel>
           <StackPanel>
             <Label Content="Recording Path: " />
-            <TextBox Height="23" Margin="5" TextWrapping="NoWrap"  Text="{Binding RecordingPath}" Width="300" Name="dst" ToolTip="File Destination"/>
+            <TextBox Height="23" Margin="5" TextWrapping="NoWrap"  Text="{Binding Settings.RecordingPath}" Width="300" Name="dst" ToolTip="File Destination"/>
           </StackPanel>
         </StackPanel>
       </StackPanel>

@@ -20,6 +20,7 @@ namespace HuskyRobotics.UI {
 		public ObservableDictionary<string, MeasuredValue<double>> Properties { get; }
         public Armature SetpointArm;
         public ObservableCollection<Waypoint> Waypoints { get; private set; } = new ObservableCollection<Waypoint>();
+        public ObservableCollection<VideoStream> Streams { get; private set; } = new ObservableCollection<VideoStream>();
 
 		public MainWindow()
         {
@@ -59,10 +60,11 @@ namespace HuskyRobotics.UI {
             if (e.PropertyName.Equals("CurrentMapFile"))
             {
                 Map.DisplayMap(Settings.CurrentMapFile);
-            } 
+            }
         }
 
-        private void PuTTY_Button_Click(object sender, RoutedEventArgs e) {
+        private void PuTTY_Button_Click(object sender, RoutedEventArgs e)
+        {
 			if (File.Exists(Settings.PuttyPath)) {
 				var process = new Process();
 				process.StartInfo.FileName = Settings.PuttyPath;
@@ -86,6 +88,13 @@ namespace HuskyRobotics.UI {
                 WaypointNameInput.Text = "";
                 FocusManager.SetFocusedElement(this, WaypointLatInput);
             }
+        }
+
+        private void Test(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("Here");
+            VideoStream v = new VideoStream("Memes", "0");
+            this.Streams.Add(v);
         }
     }
 }

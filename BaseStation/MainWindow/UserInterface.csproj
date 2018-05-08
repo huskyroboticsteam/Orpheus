@@ -112,6 +112,7 @@
     <Compile Include="RoverView.xaml.cs">
       <DependentUpon>RoverView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="VideoStreamer\VideoStream.cs" />
     <Compile Include="VideoStreamer\VideoStreamer.xaml.cs">
       <DependentUpon>VideoStreamer.xaml</DependentUpon>
     </Compile>
