@@ -22,8 +22,6 @@ namespace HuskyRobotics.UI
     /// <summary>
     /// Interaction logic for MapDisplay.xaml
     /// </summary>
-    // To Do: fix offsetting with moved map
-    //        deleting waypoints
     public partial class MapDisplay : UserControl
     {
         private const double RESET_PADDING = 10;
