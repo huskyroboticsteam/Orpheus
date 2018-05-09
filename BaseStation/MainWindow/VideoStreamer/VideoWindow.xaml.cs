@@ -10,6 +10,7 @@ using System.Linq;
 using Gst;
 using Gst.Video;
 using System.Windows.Interop;
+using System.Windows.Threading;
 
 namespace HuskyRobotics.UI.VideoStreamer
 {
@@ -28,16 +29,25 @@ namespace HuskyRobotics.UI.VideoStreamer
         private Caps Caps = Caps.FromString("application/x-rtp, media=video, clock-rate=90000, encoding-name=H264");
         private int Port;
         private int Buffering;
+        public string StreamName;
+
+        // Stream with recording and showing: 
+        // gst-launch-1.0 -vvv -e udpsrc caps=\"application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264\" port=5555 ! 
+        // rtph264depay ! h264parse ! tee name=videoTee mp4mux name=mux ! filesink location=test.mp4 decodebin name=bin ! d3dvideosink videoTee. !
+        // queue ! mux. videoTee. ! queue ! bin.
+
 
         /// <summary>
         /// A window that is separate from the main UI and plays a GStreamer RTP feed.
         /// </summary>
         /// <param name="Port"> The port that the RTP stream is sending data to. </param>
         /// <param name="Buffering"> The time in milliseconds of buffering of the feed. </param>
-        public VideoWindow(int Port, int Buffering = 200)
+        public VideoWindow(int Port, string StreamName, int Buffering = 200)
         {
             this.Port = Port;
+            this.StreamName = StreamName;
             this.Buffering = Buffering;
+
             Pipeline = new Pipeline();
 
             Window window = GetWindow(this);
@@ -70,7 +80,7 @@ namespace HuskyRobotics.UI.VideoStreamer
 
         private void OnCloseEvent(object sender, CancelEventArgs e)
         {
-            // Cleanup
+            // Cleanup the basically unmanaged class objects
             Pipeline.SetState(State.Null);
             Pipeline.Unref();
         }

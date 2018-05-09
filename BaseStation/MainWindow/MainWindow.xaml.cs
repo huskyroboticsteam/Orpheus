@@ -10,6 +10,8 @@ using System.Windows.Input;
 using System.Threading;
 using System.Collections.Generic;
 using System.Windows.Controls;
+using System.ComponentModel;
+using HuskyRobotics.UI.VideoStreamer;
 
 namespace HuskyRobotics.UI {
 	/// <summary>
@@ -104,9 +106,9 @@ namespace HuskyRobotics.UI {
             if (StreamSelect.SelectedItem != null)
             {
                 VideoDevice selection = (VideoDevice) StreamSelect.SelectedItem;
-                Streams.Add(new VideoStream(selection.Name, "Video Player Window"));
+                Streams.Add(new VideoStream(selection.Name, "0"));
 
-                Thread newWindowThread = new Thread(() => ThreadStartingPoint(Convert.ToInt32(selection.Port)));
+                Thread newWindowThread = new Thread(() => ThreadStartingPoint(Convert.ToInt32(selection.Port), selection.Name));
                 newWindowThread.SetApartmentState(ApartmentState.STA);
                 newWindowThread.IsBackground = true;
                 newWindowThread.Start();
@@ -118,12 +120,29 @@ namespace HuskyRobotics.UI {
             
         }
 
-        private void ThreadStartingPoint(int Port)
+        private void ThreadStartingPoint(int Port, string Name)
         {
-            VideoStreamer.VideoWindow tempWindow = new VideoStreamer.VideoWindow(Port);
+            VideoWindow tempWindow = new VideoWindow(Port, Name);
+            tempWindow.Closed += StreamWindowClosed;
             tempWindow.Show();
             tempWindow.StartStream();
             System.Windows.Threading.Dispatcher.Run();
+        }
+
+        private void StreamWindowClosed(object sender, EventArgs e)
+        {
+            VideoWindow w = (VideoWindow) sender;
+
+            Application.Current.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => {
+                for (int i = 0; i < this.Streams.Count; i++)
+                {
+                    if(this.Streams[i].Name.Equals(w.StreamName))
+                    {
+                        this.Streams.RemoveAt(i);
+                        break;
+                    }
+                }
+             }));
         }
     }
 }
