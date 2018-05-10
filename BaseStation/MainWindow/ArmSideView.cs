@@ -24,9 +24,8 @@ namespace HuskyRobotics.UI
     /// </summary>
     public partial class ArmSideView : ArmView
     {
-
-        private string _viewName = "Arm Side";
-        public override string ViewName { get => _viewName; set { _viewName = value; } }
+        
+        public override string ViewName { get => "Arm Side"; }
 
         protected override (float, float) ProjectCanvas((float, float, float) input)
         {

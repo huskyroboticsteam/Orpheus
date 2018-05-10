@@ -8,8 +8,7 @@ namespace HuskyRobotics.UI
 {
     public partial class ArmTopView : ArmView
     {
-        private string _viewName = "Arm Top";
-        public override string ViewName { get => _viewName; set { _viewName = value; } }
+        public override string ViewName { get => "Arm Top"; }
 
         protected override (float, float) ProjectCanvas((float, float, float) input)
         {
