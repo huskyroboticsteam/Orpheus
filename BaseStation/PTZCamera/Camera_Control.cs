@@ -10,6 +10,9 @@ using System.Threading.Tasks;
 
 namespace HuskyRobotics
 {
+    /// <summary>
+    /// This class is just used to test the camera controls.
+    /// </summary>
     class Camera_Control
     {
         static void Main(string[] args)
