@@ -50,8 +50,6 @@ namespace HuskyRobotics.UI {
             }
             Map.DisplayMap(Settings.CurrentMapFile);
             Map.Waypoints = Waypoints;
-            ArmSideViewer.ViewLabel.Content = "Arm Side";
-            ArmTopViewer.ViewLabel.Content = "Arm Top";
         }
 
         private void SettingChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
