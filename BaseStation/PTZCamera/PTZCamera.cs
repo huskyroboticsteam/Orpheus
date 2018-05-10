@@ -31,7 +31,7 @@ namespace HuskyRobotics
         public PTZCamera(string camera_address, string username, string password) : this(camera_address,username,password, new HttpClient()){ }
         public PTZCamera(IPAddress camera_address, string username, string password) : this(camera_address.ToString(), username, password, new HttpClient()) { }
 
-        public void _send_data(string relative_url, Dictionary<string, string> values)
+        public async void _send_data(string relative_url, Dictionary<string, string> values)
         {
             List<string> data = new List<string>();
             foreach(KeyValuePair<string,string> entry in values)
@@ -40,7 +40,8 @@ namespace HuskyRobotics
             }
             string url = this._base_url + relative_url + "?" + string.Join("&",data);
             try { 
-                Task<string> responseString = client.GetStringAsync(url);
+                string responseString = await client.GetStringAsync(url);
+                Log.Output(Log.Severity.INFO, Log.Source.CAMERAS, _base_url+" Response: "+responseString);
             }
             catch
             {
