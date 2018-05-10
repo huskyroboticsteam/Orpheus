@@ -98,7 +98,6 @@ namespace HuskyRobotics.UI
                 buffer.Position = 0;
                 byte[] hash = sha.ComputeHash(buffer);
                 var bufferHash = BitConverter.ToString(hash).Replace("-", String.Empty).Substring(0, 16);
-                Console.WriteLine(bufferHash);
 
                 String fileName = Directory.GetCurrentDirectory().ToString()+ @"\Images\" + bufferHash + ".jpg";
 

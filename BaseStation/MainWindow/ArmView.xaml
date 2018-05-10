@@ -11,7 +11,7 @@
             <!--<Line Stroke="Black" X1="{Binding ActualLocationX[0]}" Y1="{Binding ActualLocationY[0]}" X2="{Binding ActualLocationX[1]}" Y2="{Binding ActualLocationY[1]}" />
             <Line Stroke="Black" X1="{Binding ActualLocationX[1]}" Y1="{Binding ActualLocationY[1]}" X2="{Binding ActualLocationX[2]}" Y2="{Binding ActualLocationY[2]}" />
             <Line Stroke="Black" X1="{Binding ActualLocationX[2]}" Y1="{Binding ActualLocationY[2]}" X2="{Binding ActualLocationX[3]}" Y2="{Binding ActualLocationY[3]}" />-->
-            <Label Content="Arm" FontSize="8" Canvas.Left="40" x:Name="ViewLabel"/>
+            <Label Content="{Binding ViewName}" FontSize="8" Canvas.Left="40" x:Name="ViewLabel"/>
             <Line Stroke="Gray" X1="{Binding SetpointDisplayX[0]}" Y1="{Binding SetpointDisplayY[0]}" X2="{Binding SetpointDisplayX[1]}" Y2="{Binding SetpointDisplayY[1]}" />
             <Line Stroke="Gray" X1="{Binding SetpointDisplayX[1]}" Y1="{Binding SetpointDisplayY[1]}" X2="{Binding SetpointDisplayX[2]}" Y2="{Binding SetpointDisplayY[2]}" />
             <Line Stroke="Gray" X1="{Binding SetpointDisplayX[2]}" Y1="{Binding SetpointDisplayY[2]}" X2="{Binding SetpointDisplayX[3]}" Y2="{Binding SetpointDisplayY[3]}" />

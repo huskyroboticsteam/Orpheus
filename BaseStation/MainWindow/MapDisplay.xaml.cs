@@ -22,11 +22,31 @@ namespace HuskyRobotics.UI
     /// <summary>
     /// Interaction logic for MapDisplay.xaml
     /// </summary>
-    // To Do: fix offsetting with moved map
-    //        deleting waypoints
     public partial class MapDisplay : UserControl
     {
         private const double RESET_PADDING = 10;
+        private Point mousePosition;
+        private List<Image> allImages = new List<Image>();
+        private List<Image> waypointIcons = new List<Image>();
+        private bool dragging = false;
+        private int ImageWidth;
+        private int ImageHeight;
+        private int CenterPixelX;
+        private int CenterPixelY;
+        private int Zoom;
+
+        private ObservableCollection<Waypoint> _waypoints = new ObservableCollection<Waypoint>();
+        public ObservableCollection<Waypoint> Waypoints
+        {
+            get => _waypoints;
+            set
+            {
+                _waypoints.CollectionChanged -= WaypointsChanged;
+                _waypoints = value;
+                _waypoints.CollectionChanged += WaypointsChanged;
+            }
+        }
+
         public MapDisplay()
         {
             InitializeComponent();
@@ -46,17 +66,23 @@ namespace HuskyRobotics.UI
                     string[] imgDim = config[0].Split('x');
                     string[] centerCoords = config[1].Split(',');
 
-                    ImageWidth = 1;
-                    ImageHeight = 1;
-                    double MapCenterLat = 0;
-                    double MapCenterLong = 0;
-                    Zoom = 1;
+                    // reasonable defaults in case the parsing does fail
+                    ImageWidth = 300;
+                    ImageHeight = 300;
+                    double MapCenterLat = 47.653799;
+                    double MapCenterLong = -122.307808;
+                    Zoom = 17;
 
-                    Int32.TryParse(config[2], out Zoom);
-                    Int32.TryParse(imgDim[0], out ImageWidth);
-                    Int32.TryParse(imgDim[1], out ImageHeight);
-                    Double.TryParse(centerCoords[0], out MapCenterLat);
-                    Double.TryParse(centerCoords[1], out MapCenterLong);
+                    if (!Int32.TryParse(config[2], out Zoom))
+                        throw new ArithmeticException("Could not parse zoom from file");
+                    if (!Int32.TryParse(imgDim[0], out ImageWidth))
+                        throw new ArithmeticException("Could not parse image width from file");
+                    if (!Int32.TryParse(imgDim[1], out ImageHeight))
+                        throw new ArithmeticException("Could not parse image height from file");
+                    if (!Double.TryParse(centerCoords[0], out MapCenterLat))
+                        throw new ArithmeticException("Could not parse center latitude from file");
+                    if (!Double.TryParse(centerCoords[1], out MapCenterLong))
+                        throw new ArithmeticException("Could not parse center longitude from file");
 
                     Tuple<int, int> PixelCoords = MapConversion.LatLongToPixelXY(MapCenterLat, MapCenterLong, Zoom);
                     CenterPixelX = PixelCoords.Item1;
@@ -96,39 +122,21 @@ namespace HuskyRobotics.UI
             allImages.Clear();
         }
 
-        private Point mousePosition;
-        private List<Image> allImages = new List<Image>();
-        private List<Image> waypointIcons= new List<Image>();
-        private bool dragging = false;
-        private int ImageWidth;
-        private int ImageHeight;
-        private int CenterPixelX;
-        private int CenterPixelY;
-        private int Zoom;
-
-        private ObservableCollection<Waypoint> _waypoints = new ObservableCollection<Waypoint>();
-        public ObservableCollection<Waypoint> Waypoints { get => _waypoints;
-            set {
-                _waypoints.CollectionChanged -= WaypointsChanged;
-                _waypoints = value;
-                _waypoints.CollectionChanged += WaypointsChanged;
-            }
-        }
-
         private void WaypointsChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             foreach (var oldIcon in waypointIcons) {
                 MapCanvas.Children.Remove(oldIcon);
             }
-
+            
             foreach (var waypoint in Waypoints)
             {
-                var waypointIcon = new Image { Source = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"/waypoint.png", UriKind.Absolute)) };
+                var waypointIcon = new Image { Source = new BitmapImage(
+                    new Uri(Directory.GetCurrentDirectory() + @"/waypoint.png", UriKind.Absolute)) };
                 Tuple<int, int> pixelCoords = MapConversion.LatLongToPixelXY(waypoint.Lat, waypoint.Long, Zoom);
                 Canvas.SetLeft(waypointIcon, (ImageWidth / 2) + (pixelCoords.Item1 - CenterPixelX));
                 Canvas.SetTop(waypointIcon, (ImageHeight / 2) + (pixelCoords.Item2 - CenterPixelY));
                 MapCanvas.Children.Add(waypointIcon);
-                allImages.Add(waypointIcon);
+                waypointIcons.Add(waypointIcon);
             }            
         }
 
@@ -159,7 +167,7 @@ namespace HuskyRobotics.UI
 
         private void CanvasMouseWheel(object sender, MouseWheelEventArgs e)
         {
-            double scale = Math.Pow(1.5, -e.Delta/20.0);
+            double scale = Math.Pow(1.1, -e.Delta/20.0);
             var position = e.GetPosition(MapCanvas);
             var matrix = MapCanvas.RenderTransform.Value;
             matrix.ScaleAtPrepend(scale, scale, position.X, position.Y);
