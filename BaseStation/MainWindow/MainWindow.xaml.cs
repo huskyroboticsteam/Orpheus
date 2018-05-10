@@ -93,13 +93,7 @@ namespace HuskyRobotics.UI {
             }
         }
 
-        // Test Server: gst-launch-1.0 videotestsrc ! openh264enc ! h264parse ! rtph264pay ! udpsink host=127.0.0.1 port=5555
         private void LaunchStream(object sender, RoutedEventArgs e)
-        {
-            NewWindowHandler(sender, e);
-        }
-
-        private void NewWindowHandler(object sender, RoutedEventArgs e)
         {
             if (StreamSelect.SelectedItem != null)
             {

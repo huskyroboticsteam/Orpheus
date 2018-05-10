@@ -11,6 +11,7 @@ using Gst;
 using Gst.Video;
 using System.Windows.Interop;
 using System.Windows.Threading;
+using System.Threading;
 
 namespace HuskyRobotics.UI.VideoStreamer
 {
@@ -20,49 +21,82 @@ namespace HuskyRobotics.UI.VideoStreamer
     public partial class VideoWindow : Window
     {
         private Pipeline Pipeline;
+
         private Element UDP = ElementFactory.Make("udpsrc");
         private Element JitterBuffer = ElementFactory.Make("rtpjitterbuffer");
         private Element Depay = ElementFactory.Make("rtph264depay");
         private Element Parse = ElementFactory.Make("h264parse");
-        private Element Dec = ElementFactory.Make("openh264dec");
-        private Element Sink = ElementFactory.Make("d3dvideosink");
+
+        private Element Mux = ElementFactory.Make("mp4mux");
+        private Element FileSink = ElementFactory.Make("filesink");
+
+        private Element Dec = ElementFactory.Make("avdec_h264");
+        private Element VideoSink = ElementFactory.Make("d3dvideosink");
+
+        private Element Tee = ElementFactory.Make("tee");
+        private Element Q1 = ElementFactory.Make("queue");
+        private Element Q2 = ElementFactory.Make("queue");
+
         private Caps Caps = Caps.FromString("application/x-rtp, media=video, clock-rate=90000, encoding-name=H264");
+
+        private Element Filter = ElementFactory.Make("capsfilter");
+        private Caps FilterCaps = Caps.FromString("video/x-h264");
         private int Port;
-        private int Buffering;
+        private int BufferSizeMs;
         public string StreamName;
 
-        // Stream with recording and showing: 
-        // gst-launch-1.0 -vvv -e udpsrc caps=\"application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264\" port=5555 ! 
-        // rtph264depay ! h264parse ! tee name=videoTee mp4mux name=mux ! filesink location=test.mp4 decodebin name=bin ! d3dvideosink videoTee. !
-        // queue ! mux. videoTee. ! queue ! bin.
+        // Test Server: 
+        // gst-launch-1.0 videotestsrc ! openh264enc ! h264parse ! rtph264pay ! udpsink host=127.0.0.1 port=5555
 
+        // Client stream with recording and showing:
+        // gst-launch-1.0 -vvv -e udpsrc caps=\"application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264\" port=5555 ! 
+        // rtph264depay ! h264parse ! tee name=videoTee videoTee. ! queue ! mp4mux ! filesink location=test.mp4 videoTee. ! queue ! avdec_h264 ! d3dvideosink
 
         /// <summary>
         /// A window that is separate from the main UI and plays a GStreamer RTP feed.
         /// </summary>
         /// <param name="Port"> The port that the RTP stream is sending data to. </param>
-        /// <param name="Buffering"> The time in milliseconds of buffering of the feed. </param>
-        public VideoWindow(int Port, string StreamName, int Buffering = 200)
+        /// <param name="BufferSizeMs"> The time in milliseconds of buffering of the feed. </param>
+        public VideoWindow(int Port, string StreamName, int BufferSizeMs = 200)
         {
             this.Port = Port;
             this.StreamName = StreamName;
-            this.Buffering = Buffering;
+            this.BufferSizeMs = BufferSizeMs;
 
             Pipeline = new Pipeline();
 
             Window window = GetWindow(this);
             WindowInteropHelper wih = new WindowInteropHelper(this);
             wih.EnsureHandle(); // Generate Window Handle if current HWND is NULL (always occurs because background window)
-            VideoOverlayAdapter overlay = new VideoOverlayAdapter(Sink.Handle);
+            VideoOverlayAdapter overlay = new VideoOverlayAdapter(VideoSink.Handle);
             overlay.WindowHandle = wih.Handle;
 
+            // Allow forwarding of EOS to all elements in the pipeline for shutdown
+            Pipeline["message-forward"] = true;
             UDP["port"] = Port;
             UDP["caps"] = Caps;
+            JitterBuffer["latency"] = BufferSizeMs;
+            FileSink["location"] = "test.mp4";
+            Filter["caps"] = FilterCaps;
 
-            JitterBuffer["latency"] = Buffering;
+            Pipeline.Add(UDP, JitterBuffer, Depay, Parse, Tee, Q1, Filter, Mux, FileSink, Q2, Dec, VideoSink);
+            if(!Element.Link(UDP, JitterBuffer, Depay, Parse, Tee)) { Console.WriteLine("Failed To Link UDP, JitterBufferm, Depay, Parser, Tee"); }
+            //if(!Parse.Link(Tee)) { Console.WriteLine("Failed To Link Parser to Tee"); }
+            if(!Element.Link(Q1, Filter, Mux, FileSink)) { Console.WriteLine("Failed To Link Queue1, Mux, FileSink"); }
+            if(!Element.Link(Q2, Dec, VideoSink)) { Console.WriteLine("Failed To Link Queue2, Decoder, VideoSink"); }
 
-            Pipeline.Add(UDP, JitterBuffer, Depay, Parse, Dec, Sink);
-            Element.Link(UDP, JitterBuffer, Depay, Parse, Dec, Sink);
+            PadTemplate TeeSrcPadTemplate = Tee.GetPadTemplate("src_%u");
+            Pad TeeQ1Pad = Tee.RequestPad(TeeSrcPadTemplate);
+            Pad Q1Pad = Q1.GetStaticPad("sink");
+
+            Pad TeeQ2Pad = Tee.RequestPad(TeeSrcPadTemplate);
+            Pad Q2Pad = Q2.GetStaticPad("sink");
+
+            if (TeeQ1Pad.Link(Q1Pad) != PadLinkReturn.Ok) { Console.WriteLine("Failed To Link Tee to Queue1"); }
+            if (TeeQ2Pad.Link(Q2Pad) != PadLinkReturn.Ok) { Console.WriteLine("Failed To Link Tee to Queue2"); }
+
+            Q1Pad.Unref();
+            Q2Pad.Unref();
 
             Pipeline.SetState(State.Null);
 
@@ -80,7 +114,13 @@ namespace HuskyRobotics.UI.VideoStreamer
 
         private void OnCloseEvent(object sender, CancelEventArgs e)
         {
-            // Cleanup the basically unmanaged class objects
+            // Properly shutdown down the sinks
+            // We have to wait for EOS to propogate through the pipeline
+            // Unclear how dependent delay is on machine's speed or other process usage
+            Pipeline.SendEvent(Event.NewEos());
+            Thread.Sleep(1000);
+
+            // Cleanup the unmanaged class objects
             Pipeline.SetState(State.Null);
             Pipeline.Unref();
         }
