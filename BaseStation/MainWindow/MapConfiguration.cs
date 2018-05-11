@@ -123,16 +123,16 @@ namespace HuskyRobotics.UI
         // Constructor with everything set to a default value
         public MapConfiguration()
         {
-            Latitude = 0;
-            Longitude = 0;
+            Latitude = 47.653799;
+            Longitude = -122.307808;
             ImgWidth = 300;
             ImgHeight = 300;
             Scale = 2;
-            Zoom = 1;
+            Zoom = 17;
             MapType = "satellite";
             MapSetName = "New Map";
-            TilingWidth = 2;
-            TilingHeight = 2;
+            TilingWidth = 5;
+            TilingHeight = 5;
         }
 
         // returns the string representation of the configuration

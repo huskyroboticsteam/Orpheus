@@ -6,6 +6,8 @@ using HuskyRobotics.Utilities;
 using HuskyRobotics.Arm;
 using System;
 using System.Linq;
+using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 namespace HuskyRobotics.UI {
 	/// <summary>
@@ -17,6 +19,7 @@ namespace HuskyRobotics.UI {
 		public Settings Settings { get => SettingsFile.Settings; }
 		public ObservableDictionary<string, MeasuredValue<double>> Properties { get; }
         public Armature SetpointArm;
+        public ObservableCollection<Waypoint> Waypoints { get; private set; } = new ObservableCollection<Waypoint>();
 
 		public MainWindow()
         {
@@ -46,7 +49,8 @@ namespace HuskyRobotics.UI {
                 }
             }
             Map.DisplayMap(Settings.CurrentMapFile);
-		}
+            Map.Waypoints = Waypoints;
+        }
 
         private void SettingChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
@@ -69,5 +73,17 @@ namespace HuskyRobotics.UI {
 						"Should be pointed to putty.exe");
 			}
 		}
-	}
+
+        private void Add_Waypoint(object sender, RoutedEventArgs e)
+        {
+            double lat, long_;
+            if (Double.TryParse(WaypointLatInput.Text, out lat) &&
+                Double.TryParse(WaypointLongInput.Text, out long_)) {
+                Waypoints.Add(new Waypoint(lat, long_, WaypointNameInput.Text));
+
+                WaypointNameInput.Text = "";
+                FocusManager.SetFocusedElement(this, WaypointLatInput);
+            }
+        }
+    }
 }
