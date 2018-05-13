@@ -187,10 +187,6 @@
       <Project>{A6DFDFF4-614F-4225-8F75-C81C6765F23E}</Project>
       <Name>Utilities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\VideoStreamer\VideoStreamer.csproj">
-      <Project>{97cc5515-a095-48eb-9ec2-ac134eb4a79c}</Project>
-      <Name>VideoStreamer</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="settings.xml" />

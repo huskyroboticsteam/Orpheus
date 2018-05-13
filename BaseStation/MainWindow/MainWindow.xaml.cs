@@ -9,7 +9,6 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using System.Threading;
 using System.Collections.Generic;
-using System.Windows.Controls;
 using System.ComponentModel;
 using HuskyRobotics.UI.VideoStreamer;
 

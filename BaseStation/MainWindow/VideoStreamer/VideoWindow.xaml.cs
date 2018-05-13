@@ -1,16 +1,9 @@
 ﻿using System;
 using System.Windows;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using Gst;
 using Gst.Video;
 using System.Windows.Interop;
-using System.Windows.Threading;
 using System.Threading;
 
 namespace HuskyRobotics.UI.VideoStreamer
