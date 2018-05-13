@@ -28,6 +28,7 @@ namespace HuskyRobotics.UI {
 
 		public MainWindow()
         {
+            Environment.SetEnvironmentVariable("GST_PLUGIN_SYSTEM_PATH", Directory.GetCurrentDirectory() + "\\lib");
             Gst.Application.Init();
             Properties = new MockObservableMap();
             InitializeComponent();
