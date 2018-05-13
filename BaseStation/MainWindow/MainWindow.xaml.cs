@@ -100,7 +100,7 @@ namespace HuskyRobotics.UI {
             if (StreamSelect.SelectedItem != null)
             {
                 VideoDevice selection = (VideoDevice) StreamSelect.SelectedItem;
-                Streams.Add(new VideoStream(selection.Name, "0"));
+                Streams.Add(new VideoStream(selection.Name, "00:00:00"));
 
                 Thread newWindowThread = new Thread(() => ThreadStartingPoint(Convert.ToInt32(selection.Port), selection.Name));
                 newWindowThread.SetApartmentState(ApartmentState.STA);

@@ -90,7 +90,7 @@ namespace HuskyRobotics.UI.VideoStreamer
             UDP["caps"] = Caps;
             JitterBuffer["latency"] = BufferSizeMs;
 
-            FileSink["location"] = RecordingPath + FindFilename();
+            FileSink["location"] = RecordingPath + GetFilename();
             Filter["caps"] = FilterCaps;
 
             Pipeline.Add(UDP, JitterBuffer, Depay, Parse, Tee, Q1, Filter, Mux, FileSink, Q2, Dec, VideoSink);
@@ -126,9 +126,9 @@ namespace HuskyRobotics.UI.VideoStreamer
             StateChangeReturn s = Pipeline.SetState(State.Playing);
         }
 
-        private string FindFilename()
+        private string GetFilename()
         {
-            return "\\test.mp4";
+            return "\\" + System.DateTime.Now.ToString("MM-dd-yyyy--HH;mm;ss") + " (" + this.StreamName + ")" + ".mp4";
         }
 
         private void OnCloseEvent(object sender, CancelEventArgs e)
