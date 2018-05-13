@@ -16,6 +16,8 @@ namespace Science.Systems
     {
         public static string MIDIFileName;
         public static int OctaveShift = int.MinValue;
+        public static bool AutoOctaveDown = true;
+        public static bool AutoOctaveUp = false;
 
         private const float MOTOR_FREQUENCY_SLOPE = 711.67F;
         private const float MOTOR_FREQUENCY_INTERCEPT = 1.1111F;
@@ -47,6 +49,8 @@ namespace Science.Systems
                     if (StartUS < PlayerPositionUS) { continue; } // If we've missed the start of the note (due to overlap), skip it.
                     if (StartUS > (PlayerPositionUS + 1000)) { Thread.Sleep((int)((StartUS - PlayerPositionUS) / 1000)); } // If the start is in more than 1 ms, wait until then to allow for rests.
 
+                    if (NoteToPercent(Note.NoteNumber + (OctaveShift * 12)) > 1 && AutoOctaveDown) { Note.NoteNumber = (SevenBitNumber)(Note.NoteNumber - 12); }
+                    if (NoteToPercent(Note.NoteNumber + ((OctaveShift + 1) * 12)) <= 1 && AutoOctaveUp) { Note.NoteNumber = (SevenBitNumber)(Note.NoteNumber + 12); }
                     RoverMain.IOHandler.DrillController.SetSpeed(NoteToPercent(Note.NoteNumber + (OctaveShift * 12)), true);
                     Log.Output(Log.Severity.DEBUG, Log.Source.MOTORS, "Outputting note " + Note.NoteNumber + " at speed " + NoteToPercent(Note.NoteNumber + (OctaveShift * 12)) + " for " + (LengthUS / 1000) + "ms.");
                     Thread.Sleep((int)(LengthUS / 1000));
@@ -68,6 +72,7 @@ namespace Science.Systems
             if (MIDIFileName != null && OctaveShift != int.MinValue)
             {
                 this.PlayerThread = new Thread(new ThreadStart(this.StartPlayer));
+                this.PlayerThread.Start();
             }
         }
 
