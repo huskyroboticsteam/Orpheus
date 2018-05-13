@@ -102,16 +102,16 @@ namespace HuskyRobotics.UI {
                 VideoDevice selection = (VideoDevice) StreamSelect.SelectedItem;
                 Streams.Add(new VideoStream(selection.Name, "00:00:00"));
 
-                Thread newWindowThread = new Thread(() => ThreadStartingPoint(Convert.ToInt32(selection.Port), selection.Name));
+                Thread newWindowThread = new Thread(() => ThreadStartingPoint(Convert.ToInt32(selection.Port), selection.Name, Convert.ToInt32(selection.BufferingMs)));
                 newWindowThread.SetApartmentState(ApartmentState.STA);
                 newWindowThread.IsBackground = true;
                 newWindowThread.Start();
             }            
         }
 
-        private void ThreadStartingPoint(int Port, string Name)
+        private void ThreadStartingPoint(int Port, string Name, int BufferingMs)
         {
-            VideoWindow tempWindow = new VideoWindow(Port, Name, Settings.RecordingPath);
+            VideoWindow tempWindow = new VideoWindow(Port, Name, Settings.RecordingPath, BufferingMs);
             VideoWindows.Add(tempWindow);
             tempWindow.Closed += StreamWindowClosed;
             tempWindow.Show();
