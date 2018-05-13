@@ -100,6 +100,6 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy /I /Q /Y $(SolutionDir)_GStreamerDependencies $(TargetDir)
-xcopy /I /Q /Y $(SolutionDir)_GStreamerDependencies\lib\gstreamer-1.0 $(TargetDir)lib\gstreamer-1.0</PostBuildEvent>
+xcopy /I /Q /Y $(SolutionDir)_GStreamerDependencies\_GLib\gstreamer-1.0 $(TargetDir)lib\gstreamer-1.0</PostBuildEvent>
   </PropertyGroup>
 </Project>
