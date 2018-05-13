@@ -43,7 +43,18 @@ namespace HuskyRobotics.UI.VideoStreamer
         private Caps FilterCaps = Caps.FromString("video/x-h264");
         private int Port;
         private int BufferSizeMs;
-        public string StreamName;
+        private string RecordingPath;
+        private string _streamName;
+
+        public String StreamName
+        {
+            get { return this._streamName; }
+            set
+            {
+                this.Title = value;
+                this._streamName = value;
+            }
+        }
 
         // Test Server: 
         // gst-launch-1.0 videotestsrc ! openh264enc ! h264parse ! rtph264pay ! udpsink host=127.0.0.1 port=5555
@@ -57,11 +68,13 @@ namespace HuskyRobotics.UI.VideoStreamer
         /// </summary>
         /// <param name="Port"> The port that the RTP stream is sending data to. </param>
         /// <param name="BufferSizeMs"> The time in milliseconds of buffering of the feed. </param>
-        public VideoWindow(int Port, string StreamName, int BufferSizeMs = 200)
+        public VideoWindow(int Port, string StreamName, string RecordingPath, int BufferSizeMs = 200)
         {
+            DataContext = this;
             this.Port = Port;
             this.StreamName = StreamName;
             this.BufferSizeMs = BufferSizeMs;
+            this.RecordingPath = RecordingPath;
 
             Pipeline = new Pipeline();
 
@@ -76,7 +89,8 @@ namespace HuskyRobotics.UI.VideoStreamer
             UDP["port"] = Port;
             UDP["caps"] = Caps;
             JitterBuffer["latency"] = BufferSizeMs;
-            FileSink["location"] = "test.mp4";
+
+            FileSink["location"] = RecordingPath + FindFilename();
             Filter["caps"] = FilterCaps;
 
             Pipeline.Add(UDP, JitterBuffer, Depay, Parse, Tee, Q1, Filter, Mux, FileSink, Q2, Dec, VideoSink);
@@ -112,11 +126,18 @@ namespace HuskyRobotics.UI.VideoStreamer
             StateChangeReturn s = Pipeline.SetState(State.Playing);
         }
 
+        private string FindFilename()
+        {
+            return "\\test.mp4";
+        }
+
         private void OnCloseEvent(object sender, CancelEventArgs e)
         {
             // Properly shutdown down the sinks
             // We have to wait for EOS to propogate through the pipeline
             // Unclear how dependent delay is on machine's speed or other process usage
+            this.Hide();
+            Console.WriteLine("Shutting down video");
             Pipeline.SendEvent(Event.NewEos());
             Thread.Sleep(1000);
 

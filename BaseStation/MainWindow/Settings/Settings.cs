@@ -1,4 +1,5 @@
-﻿using HuskyRobotics.Utilities;
+﻿using HuskyRobotics.UI;
+using HuskyRobotics.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,6 +18,7 @@ namespace HuskyRobotics.UI
     /// 
     /// Every setting should also call PropertyChanged so we implement INotifyPropertyChanged
     ///
+    [XmlRoot("settings")]
     public class Settings : INotifyPropertyChanged
     {
         /// <summary>
@@ -34,16 +36,27 @@ namespace HuskyRobotics.UI
         public event PropertyChangedEventHandler ValueChanged;
         // Boilerplate
         public event PropertyChangedEventHandler PropertyChanged;
-        
-        public IEnumerable<RemoteDevice> Devices {
+
+        [XmlArray("devices")]
+        public ObservableCollection<RemoteDevice> Devices {
             get => _devices;
+            set {
+                _devices = value;
+                NotifyChanged("Devices");
+            }
         }
 
-        public IEnumerable<VideoDevice> VideoDevices
+		[XmlArray("video_devices")]
+        public ObservableCollection<VideoDevice> VideoDevices
         {
             get => _videoDevices;
+			set {
+				_videoDevices = value;
+				NotifyChanged("VideoDevices");
+			}
         }
 
+        [XmlElement("putty_path")]
         public String PuttyPath {
             get => _puttyPath;
             set {
@@ -52,6 +65,7 @@ namespace HuskyRobotics.UI
             }
         }
 
+        [XmlElement("current_map_file")]
         public String CurrentMapFile {
             get => _currentMapFile;
             set {
@@ -60,6 +74,7 @@ namespace HuskyRobotics.UI
             }
         }
 
+		[XmlElement("recording_path")]
         public String RecordingPath
         {
             get => _recordingPath;
@@ -95,7 +110,8 @@ namespace HuskyRobotics.UI
                     {
                         item.PropertyChanged += Settings_PropertyChanged;
                     }
-                } else if (e.Action == NotifyCollectionChangedAction.Remove)
+                }
+                else if (e.Action == NotifyCollectionChangedAction.Remove)
                 {
                     foreach (var item in e.OldItems.OfType<INotifyPropertyChanged>())
                     {

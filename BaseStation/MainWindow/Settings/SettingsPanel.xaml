@@ -66,8 +66,9 @@
             <Label Content="Video Streams:" />
             <DataGrid Name="Streams" Width="400" Height="200" ItemsSource="{Binding Settings.VideoDevices}" CanUserAddRows="True" AutoGenerateColumns="False">
               <DataGrid.Columns>
-              <DataGridTextColumn Binding="{Binding Name}" Header="Name" Width="*"/>
-              <DataGridTextColumn Binding="{Binding Port}" Header="Port" Width="*"/>
+                <DataGridTextColumn Binding="{Binding Name}" Header="Name" Width="*"/>
+                <DataGridTextColumn Binding="{Binding Port}" Header="Port" Width="*"/>
+                <DataGridTextColumn Binding="{Binding BufferingMs}" Header="Buffering (ms)" Width="*"/>
               </DataGrid.Columns>
             </DataGrid>
           </StackPanel>

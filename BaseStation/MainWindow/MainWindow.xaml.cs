@@ -20,6 +20,7 @@ namespace HuskyRobotics.UI {
 	public partial class MainWindow : Window {
 		private const string SETTINGS_PATH = "settings.xml";
 		private SettingsFile SettingsFile = new SettingsFile(SETTINGS_PATH);
+        private List<VideoWindow> VideoWindows = new List<VideoWindow>();
 		public Settings Settings { get => SettingsFile.Settings; }
 		public ObservableDictionary<string, MeasuredValue<double>> Properties { get; }
         public Armature SetpointArm;
@@ -32,6 +33,7 @@ namespace HuskyRobotics.UI {
             Properties = new MockObservableMap();
             InitializeComponent();
             WindowState = WindowState.Maximized;
+            this.Closing += OnCloseEvent;
 			DataContext = this;
 
             double degToRad = Math.PI / 180;
@@ -45,7 +47,7 @@ namespace HuskyRobotics.UI {
 
             Settings.PropertyChanged += SettingChanged;
             SettingPanel.Settings = Settings;
-            if (!Directory.Exists(Settings.CurrentMapFile))
+            if (!File.Exists(Directory.GetCurrentDirectory() + @"\Images\" + Settings.CurrentMapFile))
             {
                 string[] mapFiles = Directory.GetFiles
                     (Directory.GetCurrentDirectory() + @"\Images", "*.map");
@@ -104,17 +106,13 @@ namespace HuskyRobotics.UI {
                 newWindowThread.SetApartmentState(ApartmentState.STA);
                 newWindowThread.IsBackground = true;
                 newWindowThread.Start();
-            }
-            else
-            {
-                // Show error message indicating that selection must be made
-            }
-            
+            }            
         }
 
         private void ThreadStartingPoint(int Port, string Name)
         {
-            VideoWindow tempWindow = new VideoWindow(Port, Name);
+            VideoWindow tempWindow = new VideoWindow(Port, Name, Settings.RecordingPath);
+            VideoWindows.Add(tempWindow);
             tempWindow.Closed += StreamWindowClosed;
             tempWindow.Show();
             tempWindow.StartStream();
@@ -131,10 +129,24 @@ namespace HuskyRobotics.UI {
                     if(this.Streams[i].Name.Equals(w.StreamName))
                     {
                         this.Streams.RemoveAt(i);
+                        this.VideoWindows.RemoveAt(i);
                         break;
                     }
                 }
              }));
+        }
+
+        private void OnCloseEvent(object sender, CancelEventArgs e)
+        {
+            for (int i = VideoWindows.Count - 1; i >= 0; i--)
+            {
+                VideoWindow window = VideoWindows.ElementAt(i);
+                window.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => {
+                    window.Hide();
+                    window.Close(); // Closing takes awhile so hide the window
+                }));
+                VideoWindows.RemoveAt(i);
+            }
         }
     }
 }

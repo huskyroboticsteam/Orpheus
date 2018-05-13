@@ -77,16 +77,17 @@
                                         <DataGridTextColumn Binding="{Binding Time}" Header="Time" Width="*"/>
                                     </DataGrid.Columns>
                                 </DataGrid>
-                                <StackPanel Orientation="Horizontal">
+                                <DockPanel Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                                     <Button Padding="5" Margin="5" Content="Launch" Click="LaunchStream" />
-                                </StackPanel>
-                                <ComboBox Name="StreamSelect" Padding="5" Margin="5" ItemsSource="{Binding Settings.VideoDevices}">
-                                    <ComboBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding Name}"/>
-                                        </DataTemplate>
-                                    </ComboBox.ItemTemplate>
-                                </ComboBox>
+                                    <ComboBox Name="StreamSelect" Padding="5" Margin="5" ItemsSource="{Binding Settings.VideoDevices}" SelectedIndex="0">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Name}"/>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                </DockPanel>
+                                
                             </StackPanel>
                         </StackPanel>
                         <DataGrid ItemsSource="{Binding Waypoints}" CanUserDeleteRows="True" ColumnWidth="*" />
