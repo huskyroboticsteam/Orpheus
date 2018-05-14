@@ -129,7 +129,6 @@ namespace HuskyRobotics.UI.VideoStreamer
             // Properly shutdown down the sinks
             // We have to wait for EOS to propogate through the pipeline
             // Unclear how dependent delay is on machine's speed or other process usage
-            this.Hide();
             Console.WriteLine("Shutting down video");
             Pipeline.SendEvent(Event.NewEos());
             Thread.Sleep(1000);

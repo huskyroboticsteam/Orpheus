@@ -113,27 +113,28 @@ namespace HuskyRobotics.UI {
         {
             VideoWindow tempWindow = new VideoWindow(Port, Name, Settings.RecordingPath, BufferingMs);
             VideoWindows.Add(tempWindow);
-            tempWindow.Closed += StreamWindowClosed;
+            tempWindow.Closed += VideoWindowClosedEvent;
             tempWindow.Show();
             tempWindow.StartStream();
             System.Windows.Threading.Dispatcher.Run();
         }
 
-        private void StreamWindowClosed(object sender, EventArgs e)
+        private void VideoWindowClosedEvent(object sender, EventArgs e)
         {
-            VideoWindow w = (VideoWindow) sender;
+            VideoWindow w = (VideoWindow)sender;
 
-            Application.Current.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => {
+            Application.Current.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() =>
+            {
                 for (int i = 0; i < this.Streams.Count; i++)
                 {
-                    if(this.Streams[i].Name.Equals(w.StreamName))
+                    if (this.Streams[i].Name.Equals(w.StreamName))
                     {
                         this.Streams.RemoveAt(i);
                         this.VideoWindows.RemoveAt(i);
                         break;
                     }
                 }
-             }));
+            }));
         }
 
         private void OnCloseEvent(object sender, CancelEventArgs e)
