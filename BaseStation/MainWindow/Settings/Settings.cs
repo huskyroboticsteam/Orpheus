@@ -26,6 +26,8 @@ namespace HuskyRobotics.UI
         /// </summary>
         private string _currentMapFile;
         private ObservableCollection<RemoteDevice> _devices = new ObservableCollection<RemoteDevice>();
+        private ObservableCollection<VideoDevice> _videoDevices = new ObservableCollection<VideoDevice>();
+        private String _recordingPath;
         private String _puttyPath = @"C:\Program Files (x86)\PuTTY\putty.exe";
 
         /// <summary>
@@ -42,6 +44,16 @@ namespace HuskyRobotics.UI
                 _devices = value;
                 NotifyChanged("Devices");
             }
+        }
+
+		[XmlArray("video_devices")]
+        public ObservableCollection<VideoDevice> VideoDevices
+        {
+            get => _videoDevices;
+			set {
+				_videoDevices = value;
+				NotifyChanged("VideoDevices");
+			}
         }
 
         [XmlElement("putty_path")]
@@ -62,9 +74,30 @@ namespace HuskyRobotics.UI
             }
         }
 
+		[XmlElement("recording_path")]
+        public String RecordingPath
+        {
+            get => _recordingPath;
+            set
+            {
+                _recordingPath = value;
+                NotifyChanged("RecordingPath");
+            }
+        }
+
+
+        // For serialization only
+        [XmlElement("Devices"), Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+        public List<RemoteDevice> DevicesSurrogate { get => _devices.ToList(); set => _devices = new ObservableCollection<RemoteDevice>(value); }
+
+        // For serialization only
+        [XmlElement("VideoDevices"), Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+        public List<VideoDevice> VideoDevicesSurrogate { get => _videoDevices.ToList(); set => _videoDevices = new ObservableCollection<VideoDevice>(value); }
+
         public Settings()
         {
             _devices.CollectionChanged += CollectionListener("Devices");
+            _videoDevices.CollectionChanged += CollectionListener("VideoDevices");
         }
 
         private NotifyCollectionChangedEventHandler CollectionListener(string collectionName)

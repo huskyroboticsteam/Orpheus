@@ -69,6 +69,26 @@
                                 <Button Padding="5" Margin="5" Content="Add Waypoint" Click="Add_Waypoint"/>
                                 <Button Padding="5" Margin="5" Content="Update Location" />
                             </StackPanel>
+                            <StackPanel>
+                                <Label Content="Video Streams" />
+                                <DataGrid Name="VideoStreams"  Height="150" ItemsSource="{Binding Streams}" CanUserAddRows="False" AutoGenerateColumns="False">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Binding="{Binding Name}" Header="Name" Width="*"/>
+                                        <DataGridTextColumn Binding="{Binding Time}" Header="Time" Width="*"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                                <DockPanel Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                                    <Button Padding="5" Margin="5" Content="Launch" Click="LaunchStream" />
+                                    <ComboBox Name="StreamSelect" Padding="5" Margin="5" ItemsSource="{Binding Settings.VideoDevices}" SelectedIndex="0">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Name}"/>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                </DockPanel>
+                                
+                            </StackPanel>
                         </StackPanel>
                         <DataGrid ItemsSource="{Binding Waypoints}" CanUserDeleteRows="True" ColumnWidth="*" />
                     </DockPanel>
