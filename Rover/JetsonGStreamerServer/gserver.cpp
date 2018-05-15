@@ -71,8 +71,9 @@ GstElement * start_device(GstDevice *dev, const char *client)
   GstStructure *str;
   gchar *name, *cl;
   GstElement *pipeline, *source, *depay, *encoder, *parse, *sink;
-  GstElement *s_cap, *e_cap, *scale, *scale_cap;
+  GstElement *s_cap, *e_cap, *scale, *scale_cap, *video_rate, *v_cap;
   GstCaps *s_cap_unapplied, *e_cap_unapplied, *scale_cap_unapplied;
+  GstCaps *v_cap_unapplied;
 
   name = gst_device_get_display_name(dev);
   cl = gst_device_get_device_class(dev);
@@ -92,6 +93,8 @@ GstElement * start_device(GstDevice *dev, const char *client)
   sink = gst_element_factory_make("udpsink", NULL); 
   scale = gst_element_factory_make("videoscale", NULL);
   scale_cap = gst_element_factory_make("capsfilter", NULL);
+  video_rate = gst_element_factory_make("videorate", NULL);
+  v_cap = gst_element_factory_make("capsfilter", NULL);
 
   // options for the source
   g_object_set(G_OBJECT(source), "device", gst_structure_get_string(str, "device.path")
@@ -99,7 +102,7 @@ GstElement * start_device(GstDevice *dev, const char *client)
   std::unordered_map<std::string, std::tuple<gint, gint, gint, gint, gint> > table;
   table["RICOH THETA S"] = std::make_tuple(1280, 720, 5555, 640, 360);
   table["ZED"] = std::make_tuple(3840, 1080, 5556, 960, 270);
-  table["USB 2.0 Camera"] = std::make_tuple(1280, 720, 5557, 640, 360);
+  table["USB 2.0 Camera"] = std::make_tuple(1280, 720, 5557, 320, 180);
  
   
   s_cap_unapplied = gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "I420",
@@ -119,13 +122,19 @@ GstElement * start_device(GstDevice *dev, const char *client)
  
   g_object_set(G_OBJECT(scale_cap), "caps", scale_cap_unapplied, NULL);
 
+  // options for the videorate
+  v_cap_unapplied = gst_caps_new_simple("video/x-raw", "framerate", G_TYPE_STRING, "10/1", NULL);
+  g_object_set(G_OBJECT(v_cap), "caps", v_cap_unapplied, NULL);
+
   // options for the sink
-  g_object_set(G_OBJECT(sink), "host", client, "port", std::get<2>(table[name]), NULL);
-  if (!pipeline || !source || !s_cap || !e_cap || !depay || !encoder || !parse || !sink || !scale || !scale_cap) 
+  g_object_set(G_OBJECT(sink), "host", client, "port", std::get<2>(table[name]), NULL);:
+  if (!pipeline || !source || !s_cap || !e_cap || !depay || !encoder || !parse || !sink || !scale || !scale_cap || !) 
   {
     g_printerr ("One element could not be created. SAD! \n");
     exit(-1);
   } 
+
+
   
   // add elements and linking them
   gst_bin_add_many(GST_BIN(pipeline), source, s_cap, e_cap, depay, 
