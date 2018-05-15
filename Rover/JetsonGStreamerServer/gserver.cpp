@@ -1,18 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <signal.h>
 #include "gserver.h"
+#include <gst/gst.h>
 #include <unordered_map>
 #include <thread>
-#include <vector>
-#include <signal.h> 
+#include <vector> 
+#include <chrono>
 
-extern "C" 
-{
-  #include <gst/gst.h>
-  #include <gst/gstprotection.h>
-}
-
-GMainLoop * loop;
+GMainLoop *loop;
+std::vector<std::thread> threads;
 
 void structure_fields(const GstStructure *device) 
 {
@@ -25,7 +22,7 @@ void structure_fields(const GstStructure *device)
   }
 }
 
-gboolean bus_func (GstBus * bus, GstMessage * message, gpointer user_data)
+gboolean bus_func (GstBus *bus, GstMessage *message, gpointer user_data)
 {
    GstDevice *devi;
    gchar *name;
@@ -66,7 +63,7 @@ gboolean bus_func (GstBus * bus, GstMessage * message, gpointer user_data)
 // h264parse ! 
 // rtph264pay ! 
 // udpsink host=192.168.0.5 port=5555
-GstElement * start_device(GstDevice *dev, const char *client) 
+GstElement *start_device(GstDevice *dev, const char *client) 
 {
   GstStructure *str;
   gchar *name, *cl;
@@ -99,6 +96,8 @@ GstElement * start_device(GstDevice *dev, const char *client)
   // options for the source
   g_object_set(G_OBJECT(source), "device", gst_structure_get_string(str, "device.path")
                                                                                 , NULL);
+
+  // camera settings: (orignal_x_res, orignal_y_res, port, scaled_x_res, scaled_y_res)
   std::unordered_map<std::string, std::tuple<gint, gint, gint, gint, gint> > table;
   table["RICOH THETA S"] = std::make_tuple(1280, 720, 5555, 640, 360);
   table["ZED"] = std::make_tuple(3840, 1080, 5556, 960, 270);
@@ -123,25 +122,25 @@ GstElement * start_device(GstDevice *dev, const char *client)
   g_object_set(G_OBJECT(scale_cap), "caps", scale_cap_unapplied, NULL);
 
   // options for the videorate
-  v_cap_unapplied = gst_caps_new_simple("video/x-raw", "framerate", G_TYPE_STRING, "10/1", NULL);
+  v_cap_unapplied = gst_caps_new_simple("video/x-raw", "framerate", GST_TYPE_FRACTION, 10, 1, NULL);
   g_object_set(G_OBJECT(v_cap), "caps", v_cap_unapplied, NULL);
 
   // options for the sink
-  g_object_set(G_OBJECT(sink), "host", client, "port", std::get<2>(table[name]), NULL);:
-  if (!pipeline || !source || !s_cap || !e_cap || !depay || !encoder || !parse || !sink || !scale || !scale_cap || !) 
-  {
+  g_object_set(G_OBJECT(sink), "host", client, "port", std::get<2>(table[name]), NULL);
+  
+  // there is no reason this should fail other than the programmer not making something correctly
+  if (!pipeline || !source || !s_cap || !e_cap || !depay || !encoder || !parse || !sink || !scale || !scale_cap || !video_rate || !v_cap) 
+  { 
     g_printerr ("One element could not be created. SAD! \n");
     exit(-1);
   } 
 
-
-  
   // add elements and linking them
-  gst_bin_add_many(GST_BIN(pipeline), source, s_cap, e_cap, depay, 
-                    encoder, parse, sink, scale, scale_cap, NULL);
+  gst_bin_add_many(GST_BIN(pipeline), source, s_cap, e_cap, depay, encoder, 
+                   parse, sink, scale, scale_cap, video_rate, v_cap, NULL);
  
-  if (!gst_element_link_many(source, s_cap, scale, scale_cap, encoder, 
-                                     e_cap, parse, depay, sink, NULL)) 
+  if (!gst_element_link_many(source, s_cap, video_rate, v_cap, scale, 
+                 scale_cap, encoder, e_cap, parse, depay, sink, NULL)) 
   {
     g_printerr ("unable to link the elments to the pipeline. SAD! \n");
     exit(-1);
@@ -150,7 +149,7 @@ GstElement * start_device(GstDevice *dev, const char *client)
   return pipeline;
 }
 
-GstDeviceMonitor * device_monitor (void) 
+GstDeviceMonitor *device_monitor(void) 
 {
   GstDeviceMonitor *monitor;
   GstBus *bus;
@@ -174,59 +173,79 @@ GstDeviceMonitor * device_monitor (void)
 }
 
 // creates the pipelines and uses them in different threads
-void stream_start(GList *cur, int argc, char *argv[]) {
+void stream_start(GList *cur, gchar *ip, gint stream_dup_num) 
+{
   GstElement *pipe;
-  int retry = 0;
-  if (argc > 1) {
-    pipe = start_device((GstDevice*) cur->data, argv[1]);
-  } else {
-   pipe = start_device((GstDevice*) cur->data, "192.168.0.5");
-  }
+  int retries = 0;
+  printf("cock1\n");
+  pipe = start_device((GstDevice*) cur->data, ip);
+  printf("cock2\n");
   gchar *name = gst_device_get_display_name((GstDevice *) cur->data);
-  
-  while (gst_element_set_state(pipe, GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE){
+ 
+  // try and set the state of the camera pipeline, retry 5 times exit if it can't 
+  while (gst_element_set_state(pipe, GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE)
+  {
     printf("oh no did not start %s, going to retry \n", name);
-    retry ++;
-    if (retry >= 5) {
+    retries ++;
+    if (retries >= 5) 
+    {
       printf("this %s isn't going to open, exiting!\n", name); 
       exit(-1);
     }
+    std::this_thread::sleep_for(std::chrono::nanoseconds(retries * 100));
   }
   printf("%s stream started\n", name);
 }
 
-/*void sigintHandler(int sig) {
-  switch (sig) {
-  case CTRL_C_EVENT:
-    // stuff here
-    g_main_loop_quit(loop);
-    break;
-  }
+/*void sigintHandler(int signum) 
+{
+  
+  exit(-1);
 
 }*/
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) 
+{
   GstDeviceMonitor *monitor;
   GList *dev;
-  std::vector<std::thread> threads;
+  gint stream_duplication_number = 0;
+  char *ip;
   gst_init(&argc, &argv);
 
+  if (argc > 1)
+  {
+    ip = argv[1];
+  }
+  else if (argc > 2) 
+  {
+    ip = argv[1];
+    stream_duplication_number = atoi(argv[2]);
+  }
+  else 
+  {
+    ip = (char*)"192.168.0.5";
+  }
+  printf("set the ip\n");
   // signal for closing
-  //signal(SIGINT, &sigintHandler);
+  // signal(SIGINT, sigintHandler);
 
   // set the monitor
   monitor = device_monitor();
   dev = gst_device_monitor_get_devices(monitor);
-  
+ 
+  printf("set monitor\n"); 
   // loop for the lists
   GList *cur = g_list_first(dev);
 
-  while (cur != NULL) {
-    threads.push_back(std::thread(stream_start, cur, argc, argv));
+  while (cur != NULL) 
+  {
+    printf("cock3\n");
+    threads.push_back(std::thread(stream_start, cur, ip, stream_duplication_number));
     cur = g_list_next(cur);
   }
-  for (int i = 0; i < (int)threads.size(); i++) {
-    (threads[i]).join();
+  for (std::thread &thread : threads) 
+  {
+    thread.join();
   }
  
   loop = g_main_loop_new(NULL, FALSE);
