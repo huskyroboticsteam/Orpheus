@@ -8,9 +8,10 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>SensorRealTimeGraph</RootNamespace>
     <AssemblyName>SensorRealTimeGraph</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -33,7 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BBBCSIO">
-      <HintPath>..\..\..\..\..\Scarlet\bin\Debug\BBBCSIO.dll</HintPath>
+      <HintPath>..\..\SensorDLLs\BBBCSIO.dll</HintPath>
     </Reference>
     <Reference Include="LiveCharts, Version=0.9.7.0, Culture=neutral, PublicKeyToken=0bc1f845d1ebb8df, processorArchitecture=MSIL">
       <HintPath>..\..\packages\LiveCharts.0.9.7\lib\net45\LiveCharts.dll</HintPath>
@@ -53,7 +54,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Scarlet">
-      <HintPath>..\..\..\..\..\Scarlet\bin\Debug\Scarlet.dll</HintPath>
+      <HintPath>..\..\SensorDLLs\Scarlet.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

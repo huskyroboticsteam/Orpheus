@@ -26,6 +26,8 @@ namespace HuskyRobotics.UI
         protected int CANVAS_WIDTH = 100;
         protected int CANVAS_HEIGHT = 100;
 
+        public abstract string ViewName{ get; }
+
         public ArmView()
         {
             InitializeComponent();

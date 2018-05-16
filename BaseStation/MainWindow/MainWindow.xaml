@@ -33,20 +33,65 @@
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="220" />
                         </Grid.ColumnDefinitions>
-                        <ui:RoverView Grid.Column="0"></ui:RoverView>
-                        <ui:ArmSideView x:Name="ArmSideViewer" Grid.Column="1"></ui:ArmSideView>
-                        <ui:ArmTopView x:Name="ArmTopViewer" Grid.Column="2"></ui:ArmTopView>
-                        <StackPanel Grid.Column="3" Orientation="Vertical">
+                        <ui:GamePadView Grid.Column="0" Margin="5"></ui:GamePadView>
+                        <ui:RoverView Grid.Column="1"></ui:RoverView>
+                        <ui:ArmSideView x:Name="ArmSideViewer" Grid.Column="2"></ui:ArmSideView>
+                        <ui:ArmTopView x:Name="ArmTopViewer" Grid.Column="3"></ui:ArmTopView>
+                        <StackPanel Grid.Column="4" Orientation="Vertical">
                             <Label Content="Devices" />
                             <Button Content="Connect with PuTTY" Click="PuTTY_Button_Click"></Button>
                         </StackPanel>
                     </Grid>
-                    <StackPanel Width="200" DockPanel.Dock="Right" Orientation="Vertical">
-                        <Label Content="Waypoints" />
-                        <ListView></ListView>
-                    </StackPanel>
+                    <DockPanel Width="250" DockPanel.Dock="Right">
+                        <Label Content="Waypoints" DockPanel.Dock="Top"/>
+                        <StackPanel DockPanel.Dock="Bottom">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0" Grid.Row="0" Content="Name:"/>
+                                <Label Grid.Column="0" Grid.Row="1" Content="Lat:"/>
+                                <Label Grid.Column="0" Grid.Row="2" Content="Long:"/>
+                                <TextBox Name="WaypointNameInput" Grid.Column="1" Grid.Row="0" />
+                                <TextBox Name="WaypointLatInput" Grid.Column="1" Grid.Row="1" />
+                                <TextBox Name="WaypointLongInput" Grid.Column="1" Grid.Row="2" />
+                            </Grid>
+                            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                                <Button Padding="5" Margin="5" Content="Add Waypoint" Click="Add_Waypoint"/>
+                                <Button Padding="5" Margin="5" Content="Update Location" />
+                            </StackPanel>
+                            <StackPanel>
+                                <Label Content="Video Streams" />
+                                <DataGrid Name="VideoStreams"  Height="150" ItemsSource="{Binding Streams}" CanUserAddRows="False" AutoGenerateColumns="False">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Binding="{Binding Name}" Header="Name" Width="*"/>
+                                        <DataGridTextColumn Binding="{Binding Time}" Header="Time" Width="*"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                                <DockPanel Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                                    <Button Padding="5" Margin="5" Content="Launch" Click="LaunchStream" />
+                                    <ComboBox Name="StreamSelect" Padding="5" Margin="5" ItemsSource="{Binding Settings.VideoDevices}" SelectedIndex="0">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Name}"/>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                </DockPanel>
+                                
+                            </StackPanel>
+                        </StackPanel>
+                        <DataGrid ItemsSource="{Binding Waypoints}" CanUserDeleteRows="True" ColumnWidth="*" />
+                    </DockPanel>
                     <ui:MapDisplay x:Name="Map"/>
                 </DockPanel>
             </TabItem>

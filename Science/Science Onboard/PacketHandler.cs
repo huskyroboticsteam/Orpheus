@@ -1,6 +1,6 @@
 ﻿using Scarlet.Communications;
-using Scarlet.Science;
 using Scarlet.Utilities;
+using Science.Library;
 
 namespace Science
 {
@@ -9,9 +9,16 @@ namespace Science
 
         public PacketHandler()
         {
-            Parse.SetParseHandler(PacketType.WATCHDOG_PING, ParseWatchdog);
-            Parse.SetParseHandler(PacketType.ERROR, ParseErrorPacket);
-            Parse.SetParseHandler(PacketType.EMERGENCY_STOP, ParseStopPacket);
+            //Parse.SetParseHandler(ScienceConstants.Packets.WATCHDOG_PING, ParseWatchdog); // TODO: What are we doing with this?
+            Parse.SetParseHandler(ScienceConstants.Packets.ERROR, ParseErrorPacket);
+            Parse.SetParseHandler(ScienceConstants.Packets.EMERGENCY_STOP, ParseStopPacket);
+            Parse.SetParseHandler(ScienceConstants.Packets.CONTROL, ParseControlPacket);
+        }
+
+        public static void ParseControlPacket(Packet Packet)
+        {
+            if (Packet == null || Packet.Data == null || Packet.Data.Payload == null || Packet.Data.Payload.Length != 2) { Log.Output(Log.Severity.WARNING, Log.Source.MOTORS, "Control packet invalid length."); }
+            RoverMain.IOHandler.DrillController.SetSpeed(Packet.Data.Payload[0] / 100.0F * ((Packet.Data.Payload[1] == 0) ? 1 : -1), true);
         }
 
         public static void ParseErrorPacket(Packet Error)

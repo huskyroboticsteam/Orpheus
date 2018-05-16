@@ -8,9 +8,10 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>SensorDiagnosticsServer</RootNamespace>
     <AssemblyName>SensorDiagnosticsServer</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -32,10 +33,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BBBCSIO">
+      <HintPath>..\..\SensorDLLs\BBBCSIO.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="Scarlet">
-      <HintPath>..\..\..\..\Scarlet\bin\Debug\Scarlet.dll</HintPath>
+      <HintPath>..\..\SensorDLLs\Scarlet.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -53,9 +57,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SensorDiagnostics\SensorRealTimeGraph\SensorRealTimeGraph.csproj">
+    <ProjectReference Include="..\SensorRealTimeGraph\SensorRealTimeGraph.csproj">
       <Project>{89AF1702-7D86-4364-91B1-F1A027AF8AA8}</Project>
       <Name>SensorRealTimeGraph</Name>
     </ProjectReference>

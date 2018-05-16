@@ -1,4 +1,5 @@
-﻿using HuskyRobotics.Utilities;
+﻿using HuskyRobotics.UI;
+using HuskyRobotics.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,6 +18,7 @@ namespace HuskyRobotics.UI
     /// 
     /// Every setting should also call PropertyChanged so we implement INotifyPropertyChanged
     ///
+    [XmlRoot("settings")]
     public class Settings : INotifyPropertyChanged
     {
         /// <summary>
@@ -24,6 +26,8 @@ namespace HuskyRobotics.UI
         /// </summary>
         private string _currentMapFile;
         private ObservableCollection<RemoteDevice> _devices = new ObservableCollection<RemoteDevice>();
+        private ObservableCollection<VideoDevice> _videoDevices = new ObservableCollection<VideoDevice>();
+        private String _recordingPath;
         private String _puttyPath = @"C:\Program Files (x86)\PuTTY\putty.exe";
 
         /// <summary>
@@ -32,11 +36,27 @@ namespace HuskyRobotics.UI
         public event PropertyChangedEventHandler ValueChanged;
         // Boilerplate
         public event PropertyChangedEventHandler PropertyChanged;
-        
-        public IEnumerable<RemoteDevice> Devices {
+
+        [XmlArray("devices")]
+        public ObservableCollection<RemoteDevice> Devices {
             get => _devices;
+            set {
+                _devices = value;
+                NotifyChanged("Devices");
+            }
         }
 
+		[XmlArray("video_devices")]
+        public ObservableCollection<VideoDevice> VideoDevices
+        {
+            get => _videoDevices;
+			set {
+				_videoDevices = value;
+				NotifyChanged("VideoDevices");
+			}
+        }
+
+        [XmlElement("putty_path")]
         public String PuttyPath {
             get => _puttyPath;
             set {
@@ -45,6 +65,7 @@ namespace HuskyRobotics.UI
             }
         }
 
+        [XmlElement("current_map_file")]
         public String CurrentMapFile {
             get => _currentMapFile;
             set {
@@ -53,14 +74,30 @@ namespace HuskyRobotics.UI
             }
         }
 
+		[XmlElement("recording_path")]
+        public String RecordingPath
+        {
+            get => _recordingPath;
+            set
+            {
+                _recordingPath = value;
+                NotifyChanged("RecordingPath");
+            }
+        }
+
 
         // For serialization only
         [XmlElement("Devices"), Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public List<RemoteDevice> DevicesSurrogate { get => _devices.ToList(); set => _devices = new ObservableCollection<RemoteDevice>(value); }
-        
+
+        // For serialization only
+        [XmlElement("VideoDevices"), Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+        public List<VideoDevice> VideoDevicesSurrogate { get => _videoDevices.ToList(); set => _videoDevices = new ObservableCollection<VideoDevice>(value); }
+
         public Settings()
         {
             _devices.CollectionChanged += CollectionListener("Devices");
+            _videoDevices.CollectionChanged += CollectionListener("VideoDevices");
         }
 
         private NotifyCollectionChangedEventHandler CollectionListener(string collectionName)
@@ -73,7 +110,8 @@ namespace HuskyRobotics.UI
                     {
                         item.PropertyChanged += Settings_PropertyChanged;
                     }
-                } else if (e.Action == NotifyCollectionChangedAction.Remove)
+                }
+                else if (e.Action == NotifyCollectionChangedAction.Remove)
                 {
                     foreach (var item in e.OldItems.OfType<INotifyPropertyChanged>())
                     {
