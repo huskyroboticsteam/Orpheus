@@ -14,6 +14,8 @@
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -38,6 +40,15 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="gio-sharp, Version=3.0.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL">
+      <HintPath>..\packages\GstSharp.1.14.0\lib\net45\gio-sharp.dll</HintPath>
+    </Reference>
+    <Reference Include="glib-sharp, Version=3.0.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL">
+      <HintPath>..\packages\GstSharp.1.14.0\lib\net45\glib-sharp.dll</HintPath>
+    </Reference>
+    <Reference Include="gstreamer-sharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=5cbf79803e97ff61, processorArchitecture=MSIL">
+      <HintPath>..\packages\GstSharp.1.14.0\lib\net45\gstreamer-sharp.dll</HintPath>
+    </Reference>
     <Reference Include="ImageProcessor, Version=2.6.1.19, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ImageProcessor.2.6.1.19\lib\net452\ImageProcessor.dll</HintPath>
     </Reference>
@@ -95,11 +106,17 @@
     <Compile Include="Settings\SettingsPanel.xaml.cs">
       <DependentUpon>SettingsPanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Settings\VideoDevice.cs" />
     <Compile Include="Utilities\MockObservableMap.cs" />
     <Compile Include="Utilities\ProportionToDegree.cs" />
     <Compile Include="RoverView.xaml.cs">
       <DependentUpon>RoverView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="VideoStreamer\VideoStream.cs" />
+    <Compile Include="VideoStreamer\VideoWindow.xaml.cs">
+      <DependentUpon>VideoWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Waypoint.cs" />
     <Page Include="ArmView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -129,6 +146,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Settings\SettingsPanel.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="VideoStreamer\VideoWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -166,13 +187,16 @@
       <Project>{A6DFDFF4-614F-4225-8F75-C81C6765F23E}</Project>
       <Name>Utilities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\VideoStreamer\VideoStreamer.csproj">
-      <Project>{97cc5515-a095-48eb-9ec2-ac134eb4a79c}</Project>
-      <Name>VideoStreamer</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="settings.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\GstSharp.1.14.0\build\GstSharp.targets" Condition="Exists('..\packages\GstSharp.1.14.0\build\GstSharp.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\GstSharp.1.14.0\build\GstSharp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GstSharp.1.14.0\build\GstSharp.targets'))" />
+  </Target>
 </Project>
