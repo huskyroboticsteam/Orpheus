@@ -37,13 +37,11 @@ namespace HuskyRobotics.UI
 
         public void Save()
         {
-            Console.WriteLine("Saving..");
             XmlSerializer serializer = new XmlSerializer(typeof(Settings));
             using (TextWriter writer = new StreamWriter(FileName))
             {
                 serializer.Serialize(writer, Settings);
             }
-            Console.WriteLine("Done");
         }
     }
 }

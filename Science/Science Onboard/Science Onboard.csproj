@@ -37,6 +37,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\shared\Scarlet\_Libraries\BBBCSIO.dll</HintPath>
     </Reference>
+    <Reference Include="Melanchall.DryWetMidi, Version=2.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Melanchall.DryWetMidi.2.0.1\lib\net45\Melanchall.DryWetMidi.dll</HintPath>
+    </Reference>
     <Reference Include="Scarlet">
       <HintPath>..\..\lib\Scarlet.dll</HintPath>
     </Reference>
@@ -54,6 +57,7 @@
     <Compile Include="Systems\AuxSensors.cs" />
     <Compile Include="Systems\Drill.cs" />
     <Compile Include="Systems\LEDs.cs" />
+    <Compile Include="Systems\MusicPlayer.cs" />
     <Compile Include="Systems\Rail.cs" />
     <Compile Include="PacketHandler.cs" />
     <Compile Include="RoverMain.cs" />
@@ -63,6 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Science Library\Science Library.csproj">
@@ -72,4 +77,3 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
-

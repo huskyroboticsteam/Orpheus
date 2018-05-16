@@ -1,8 +1,10 @@
 ﻿using System;
+using System.IO;
 using System.Threading;
 using Scarlet.Communications;
 using Scarlet.Utilities;
 using Science.Library;
+using Science.Systems;
 
 namespace Science
 {
@@ -50,6 +52,18 @@ namespace Science
             if (Args == null || Args.Length == 0) { return; } // Nothing to parse.
             for(int i = 0; i < Args.Length; i++)
             {
+                if (Args.Length > i + 2) // Triple-part arguments
+                {
+                    if(Args[i] == "--music")
+                    {
+                        string MIDIFileName = Args[i + 1];
+                        if (!int.TryParse(Args[i + 2], out int OctaveShift)) { Console.WriteLine("Given octave shift is invalid. Must be integer."); continue; }
+                        if (!File.Exists(MIDIFileName)) { Console.WriteLine("MIDI file not found."); continue; }
+                        MusicPlayer.MIDIFileName = MIDIFileName;
+                        MusicPlayer.OctaveShift = OctaveShift;
+                        i += 2;
+                    }
+                }
                 if (Args.Length > i + 1) // Dual-part arguments.
                 {
                     if (Args[i] == "-s" || Args[i] == "--server") { IP = Args[i + 1]; i++; }
@@ -73,6 +87,8 @@ namespace Science
                     Console.WriteLine("  -s|--server <IP> : Connects to the given server instead of the default.");
                     Console.WriteLine("  -pt|--port-tcp <Port> : Connects to the server via TCP using the given port instead of the default.");
                     Console.WriteLine("  -pu|--port-udp <Port> : Connects to the server via UDP using the given port instead of the default.");
+                    Console.WriteLine(" Fun:");
+                    Console.WriteLine("  --music <MIDI file> <Octave Shift> : Syntesizes a MIDI file using the drill motor.");
                     /*Console.WriteLine(" Device Tree (BBB):");
                     Console.WriteLine("  --no-dt : Do not attempt to remove/add device tree overlays.");
                     Console.WriteLine("  --replace-dt : Remove all Scarlet DT overlays, then apply the new one. DANGEROUS!");

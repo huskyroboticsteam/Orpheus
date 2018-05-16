@@ -51,7 +51,6 @@ namespace HuskyRobotics.UI
 
         public SettingsPanel()
         {
-            
             DataContext = this;
             MapConfig = new MapConfiguration();
             initMapFiles();

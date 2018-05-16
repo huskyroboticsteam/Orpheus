@@ -7,57 +7,77 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="700">
     <!--<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">-->
-    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-        <StackPanel Margin="3">
-            <Label Content="Devices:" />
-            <DataGrid Name="Devices" Width="400" Height="200" ItemsSource="{Binding Settings.Devices}" CanUserAddRows="True" AutoGenerateColumns="False">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Binding="{Binding Name}" Header="Name" Width="*"/>
-                    <DataGridTextColumn Binding="{Binding Address}" Header="Address" Width="*"/>
-                </DataGrid.Columns>
+    <StackPanel Orientation="Vertical">
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+          <StackPanel Margin="3">
+              <Label Content="Devices:" />
+              <DataGrid Name="Devices" Width="400" Height="200" ItemsSource="{Binding Settings.Devices}" CanUserAddRows="True" AutoGenerateColumns="False">
+                  <DataGrid.Columns>
+                      <DataGridTextColumn Binding="{Binding Name}" Header="Name" Width="*"/>
+                      <DataGridTextColumn Binding="{Binding Address}" Header="Address" Width="*"/>
+                  </DataGrid.Columns>
+              </DataGrid>
+              <Label Content="PuTTY Path:" />
+              <TextBox Text="{Binding Settings.PuttyPath}" />
+          </StackPanel>
+          <StackPanel Margin="3" Width="280">
+              <Label Content="Load Existing Map:"/>
+              <ComboBox ItemsSource="{Binding MapSets}" SelectedValue="{Binding Settings.CurrentMapFile}"/>
+              <Label Content="Add new map set:"/>
+              <StackPanel Orientation="Horizontal" Margin="2">
+                  <Label Content="Set Name:"/>
+                  <TextBox Width="100" Height="21" Text="{Binding MapConfig.MapSetName}"/>
+              </StackPanel>
+              <StackPanel Orientation="Horizontal" Margin="2">
+                  <Label Content="Latitude:"/>
+                  <TextBox Width="70" Height="21" Text="{Binding MapConfig.Latitude}"/>
+                  <Label Content="Longitude:"/>
+                  <TextBox Width="70" Height="21" Text="{Binding MapConfig.Longitude}"/>
+              </StackPanel>
+              <StackPanel Orientation="Horizontal" Margin="2">
+                  <Label Content="Image Width:"/>
+                  <TextBox Width="50" Height="21" Text="{Binding MapConfig.ImgWidth}"/>
+                  <Label Content="Image Height:"/>
+                  <TextBox Width="50" Height="21" Text="{Binding MapConfig.ImgHeight}"/>
+              </StackPanel>
+              <StackPanel Orientation="Horizontal" Margin="2">
+                  <Label Content="Tiling Width:"/>
+                  <TextBox Width="50" Height="21" Text="{Binding MapConfig.TilingWidth}"/>
+                  <Label Content="Tiling Height:"/>
+                  <TextBox Width="50" Height="21" Text="{Binding MapConfig.TilingHeight}"/>
+              </StackPanel>
+              <StackPanel Orientation="Horizontal" Margin="2">
+                  <Label Content="Scale:"/>
+                  <TextBox Width="50" Height="21" Text="{Binding MapConfig.Scale}"/>
+                  <Label Content="Zoom:"/>
+                  <TextBox Width="50" Height="21" Text="{Binding MapConfig.Zoom}"/>
+              </StackPanel>
+              <StackPanel Orientation="Horizontal" Margin="2">
+                  <Label Content="Map Type:"/>
+                  <TextBox Width="100" Height="21" Text="{Binding MapConfig.MapType}"/>
+              </StackPanel>
+              <Button Content="Get Map" Click="Button_GetMap" Name="MapDownloadButton"/>
+              <Label Name="MapStatus" />
+          </StackPanel>
+      </StackPanel>
+      <StackPanel Margin="3" Height="200">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+          <StackPanel>
+            <Label Content="Video Streams:" />
+            <DataGrid Name="Streams" Width="400" Height="200" ItemsSource="{Binding Settings.VideoDevices}" CanUserAddRows="True" AutoGenerateColumns="False">
+              <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Name}" Header="Name" Width="*"/>
+                <DataGridTextColumn Binding="{Binding Port}" Header="Port" Width="*"/>
+                <DataGridTextColumn Binding="{Binding BufferingMs}" Header="Buffering (ms)" Width="*"/>
+              </DataGrid.Columns>
             </DataGrid>
-            <Label Content="PuTTY Path:" />
-            <TextBox Text="{Binding Settings.PuttyPath}" />
+          </StackPanel>
+          <StackPanel>
+            <Label Content="Recording Path: " />
+            <TextBox Height="23" Margin="5" TextWrapping="NoWrap"  Text="{Binding Settings.RecordingPath}" Width="300" Name="dst" ToolTip="File Destination"/>
+          </StackPanel>
         </StackPanel>
-        <StackPanel Margin="3" Width="280">
-            <Label Content="Load Existing Map:"/>
-            <ComboBox ItemsSource="{Binding MapSets}" SelectedValue="{Binding Settings.CurrentMapFile}"/>
-            <Label Content="Add new map set:"/>
-            <StackPanel Orientation="Horizontal" Margin="2">
-                <Label Content="Set Name:"/>
-                <TextBox Width="100" Height="21" Text="{Binding MapConfig.MapSetName}"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="2">
-                <Label Content="Latitude:"/>
-                <TextBox Width="70" Height="21" Text="{Binding MapConfig.Latitude}"/>
-                <Label Content="Longitude:"/>
-                <TextBox Width="70" Height="21" Text="{Binding MapConfig.Longitude}"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="2">
-                <Label Content="Image Width:"/>
-                <TextBox Width="50" Height="21" Text="{Binding MapConfig.ImgWidth}"/>
-                <Label Content="Image Height:"/>
-                <TextBox Width="50" Height="21" Text="{Binding MapConfig.ImgHeight}"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="2">
-                <Label Content="Tiling Width:"/>
-                <TextBox Width="50" Height="21" Text="{Binding MapConfig.TilingWidth}"/>
-                <Label Content="Tiling Height:"/>
-                <TextBox Width="50" Height="21" Text="{Binding MapConfig.TilingHeight}"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="2">
-                <Label Content="Scale:"/>
-                <TextBox Width="50" Height="21" Text="{Binding MapConfig.Scale}"/>
-                <Label Content="Zoom:"/>
-                <TextBox Width="50" Height="21" Text="{Binding MapConfig.Zoom}"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="2">
-                <Label Content="Map Type:"/>
-                <TextBox Width="100" Height="21" Text="{Binding MapConfig.MapType}"/>
-            </StackPanel>
-            <Button Content="Get Map" Click="Button_GetMap" Name="MapDownloadButton"/>
-            <Label Name="MapStatus" />
-        </StackPanel>
+      </StackPanel>
     </StackPanel>
     <!--</ScrollViewer>-->
 </UserControl>
