@@ -39,7 +39,8 @@ namespace Science
             this.PWMGenHighFreq.SetFrequency(333);
             this.PWMGenLowFreq.SetFrequency(50);
 
-            //this.RailController = new Rail(this.PWMGenHighFreq.Outputs[1], new DigitalInPi(11));
+            //TODO: Is it OK to construct a comms bus more than once for the different systems?
+            //this.RailController = new Rail(this.PWMGenHighFreq.Outputs[1], new DigitalInPi(11), new SPIBusPi(0), new DigitalOutPi(31), new I2CBusPi());
             this.DrillController = new Drill(this.PWMGenHighFreq.Outputs[0], this.PWMGenLowFreq.Outputs[0]);
             //this.SampleController = new Sample(this.PWMGenLowFreq.Outputs[1]);
             this.LEDController = new LEDs(this.PWMGenLowFreq.Outputs, this.PWMGenHighFreq.Outputs);
