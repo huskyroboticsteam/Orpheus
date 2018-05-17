@@ -65,40 +65,40 @@ gboolean bus_func (GstBus *bus, GstMessage *message, gpointer user_data)
 // udpsink host=192.168.0.5 port=5555
 
 
-GstElement *start_device(GstDevice *dev, const char *client) 
+g_element *start_device(GstDevice *dev, const char *client) 
 {
   GstStructure *str;
   gchar *name, *cl;
+  g_element *ele = malloc(sizeof(g_element_st));
   GstElement *pipeline, *source, *depay, *encoder, *parse, *sink;
   GstElement *s_cap, *e_cap, *scale, *scale_cap, *video_rate, *v_cap;
   GstCaps *s_cap_unapplied, *e_cap_unapplied, *scale_cap_unapplied;
   GstCaps *v_cap_unapplied;
 
-  name = gst_device_get_display_name(dev);
-  cl = gst_device_get_device_class(dev);
-  str = gst_device_get_properties(dev);
-  printf("device name: %s\n", name);
-  printf("device class: %s\n", cl);
+  ele->name = gst_device_get_display_name(dev);
+  ele->cl = gst_device_get_device_class(dev);
+  ele->str = gst_device_get_properties(dev);
+  g_print("device name: %s\n", name);
+  g_print("device class: %s\n", cl);
   g_print("device path: %s\n", gst_structure_get_string(str, "device.path")); 
   
   // setting elements of pipeline
-  pipeline = gst_pipeline_new(gst_device_get_display_name(dev));
+  ele->pipeline = gst_pipeline_new(gst_device_get_display_name(dev));
                                                              /* opencv object dir */
-  source = gst_element_factory_make("v4l2src", NULL);        // cap
-  s_cap = gst_element_factory_make("capsfilter", NULL);      // cap
-  encoder = gst_element_factory_make("omxh264enc", NULL);    // cap & writer 
-  e_cap = gst_element_factory_make("capsfilter", NULL);      // writer
-  depay = gst_element_factory_make("rtph264pay", NULL);      // writer
-  parse = gst_element_factory_make("h264parse", NULL);       // writer
-  sink = gst_element_factory_make("udpsink", NULL);          // writer
-  scale = gst_element_factory_make("videoscale", NULL);      // cap ?
-  scale_cap = gst_element_factory_make("capsfilter", NULL);  // cap ?
-  video_rate = gst_element_factory_make("videorate", NULL);  // cap
-  v_cap = gst_element_factory_make("capsfilter", NULL);      // cap 
+  ele->source = gst_element_factory_make("v4l2src", NULL);        // cap
+  ele->s_cap = gst_element_factory_make("capsfilter", NULL);      // cap
+  ele->encoder = gst_element_factory_make("omxh264enc", NULL);    // cap & writer 
+  ele->e_cap = gst_element_factory_make("capsfilter", NULL);      // writer
+  ele->depay = gst_element_factory_make("rtph264pay", NULL);      // writer
+  ele->parse = gst_element_factory_make("h264parse", NULL);       // writer
+  ele->sink = gst_element_factory_make("udpsink", NULL);          // writer
+  ele->scale = gst_element_factory_make("videoscale", NULL);      // cap ?
+  ele->scale_cap = gst_element_factory_make("capsfilter", NULL);  // cap ?
+  ele->video_rate = gst_element_factory_make("videorate", NULL);  // cap
+  ele->v_cap = gst_element_factory_make("capsfilter", NULL);      // cap 
 
   // options for the source  
-  g_object_set(G_OBJECT(source), "device", gst_structure_get_string(str, "device.path")
-                                                                                , NULL);
+  g_object_set(G_OBJECT(ele->source), "device", gst_structure_get_string(ele->str, "device.path"), NULL);
 
   // camera settings: (orignal_x_res, orignal_y_res, port, scaled_x_res, scaled_y_res)
   std::unordered_map<std::string, std::tuple<gint, gint, gint, gint, gint> > table;
@@ -108,37 +108,39 @@ GstElement *start_device(GstDevice *dev, const char *client)
  
   
   s_cap_unapplied = gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "I420",
-                              "width", G_TYPE_INT, std::get<0>(table[name]), "height", 
-                               G_TYPE_INT, std::get<1>(table[name]), NULL);
-  g_object_set(G_OBJECT(s_cap), "caps", s_cap_unapplied, NULL);
+                          "width", G_TYPE_INT, std::get<0>(table[ele->name]), 
+                          "height", G_TYPE_INT, std::get<1>(table[ele->name]), NULL);
+  g_object_set(G_OBJECT(ele->s_cap), "caps", s_cap_unapplied, NULL);
 
   // options for the encoder
   e_cap_unapplied = gst_caps_new_simple("video/x-h264", "stream-format", 
                                      G_TYPE_STRING, "byte-stream", NULL);
-  g_object_set(G_OBJECT(e_cap), "caps", e_cap_unapplied, NULL);
+  g_object_set(G_OBJECT(ele->e_cap), "caps", e_cap_unapplied, NULL);
 
   // options for the videoscalar
-  scale_cap_unapplied = gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING,"I420", 
-                                    "width", G_TYPE_INT, std::get<3>(table[name]), 
-                                    "height", G_TYPE_INT, std::get<4>(table[name]), NULL);
+  scale_cap_unapplied = gst_caps_new_simple("video/x-raw","format",G_TYPE_STRING,"I420",
+                           "width", G_TYPE_INT, std::get<3>(table[ele->name]), 
+                           "height", G_TYPE_INT, std::get<4>(table[ele->name]), NULL);
  
-  g_object_set(G_OBJECT(scale_cap), "caps", scale_cap_unapplied, NULL);
+  g_object_set(G_OBJECT(ele->scale_cap), "caps", scale_cap_unapplied, NULL);
 
   // options for the videorate
   v_cap_unapplied = gst_caps_new_simple("video/x-raw", "framerate", GST_TYPE_FRACTION, 10, 1, NULL);
-  g_object_set(G_OBJECT(v_cap), "caps", v_cap_unapplied, NULL);
+  g_object_set(G_OBJECT(ele->v_cap), "caps", v_cap_unapplied, NULL);
 
   // options for the sink
-  g_object_set(G_OBJECT(sink), "host", client, "port", std::get<2>(table[name]), NULL);
+  g_object_set(G_OBJECT(ele->sink), "host", client, "port", std::get<2>(table[ele->name]), NULL);
   
   // there is no reason this should fail other than the programmer not making something correctly
-  if (!pipeline || !source || !s_cap || !e_cap || !depay || !encoder || !parse || !sink || !scale || !scale_cap || !video_rate || !v_cap) 
+  if (!ele->pipeline || !ele->source || !ele->s_cap || !ele->e_cap || !ele->depay || !ele->encoder || !ele->parse || !ele->sink || !ele->scale || !ele->scale_cap || !ele->video_rate || !ele->v_cap) 
   { 
     g_printerr ("One element could not be created. SAD! \n");
     exit(-1);
   } 
-
-  // add elements and linking them
+  
+  return ele;
+  /*
+  // add elements and link them
   gst_bin_add_many(GST_BIN(pipeline), source, s_cap, e_cap, depay, encoder, 
                    parse, sink, scale, scale_cap, video_rate, v_cap, NULL);
  
@@ -149,7 +151,7 @@ GstElement *start_device(GstDevice *dev, const char *client)
     exit(-1);
   } 
 
-  return pipeline;
+  return pipeline;*/
 }
 
 GstDeviceMonitor *device_monitor(void) 
@@ -170,7 +172,7 @@ GstDeviceMonitor *device_monitor(void)
   gst_device_monitor_add_filter (monitor, "Video/Source", caps);
   gst_caps_unref (caps);
 
-  gst_device_monitor_start (monitor);
+  gst_device_monitori_start (monitor);
 
   return monitor;
 }
@@ -178,26 +180,46 @@ GstDeviceMonitor *device_monitor(void)
 // creates the pipelines and uses them in different threads
 void stream_start(GList *cur, gchar *ip, gint stream_dup_num) 
 {
-  GstElement *pipe;
+  g_element *ele;
   int retries = 0;
-  printf("cock1\n");
-  pipe = start_device((GstDevice*) cur->data, ip);
-  printf("cock2\n");
-  gchar *name = gst_device_get_display_name((GstDevice *) cur->data);
+  ele = start_device((GstDevice*) cur->data, ip);
+  //gchar *name = gst_device_get_display_name((GstDevice *) cur->data);
+  
+  if (!ele->name == "RICOH THETA S") 
+  {
+    gst_bin_add_many(GST_BIN(ele->pipeline), ele->source, ele->s_cap, ele->e_cap, 
+                     ele->depay, ele->encoder, ele->parse, ele->sink, ele->scale, 
+                     ele->scale_cap, ele->video_rate, ele->v_cap, NULL);
+ 
+    if (!gst_element_link_many(ele->source, ele->s_cap, ele->video_rate, ele->v_cap, 
+                               ele->scale, ele->scale_cap, ele->ncoder, ele->e_cap, 
+                               ele->parse, ele->depay, ele->sink, NULL)) 
+    {
+      g_printerr ("unable to link the elments to the pipeline. SAD! \n");
+      exit(-1);
+    } 
+
  
   // try and set the state of the camera pipeline, retry 5 times exit if it can't 
-  while (gst_element_set_state(pipe, GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE)
-  {
-    printf("oh no did not start %s, going to retry \n", name);
-    retries ++;
-    if (retries >= 5) 
+    while (gst_element_set_state(pipe, GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE)
     {
-      printf("this %s isn't going to open, exiting!\n", name); 
-      exit(-1);
+      printf("oh no did not start %s, going to retry \n", ele->name);
+      retries ++;
+      if (retries >= 5) 
+      {
+        printf("this %s isn't going to open, exiting!\n", ele->name); 
+        exit(-1);
+      }
+      std::this_thread::sleep_for(std::chrono::nanoseconds(retries * 100));
     }
-    std::this_thread::sleep_for(std::chrono::nanoseconds(retries * 100));
   }
-  printf("%s stream started\n", name);
+  else 
+  {
+    // this is where we put stuff for the richo cam
+    // We still need to break up the pipe and send things accordingly
+    start_stream(ele);
+  }
+  printf("%s stream started\n", ele->name);
 }
 
 /*void sigintHandler(int signum) 
@@ -242,7 +264,6 @@ int main(int argc, char *argv[])
 
   while (cur != NULL) 
   {
-    printf("cock3\n");
     threads.push_back(std::thread(stream_start, cur, ip, stream_duplication_number));
     cur = g_list_next(cur);
   }

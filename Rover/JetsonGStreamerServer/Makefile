@@ -1,6 +1,7 @@
 CFLAGS= -g -Wall -Wpedantic -std=c++14 
 GSFLAGS= `pkg-config --cflags --libs gstreamer-1.0`
-HEADERS= gserver.h
+RDIR = ricoh #where the ricoh specific camera stuff is
+HEADERS= gserver.h $(RDIR)/ricoh.h
 
 all: g_server
 
