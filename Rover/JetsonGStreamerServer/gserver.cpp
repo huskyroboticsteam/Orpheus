@@ -63,6 +63,8 @@ gboolean bus_func (GstBus *bus, GstMessage *message, gpointer user_data)
 // h264parse ! 
 // rtph264pay ! 
 // udpsink host=192.168.0.5 port=5555
+
+
 GstElement *start_device(GstDevice *dev, const char *client) 
 {
   GstStructure *str;
@@ -81,19 +83,20 @@ GstElement *start_device(GstDevice *dev, const char *client)
   
   // setting elements of pipeline
   pipeline = gst_pipeline_new(gst_device_get_display_name(dev));
-  source = gst_element_factory_make("v4l2src", NULL);
-  s_cap = gst_element_factory_make("capsfilter", NULL);
-  e_cap = gst_element_factory_make("capsfilter", NULL);
-  depay = gst_element_factory_make("rtph264pay", NULL);
-  encoder = gst_element_factory_make("omxh264enc", NULL);
-  parse = gst_element_factory_make("h264parse", NULL);
-  sink = gst_element_factory_make("udpsink", NULL); 
-  scale = gst_element_factory_make("videoscale", NULL);
-  scale_cap = gst_element_factory_make("capsfilter", NULL);
-  video_rate = gst_element_factory_make("videorate", NULL);
-  v_cap = gst_element_factory_make("capsfilter", NULL);
+                                                             /* opencv object dir */
+  source = gst_element_factory_make("v4l2src", NULL);        // cap
+  s_cap = gst_element_factory_make("capsfilter", NULL);      // cap
+  encoder = gst_element_factory_make("omxh264enc", NULL);    // cap & writer 
+  e_cap = gst_element_factory_make("capsfilter", NULL);      // writer
+  depay = gst_element_factory_make("rtph264pay", NULL);      // writer
+  parse = gst_element_factory_make("h264parse", NULL);       // writer
+  sink = gst_element_factory_make("udpsink", NULL);          // writer
+  scale = gst_element_factory_make("videoscale", NULL);      // cap ?
+  scale_cap = gst_element_factory_make("capsfilter", NULL);  // cap ?
+  video_rate = gst_element_factory_make("videorate", NULL);  // cap
+  v_cap = gst_element_factory_make("capsfilter", NULL);      // cap 
 
-  // options for the source
+  // options for the source  
   g_object_set(G_OBJECT(source), "device", gst_structure_get_string(str, "device.path")
                                                                                 , NULL);
 
