@@ -15,8 +15,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Controller Controls", "Cont
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cotroller Client Test", "Cotroller Client Test\Cotroller Client Test.csproj", "{E1987E62-47E6-426E-BC25-0C551AEC4CB2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoStreamer", "VideoStreamer\VideoStreamer.csproj", "{97CC5515-A095-48EB-9EC2-AC134EB4A79C}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SensorDiagnosticsServer", "SensorDiagnostics\SensorDiagnosticsServer\SensorDiagnosticsServer.csproj", "{43D3828E-57A1-47A5-B7F6-3BCA1B3C2BC3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SensorHistoryGraph", "SensorDiagnostics\SensorHistoryGraph\SensorHistoryGraph.csproj", "{D3A934C8-BA8C-4B6F-860B-3923714F4AFF}"
@@ -53,10 +51,6 @@ Global
 		{E1987E62-47E6-426E-BC25-0C551AEC4CB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E1987E62-47E6-426E-BC25-0C551AEC4CB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E1987E62-47E6-426E-BC25-0C551AEC4CB2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{97CC5515-A095-48EB-9EC2-AC134EB4A79C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{97CC5515-A095-48EB-9EC2-AC134EB4A79C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{97CC5515-A095-48EB-9EC2-AC134EB4A79C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{97CC5515-A095-48EB-9EC2-AC134EB4A79C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{43D3828E-57A1-47A5-B7F6-3BCA1B3C2BC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{43D3828E-57A1-47A5-B7F6-3BCA1B3C2BC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{43D3828E-57A1-47A5-B7F6-3BCA1B3C2BC3}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -1,9 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Xml.Serialization;
 
 namespace HuskyRobotics.UI
 {
-    [Serializable]
+    [XmlType("remote_device")]
     public class RemoteDevice : INotifyPropertyChanged
     {
         public RemoteDevice() : this("", "")
@@ -22,6 +23,7 @@ namespace HuskyRobotics.UI
         // Boilerplate
         public event PropertyChangedEventHandler PropertyChanged;
 
+        [XmlElement("name")]
         public string Name {
             get => _name;
             set {
@@ -30,6 +32,7 @@ namespace HuskyRobotics.UI
             }
         }
 
+        [XmlElement("address")]
         public string Address {
             get => _address;
             set {
