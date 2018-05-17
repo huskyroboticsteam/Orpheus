@@ -1,0 +1,4 @@
+﻿  Ricoh Theta S.cpp
+c:\users\guramrit singh\source\repos\ricoh theta s\ricoh theta s\ricoh theta s.cpp(5): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+c:\users\guramrit singh\source\repos\ricoh theta s\ricoh theta s\ricoh theta s.cpp(14): error C3867: 'cv::VideoCapture::read': non-standard syntax; use '&' to create a pointer to member
+c:\users\guramrit singh\source\repos\ricoh theta s\ricoh theta s\ricoh theta s.cpp(15): error C3867: 'cv::Mat::empty': non-standard syntax; use '&' to create a pointer to member
