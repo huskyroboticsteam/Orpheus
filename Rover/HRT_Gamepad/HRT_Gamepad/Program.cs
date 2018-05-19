@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Scarlet.IO.BeagleBone;
+using Scarlet.Utilities;
 using SharpDX.DirectInput;
 
 namespace HRT_Gamepad
@@ -20,6 +22,8 @@ namespace HRT_Gamepad
             foreach (var deviceInstance in directInput.GetDevices(DeviceType.Gamepad,
                         DeviceEnumerationFlags.AllDevices))
                 joystickGuid = deviceInstance.InstanceGuid;
+
+            CANBusBBB canName = CANBBB.CANBus0;
 
             /*
             // If Gamepad not found, look for a Joystick
@@ -105,6 +109,10 @@ namespace HRT_Gamepad
                             printt = value - center;
                             printt = printt / (double)center;
                         }
+                        // Horizonal Joystick
+                        canName.Write(5, UtilData.ToBytes((int)printt*100000.0));
+
+
                         Console.WriteLine(printt);
                     }
                     else if (temp.Contains("Offset: RotationY, Value:"))
@@ -134,6 +142,12 @@ namespace HRT_Gamepad
                             printt = -printt / (double)center;
                         }
                         Console.WriteLine(printt);
+
+                        // Vertical Joystick
+                        canName.Write(1, UtilData.ToBytes((int)printt * 100000.0));
+                        canName.Write(2, UtilData.ToBytes((int)printt * 100000.0));
+                        canName.Write(3, UtilData.ToBytes((int)printt * 100000.0));
+                        canName.Write(4, UtilData.ToBytes((int)printt * 100000.0));
                     }
                     else
                     {
