@@ -14,7 +14,7 @@ namespace CanVESC
         private readonly ICANBus CANBus;
         private readonly int CANForwardID;
         private readonly float MaxSpeed;
-        private readonly uint64 CanID;
+        private readonly long CanID;
 
         private bool OngoingSpeedThread; // Whether or not a thread is running to set the speed
         private bool Stopped; // Whether or not the motor is stopped
@@ -114,7 +114,7 @@ namespace CanVESC
             payload.Add((byte)PacketID.SET_DUTY);
             // Duty Cycle (100000.0 mysterious magic number from https://github.com/VTAstrobotics/VESC_BBB_UART/blob/master/bldc_interface.c)
             payload.AddRange(UtilData.ToBytes((Int32)(Speed * 100000.0)));
-            this.CANBus.Write(CanID, ConstructPacket(payload));
+            this.CANBus.Write((uint)CanID, ConstructPacket(payload));
         }
 
         /// <summary> Tell the motor controller that there is a listener on the other end. </summary>
@@ -123,7 +123,7 @@ namespace CanVESC
         {
             List<byte> payload = new List<byte>();
             payload.Add((byte)PacketID.ALIVE);
-            this.CANBus.Write(CanID, ConstructPacket(payload));
+            this.CANBus.Write((uint)CanID, ConstructPacket(payload));
         }
 
         /// <summary> Generates the packet for the motor controller: </summary>
