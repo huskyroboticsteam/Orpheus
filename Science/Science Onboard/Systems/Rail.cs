@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Threading;
 using System.Timers;
 using Scarlet.Components;
 using Scarlet.Components.Motors;
+using Scarlet.Components.Outputs;
 using Scarlet.Components.Sensors;
 using Scarlet.IO;
 using Scarlet.IO.BeagleBone;
@@ -15,7 +17,17 @@ namespace Science.Systems
         private const int INIT_TIMEOUT = 5000;
         private const float ENCODER_MM_PER_TICK = 0.001F; // TODO: Placeholder value. Replace.
 
-        private bool Initializing, InitDone;
+        private bool P_Initializing = false;
+        private bool Initializing
+        {
+            get => this.P_Initializing;
+            set
+            {
+                this.P_Initializing = value;
+                this.LED?.InitStateChange(value);
+            }
+        }
+        private bool InitDone = false;
         private int TopDepth; // The distance that the top of the rail is away from the very top position (limit switch), in mm.
         public bool TargetLocationRefIsTop = true; // The following terget distance is from the top of the rail (true) or the ground (false).
         public int TargetLocation; // Where the operator would like the rail to go.
@@ -25,13 +37,16 @@ namespace Science.Systems
         //private LS7366R Encoder;
         //private VL53L0X Ranger;
 
+        private LEDController LED;
+
         /// <summary> Handles moving the linear rail up and down for the various experiments. </summary>
-        public Rail(IPWMOutput MotorPWM, IDigitalIn LimitSw, ISPIBus EncoderSPI, IDigitalOut EncoderCS, II2CBus RangerBus)
+        public Rail(IPWMOutput MotorPWM, IDigitalIn LimitSw, ISPIBus EncoderSPI, IDigitalOut EncoderCS, II2CBus RangerBus, RGBLED LED)
         {
             this.MotorCtrl = new TalonMC(MotorPWM, MOTOR_MAX_SPEED);
             this.Limit = new LimitSwitch(LimitSw, false);
             //this.Encoder = new LS7366R(EncoderSPI, EncoderCS);
             //this.Ranger = new VL53L0X(RangerBus);
+            this.LED = new LEDController(LED);
         }
 
         public void EventTriggered(object Sender, EventArgs Event)
@@ -65,7 +80,7 @@ namespace Science.Systems
             this.Initializing = true;
             this.Limit.SwitchToggle += this.EventTriggered;
 
-            Timer TimeoutTrigger = new Timer() { Interval = INIT_TIMEOUT, AutoReset = false };
+            System.Timers.Timer TimeoutTrigger = new System.Timers.Timer() { Interval = INIT_TIMEOUT, AutoReset = false };
             TimeoutTrigger.Elapsed += this.EventTriggered;
             TimeoutTrigger.Enabled = true;
             if (this.Limit.State) // We are already at the top, nothing needs to be done.
@@ -116,6 +131,37 @@ namespace Science.Systems
             //this.Encoder.UpdateState();
             //this.Ranger.UpdateState();
             // TODO: Send commands to Talon.
+        }
+
+        private class LEDController
+        {
+            private RGBLED LED;
+            private int Blinking = -1; // -1 for no, otherwise colour.
+
+            public LEDController(RGBLED LED)
+            {
+                this.LED = LED;
+                new Thread(new ThreadStart(this.DoUpdates)).Start();
+            }
+
+            public void UnexpectedLimit()
+            {
+                
+            }
+
+            public void InitStateChange(bool NewState)
+            {
+                if(!NewState) // Initializtion stopped
+                {
+                    //
+                }
+            }
+
+            // Run on a seperate thread to keep LED updates from slowing down Rail controls.
+            private void DoUpdates()
+            {
+
+            }
         }
     }
 }
