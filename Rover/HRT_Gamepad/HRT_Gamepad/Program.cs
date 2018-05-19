@@ -110,7 +110,7 @@ namespace HRT_Gamepad
                             printt = printt / (double)center;
                         }
                         // Horizonal Joystick
-                        canName.Write(5, UtilData.ToBytes((int)0.2*printt*100000.0));
+                        canName.Write(5, UtilData.ToBytes((int)0.15*printt*100000.0));
 
 
                         Console.WriteLine(printt);
