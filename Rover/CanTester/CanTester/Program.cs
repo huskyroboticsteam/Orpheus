@@ -19,6 +19,9 @@ namespace CanTester
             CANBusBBB canName = CANBBB.CANBus0;
             var data = new byte[5];
 
+            Console.Write("Enter a can ID: ");
+            UInt64 canID = Convert.ToUInt64(Console.ReadLine());   
+
             while (true)
             {
                 Console.Write("Enter a speed value from -1 to 1: ");
@@ -26,10 +29,11 @@ namespace CanTester
                 //data[0] = UtilData.ToBytes((Int32)(Speed * 100000.0));
                 //data[0] = UtilData.ToBytes((int)(speed * 100000));
                 List<byte> payload = new List<byte>();
-                payload.Add(5);
-                payload.AddRange(UtilData.ToBytes((int)(speed * 100000.0)));
-                canName.Write(255, payload.ToArray());
-               
+                //payload.Add(5);
+                //payload.AddRange(UtilData.ToBytes((float)(speed * 100000.0)));
+                //canName.Write((uint) canID, payload.ToArray());
+                canName.Write((uint)canID, UtilData.ToBytes((float)(speed * 100000.0)));
+
             }
         }
     }
