@@ -56,8 +56,13 @@ namespace HuskyRobotics.UI {
                     Settings.CurrentMapFile = Path.GetFileName(mapFiles[0]);
                 }
             }
-            Map.DisplayMap(Settings.CurrentMapFile);
+            // enforces loading an existing set of waypoints on startup
+            if (File.Exists(Directory.GetCurrentDirectory() + @"\Images\" + (Settings.CurrentMapFile.Replace(".map", ".waypoints"))))
+            {
+                Map.LoadWaypoints((Settings.CurrentMapFile.Replace(".map", ".waypoints")), Waypoints);
+            }
             Map.Waypoints = Waypoints;
+            Map.DisplayMap(Settings.CurrentMapFile);
         }
 
         private void SettingChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
