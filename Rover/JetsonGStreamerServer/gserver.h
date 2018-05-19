@@ -10,9 +10,9 @@ typedef struct g_element_st
   GstStructure *str;
   GstElement *pipeline, *source, *depay, *encoder;
   GstElement *parse, *sink, *s_cap, *e_cap, *scale;
-  GstElement *scale_cap, *video_rate, *v_cap:
+  GstElement *scale_cap, *video_rate, *v_cap;
 
-} g_element*;
+} *g_element;
 
 void structure_fields(const GstStructure *);
 gboolean bus_func(GstBus *, GstMessage *, gpointer);

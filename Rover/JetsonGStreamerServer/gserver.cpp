@@ -3,6 +3,8 @@
 #include <signal.h>
 #include "gserver.h"
 #include <gst/gst.h>
+#include "ricoh.h"
+#include <string.h>
 #include <unordered_map>
 #include <thread>
 #include <vector> 
@@ -65,22 +67,22 @@ gboolean bus_func (GstBus *bus, GstMessage *message, gpointer user_data)
 // udpsink host=192.168.0.5 port=5555
 
 
-g_element *start_device(GstDevice *dev, const char *client) 
+g_element start_device(GstDevice *dev, const char *client) 
 {
-  GstStructure *str;
-  gchar *name, *cl;
-  g_element *ele = malloc(sizeof(g_element_st));
-  GstElement *pipeline, *source, *depay, *encoder, *parse, *sink;
-  GstElement *s_cap, *e_cap, *scale, *scale_cap, *video_rate, *v_cap;
+  // GstStructure *str;
+  // gchar *name, *cl;
+  g_element ele = (g_element)malloc(sizeof(g_element_st));
+  // GstElement *pipeline, *source, *depay, *encoder, *parse, *sink;
+  // GstElement *s_cap, *e_cap, *scale, *scale_cap, *video_rate, *v_cap;
   GstCaps *s_cap_unapplied, *e_cap_unapplied, *scale_cap_unapplied;
   GstCaps *v_cap_unapplied;
 
   ele->name = gst_device_get_display_name(dev);
   ele->cl = gst_device_get_device_class(dev);
   ele->str = gst_device_get_properties(dev);
-  g_print("device name: %s\n", name);
-  g_print("device class: %s\n", cl);
-  g_print("device path: %s\n", gst_structure_get_string(str, "device.path")); 
+  g_print("device name: %s\n", ele->name);
+  g_print("device class: %s\n", ele->cl);
+  g_print("device path: %s\n", gst_structure_get_string(ele->str, "device.path")); 
   
   // setting elements of pipeline
   ele->pipeline = gst_pipeline_new(gst_device_get_display_name(dev));
@@ -172,7 +174,7 @@ GstDeviceMonitor *device_monitor(void)
   gst_device_monitor_add_filter (monitor, "Video/Source", caps);
   gst_caps_unref (caps);
 
-  gst_device_monitori_start (monitor);
+  gst_device_monitor_start (monitor);
 
   return monitor;
 }
@@ -180,19 +182,19 @@ GstDeviceMonitor *device_monitor(void)
 // creates the pipelines and uses them in different threads
 void stream_start(GList *cur, gchar *ip, gint stream_dup_num) 
 {
-  g_element *ele;
+  g_element ele;
   int retries = 0;
   ele = start_device((GstDevice*) cur->data, ip);
   //gchar *name = gst_device_get_display_name((GstDevice *) cur->data);
   
-  if (!ele->name == "RICOH THETA S") 
+  if (strcmp(ele->name, "RICOH THETA S") != 0) 
   {
     gst_bin_add_many(GST_BIN(ele->pipeline), ele->source, ele->s_cap, ele->e_cap, 
                      ele->depay, ele->encoder, ele->parse, ele->sink, ele->scale, 
                      ele->scale_cap, ele->video_rate, ele->v_cap, NULL);
  
     if (!gst_element_link_many(ele->source, ele->s_cap, ele->video_rate, ele->v_cap, 
-                               ele->scale, ele->scale_cap, ele->ncoder, ele->e_cap, 
+                               ele->scale, ele->scale_cap, ele->encoder, ele->e_cap, 
                                ele->parse, ele->depay, ele->sink, NULL)) 
     {
       g_printerr ("unable to link the elments to the pipeline. SAD! \n");
@@ -201,7 +203,7 @@ void stream_start(GList *cur, gchar *ip, gint stream_dup_num)
 
  
   // try and set the state of the camera pipeline, retry 5 times exit if it can't 
-    while (gst_element_set_state(pipe, GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE)
+    while (gst_element_set_state(ele->pipeline, GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE)
     {
       printf("oh no did not start %s, going to retry \n", ele->name);
       retries ++;
@@ -213,11 +215,12 @@ void stream_start(GList *cur, gchar *ip, gint stream_dup_num)
       std::this_thread::sleep_for(std::chrono::nanoseconds(retries * 100));
     }
   }
+  // ricoh specific stream things 
   else 
   {
     // this is where we put stuff for the richo cam
     // We still need to break up the pipe and send things accordingly
-    start_stream(ele);
+    r_start(ele);
   }
   printf("%s stream started\n", ele->name);
 }
