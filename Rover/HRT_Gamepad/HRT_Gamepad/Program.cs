@@ -75,7 +75,7 @@ namespace HRT_Gamepad
                             //22
                         Console.Write("Z :");
                         int value = int.Parse(temp.Substring(19, endOfNum + 2));
-                        value -= 2767;
+                        //value -= 2767;
                         Console.WriteLine(value);
                     }
                     else if (temp.Contains("Offset: RotationX, Value:"))
@@ -90,8 +90,22 @@ namespace HRT_Gamepad
                             }
                         }
                         //22
-                        Console.Write("X :" + temp.Substring(25, endOfNum + 2));
-                        Console.WriteLine("");
+                        Console.Write("X :");
+                        int center = 32895;
+                        int value = int.Parse(temp.Substring(25, endOfNum + 2));
+                        double printt = 0;
+                        if (value < center)
+                        {
+                            printt = center - value;
+                            printt = -printt / (double)center;
+
+                        }
+                        else
+                        {
+                            printt = value - center;
+                            printt = printt / (double)center;
+                        }
+                        Console.WriteLine(printt);
                     }
                     else if (temp.Contains("Offset: RotationY, Value:"))
                     {
@@ -105,12 +119,25 @@ namespace HRT_Gamepad
                             }
                         }
                         //22
-                        Console.Write("                Y :" + temp.Substring(25, endOfNum + 2));
-                        Console.WriteLine("");
+                        Console.Write("              Y :");
+                        int center = 32638;
+                        int value = int.Parse(temp.Substring(25, endOfNum + 2));
+                        double printt = 0;
+                        if (value < center)
+                        {
+                            printt = center - value;
+                            printt = printt / (double)center;
+
+                        } else
+                        {
+                            printt = value - center;
+                            printt = -printt / (double)center;
+                        }
+                        Console.WriteLine(printt);
                     }
                     else
                     {
-                        Console.WriteLine(temp);
+                        Console.WriteLine(state);
                     }
                 }
             }
