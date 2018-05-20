@@ -35,6 +35,12 @@
     <Reference Include="BBBCSIO">
       <HintPath>..\BBBCSIO.dll</HintPath>
     </Reference>
+<<<<<<< HEAD
+=======
+    <Reference Include="OpenTK, Version=3.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenTK.3.0.0\lib\net20\OpenTK.dll</HintPath>
+    </Reference>
+>>>>>>> 5c89447494fb568eac6eaf6bd4c45c62b5ee9b14
     <Reference Include="Scarlet">
       <HintPath>..\Scarlet.dll</HintPath>
     </Reference>
@@ -55,10 +61,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
+    <Compile Include="old_program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
