@@ -32,6 +32,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BBBCSIO">
+      <HintPath>..\..\HRT_Gamepad\BBBCSIO.dll</HintPath>
+    </Reference>
+    <Reference Include="Scarlet">
+      <HintPath>..\..\HRT_Gamepad\Scarlet.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -42,8 +48,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VESC.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
