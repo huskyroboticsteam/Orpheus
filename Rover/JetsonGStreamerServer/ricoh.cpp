@@ -3,7 +3,8 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <iostream>
 #include "gserver.h"
-#include "ricoh.h"
+#include <string>
+//#include "ricoh.h"
 #include <stdio.h>
 #include <gst/gst.h>
 
@@ -127,7 +128,37 @@ void saveToArray()
 int r_start(g_element ele) {
   // TODO: create the pipeline for the capture of the camera
   // TODO: create the pipeline for the writing to the screen
-  /*VideoCapture cap(1);
+  GstElement *inward_pipe = gst_pipeline_new("inward");
+  GstElement *outward_pipe = gst_pipeline_new("outward");
+
+  // adding elements to the pipes
+  gst_bin_add_many(GST_BIN(inward_pipe), ele->source, ele->s_cap, ele->video_rate,
+                   ele->v_cap, ele->scale, ele->scale_cap, NULL);
+  gst_bin_add_many(GST_BIN(outward_pipe), ele->encoder, ele->e_cap, ele->parse,
+                   ele->depay, ele->sink, NULL);
+
+  // linking elements to pipes, if fails the programmer is a dummy
+  if (!gst_element_link_many(ele->source, ele->s_cap, ele->video_rate, ele->v_cap,
+                             ele->scale, ele->scale_cap, NULL)) 
+  {
+    g_printerr("inward pipe failed make sure the objects were made correctly");
+  }
+ 
+  if (!gst_element_link_many(ele->encoder, ele->e_cap, ele->parse, ele->depay, 
+                             ele->sink, NULL))
+  {
+    g_printerr("outward pipe faile make sure the objects were made correctly");
+  }
+  g_print("element name %s \n", GST_ELEMENT_PADS(inward_pipe));
+  const gchar *path = gst_structure_get_string(ele->str, "device.path");
+  std::string inward_stream;
+
+  inward_stream += "v4l2src device=" + std::string(path) + " ! video/x-raw, 'format=1420, width=1280, height=  720' ! videorate ! 'video/x-raw, framerate=(fraction)10/1' ! videoscalse ! d'video/x-raw, format=I420, width=640, height=360'";
+
+  std::string outward_stream;
+  outward_stream += "omxh264enc ! 'video/x-h264, stream-format=byte-stream' ! h264parse ! rtph264pay ! udpsink ! 'host=192.168.0.5, port=5555'";
+
+  VideoCapture cap(inward_stream, CAP_GSTREAMER);
   Mat dualFisheye;
   cap.read(dualFisheye);
 
@@ -142,9 +173,11 @@ int r_start(g_element ele) {
   Size frame_size(1144, 592);
   int frames_per_second = 25;
   //Create and initialize the VideoWriter object 
-  VideoWriter oVideoWriter("C:/Users/Guramrit Singh/Videos/360_cam.avi", VideoWriter::fourcc('M', 'J', 'P', 'G'),frames_per_second, frame_size, true);
+  //VideoWriter oVideoWriter("C:/Users/Guramrit Singh/Videos/360_cam.avi", VideoWriter::fourcc('M', 'J', 'P', 'G'),frames_per_second, frame_size, true);
+  cv::VideoWriter writer;
+  writer.open(outward_stream, CAP_GSTREAMER, 0, 30, Size(640, 360), true);
 
-  namedWindow("image Final", CV_WINDOW_AUTOSIZE);
+  //namedWindow("image Final", CV_WINDOW_AUTOSIZE);
 
   while (true)
   {
@@ -158,10 +191,10 @@ int r_start(g_element ele) {
     //Stitch the two feeds together
     Mat pano = stitch(separated);
     imshow("image Final", pano);
-    oVideoWriter.write(pano);
+    writer.write(pano);
     if (waitKey(30) == 27) break;
   }
-  oVideoWriter.release();*/
+  writer.release();
   g_print("name of camera from the ricoh side: %s \n", (char *)ele->name);
   return 0;
 }

@@ -1,8 +1,7 @@
 #pragma once
 
-#include <gst/gstprotection.h>
+//#include <gst/gstprotection.h>
 #include <gst/gst.h>
-
 // struct for the elements used by gstreamer
 typedef struct g_element_st 
 {
@@ -14,9 +13,9 @@ typedef struct g_element_st
 
 } *g_element;
 
-void structure_fields(const GstStructure *);
+/*void structure_fields(const GstStructure *);
 gboolean bus_func(GstBus *, GstMessage *, gpointer);
 GstDeviceMonitor *device_monitor(void);
 void sigintHandler(int);
-void stream_start(GList *, gchar *, gint); 
+void stream_start(GList *, gchar *, gint);*/ 
 

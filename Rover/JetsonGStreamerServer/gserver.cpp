@@ -1,15 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
-#include "gserver.h"
 #include <gst/gst.h>
-#include "ricoh.h"
 #include <string.h>
 #include <unordered_map>
 #include <thread>
 #include <vector> 
 #include <chrono>
 
+#include "gserver.h"
+#include "ricoh.cpp"
 GMainLoop *loop;
 std::vector<std::thread> threads;
 
@@ -89,7 +89,7 @@ g_element start_device(GstDevice *dev, const char *client)
                                                              /* opencv object dir */
   ele->source = gst_element_factory_make("v4l2src", NULL);        // cap
   ele->s_cap = gst_element_factory_make("capsfilter", NULL);      // cap
-  ele->encoder = gst_element_factory_make("omxh264enc", NULL);    // cap & writer 
+  ele->encoder = gst_element_factory_make("omxh264enc", NULL);    // writer 
   ele->e_cap = gst_element_factory_make("capsfilter", NULL);      // writer
   ele->depay = gst_element_factory_make("rtph264pay", NULL);      // writer
   ele->parse = gst_element_factory_make("h264parse", NULL);       // writer

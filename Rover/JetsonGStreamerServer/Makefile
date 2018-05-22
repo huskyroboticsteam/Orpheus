@@ -7,11 +7,11 @@ OBJS= ricoh.o
 
 all: ricoh g_server
 
-ricoh: ricoh.cpp $(HEADERS)
-	$(CPP) $(CFLAGS) -c ricoh.cpp $(CVFLAGS) $(GSFLAGS)
+#ricoh: ricoh.cpp $(HEADERS)
+#	$(CPP) $(CFLAGS) -c ricoh.cpp $(CVFLAGS) $(GSFLAGS)
 
-g_server: $(HEADERS) $(OBJ)
-	$(CPP) $(CFLAGS) gserver.cpp -o gserver $(GSFLAGS) $(OBJS)
+g_server: $(HEADERS) richo.cpp gserver.cpp
+	$(CPP) -std=c++14 gserver.cpp -o gserver $(GSFLAGS) $(CVFLAGS)
 
 clean:
 	rm gserver *.o
