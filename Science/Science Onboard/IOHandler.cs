@@ -27,10 +27,6 @@ namespace Science
 
         public IOHandler()
         {
-            this.InitProcedure = new ISubsystem[] { /*this.RailController, */this.DrillController, /*this.SampleController, */this.LEDController, this.AuxSensors, this.SysSensors, this.Music };
-            this.EStopProcedure = new ISubsystem[] { this.Music, this.RailController, this.DrillController, this.SampleController, this.LEDController, this.AuxSensors, this.SysSensors };
-            this.UpdateProcedure = new ISubsystem[] { /*this.RailController, */this.DrillController, /*this.SampleController, */this.LEDController, this.AuxSensors, this.SysSensors };
-            if (this.EStopProcedure.Length < this.InitProcedure.Length || this.EStopProcedure.Length < this.UpdateProcedure.Length) { throw new Exception("A system is registered for init or updates, but not for emergency stop. For safety reasons, this is not permitted."); }
 
             RaspberryPi.Initialize();
             this.I2C = new I2CBusPi();
@@ -47,6 +43,11 @@ namespace Science
             this.AuxSensors = new AuxSensors();
             this.SysSensors = new SysSensors();
             this.Music = new MusicPlayer();
+
+            this.InitProcedure = new ISubsystem[] { /*this.RailController, */this.DrillController, /*this.SampleController, */this.LEDController, this.AuxSensors, this.SysSensors, this.Music };
+            this.EStopProcedure = new ISubsystem[] { this.Music, this.RailController, this.DrillController, this.SampleController, this.LEDController, this.AuxSensors, this.SysSensors };
+            this.UpdateProcedure = new ISubsystem[] { /*this.RailController, */this.DrillController, /*this.SampleController, */this.LEDController, this.AuxSensors, this.SysSensors };
+            if (this.EStopProcedure.Length < this.InitProcedure.Length || this.EStopProcedure.Length < this.UpdateProcedure.Length) { throw new Exception("A system is registered for init or updates, but not for emergency stop. For safety reasons, this is not permitted."); }
         }
 
         /// <summary> Prepares all systems for use by zeroing them. This takes a while. </summary>
