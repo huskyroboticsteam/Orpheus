@@ -20,6 +20,7 @@ using Scarlet.Utilities;
 using OpenTK.Input;
 using Scarlet.Components.Sensors;
 using Scarlet.IO;
+using Scarlet.Communications;
 
 namespace Minibot
 {
@@ -37,17 +38,23 @@ namespace Minibot
             var orientation = 0.0f;
             CANBusBBB canName = CANBBB.CANBus0;
 
+            /*
             var client = new UdpClient();
             IPEndPoint ep = new IPEndPoint(IPAddress.Parse("192.168.0.20"), 9000);
-            client.Connect(ep);
+            client.Connect(ep);*/
+
+            Client.Start("192.168.0.20", 1025, 1026, "Client 1");
+
             int count = 0;
             while (true)
             {
+
                 GamePadState State = GamePad.GetState(0);
                 if (State.Buttons.A == ButtonState.Pressed)
                 {
                     do
                     {
+                        Thread.Sleep(500);
                         count++;
                         State = GamePad.GetState(0);
                         //Console.WriteLine("Reading");
@@ -58,11 +65,11 @@ namespace Minibot
                             float speed = rightSpeed - leftSpeed;
 
                             float leftJoy = State.ThumbSticks.Left.Y;
-                            float rightJoy = State.ThumbSticks.Right.Y + 0.003967406f;
+                            float rightJoy = State.ThumbSticks.Right.X + 0.003967406f;
 
                             
                             //Console.WriteLine("Left Trigger: " + leftSpeed);
-                            //Console.WriteLine("Right Trigger: " + rightSpeed)    
+                            //Console.WriteLine("Right Trigger: " + rightSpeed);
                             float turn = rightSpeed - leftSpeed;
 
                             if (count == 100)
@@ -74,8 +81,21 @@ namespace Minibot
                             }
 
                             string stringData = turn + "," + rightJoy;
-                            byte [] sendBytes = Encoding.ASCII.GetBytes(stringData);
-                            client.Send(sendBytes, sendBytes.Length);
+
+                            //byte [] sendBytes = Encoding.ASCII.GetBytes(stringData);
+                            //client.Send(sendBytes, sendBytes.Length);
+
+                            
+                            Console.WriteLine(stringData);
+
+
+                            Packet MyPack = new Packet(0x30, false);
+                            MyPack.AppendData(UtilData.ToBytes(stringData));
+                            MyPack.IsUDP = false;
+                            Client.Send(MyPack);
+                            
+
+                            
 
                             /*
                             canName.Write(5, UtilData.ToBytes((int)0.15*turn*100000.0)); 
@@ -92,7 +112,10 @@ namespace Minibot
                         }
                     }
                     while (State.Buttons.Start != ButtonState.Pressed && State.Buttons.B != ButtonState.Pressed);
-                }                
+                }
+
+                
+
             }
         }
     }
