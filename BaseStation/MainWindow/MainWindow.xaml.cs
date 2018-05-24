@@ -19,11 +19,12 @@ namespace HuskyRobotics.UI {
 	public partial class MainWindow : Window {
 		private const string SETTINGS_PATH = "settings.xml";
 		private SettingsFile SettingsFile = new SettingsFile(SETTINGS_PATH);
+        private WaypointsFile WaypointsFile { get; set; }
         private List<VideoWindow> VideoWindows = new List<VideoWindow>();
 		public Settings Settings { get => SettingsFile.Settings; }
 		public ObservableDictionary<string, MeasuredValue<double>> Properties { get; }
         public Armature SetpointArm;
-        public ObservableCollection<Waypoint> Waypoints { get; private set; } = new ObservableCollection<Waypoint>();
+        public ObservableCollection<Waypoint> Waypoints { get => WaypointsFile.Waypoints; }
         public ObservableCollection<VideoStream> Streams { get; private set; } = new ObservableCollection<VideoStream>();
 
 		public MainWindow()
@@ -56,11 +57,7 @@ namespace HuskyRobotics.UI {
                     Settings.CurrentMapFile = Path.GetFileName(mapFiles[0]);
                 }
             }
-            // enforces loading an existing set of waypoints on startup
-            if (File.Exists(Directory.GetCurrentDirectory() + @"\Images\" + (Settings.CurrentMapFile.Replace(".map", ".waypoints"))))
-            {
-                Map.LoadWaypoints((Settings.CurrentMapFile.Replace(".map", ".waypoints")), Waypoints);
-            }
+            WaypointsFile = new WaypointsFile(Settings.CurrentMapFile.Replace(".map", ".waypoints"));
             Map.Waypoints = Waypoints;
             Map.DisplayMap(Settings.CurrentMapFile);
         }
@@ -70,6 +67,7 @@ namespace HuskyRobotics.UI {
             if (e.PropertyName.Equals("CurrentMapFile"))
             {
                 Map.DisplayMap(Settings.CurrentMapFile);
+                WaypointsFile = new WaypointsFile(Settings.CurrentMapFile.Replace(".map", ".waypoints"));
             }
         }
 

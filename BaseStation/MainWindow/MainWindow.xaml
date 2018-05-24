@@ -92,7 +92,10 @@
                         </StackPanel>
                         <DataGrid ItemsSource="{Binding Waypoints}" CanUserDeleteRows="True" ColumnWidth="*" />
                     </DockPanel>
-                    <ui:MapDisplay DataContext="{Binding Settings}" x:Name="Map"/>
+                    <ui:MapDisplay
+                        DataContext="{Binding Settings}"
+                        x:Name="Map"
+                    />
                 </DockPanel>
             </TabItem>
             <TabItem Header="Settings">

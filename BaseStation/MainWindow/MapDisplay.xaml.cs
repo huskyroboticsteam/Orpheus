@@ -58,10 +58,9 @@ namespace HuskyRobotics.UI
             ClearCanvas();
             // load in individual images
             // TODO get the path from the settings
-            _waypoints.Clear();
-            String waypointsFile = (mapSetFile.Replace(".map", ".waypoints"));
             if (File.Exists(Directory.GetCurrentDirectory() + @"\Images\" + mapSetFile))
             {
+                String waypointsFile = (mapSetFile.Replace(".map", ".waypoints"));
                 using (StreamReader file = new StreamReader(Directory.GetCurrentDirectory() + @"\Images\" + mapSetFile))
                 {
                     string line = file.ReadLine();
@@ -103,29 +102,6 @@ namespace HuskyRobotics.UI
                     }
                 }
             }
-            if (File.Exists(Directory.GetCurrentDirectory() + @"\Images\" + waypointsFile))
-            {
-                LoadWaypoints(waypointsFile, Waypoints);
-            }
-        }
-
-        public void LoadWaypoints(String waypointsFile, ObservableCollection<Waypoint> set)
-        {
-            using (StreamReader file = new StreamReader(Directory.GetCurrentDirectory() + @"\Images\" + waypointsFile))
-            {
-                String line;
-                while ((line = file.ReadLine()) != null)
-                {
-                    string[] parts = line.Split('|');
-                    double Lat = 47.653799;
-                    double Long = -122.307808;
-                    if (!Double.TryParse(parts[1], out Lat))
-                        throw new ArithmeticException("Could not parse waypoint Lat");
-                    if (!Double.TryParse(parts[2], out Long))
-                        throw new ArithmeticException("Could not parse waypoint Long");
-                    set.Add(new Waypoint(Lat, Long, parts[0]));
-                }
-            }
         }
 
         // adds an image to the canvas with the given file location and the coords of where
@@ -146,21 +122,6 @@ namespace HuskyRobotics.UI
         {
             MapCanvas.Children.Clear();
             allImages.Clear();
-            Waypoints.Clear();
-        }
-
-        private void SaveWaypoints()
-        {
-            if (DataContext == null) return;
-            String fileName = Directory.GetCurrentDirectory().ToString() + @"\Images\"
-                    +  ((Settings)DataContext).CurrentMapFile.Replace(".map", ".waypoints");
-            using (StreamWriter file = new StreamWriter(fileName))
-            {
-                foreach (Waypoint waypoint in _waypoints)
-                {
-                    file.WriteLine(waypoint.Name + "|" + waypoint.Lat + "|" + waypoint.Long);
-                }
-            }
         }
 
         private void WaypointsChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -179,7 +140,6 @@ namespace HuskyRobotics.UI
                 MapCanvas.Children.Add(waypointIcon);
                 waypointIcons.Add(waypointIcon);
             }
-            SaveWaypoints();
         }
 
         private void CanvasMouseButtonDown(object sender, MouseButtonEventArgs e)
