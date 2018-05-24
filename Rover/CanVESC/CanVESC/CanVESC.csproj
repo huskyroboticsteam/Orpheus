@@ -49,7 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="VESC.cs" />
+    <Compile Include="CANVESC.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
