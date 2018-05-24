@@ -15,6 +15,8 @@ namespace HuskyRobotics.BaseStation
     /// </summary>
     class PTZCamera
     {
+        private int changeThreshold { get; set; }
+        private int deadzoneThreshold { get; set; }
         private int lastXSpeed { get; set; }
         private int lastYSpeed { get; set; }
         private string BaseURL { get; set; } //the ip address for the camera
@@ -38,6 +40,8 @@ namespace HuskyRobotics.BaseStation
             BaseURL = string.Format("http://{0}/", cameraAddress);
             lastXSpeed = 0;
             lastYSpeed = 0;
+            changeThreshold = 20;
+            deadzoneThreshold = 20;
         }
 
         /// <summary>
@@ -97,9 +101,12 @@ namespace HuskyRobotics.BaseStation
         /// <param name="ySpeed">Vertical panning speed</param>
         public void SetSpeeds(int xSpeed, int ySpeed)
         {
-            if ((xSpeed != lastXSpeed || ySpeed != lastYSpeed)) {
+            if (Math.Abs( lastXSpeed - xSpeed ) > changeThreshold|| Math.Abs(lastYSpeed - ySpeed) > changeThreshold ) {
+                if (Math.Abs(xSpeed) < deadzoneThreshold) { xSpeed = 0; }
+                if (Math.Abs(ySpeed) < deadzoneThreshold) { ySpeed = 0; }
                 lastXSpeed = xSpeed;
                 lastYSpeed = ySpeed;
+                Log.Output(Log.Severity.INFO, Log.Source.CAMERAS, xSpeed + ", " + ySpeed);
                 Dictionary<string, string> values = new Dictionary<string, string>()
                 {
                     {"continuouspantiltmove", string.Format("{0},{1}",xSpeed,ySpeed) }

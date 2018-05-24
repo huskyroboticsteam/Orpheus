@@ -1,5 +1,6 @@
 ﻿using OpenTK;
 using OpenTK.Input;
+using Scarlet.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+
 
 namespace HuskyRobotics.BaseStation
 {
@@ -18,42 +20,20 @@ namespace HuskyRobotics.BaseStation
     {
         public static void Start()
         {
-            int max_speed = 100;
-            int x_speed=0;
-            int y_speed=0;
+            int maxSpeed = 100;
+            int xSpeed=0;
+            int ySpeed=0;
 
             HttpClient client = new HttpClient();
             PTZCamera cam = new PTZCamera("192.168.0.42", "admin","1234",client);
-
+            
             while (true)
             {
-                if (Keyboard.GetState().IsKeyDown(Key.Up) )
-                {
-                        y_speed = max_speed;
-                }
-                else if (Keyboard.GetState().IsKeyDown(Key.Down))
-                {
-                        y_speed = -max_speed;
-                }
-                else if (y_speed != 0)
-                {
-                    y_speed = 0;
-                }
-
-                if (Keyboard.GetState().IsKeyDown(Key.Left))
-                {
-                        x_speed = -max_speed;
-                }
-                else if (Keyboard.GetState().IsKeyDown(Key.Right))
-                {
-                        x_speed = max_speed;
-                }
-                else if (x_speed != 0)
-                {
-                    x_speed = 0;
-                }
-
-                cam.SetSpeeds(x_speed, y_speed);
+                JoystickState jsState = Joystick.GetState(0);
+                xSpeed = Convert.ToInt16(jsState.GetAxis(0) * maxSpeed);
+                ySpeed = Convert.ToInt16(jsState.GetAxis(1) * maxSpeed);
+                
+                cam.SetSpeeds(xSpeed, ySpeed);
                 Thread.Sleep(10);
             }
         }
