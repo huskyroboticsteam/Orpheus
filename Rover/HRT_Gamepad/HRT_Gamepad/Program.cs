@@ -38,29 +38,38 @@ namespace Minibot
             var orientation = 0.0f;
             CANBusBBB canName = CANBBB.CANBus0;
 
+            double[] xBuffer = new double[3];
+            double[] yBuffer = new double[3];
+            int xIndex = 0;
+            int yIndex = 0;
+
             /*
             var client = new UdpClient();
             IPEndPoint ep = new IPEndPoint(IPAddress.Parse("192.168.0.20"), 9000);
             client.Connect(ep);*/
-            bool usingJoystick = false;
+            bool usingJoystick = true;
             Client.Start("192.168.0.20", 1025, 1026, "Client 1");
             if (usingJoystick)
             {
                 while (true)
                 // for (int i = 0; i < 4; i++)
                 {
+                    Thread.Sleep(100);
                     //JoystickState state = new JoystickState();
                     var state = Joystick.GetState(0);
                     if (state.IsConnected)
                     {
-                        float x = state.GetAxis(0);
-                        float y = state.GetAxis(1);
+                        xBuffer[xIndex] = state.GetAxis(0);
+                        yBuffer[yIndex]= state.GetAxis(1);
+
+                        double avgX = (xBuffer[0] + xBuffer[1] + xBuffer[2]) / 3;
+                        double avgY = (yBuffer[0] + yBuffer[1] + yBuffer[2]) / 3;
 
                         // Print the current state of the joystick
                         //Console.WriteLine(state);
-                        Console.WriteLine("X: " + x + "Y: " + -y);
+                        Console.WriteLine("X: " + -xBuffer[xIndex] + "Y: " + -yBuffer[yIndex]);
 
-                        string stringData = x + "," + -y;
+                        string stringData = -(float)avgX + "," + -(float)avgY;
 
                         //byte [] sendBytes = Encoding.ASCII.GetBytes(stringData);
                         //client.Send(sendBytes, sendBytes.Length);
@@ -69,6 +78,9 @@ namespace Minibot
                         MyPack.AppendData(UtilData.ToBytes(stringData));
                         MyPack.IsUDP = false;
                         Client.Send(MyPack);
+
+                        xIndex = (xIndex + 1) % 3;
+                        yIndex = (yIndex + 1) % 3;
                     }
                 }
             } 
@@ -83,7 +95,7 @@ namespace Minibot
                     {
                         do
                         {
-                            //Thread.Sleep(500);
+                            Thread.Sleep(100);
                             count++;
                             State = GamePad.GetState(0);
                             //Console.WriteLine("Reading");
