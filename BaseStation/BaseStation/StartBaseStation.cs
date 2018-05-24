@@ -1,5 +1,6 @@
 ﻿using System;
 using HuskyRobotics.UI;
+using HuskyRobotics.BaseStation;
 using System.Threading;
 using System.Windows;
 using Scarlet.Utilities;
@@ -18,6 +19,7 @@ namespace HuskyRobotics.BaseStation.Start {
         public static void Main(String[] args) {
             //temporary example code
             new Thread(StartServer).Start();
+            new Thread(StartCameraControl).Start();
             Application app = new Application();
             app.Exit += (sd, ev) => Scarlet.Communications.Server.Stop();
 			app.Run(new MainWindow());
@@ -26,5 +28,10 @@ namespace HuskyRobotics.BaseStation.Start {
 		private static void StartServer() {
 			Scarlet.Communications.Server.Start(50000, 50000);
 		}
+
+        private static void StartCameraControl()
+        {
+            BaseStation.CameraControl.Start();
+        }
     }
 }
