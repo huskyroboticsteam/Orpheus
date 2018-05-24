@@ -1,0 +1,1 @@
+bash -c "./upload.sh '%1' %2"
