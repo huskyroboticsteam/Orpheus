@@ -1,6 +1,6 @@
-﻿using OpenTK;
-using OpenTK.Input;
-using Scarlet.Utilities;
+﻿using Scarlet.Utilities;
+using SlimDX.DirectInput;
+using SlimDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,21 +26,57 @@ namespace HuskyRobotics.BaseStation
 
             HttpClient client = new HttpClient();
             PTZCamera cam = new PTZCamera("192.168.0.42", "admin","1234",client);
-            
-            while (true)
-            {
-                JoystickState jsState = Joystick.GetState(0);
+            Joystick joystick = GetJoystick();
 
-                if (jsState.IsConnected == true)
+            if (joystick != null)
+            {
+                // Acquire the joystick
+                joystick.Acquire();
+
+                while (true)
                 {
-                    xSpeed = Convert.ToInt16(jsState.GetAxis(0) * maxSpeed);
-                    ySpeed = Convert.ToInt16(jsState.GetAxis(1) * maxSpeed);
+                    joystick.Poll();
+                    var state = joystick.GetCurrentState();
+
+                    xSpeed = Convert.ToInt16(UtilMain.LinearMap(state.X, 0, 65535, -1, 1) * maxSpeed);
+                    ySpeed = Convert.ToInt16(UtilMain.LinearMap(state.Y, 0, 65535, -1, 1) * maxSpeed);
+                    Console.WriteLine(xSpeed + ", " + ySpeed);
 
                     cam.SetSpeeds(xSpeed, ySpeed);
-                }
-                Thread.Sleep(10);
+                    Thread.Sleep(10);
 
+                }
             }
+        }
+
+        private static Joystick GetJoystick() {
+            // Initialize DirectInput
+            var directInput = new DirectInput();
+
+            // Find a Joystick Guid
+            var joystickGuid = Guid.Empty;
+
+            // Look for Gamepad
+            foreach (var deviceInstance in directInput.GetDevices(SlimDX.DirectInput.DeviceType.Gamepad,
+                        DeviceEnumerationFlags.AllDevices))
+                joystickGuid = deviceInstance.InstanceGuid;
+
+            // If Gamepad not found, look for a Joystick
+            if (joystickGuid == Guid.Empty)
+                foreach (var deviceInstance in directInput.GetDevices(SlimDX.DirectInput.DeviceType.Joystick,
+                        DeviceEnumerationFlags.AllDevices))
+                    joystickGuid = deviceInstance.InstanceGuid;
+
+            // If Joystick not found, throws an error
+            if (joystickGuid == Guid.Empty)
+            {
+                Console.WriteLine("No Joystick Found");
+                return null;
+            }
+
+            Console.WriteLine("Found Joystick/Gamepad with GUID: {0}", joystickGuid);
+            // Instantiate the joystick
+            return new Joystick(directInput, joystickGuid);
         }
     }
 }
