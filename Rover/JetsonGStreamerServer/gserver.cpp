@@ -220,6 +220,7 @@ void stream_start(GList *cur, gchar *ip, gint stream_dup_num)
   {
     // this is where we put stuff for the richo cam
     // We still need to break up the pipe and send things accordingly
+    printf("starting the ricoh \n");
     r_start(ele);
   }
   printf("%s stream started\n", ele->name);
