@@ -76,18 +76,21 @@ namespace HuskyRobotics.UI
         public static String Fetch(MapConfiguration config)
         {
             String requestUrl = "https://maps.googleapis.com/maps/api/staticmap?" + config.URLParams();
+            bool notDownloaded = true;
 
-            HttpWebRequest request = WebRequest.CreateHttp(requestUrl);
-            HttpWebResponse response;
-            try
-            {
-                response = (HttpWebResponse)request.GetResponse();
-            } catch (WebException ex)
-            {
-                Console.WriteLine(ex.Status + " " + ex.Message);
-                return null;
+            HttpWebResponse response = null;
+            while (notDownloaded) {
+                HttpWebRequest request = WebRequest.CreateHttp(requestUrl);
+                try
+                {
+                    response = (HttpWebResponse)request.GetResponse();
+                    notDownloaded = false;
+                } catch (WebException ex)
+                {
+                    Console.WriteLine(ex.Status + " " + ex.Message);
+                    Console.WriteLine("Retrying Download");
+                }
             }
-
             Stream input = response.GetResponseStream();
             // writes to the buffer stream
             using (MemoryStream buffer = new MemoryStream())
