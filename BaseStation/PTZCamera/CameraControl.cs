@@ -30,11 +30,16 @@ namespace HuskyRobotics.BaseStation
             while (true)
             {
                 JoystickState jsState = Joystick.GetState(0);
-                xSpeed = Convert.ToInt16(jsState.GetAxis(0) * maxSpeed);
-                ySpeed = Convert.ToInt16(jsState.GetAxis(1) * maxSpeed);
-                
-                cam.SetSpeeds(xSpeed, ySpeed);
+
+                if (jsState.IsConnected == true)
+                {
+                    xSpeed = Convert.ToInt16(jsState.GetAxis(0) * maxSpeed);
+                    ySpeed = Convert.ToInt16(jsState.GetAxis(1) * maxSpeed);
+
+                    cam.SetSpeeds(xSpeed, ySpeed);
+                }
                 Thread.Sleep(10);
+
             }
         }
     }
