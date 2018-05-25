@@ -17,14 +17,13 @@ namespace HuskyRobotics.BaseStation.Start {
 		[STAThread]
         public static void Main(String[] args) {
             //temporary example code
-            new Thread(StartServer).Start();
+            Server.BaseServer.Start();
+            Thread eventloop = new Thread(Server.BaseServer.EventLoop);
+            eventloop.IsBackground = true;
+            eventloop.Start();
             Application app = new Application();
-            app.Exit += (sd, ev) => Scarlet.Communications.Server.Stop();
+            app.Exit += (sd, ev) => Server.BaseServer.Shutdown();
 			app.Run(new MainWindow());
         }
-
-		private static void StartServer() {
-			Scarlet.Communications.Server.Start(50000, 50000);
-		}
     }
 }
