@@ -30,8 +30,8 @@ std::pair<Mat,Mat> split(Mat dualFisheye)
   cv::Rect roi;
   roi.x = 15;
   roi.y = 36;
-  roi.width = dualFisheye.cols / 2 - 48;
-  roi.height = dualFisheye.rows - 148;
+  roi.width = dualFisheye.cols / 2 - 48; // ROWS
+  roi.height = dualFisheye.rows - 148;   // COLS
   //Crop the image using these parameters.
   Mat left = dualFisheye(roi);
   //Crop the other half.
