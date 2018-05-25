@@ -40,7 +40,6 @@ namespace HuskyRobotics.BaseStation
 
                     xSpeed = Convert.ToInt16(UtilMain.LinearMap(state.X, 0, 65535, -1, 1) * maxSpeed);
                     ySpeed = Convert.ToInt16(UtilMain.LinearMap(state.Y, 0, 65535, -1, 1) * maxSpeed);
-                    Console.WriteLine(xSpeed + ", " + ySpeed);
 
                     cam.SetSpeeds(xSpeed, ySpeed);
                     Thread.Sleep(10);
