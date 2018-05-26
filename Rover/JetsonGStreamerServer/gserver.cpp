@@ -65,15 +65,9 @@ gboolean bus_func (GstBus *bus, GstMessage *message, gpointer user_data)
 // h264parse ! 
 // rtph264pay ! 
 // udpsink host=192.168.0.5 port=5555
-
-
 g_element start_device(GstDevice *dev, const char *client) 
 {
-  // GstStructure *str;
-  // gchar *name, *cl;
   g_element ele = (g_element)malloc(sizeof(g_element_st));
-  // GstElement *pipeline, *source, *depay, *encoder, *parse, *sink;
-  // GstElement *s_cap, *e_cap, *scale, *scale_cap, *video_rate, *v_cap;
   GstCaps *s_cap_unapplied, *e_cap_unapplied, *scale_cap_unapplied;
   GstCaps *v_cap_unapplied;
 
@@ -141,19 +135,6 @@ g_element start_device(GstDevice *dev, const char *client)
   } 
   
   return ele;
-  /*
-  // add elements and link them
-  gst_bin_add_many(GST_BIN(pipeline), source, s_cap, e_cap, depay, encoder, 
-                   parse, sink, scale, scale_cap, video_rate, v_cap, NULL);
- 
-  if (!gst_element_link_many(source, s_cap, video_rate, v_cap, scale, 
-                 scale_cap, encoder, e_cap, parse, depay, sink, NULL)) 
-  {
-    g_printerr ("unable to link the elments to the pipeline. SAD! \n");
-    exit(-1);
-  } 
-
-  return pipeline;*/
 }
 
 GstDeviceMonitor *device_monitor(void) 
@@ -180,12 +161,11 @@ GstDeviceMonitor *device_monitor(void)
 }
 
 // creates the pipelines and uses them in different threads
-void stream_start(GList *cur, gchar *ip, gint stream_dup_num) 
+void stream_start(GList *cur, gchar *ip, gint stream_duplication_num) 
 {
   g_element ele;
   int retries = 0;
   ele = start_device((GstDevice*) cur->data, ip);
-  //gchar *name = gst_device_get_display_name((GstDevice *) cur->data);
   
   if (strcmp(ele->name, "RICOH THETA S") != 0) 
   {
@@ -221,9 +201,9 @@ void stream_start(GList *cur, gchar *ip, gint stream_dup_num)
     // this is where we put stuff for the richo cam
     // We still need to break up the pipe and send things accordingly
     printf("starting the ricoh \n");
-    r_start(ele);
+    r_start(ele, ip);
   }
-  printf("%s stream started\n", ele->name);
+  printf("\n\n %s: stream started \n\n", ele->name);
 }
 
 /*void sigintHandler(int signum) 
@@ -254,15 +234,13 @@ int main(int argc, char *argv[])
   {
     ip = (char*)"192.168.0.5";
   }
-  printf("set the ip\n");
+  printf("ip is set to: %s\n\n", ip);
   // signal for closing
-  // signal(SIGINT, sigintHandler);
 
   // set the monitor
   monitor = device_monitor();
   dev = gst_device_monitor_get_devices(monitor);
- 
-  printf("set monitor\n"); 
+  
   // loop for the lists
   GList *cur = g_list_first(dev);
 

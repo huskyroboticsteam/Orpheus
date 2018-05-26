@@ -1,12 +1,10 @@
-//#include "stdafx.h"
+#include <stdio.h>
+#include <gst/gst.h>
+#include "gserver.h"
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <iostream>
-#include "gserver.h"
 #include <string>
-//#include "ricoh.h"
-#include <stdio.h>
-#include <gst/gst.h>
 
 using namespace cv;
 using namespace std;
@@ -125,19 +123,16 @@ void saveToArray()
   }
 }
 
-int r_start(g_element ele) {
-  // TODO: create the pipeline for the capture of the camera
-  // TODO: create the pipeline for the writing to the screen
+int r_start(g_element ele, gchar *ip) {
   const gchar *path = gst_structure_get_string(ele->str, "device.path");
+
+  // string for getting image data from ricoh
   std::string inward_stream;
+  inward_stream += "v4l2src device=" + std::string(path) + " ! video/x-raw, format=BGR, width=1280, height=720 ! videorate ! video/x-raw, framerate=(fraction)10/1 ! appsink";
 
-  inward_stream += "v4l2src device=" + std::string(path) + " ! video/x-raw, format=BGR, width=1280, height=720 ! videorate ! video/x-raw, framerate=(fraction)10/1 ! appsink"; //videoscale ! video/x-raw, format=I420, width=640, height=360 ! appsink";
- // printf("inward_stream: %s \n", inward_stream.c_str());
-
+  // string for sending 
   std::string outward_stream;
-  //outward_stream += "appsrc ! video/x-raw format=BGR ! videoconvert ! omxh264enc ! video/x-h264, stream-format=byte-stream ! h264parse ! rtph264pay ! udpsink host=192.168.0.5 port=5555";
-
-  outward_stream += "appsrc ! videoscale ! video/x-raw, format=BGR, width=640, height=360 ! autovideoconvert ! omxh264enc ! video/x-h264, stream-format=(string)byte-stream ! h264parse ! rtph264pay ! udpsink host=192.168.0.5 port=5555";
+  outward_stream += "appsrc ! autovideoconvert ! omxh264enc ! video/x-h264, stream-format=(string)byte-stream ! h264parse ! rtph264pay ! udpsink host=" + std::string(ip) + "port=5555";
   // creating the capture 
   VideoCapture cap(inward_stream, CAP_GSTREAMER);
   Mat dualFisheye;
@@ -161,7 +156,6 @@ int r_start(g_element ele) {
 
   while (true)
   {
-    //printf("cock1\n");
     cap.read(dualFisheye);
     //separate the feed and crop to bounding square
     std::pair<Mat, Mat> separated = split(dualFisheye);
@@ -173,10 +167,8 @@ int r_start(g_element ele) {
     Mat pano = stitch(separated);
     // imshow("image Final", pano);
     writer.write(pano);
-    // printf("cock2\n");
     if (waitKey(30) == 27) break;
   }
   writer.release();
-  // g_print("name of camera from the ricoh side: %s \n", (char *)ele->name);
   return 0;
 }
