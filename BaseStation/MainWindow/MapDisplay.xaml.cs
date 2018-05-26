@@ -101,6 +101,7 @@ namespace HuskyRobotics.UI
                         AddImage(Directory.GetCurrentDirectory() + @"\Images\" + parts[1] + ".jpg", x, y, ImageWidth, ImageHeight);
                     }
                 }
+                WaypointsChanged(null, null); // this loads the waypoints on startup
             }
         }
 

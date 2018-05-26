@@ -66,8 +66,10 @@ namespace HuskyRobotics.UI {
         {
             if (e.PropertyName.Equals("CurrentMapFile"))
             {
-                Map.DisplayMap(Settings.CurrentMapFile);
                 WaypointsFile = new WaypointsFile(Settings.CurrentMapFile.Replace(".map", ".waypoints"));
+                Map.Waypoints = Waypoints;
+                Map.DisplayMap(Settings.CurrentMapFile);
+                WaypointList.ItemsSource = Waypoints;
             }
         }
 

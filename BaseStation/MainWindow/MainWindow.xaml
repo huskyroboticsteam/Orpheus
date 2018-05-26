@@ -90,7 +90,7 @@
                                 
                             </StackPanel>
                         </StackPanel>
-                        <DataGrid ItemsSource="{Binding Waypoints}" CanUserDeleteRows="True" ColumnWidth="*" />
+                        <DataGrid ItemsSource="{Binding Waypoints}" CanUserDeleteRows="True" ColumnWidth="*" Name="WaypointList"/>
                     </DockPanel>
                     <ui:MapDisplay
                         DataContext="{Binding Settings}"
