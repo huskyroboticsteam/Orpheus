@@ -30,6 +30,7 @@
     <Reference Include="Scarlet">
       <HintPath>..\..\..\Scarlet\bin\Debug\Scarlet.dll</HintPath>
     </Reference>
+    <Reference Include="mscorlib" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainRover.cs" />
