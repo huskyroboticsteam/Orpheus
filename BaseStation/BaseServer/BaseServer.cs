@@ -80,15 +80,14 @@ namespace HuskyRobotics.BaseStation.Server
 
                 bool a = (state.Gamepad.Buttons & GamepadButtonFlags.A) != 0;
                 bool b = (state.Gamepad.Buttons & GamepadButtonFlags.B) != 0;
-                sbyte speed1 = 60;
-                sbyte packet = 0;
+                float speed1 = 0.0f;
                 if (a)
-                    packet = speed1;
+                    speed1 = 1.0f;
                 if (b)
-                    packet = (sbyte)-speed1;
-                Console.WriteLine(packet);
+                    speed1 = -1.0f;
+                Console.WriteLine(speed1);
                 Packet SteerPack = new Packet(0x8F, true, "MainRover");
-                SteerPack.AppendData(new byte[] { (byte)packet });
+                SteerPack.AppendData(UtilData.ToBytes(speed1));
                 //SteerPack.AppendData(UtilData.ToBytes(steerPos));
                 Scarlet.Communications.Server.Send(SteerPack);
 
