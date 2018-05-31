@@ -12,21 +12,23 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using HuskyRobotics.UI.VideoStreamer;
 
-namespace HuskyRobotics.UI {
-	/// <summary>
-	/// Interaction logic for MainWindow.xaml
-	/// </summary>
-	public partial class MainWindow : Window {
-		private const string SETTINGS_PATH = "settings.xml";
-		private SettingsFile SettingsFile = new SettingsFile(SETTINGS_PATH);
+namespace HuskyRobotics.UI
+{
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window
+    {
+        private const string SETTINGS_PATH = "settings.xml";
+        private SettingsFile SettingsFile = new SettingsFile(SETTINGS_PATH);
         private List<VideoWindow> VideoWindows = new List<VideoWindow>();
-		public Settings Settings { get => SettingsFile.Settings; }
-		public ObservableDictionary<string, MeasuredValue<double>> Properties { get; }
+        public Settings Settings { get => SettingsFile.Settings; }
+        public ObservableDictionary<string, MeasuredValue<double>> Properties { get; }
         public Armature SetpointArm;
         public ObservableCollection<Waypoint> Waypoints { get; private set; } = new ObservableCollection<Waypoint>();
         public ObservableCollection<VideoStream> Streams { get; private set; } = new ObservableCollection<VideoStream>();
 
-		public MainWindow()
+        public MainWindow()
         {
             Environment.SetEnvironmentVariable("GST_PLUGIN_SYSTEM_PATH", Directory.GetCurrentDirectory() + "\\lib");
             Gst.Application.Init();
@@ -34,7 +36,7 @@ namespace HuskyRobotics.UI {
             InitializeComponent();
             WindowState = WindowState.Maximized;
             this.Closing += OnCloseEvent;
-			DataContext = this;
+            DataContext = this;
 
             double degToRad = Math.PI / 180;
             ArmSideViewer.SetpointArmature =
@@ -70,24 +72,28 @@ namespace HuskyRobotics.UI {
 
         private void PuTTY_Button_Click(object sender, RoutedEventArgs e)
         {
-			if (File.Exists(Settings.PuttyPath)) {
-				var process = new Process();
-				process.StartInfo.FileName = Settings.PuttyPath;
-				process.StartInfo.Arguments = "-ssh root@192.168.0.50";
-				process.Start();
-			} else {
-				//display error message
-				MessageBox.Show("Could not find PuTTY. You will need to install putty, or launch it manually\n" +
-						"Looking at: " + Settings.PuttyPath + "\n" +
-						"Should be pointed to putty.exe");
-			}
-		}
+            if (File.Exists(Settings.PuttyPath))
+            {
+                var process = new Process();
+                process.StartInfo.FileName = Settings.PuttyPath;
+                process.StartInfo.Arguments = "-ssh root@192.168.0.50";
+                process.Start();
+            }
+            else
+            {
+                //display error message
+                MessageBox.Show("Could not find PuTTY. You will need to install putty, or launch it manually\n" +
+                        "Looking at: " + Settings.PuttyPath + "\n" +
+                        "Should be pointed to putty.exe");
+            }
+        }
 
         private void Add_Waypoint(object sender, RoutedEventArgs e)
         {
             double lat, long_;
             if (Double.TryParse(WaypointLatInput.Text, out lat) &&
-                Double.TryParse(WaypointLongInput.Text, out long_)) {
+                Double.TryParse(WaypointLongInput.Text, out long_))
+            {
                 Waypoints.Add(new Waypoint(lat, long_, WaypointNameInput.Text));
 
                 WaypointNameInput.Text = "";
@@ -99,24 +105,36 @@ namespace HuskyRobotics.UI {
         {
             if (StreamSelect.SelectedItem != null)
             {
-                VideoDevice selection = (VideoDevice) StreamSelect.SelectedItem;
+                VideoDevice selection = (VideoDevice)StreamSelect.SelectedItem;
                 Streams.Add(new VideoStream(selection.Name, "00:00:00"));
 
                 Thread newWindowThread = new Thread(() => ThreadStartingPoint(Convert.ToInt32(selection.Port), selection.Name, Convert.ToInt32(selection.BufferingMs)));
                 newWindowThread.SetApartmentState(ApartmentState.STA);
                 newWindowThread.IsBackground = true;
                 newWindowThread.Start();
-            }            
+            }
         }
 
         private void ThreadStartingPoint(int Port, string Name, int BufferingMs)
         {
-            VideoWindow tempWindow = new VideoWindow(Port, Name, Settings.RecordingPath, BufferingMs);
-            VideoWindows.Add(tempWindow);
-            tempWindow.Closed += VideoWindowClosedEvent;
-            tempWindow.Show();
-            tempWindow.StartStream();
-            System.Windows.Threading.Dispatcher.Run();
+            if (Name != "192.168.0.42")
+            {
+                RTPVideoWindow tempWindow = new RTPVideoWindow(Port, Name, Settings.RecordingPath, BufferingMs);
+                VideoWindows.Add(tempWindow);
+                tempWindow.Closed += VideoWindowClosedEvent;
+                tempWindow.Show();
+                tempWindow.StartStream();
+                System.Windows.Threading.Dispatcher.Run();
+            }
+            else
+            {
+                RTSPVideoWindow tempWindow = new RTSPVideoWindow(Port, Name, Settings.RecordingPath, BufferingMs);
+                VideoWindows.Add(tempWindow);
+                tempWindow.Closed += VideoWindowClosedEvent;
+                tempWindow.Show();
+                tempWindow.StartStream();
+                System.Windows.Threading.Dispatcher.Run();
+            }
         }
 
         private void VideoWindowClosedEvent(object sender, EventArgs e)
@@ -141,11 +159,17 @@ namespace HuskyRobotics.UI {
         {
             for (int i = VideoWindows.Count - 1; i >= 0; i--)
             {
-                VideoWindow window = VideoWindows.ElementAt(i);
-                window.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => {
-                    window.Hide();
-                    window.Close(); // Closing takes awhile so hide the window
-                }));
+                VideoWindow window = VideoWindows[i];
+                if(window is Window)
+                {
+                    Window w = window as Window;
+                    w.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() =>
+                    {
+                        w.Hide();
+                        w.Close(); // Closing takes awhile so hide the window
+                    }));
+                }
+
                 VideoWindows.RemoveAt(i);
             }
         }
