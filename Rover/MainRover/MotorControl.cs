@@ -28,7 +28,7 @@ namespace MainRover
             for (uint i = 0; i < DriveMotor.Length; i++)
                 DriveMotor[i] = new VESC(CANBBB.CANBus0, 1.0f, i + 1, new LowPass<sbyte>());
 
-            SteerMotor = new TalonMC(PWMBBB.PWMDevice0.OutputA, 0.2f, new LowPass<float>());
+            SteerMotor = new TalonMC(PWMBBB.PWMDevice0.OutputA, 0.4f, new LowPass<float>());
         }
 
         public static void SetAllSpeed(float Speed)
