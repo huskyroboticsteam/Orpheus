@@ -14,10 +14,9 @@ namespace MainRover
         public const int FL = 1; //Front left
         public const int BR = 2; //Back right
         public const int BL = 3; //Back left
-        public const int Steer = 4;
 
         private static VESC[] DriveMotor;
-        private static VESC SteerMotor;
+        private static TalonMC SteerMotor;
 
         private const float RobotLength = 1.0f;
         private const float FrontWidth = 1.067f;
@@ -29,7 +28,7 @@ namespace MainRover
             for (uint i = 0; i < DriveMotor.Length; i++)
                 DriveMotor[i] = new VESC(CANBBB.CANBus0, 1.0f, i + 1, new LowPass<sbyte>());
 
-            SteerMotor = new VESC(CANBBB.CANBus0, 1.0f, 5, new LowPass<sbyte>(), 38);
+            SteerMotor = new TalonMC(PWMBBB.PWMDevice0.OutputA, 0.2f, new LowPass<float>());
         }
 
         public static void SetAllSpeed(float Speed)
@@ -77,9 +76,9 @@ namespace MainRover
                 DriveMotor[Motor].SetRPM(RPM);
         }
 
-        public static void SetSteerRPM(sbyte RPM)
+        public static void SetSteerSpeed(float Speed)
         {
-            SteerMotor.SetRPM(RPM);
+            SteerMotor.SetSpeed(Speed);
         }
 
         public static void SetRackAndPinionPosition(float Position)

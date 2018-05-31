@@ -11,5 +11,6 @@ namespace MainRover
         public const BBBPin MTK3339_TX = BBBPin.P9_13;
 
         public const BBBPin SteeringLimitSwitch = BBBPin.P9_29;
+        public const BBBPin SteeringMotor = BBBPin.P9_31;
     }
 }
