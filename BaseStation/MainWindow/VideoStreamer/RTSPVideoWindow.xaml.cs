@@ -28,7 +28,7 @@ namespace HuskyRobotics.UI.VideoStreamer
     {
         private Pipeline Pipeline;
 
-        private Element RTSP = ElementFactory.Make("rtspsrc");
+        private Bin RTSP = (Bin) ElementFactory.Make("rtspsrc");
         private Element Depay = ElementFactory.Make("rtpjpegdepay");
         private Element Dec = ElementFactory.Make("jpegdec");
         private Element VideoSink = ElementFactory.Make("d3dvideosink");
@@ -65,14 +65,17 @@ namespace HuskyRobotics.UI.VideoStreamer
             overlay.WindowHandle = wih.Handle;
 
             Pipeline["message-forward"] = true;
-            RTSP["location"] = "rtsp://" + StreamName;
+            RTSP["location"] = "rtsp://" + StreamName + ":8554/";
             RTSP["user-id"] = "admin";
             RTSP["user-pw"] = "1234";
             RTSP["latency"] = BufferSizeMs;
 
 
-            Pipeline.Add(RTSP, Depay, Dec, VideoSink);
-            if (!Element.Link(RTSP, Depay, Dec, VideoSink)) { Console.WriteLine("Failed to Link Pipeline"); }
+            RTSP.Add(Depay, Dec, VideoSink);
+            Bin.Link(Depay, Dec, VideoSink);
+
+
+            Pipeline.Add(RTSP);
 
 
             Pipeline.SetState(State.Null);

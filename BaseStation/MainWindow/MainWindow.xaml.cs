@@ -117,7 +117,7 @@ namespace HuskyRobotics.UI
 
         private void ThreadStartingPoint(int Port, string Name, int BufferingMs)
         {
-            if (Name != "192.168.0.42")
+            if (Name != "192.168.0.42" && Name != "127.0.0.1")
             {
                 RTPVideoWindow tempWindow = new RTPVideoWindow(Port, Name, Settings.RecordingPath, BufferingMs);
                 VideoWindows.Add(tempWindow);
