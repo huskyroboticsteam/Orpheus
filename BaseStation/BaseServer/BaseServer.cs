@@ -25,22 +25,30 @@ namespace HuskyRobotics.BaseStation.Server
         public static void Start()
         {
             Scarlet.Communications.Server.Start(1025, 1026);
-            Scarlet.Communications.Server.ClientConnectionChange += memes;
+            Scarlet.Communications.Server.ClientConnectionChange += ClientConnected;
             Parse.SetParseHandler(0xC0, gpsHandler);
             Parse.SetParseHandler(0xC1, magnetomerHandler);
-            gamepad = GetGamepad();
+            gamepad = GetDriveGamepad();
         }
 
-        private static void memes(object sender, EventArgs e)
+        private static void ClientConnected(object sender, EventArgs e)
         {
             Console.WriteLine("Clients Changed");
             Console.WriteLine(Scarlet.Communications.Server.GetClients());
         }
 
-        private static Controller GetGamepad()
+        private static Controller GetDriveGamepad()
         {
-            Controller c = new Controller(UserIndex.One);
-            return c;
+            return new Controller(UserIndex.One);
+        }
+
+        private static short PreventOverflow(short leftThumbX)
+        {
+            if (leftThumbX == -32768)
+            {
+                leftThumbX++;
+            }
+            return leftThumbX;
         }
 
         public static void EventLoop()
@@ -56,38 +64,35 @@ namespace HuskyRobotics.BaseStation.Server
                 State state = gamepad.GetState();
                 byte rightTrigger = state.Gamepad.RightTrigger;
                 byte leftTrigger = state.Gamepad.LeftTrigger;
-                short leftThumbX = state.Gamepad.LeftThumbX;
+                short leftThumbX = PreventOverflow(state.Gamepad.LeftThumbX);
 
                 Console.WriteLine(leftThumbX);
 
-                if (leftThumbX == -32768)
-                {
-                    leftThumbX++;
-                }
 
                 if (rightTrigger < TriggerThreshold) { rightTrigger = 0; }
                 if (leftTrigger < TriggerThreshold) { leftTrigger = 0; }
                 if (Math.Abs(leftThumbX) < LeftThumbDeadzone) { leftThumbX = 0; }
 
-                float speed = rightTrigger - leftTrigger;
-                float steerPos = leftThumbX;
-
-                speed = (float)UtilMain.LinearMap(speed, -255, 255, -1, 1);
-                steerPos = (float)UtilMain.LinearMap(steerPos, -32768, 32767, -1, 1);
+                float speed = (float)UtilMain.LinearMap(rightTrigger - leftTrigger, -255, 255, -1, 1);
+                float steerPos = (float)UtilMain.LinearMap(leftThumbX, -32768, 32767, -1, 1);
 
                 Console.WriteLine("Speed: " + speed);
                 Console.WriteLine("Steer Pos: " + steerPos);
 
-                bool a = (state.Gamepad.Buttons & GamepadButtonFlags.A) != 0;
-                bool b = (state.Gamepad.Buttons & GamepadButtonFlags.B) != 0;
-                float speed1 = 0.0f;
-                if (a)
-                    speed1 = 1.0f;
-                if (b)
-                    speed1 = -1.0f;
+                bool aPressed = (state.Gamepad.Buttons & GamepadButtonFlags.A) != 0;
+                bool bPressed = (state.Gamepad.Buttons & GamepadButtonFlags.B) != 0;
+
+                float steerSpeed = 0.0f;
+                if (aPressed)
+                    steerSpeed = 1.0f;
+                if (bPressed)
+                    steerSpeed = -1.0f;
+
                 Console.WriteLine(speed1);
+
+
                 Packet SteerPack = new Packet(0x8F, true, "MainRover");
-                SteerPack.AppendData(UtilData.ToBytes(speed1));
+                SteerPack.AppendData(UtilData.ToBytes(steerSpeed));
                 //SteerPack.AppendData(UtilData.ToBytes(steerPos));
                 Scarlet.Communications.Server.Send(SteerPack);
 
