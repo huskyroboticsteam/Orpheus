@@ -16,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Text.RegularExpressions;
 
 namespace HuskyRobotics.UI
 {
@@ -59,6 +60,7 @@ namespace HuskyRobotics.UI
             // TODO get the path from the settings
             if (File.Exists(Directory.GetCurrentDirectory() + @"\Images\" + mapSetFile))
             {
+                String waypointsFile = (mapSetFile.Replace(".map", ".waypoints"));
                 using (StreamReader file = new StreamReader(Directory.GetCurrentDirectory() + @"\Images\" + mapSetFile))
                 {
                     string line = file.ReadLine();
@@ -99,6 +101,7 @@ namespace HuskyRobotics.UI
                         AddImage(Directory.GetCurrentDirectory() + @"\Images\" + parts[1] + ".jpg", x, y, ImageWidth, ImageHeight);
                     }
                 }
+                WaypointsChanged(null, null); // this loads the waypoints on startup
             }
         }
 
@@ -137,7 +140,7 @@ namespace HuskyRobotics.UI
                 Canvas.SetTop(waypointIcon, (ImageHeight / 2) + (pixelCoords.Item2 - CenterPixelY));
                 MapCanvas.Children.Add(waypointIcon);
                 waypointIcons.Add(waypointIcon);
-            }            
+            }
         }
 
         private void CanvasMouseButtonDown(object sender, MouseButtonEventArgs e)
