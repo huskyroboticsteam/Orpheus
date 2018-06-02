@@ -16,6 +16,8 @@ namespace HuskyRobotics.BaseStation.Server
     public static class BaseServer
     {
 
+        public static event EventHandler<(float, float)> GPSUpdate;
+
         private static bool shutdown = false;
         private static Controller gamepad;
         private static int LeftThumbDeadzone = 7849;
@@ -128,6 +130,8 @@ namespace HuskyRobotics.BaseStation.Server
 
             float lat = vals[0];
             float lng = vals[1];
+
+            GPSUpdate(null, (lat, lng));
 
             Console.WriteLine(lat + ", " + lng);
         }
