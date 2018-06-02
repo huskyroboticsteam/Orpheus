@@ -11,9 +11,7 @@
             MouseLeftButtonUp="CanvasMouseButtonUp"
             MouseMove="CanvasMouseMove"
             MouseWheel="CanvasMouseWheel">
-        <Canvas
-                x:Name="MapCanvas">
-        </Canvas>
+        <Canvas x:Name="MapCanvas" />
         <Button x:Name="ResetButton" Margin="10" Content="Reset Map" Padding="5" Click="ResetButton_Click"/>
     </Canvas>
 </UserControl>

@@ -11,7 +11,7 @@ namespace HuskyRobotics.UI.VideoStreamer
     /// <summary>
     /// Interaction logic for VideoWindow.xaml
     /// </summary>
-    public partial class VideoWindow : Window
+    public partial class RTPVideoWindow : Window, VideoWindow
     {
         private Pipeline Pipeline;
 
@@ -38,8 +38,8 @@ namespace HuskyRobotics.UI.VideoStreamer
         private int BufferSizeMs;
         private string RecordingPath;
         private string _streamName;
-
-        public String StreamName
+   
+        public string StreamName
         {
             get { return this._streamName; }
             set
@@ -61,7 +61,7 @@ namespace HuskyRobotics.UI.VideoStreamer
         /// </summary>
         /// <param name="Port"> The port that the RTP stream is sending data to. </param>
         /// <param name="BufferSizeMs"> The time in milliseconds of buffering of the feed. </param>
-        public VideoWindow(int Port, string StreamName, string RecordingPath, int BufferSizeMs = 200)
+        public RTPVideoWindow(int Port, string StreamName, string RecordingPath, int BufferSizeMs = 200)
         {
             DataContext = this;
             this.Port = Port;
@@ -83,7 +83,7 @@ namespace HuskyRobotics.UI.VideoStreamer
             UDP["caps"] = Caps;
             JitterBuffer["latency"] = BufferSizeMs;
 
-            FileSink["location"] = RecordingPath + GetFilename();
+            FileSink["location"] = RecordingPath + GetRecordingFilename();
             Filter["caps"] = FilterCaps;
 
             Pipeline.Add(UDP, JitterBuffer, Depay, Parse, Tee, Q1, Filter, Mux, FileSink, Q2, Dec, VideoSink);
@@ -119,7 +119,7 @@ namespace HuskyRobotics.UI.VideoStreamer
             StateChangeReturn s = Pipeline.SetState(State.Playing);
         }
 
-        private string GetFilename()
+        private string GetRecordingFilename()
         {
             return "\\" + System.DateTime.Now.ToString("MM-dd-yyyy--HH;mm;ss") + " (" + this.StreamName + ")" + ".mp4";
         }
