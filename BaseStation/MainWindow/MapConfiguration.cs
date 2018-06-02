@@ -12,6 +12,7 @@ namespace HuskyRobotics.UI
         private const double MaxLatitude = 85.05112878;
         private const double MinLongitude = -180;
         private const double MaxLongitude = 180;
+        public const int LOGO_BLEED = 60;
 
         private int _scale;
         private int _zoom;
@@ -139,7 +140,7 @@ namespace HuskyRobotics.UI
         public string URLParams()
         {
             return "center=" + Latitude + "," + Longitude + "&size=" + ImgWidth + "x"
-                + (ImgHeight + 60) + "&scale=" + Scale + "&zoom=" + Zoom + "&maptype=" + MapType;
+                + (ImgHeight + LOGO_BLEED) + "&scale=" + Scale + "&zoom=" + Zoom + "&maptype=" + MapType;
         }
     }
 }

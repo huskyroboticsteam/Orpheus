@@ -29,12 +29,13 @@ namespace HuskyRobotics.UI
         private Point mousePosition;
         private List<Image> allImages = new List<Image>();
         private List<Image> waypointIcons = new List<Image>();
-        private bool dragging = false;
         private int ImageWidth;
         private int ImageHeight;
         private int CenterPixelX;
         private int CenterPixelY;
         private int Zoom;
+        private Matrix _waypointTransformMatrix;
+        private BitmapImage _waypointBitmap;
 
         private ObservableCollection<Waypoint> _waypoints = new ObservableCollection<Waypoint>();
         public ObservableCollection<Waypoint> Waypoints
@@ -101,6 +102,8 @@ namespace HuskyRobotics.UI
                         AddImage(Directory.GetCurrentDirectory() + @"\Images\" + parts[1] + ".jpg", x, y, ImageWidth, ImageHeight);
                     }
                 }
+
+                _waypointBitmap = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"/waypoint.png", UriKind.Absolute));
                 WaypointsChanged(null, null); // this loads the waypoints on startup
             }
         }
@@ -130,14 +133,15 @@ namespace HuskyRobotics.UI
             foreach (var oldIcon in waypointIcons) {
                 MapCanvas.Children.Remove(oldIcon);
             }
-            
+
+            var transform = new MatrixTransform(_waypointTransformMatrix);
             foreach (var waypoint in Waypoints)
             {
-                var waypointBitmap = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"/waypoint.png", UriKind.Absolute));
-                var waypointIcon = new Image { Source = waypointBitmap };
+                var waypointIcon = new Image { Source = _waypointBitmap };
+                waypointIcon.RenderTransform = transform;
                 Tuple<int, int> pixelCoords = MapConversion.LatLongToPixelXY(waypoint.Lat, waypoint.Long, Zoom);
-                Canvas.SetLeft(waypointIcon, ((ImageWidth - waypointBitmap.Width) / 2) + (pixelCoords.Item1 - CenterPixelX));
-                Canvas.SetTop(waypointIcon, ((ImageHeight - waypointBitmap.Height) / 2) + (pixelCoords.Item2 - CenterPixelY));
+                Canvas.SetLeft(waypointIcon, pixelCoords.Item1 - CenterPixelX - (_waypointBitmap.Width / 2));
+                Canvas.SetTop(waypointIcon, pixelCoords.Item2 - CenterPixelY - (_waypointBitmap.Height / 2));
                 MapCanvas.Children.Add(waypointIcon);
                 waypointIcons.Add(waypointIcon);
             }
@@ -175,12 +179,12 @@ namespace HuskyRobotics.UI
             var matrix = MapCanvas.RenderTransform.Value;
             matrix.ScaleAtPrepend(scale, scale, position.X, position.Y);
             MapCanvas.RenderTransform = new MatrixTransform(matrix);
-            
+
+            _waypointTransformMatrix.ScaleAt(1 / scale, 1 / scale, _waypointBitmap.Width/ 2, _waypointBitmap.Height / 2);
+            var transform = new MatrixTransform(_waypointTransformMatrix);
             foreach (var waypoint in waypointIcons)
             {
-                matrix = waypoint.RenderTransform.Value;
-                matrix.ScaleAt(1 / scale, 1 / scale, waypoint.ActualWidth/2, waypoint.ActualHeight/ 2);
-                waypoint.RenderTransform = new MatrixTransform(matrix);
+                waypoint.RenderTransform = transform;
             }
         }
 
