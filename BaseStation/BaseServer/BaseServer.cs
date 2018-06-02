@@ -88,7 +88,7 @@ namespace HuskyRobotics.BaseStation.Server
                 if (bPressed)
                     steerSpeed = -1.0f;
 
-                Console.WriteLine(speed1);
+                Console.WriteLine(steerSpeed);
 
 
                 Packet SteerPack = new Packet(0x8F, true, "MainRover");
