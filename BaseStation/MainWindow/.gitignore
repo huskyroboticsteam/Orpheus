@@ -1,3 +1,6 @@
 settings.xml
-Images/*.jpg
-Images/*.map
+Images
+/*.jpg
+Images
+/*.map
+/*.waypoints
