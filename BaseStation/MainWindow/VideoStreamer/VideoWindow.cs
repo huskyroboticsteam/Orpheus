@@ -9,5 +9,7 @@ namespace HuskyRobotics.UI.VideoStreamer
     interface VideoWindow
     {
         string StreamName { get; set; }
+
+        void StartStream();
     }
 }

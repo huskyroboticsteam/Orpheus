@@ -120,35 +120,34 @@ namespace HuskyRobotics.UI {
 
         private void ThreadStartingPoint(int Port, string Name, int BufferingMs)
         {
+            VideoWindow tempWindow;
             if (Name != "192.168.0.42" && Name != "127.0.0.1")
             {
-                RTPVideoWindow tempWindow = new RTPVideoWindow(Port, Name, Settings.RecordingPath, BufferingMs);
-                VideoWindows.Add(tempWindow);
-                tempWindow.Closed += VideoWindowClosedEvent;
-                tempWindow.Show();
-                tempWindow.StartStream();
-                System.Windows.Threading.Dispatcher.Run();
+                tempWindow = new RTPVideoWindow(Port, Name, Settings.RecordingPath, BufferingMs);
             }
             else
             {
-                RTSPVideoWindow tempWindow = new RTSPVideoWindow(Port, Name, Settings.RecordingPath, BufferingMs);
-                VideoWindows.Add(tempWindow);
-                tempWindow.Closed += VideoWindowClosedEvent;
-                tempWindow.Show();
-                tempWindow.StartStream();
-                System.Windows.Threading.Dispatcher.Run();
+                tempWindow = new RTSPVideoWindow(Port, Name, Settings.RecordingPath, BufferingMs);
             }
+
+            VideoWindows.Add(tempWindow);
+
+            Window tempWindowCastAsWindow = tempWindow as Window;
+            tempWindowCastAsWindow.Closed += VideoWindowClosedEvent;
+            tempWindowCastAsWindow.Show();
+            tempWindow.StartStream();
+            System.Windows.Threading.Dispatcher.Run();
         }
 
         private void VideoWindowClosedEvent(object sender, EventArgs e)
         {
-            VideoWindow w = (VideoWindow)sender;
+            VideoWindow window = (VideoWindow)sender;
 
             Application.Current.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() =>
             {
                 for (int i = 0; i < this.Streams.Count; i++)
                 {
-                    if (this.Streams[i].Name.Equals(w.StreamName))
+                    if (this.Streams[i].Name.Equals(window.StreamName))
                     {
                         this.Streams.RemoveAt(i);
                         this.VideoWindows.RemoveAt(i);
@@ -165,11 +164,11 @@ namespace HuskyRobotics.UI {
                 VideoWindow window = VideoWindows[i];
                 if(window is Window)
                 {
-                    Window w = window as Window;
-                    w.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() =>
+                    Window videoWindowAsWindow = window as Window;
+                    videoWindowAsWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() =>
                     {
-                        w.Hide();
-                        w.Close(); // Closing takes awhile so hide the window
+                        videoWindowAsWindow.Hide();
+                        videoWindowAsWindow.Close(); // Closing takes awhile so hide the window
                     }));
                 }
 
