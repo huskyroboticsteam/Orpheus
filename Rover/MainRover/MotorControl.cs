@@ -26,7 +26,7 @@ namespace MainRover
         {
             DriveMotor = new VESC[4];
             for (uint i = 0; i < DriveMotor.Length; i++)
-                DriveMotor[i] = new VESC(CANBBB.CANBus0, 1.0f, i + 1, new LowPass<sbyte>());
+                DriveMotor[i] = new VESC(CANBBB.CANBus0, 1.0f, 60, 518, i + 1, new LowPass<int>());
 
             SteerMotor = new TalonMC(PWMBBB.PWMDevice0.OutputA, 0.2f, new LowPass<float>());
         }
@@ -35,10 +35,10 @@ namespace MainRover
         {
             Speed = Math.Min(Speed, 1.0f);
             Speed = Math.Max(Speed, -1.0f);
-            SetAllRPM((sbyte)(Speed * 60));
+            SetAllRPM((int)(Speed * 60));
         }
 
-        public static void SetAllRPM(sbyte RPM)
+        public static void SetAllRPM(int RPM)
         {
             float Theta = GetRackAndPinionAngle();
             if (Math.Abs(Theta) < 1e-6)
@@ -51,8 +51,8 @@ namespace MainRover
                 float R = (float)(RobotLength / (2 * Math.Sin(Theta)));
 
                 float Ratio = R / (R + FrontWidth);
-                sbyte OuterRPM = (sbyte)(RPM);
-                sbyte InnerRPM = (sbyte)(Ratio * RPM);
+                int OuterRPM = (int)(RPM);
+                int InnerRPM = (int)(Ratio * RPM);
 
                 int Outer = Theta < 0.0f ? FR : FL;
                 int Inner = Theta < 0.0f ? FL : FR;
@@ -60,8 +60,8 @@ namespace MainRover
                 DriveMotor[Inner].SetRPM(InnerRPM);
 
                 Ratio = R / (R + BackWidth);
-                OuterRPM = (sbyte)(RPM);
-                InnerRPM = (sbyte)(Ratio * RPM);
+                OuterRPM = (int)(RPM);
+                InnerRPM = (int)(Ratio * RPM);
 
                 Outer = Theta < 0.0f ? BR : BL;
                 Inner = Theta < 0.0f ? BL : BR;
@@ -70,9 +70,11 @@ namespace MainRover
             }
         }
 
-        public static void SetRPM(int Motor, sbyte RPM)
+        public static void SetRPM(int Motor, int RPM)
         {
-            if (Motor < DriveMotor.Length + 1)
+            if (Motor == BL)
+                RPM = -RPM;
+            if (Motor < DriveMotor.Length)
                 DriveMotor[Motor].SetRPM(RPM);
         }
 
