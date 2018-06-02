@@ -117,6 +117,7 @@
       <DependentUpon>VideoWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Waypoint.cs" />
+    <Compile Include="WaypointsFile.cs" />
     <Page Include="ArmView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
