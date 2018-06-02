@@ -46,8 +46,16 @@ namespace MainRover
         {
             Client.Start(SERVER_IP, 1025, 1026, "MainRover");
             Packets = new QueueBuffer();
-            for (byte i = 0; i < 200; i++)
+            for (byte i = 0x8E; i <= 0x99; i++)
                 Parse.SetParseHandler(i, (Packet) => Packets.Enqueue(Packet, 0));
+        }
+
+        public static void SetupArmServer()
+        {
+            Server.Start(1025, 1026);
+            Parse.SetParseHandler(0xD3, (Packet) => Client.Send(Packet));
+            for (byte i = 0x9A; i <= 0xA0; i++)
+                Parse.SetParseHandler(i, (Packet) => Server.SendNow(Packet));
         }
 
         public static void ProcessInstructions()
@@ -123,6 +131,7 @@ namespace MainRover
             Quit = false;
             InitBeagleBone();
             SetupClient();
+            SetupArmServer();
             MotorControl.Initialize();
             do
             {
