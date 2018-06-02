@@ -57,6 +57,7 @@ namespace HuskyRobotics.UI.VideoStreamer
             this.RecordingPath = RecordingPath;
 
             Pipeline = new Pipeline();
+            
 
             Window window = GetWindow(this);
             WindowInteropHelper wih = new WindowInteropHelper(this);
@@ -65,23 +66,29 @@ namespace HuskyRobotics.UI.VideoStreamer
             overlay.WindowHandle = wih.Handle;
 
             Pipeline["message-forward"] = true;
-            RTSP["location"] = "rtsp://" + StreamName + ":8554/";
+            RTSP["location"] = "rtsp://" + StreamName;
             RTSP["user-id"] = "admin";
             RTSP["user-pw"] = "1234";
             RTSP["latency"] = BufferSizeMs;
 
 
-            RTSP.Add(Depay, Dec, VideoSink);
-            Bin.Link(Depay, Dec, VideoSink);
-
-
-            Pipeline.Add(RTSP);
+            Pipeline.Add(RTSP, Depay, Dec, VideoSink);
+            RTSP.Link(Depay);
+            RTSP.PadAdded += RTSPPadAdded;
+            Depay.Link(Dec);
+            Dec.Link(VideoSink);
 
 
             Pipeline.SetState(State.Null);
 
             Closing += OnCloseEvent;
             InitializeComponent();
+        }
+
+        private void RTSPPadAdded(object o, PadAddedArgs args)
+        {
+            Pad Sink = Depay.GetStaticPad("sink");
+            args.NewPad.Link(Sink);
         }
 
         /// <summary>
