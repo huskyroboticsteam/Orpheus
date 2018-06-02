@@ -24,7 +24,9 @@ namespace HuskyRobotics.UI {
 		public Settings Settings { get => SettingsFile.Settings; }
 		public ObservableDictionary<string, MeasuredValue<double>> Properties { get; }
         public Armature SetpointArm;
-        public ObservableCollection<Waypoint> Waypoints { get => WaypointsFile.Waypoints; }
+        public ObservableCollection<Waypoint> Waypoints {
+            get => WaypointsFile?.Waypoints != null ? WaypointsFile.Waypoints : new ObservableCollection<Waypoint>();
+        }
         public ObservableCollection<VideoStream> Streams { get; private set; } = new ObservableCollection<VideoStream>();
 
 		public MainWindow()
@@ -57,18 +59,24 @@ namespace HuskyRobotics.UI {
                     Settings.CurrentMapFile = Path.GetFileName(mapFiles[0]);
                 }
             }
-            WaypointsFile = new WaypointsFile(Settings.CurrentMapFile.Replace(".map", ".waypoints"));
+            updateMapWaypoints();
+        }
+
+        private void updateMapWaypoints()
+        {
+            if (Settings.CurrentMapFile != null)
+            {
+                WaypointsFile = new WaypointsFile(Settings.CurrentMapFile.Replace(".map", ".waypoints"));
+            }
             Map.Waypoints = Waypoints;
             Map.DisplayMap(Settings.CurrentMapFile);
         }
 
-        private void SettingChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void SettingChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName.Equals("CurrentMapFile"))
             {
-                WaypointsFile = new WaypointsFile(Settings.CurrentMapFile.Replace(".map", ".waypoints"));
-                Map.Waypoints = Waypoints;
-                Map.DisplayMap(Settings.CurrentMapFile);
+                updateMapWaypoints();
                 WaypointList.ItemsSource = Waypoints;
             }
         }
