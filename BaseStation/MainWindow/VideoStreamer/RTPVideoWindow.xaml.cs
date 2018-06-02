@@ -83,7 +83,7 @@ namespace HuskyRobotics.UI.VideoStreamer
             UDP["caps"] = Caps;
             JitterBuffer["latency"] = BufferSizeMs;
 
-            FileSink["location"] = RecordingPath + GetFilename();
+            FileSink["location"] = RecordingPath + GetRecordingFilename();
             Filter["caps"] = FilterCaps;
 
             Pipeline.Add(UDP, JitterBuffer, Depay, Parse, Tee, Q1, Filter, Mux, FileSink, Q2, Dec, VideoSink);
