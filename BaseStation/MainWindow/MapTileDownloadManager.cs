@@ -120,7 +120,7 @@ namespace HuskyRobotics.UI
             // this was done all to the documentation
             ISupportedImageFormat format = new PngFormat();
             Size size = new Size(config.ImgWidth * config.Scale, config.ImgHeight * config.Scale);
-            Rectangle crop = new Rectangle(new Point(0, 0), size);
+            Rectangle crop = new Rectangle(new Point(0, config.Scale * MapConfiguration.LOGO_BLEED / 2), size);
             using (ImageFactory imageFactory = new ImageFactory(preserveExifData: true))
             {
                 imageFactory.Load(inStream)
