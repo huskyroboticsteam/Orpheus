@@ -119,7 +119,7 @@ namespace HuskyRobotics.UI.VideoStreamer
             StateChangeReturn s = Pipeline.SetState(State.Playing);
         }
 
-        private string GetFilename()
+        private string GetRecordingFilename()
         {
             return "\\" + System.DateTime.Now.ToString("MM-dd-yyyy--HH;mm;ss") + " (" + this.StreamName + ")" + ".mp4";
         }
