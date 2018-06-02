@@ -109,8 +109,8 @@ namespace HuskyRobotics.UI
             var uri = new Uri(location, UriKind.Absolute);
             var bitmap = new BitmapImage(uri);
             var image = new Image { Source = bitmap, Width = width, Height = height };
-            Canvas.SetLeft(image, x * (width - 1));
-            Canvas.SetTop(image, y * (height - 1));
+            Canvas.SetLeft(image, x * width - (width / 2));
+            Canvas.SetTop(image, y * height - (height / 2));
             MapCanvas.Children.Add(image);
             allImages.Add(image);
         }
@@ -130,11 +130,11 @@ namespace HuskyRobotics.UI
             
             foreach (var waypoint in Waypoints)
             {
-                var waypointIcon = new Image { Source = new BitmapImage(
-                    new Uri(Directory.GetCurrentDirectory() + @"/waypoint.png", UriKind.Absolute)) };
+                var waypointBitmap = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"/waypoint.png", UriKind.Absolute));
+                var waypointIcon = new Image { Source = waypointBitmap };
                 Tuple<int, int> pixelCoords = MapConversion.LatLongToPixelXY(waypoint.Lat, waypoint.Long, Zoom);
-                Canvas.SetLeft(waypointIcon, (ImageWidth / 2) + (pixelCoords.Item1 - CenterPixelX));
-                Canvas.SetTop(waypointIcon, (ImageHeight / 2) + (pixelCoords.Item2 - CenterPixelY));
+                Canvas.SetLeft(waypointIcon, ((ImageWidth - waypointBitmap.Width) / 2) + (pixelCoords.Item1 - CenterPixelX));
+                Canvas.SetTop(waypointIcon, ((ImageHeight - waypointBitmap.Height) / 2) + (pixelCoords.Item2 - CenterPixelY));
                 MapCanvas.Children.Add(waypointIcon);
                 waypointIcons.Add(waypointIcon);
             }            
@@ -172,6 +172,13 @@ namespace HuskyRobotics.UI
             var matrix = MapCanvas.RenderTransform.Value;
             matrix.ScaleAtPrepend(scale, scale, position.X, position.Y);
             MapCanvas.RenderTransform = new MatrixTransform(matrix);
+            
+            foreach (var waypoint in waypointIcons)
+            {
+                matrix = waypoint.RenderTransform.Value;
+                matrix.ScaleAt(1 / scale, 1 / scale, waypoint.ActualWidth/2, waypoint.ActualHeight/ 2);
+                waypoint.RenderTransform = new MatrixTransform(matrix);
+            }
         }
 
         private void ResetButton_Click(object sender, RoutedEventArgs e)
