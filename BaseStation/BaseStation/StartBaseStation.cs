@@ -21,18 +21,16 @@ namespace HuskyRobotics.BaseStation.Start
         public static void Main(String[] args)
         {
             //temporary example code
-            Server.BaseServer.Start();
+            Server.BaseServer.Start(GamepadFactory.GetDriveGamePad());
             Thread eventloop = new Thread(Server.BaseServer.EventLoop);
             eventloop.IsBackground = true;
             eventloop.Start();
+            Thread ipCameraControl = new Thread(() => CameraControl.Start(GamepadFactory.GetDriveGamePad()));
+            ipCameraControl.IsBackground = true;
+            ipCameraControl.Start();
             Application app = new Application();
             app.Exit += (sd, ev) => Server.BaseServer.Shutdown();
 			app.Run(new MainWindow());
-        }
-
-        private static void StartCameraControl()
-        {
-            CameraControl.Start();
         }
     }
 }
