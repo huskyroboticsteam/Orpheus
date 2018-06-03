@@ -2,6 +2,7 @@
 using Scarlet.Filters;
 using Scarlet.IO.BeagleBone;
 using Scarlet.Components.Motors;
+using Scarlet.IO;
 
 namespace ArmMaster
 {
@@ -57,6 +58,13 @@ namespace ArmMaster
         public static void SetElbowSpeed(float Speed)
         {
             MotElbow.SetSpeed(Speed);
+        }
+
+        public static void EmergencyStop()
+        {
+            MotBaseRotation.SetSpeed(0.0f);
+            MotShoulder.SetSpeed(0.0f);
+            MotElbow.SetSpeed(0.0f);
         }
     }
 }

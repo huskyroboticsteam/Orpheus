@@ -4,6 +4,7 @@ using Scarlet.Utilities;
 using Scarlet.Communications;
 using Scarlet.IO.BeagleBone;
 using Scarlet.IO;
+using System.Threading;
 
 namespace ArmMaster
 {
@@ -12,14 +13,7 @@ namespace ArmMaster
         const string CHASSIS_BEAGLEBONE = "192.168.0.5";
         static IUARTBus Slave;
 
-        static void SetupBeaglebone()
-        {
-            Slave = UARTBBB.UARTBus1;
-            StateStore.Start("ArmMaster");
-            BeagleBone.Initialize(SystemMode.DEFAULT, true);
-        }
-
-        static void SetupPins()
+        static void SetupBeagleboneAndPins()
         {
             BBBPinManager.AddMappingUART(Pins.SlaveRX);
             BBBPinManager.AddMappingUART(Pins.SlaveTX);
@@ -30,6 +24,8 @@ namespace ArmMaster
             BBBPinManager.AddMappingADC(Pins.ShoulderPot);
             BBBPinManager.AddMappingGPIO(Pins.ElbowLimitSwitch, false, ResistorState.PULL_UP);
             BBBPinManager.ApplyPinSettings(BBBPinManager.ApplicationMode.APPLY_IF_NONE);
+            Slave = UARTBBB.UARTBus1;
+            BeagleBone.Initialize(SystemMode.DEFAULT, true);
         }
 
         static void SetupClient()
@@ -60,33 +56,59 @@ namespace ArmMaster
 
         static void Main(string[] args)
         {
-
-            SetupBeaglebone();
-            SetupPins();
+            StateStore.Start("ArmMaster");
+            SetupBeagleboneAndPins();
             SetupClient();
-
+            MotorControl.Initialize();
             const int PacketSize = sizeof(byte) + sizeof(int) + sizeof(int) + sizeof(int) + sizeof(byte);
             Packet p = new Packet(0xD3, true);
             byte[] ID = new byte[1];
             p.Data.Payload = new byte[PacketSize - 1];
+            Thread t = new Thread(() =>
+            {
+                for (; ; )
+                {
+                    if (Slave.BytesAvailable() > 0)
+                    {
+                        Slave.Read(1, ID);
+                        while (Slave.BytesAvailable() < PacketSize - 1) { }
+                        Slave.Read(PacketSize, p.Data.Payload);
+
+                        List<object> fields = UtilData.ToTypes(p.Data.Payload, typeof(int), typeof(int), typeof(int), typeof(byte));
+                        Console.WriteLine($"{ ID[0] }: { (int)fields[0] }, { (int)fields[1] }, { (int)fields[2] }, { (byte)fields[3] }");
+                    }
+                }
+            });
+            t.Start();
             for (; ; )
             {
                 /*Slave.Read(1, ID);
                 Slave.Read(PacketSize, p.Data.Payload);
                 p.Data.ID = ID[0];
                 Client.SendNow(p);*/
-                string[] tokens = Console.ReadLine().Split(' ');
-                byte id = Byte.Parse(tokens[0], System.Globalization.NumberStyles.HexNumber);
-                float speed = float.Parse(tokens[1]);
-                if (0x9A <= id && id <= 0x9C)
-                    MotorControl.SetMotorSpeed(id - 0x9A, speed);
+                string @in = Console.ReadLine();
+                if (@in == "quit")
+                    break;
+                if (@in == "s")
+                {
+                    Slave.Write(new byte[] { 0x80 });
+                    MotorControl.EmergencyStop();
+                }
                 else
                 {
-                    Slave.Write(new byte[] { id });
-                    Slave.Write(UtilData.ToBytes(speed));
+
+                    string[] tokens = @in.Split(' ');
+                    byte id = Byte.Parse(tokens[0], System.Globalization.NumberStyles.HexNumber);
+                    float speed = float.Parse(tokens[1]);
+                    if (0x9A <= id && id <= 0x9C)
+                        MotorControl.SetMotorSpeed(id - 0x9A, speed);
+                    else
+                    {
+                        Slave.Write(new byte[] { id });
+                        Slave.Write(UtilData.ToBytes(speed));
+                    }
                 }
             }
-
         }
     }
 }
