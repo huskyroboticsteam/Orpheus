@@ -55,6 +55,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GamepadFactory.cs" />
     <Compile Include="StartBaseStation.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -66,6 +67,10 @@
       <Project>{722b3498-9988-4667-b02c-c9d15d288657}</Project>
       <Name>UserInterface</Name>
     </ProjectReference>
+    <ProjectReference Include="..\PTZCamera\PTZCamera.csproj">
+      <Project>{0506b166-5028-4c08-b98e-3c3b1f1e75de}</Project>
+      <Name>PTZCamera</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Utilities\Utilities.csproj">
       <Project>{a6dfdff4-614f-4225-8f75-c81c6765f23e}</Project>
       <Name>Utilities</Name>
@@ -73,13 +78,24 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="BBBCSIO, Version=1.6.0.0, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\packages\HuskyRobotics.Scarlet.0.3.1\lib\BBBCSIO.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\SensorDLLs\BBBCSIO.dll</HintPath>
     </Reference>
     <Reference Include="PresentationFramework" />
     <Reference Include="Scarlet, Version=0.3.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\HuskyRobotics.Scarlet.0.3.1\lib\Scarlet.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\SensorDLLs\Scarlet.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpDX.4.1.0\lib\net45\SharpDX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.XInput, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpDX.XInput.4.1.0\lib\net45\SharpDX.XInput.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
@@ -99,7 +115,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /I /Q /Y $(SolutionDir)_GStreamerDependencies $(TargetDir)
-xcopy /I /Q /Y $(SolutionDir)_GStreamerDependencies\_GLib\gstreamer-1.0 $(TargetDir)lib\gstreamer-1.0</PostBuildEvent>
+    <PostBuildEvent>xcopy /I /Q /Y "$(SolutionDir)_GStreamerDependencies" "$(TargetDir)"
+xcopy /I /Q /Y "$(SolutionDir)_GStreamerDependencies\_GLib\gstreamer-1.0" "$(TargetDir)lib\gstreamer-1.0"</PostBuildEvent>
   </PropertyGroup>
 </Project>

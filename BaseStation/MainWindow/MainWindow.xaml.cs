@@ -19,14 +19,17 @@ namespace HuskyRobotics.UI {
 	public partial class MainWindow : Window {
 		private const string SETTINGS_PATH = "settings.xml";
 		private SettingsFile SettingsFile = new SettingsFile(SETTINGS_PATH);
+        private WaypointsFile WaypointsFile { get; set; }
         private List<VideoWindow> VideoWindows = new List<VideoWindow>();
-		public Settings Settings { get => SettingsFile.Settings; }
-		public ObservableDictionary<string, MeasuredValue<double>> Properties { get; }
+        public Settings Settings { get => SettingsFile.Settings; }
+        public ObservableDictionary<string, MeasuredValue<double>> Properties { get; }
         public Armature SetpointArm;
-        public ObservableCollection<Waypoint> Waypoints { get; private set; } = new ObservableCollection<Waypoint>();
+        public ObservableCollection<Waypoint> Waypoints {
+            get => WaypointsFile?.Waypoints != null ? WaypointsFile.Waypoints : new ObservableCollection<Waypoint>();
+        }
         public ObservableCollection<VideoStream> Streams { get; private set; } = new ObservableCollection<VideoStream>();
 
-		public MainWindow()
+        public MainWindow()
         {
             Environment.SetEnvironmentVariable("GST_PLUGIN_SYSTEM_PATH", Directory.GetCurrentDirectory() + "\\lib");
             Gst.Application.Init();
@@ -34,7 +37,7 @@ namespace HuskyRobotics.UI {
             InitializeComponent();
             WindowState = WindowState.Maximized;
             this.Closing += OnCloseEvent;
-			DataContext = this;
+            DataContext = this;
 
             double degToRad = Math.PI / 180;
             ArmSideViewer.SetpointArmature =
@@ -56,38 +59,52 @@ namespace HuskyRobotics.UI {
                     Settings.CurrentMapFile = Path.GetFileName(mapFiles[0]);
                 }
             }
-            Map.DisplayMap(Settings.CurrentMapFile);
-            Map.Waypoints = Waypoints;
+            updateMapWaypoints();
         }
 
-        private void SettingChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void updateMapWaypoints()
+        {
+            if (Settings.CurrentMapFile != null)
+            {
+                WaypointsFile = new WaypointsFile(Settings.CurrentMapFile.Replace(".map", ".waypoints"));
+            }
+            Map.Waypoints = Waypoints;
+            Map.DisplayMap(Settings.CurrentMapFile);
+        }
+
+        private void SettingChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName.Equals("CurrentMapFile"))
             {
-                Map.DisplayMap(Settings.CurrentMapFile);
+                updateMapWaypoints();
+                WaypointList.ItemsSource = Waypoints;
             }
         }
 
         private void PuTTY_Button_Click(object sender, RoutedEventArgs e)
         {
-			if (File.Exists(Settings.PuttyPath)) {
-				var process = new Process();
-				process.StartInfo.FileName = Settings.PuttyPath;
-				process.StartInfo.Arguments = "-ssh root@192.168.0.50";
-				process.Start();
-			} else {
-				//display error message
-				MessageBox.Show("Could not find PuTTY. You will need to install putty, or launch it manually\n" +
-						"Looking at: " + Settings.PuttyPath + "\n" +
-						"Should be pointed to putty.exe");
-			}
-		}
+            if (File.Exists(Settings.PuttyPath))
+            {
+                var process = new Process();
+                process.StartInfo.FileName = Settings.PuttyPath;
+                process.StartInfo.Arguments = "-ssh root@192.168.0.50";
+                process.Start();
+            }
+            else
+            {
+                //display error message
+                MessageBox.Show("Could not find PuTTY. You will need to install putty, or launch it manually\n" +
+                        "Looking at: " + Settings.PuttyPath + "\n" +
+                        "Should be pointed to putty.exe");
+            }
+        }
 
         private void Add_Waypoint(object sender, RoutedEventArgs e)
         {
             double lat, long_;
             if (Double.TryParse(WaypointLatInput.Text, out lat) &&
-                Double.TryParse(WaypointLongInput.Text, out long_)) {
+                Double.TryParse(WaypointLongInput.Text, out long_))
+            {
                 Waypoints.Add(new Waypoint(lat, long_, WaypointNameInput.Text));
 
                 WaypointNameInput.Text = "";
@@ -99,35 +116,46 @@ namespace HuskyRobotics.UI {
         {
             if (StreamSelect.SelectedItem != null)
             {
-                VideoDevice selection = (VideoDevice) StreamSelect.SelectedItem;
+                VideoDevice selection = (VideoDevice)StreamSelect.SelectedItem;
                 Streams.Add(new VideoStream(selection.Name, "00:00:00"));
 
                 Thread newWindowThread = new Thread(() => ThreadStartingPoint(Convert.ToInt32(selection.Port), selection.Name, Convert.ToInt32(selection.BufferingMs)));
                 newWindowThread.SetApartmentState(ApartmentState.STA);
                 newWindowThread.IsBackground = true;
                 newWindowThread.Start();
-            }            
+            }
         }
 
         private void ThreadStartingPoint(int Port, string Name, int BufferingMs)
         {
-            VideoWindow tempWindow = new VideoWindow(Port, Name, Settings.RecordingPath, BufferingMs);
+            VideoWindow tempWindow;
+            if (Name != "192.168.0.42" && Name != "127.0.0.1")
+            {
+                tempWindow = new RTPVideoWindow(Port, Name, Settings.RecordingPath, BufferingMs);
+            }
+            else
+            {
+                tempWindow = new RTSPVideoWindow(Port, Name, Settings.RecordingPath, BufferingMs);
+            }
+
             VideoWindows.Add(tempWindow);
-            tempWindow.Closed += VideoWindowClosedEvent;
-            tempWindow.Show();
+
+            Window tempWindowCastAsWindow = tempWindow as Window;
+            tempWindowCastAsWindow.Closed += VideoWindowClosedEvent;
+            tempWindowCastAsWindow.Show();
             tempWindow.StartStream();
             System.Windows.Threading.Dispatcher.Run();
         }
 
         private void VideoWindowClosedEvent(object sender, EventArgs e)
         {
-            VideoWindow w = (VideoWindow)sender;
+            VideoWindow window = (VideoWindow)sender;
 
             Application.Current.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() =>
             {
                 for (int i = 0; i < this.Streams.Count; i++)
                 {
-                    if (this.Streams[i].Name.Equals(w.StreamName))
+                    if (this.Streams[i].Name.Equals(window.StreamName))
                     {
                         this.Streams.RemoveAt(i);
                         this.VideoWindows.RemoveAt(i);
@@ -141,11 +169,17 @@ namespace HuskyRobotics.UI {
         {
             for (int i = VideoWindows.Count - 1; i >= 0; i--)
             {
-                VideoWindow window = VideoWindows.ElementAt(i);
-                window.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => {
-                    window.Hide();
-                    window.Close(); // Closing takes awhile so hide the window
-                }));
+                VideoWindow window = VideoWindows[i];
+                if(window is Window)
+                {
+                    Window videoWindowAsWindow = window as Window;
+                    videoWindowAsWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() =>
+                    {
+                        videoWindowAsWindow.Hide();
+                        videoWindowAsWindow.Close(); // Closing takes awhile so hide the window
+                    }));
+                }
+
                 VideoWindows.RemoveAt(i);
             }
         }
