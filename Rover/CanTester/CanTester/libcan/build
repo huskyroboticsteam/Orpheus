@@ -1,5 +1,0 @@
-gcc -c -fpic can.c
-gcc -shared can.o -o libcan.so
-sudo cp libcan.so /usr/local/lib
-
-rm can.o
