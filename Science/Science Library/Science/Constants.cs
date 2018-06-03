@@ -25,6 +25,7 @@
             public const byte GND_SENSOR = 0xDD;
             public const byte SYS_SENSOR = 0xDE;
             public const byte SYS_TELEMETRY = 0xDF;
+            public const byte TESTING = 0xE0;
             #endregion
         }
     }

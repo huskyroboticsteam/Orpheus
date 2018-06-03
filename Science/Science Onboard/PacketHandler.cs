@@ -16,9 +16,10 @@ namespace Science
 
         public static void ParseControlPacket(Packet Packet)
         {
-            if (CheckPacket(Packet, 2, "Control"))
+            if (CheckPacket(Packet, 4, "Control"))
             {
                 RoverMain.IOHandler.DrillController.SetSpeed(Packet.Data.Payload[0] / 100.0F * ((Packet.Data.Payload[1] == 0) ? 1 : -1), true);
+                RoverMain.IOHandler.RailController.SetSpeed(Packet.Data.Payload[2] / 100.0F * ((Packet.Data.Payload[3] == 0) ? 1 : -1), true);
             }
         }
 

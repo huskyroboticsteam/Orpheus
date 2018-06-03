@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Timers;
+using Scarlet.Communications;
 using Scarlet.Components;
 using Scarlet.Components.Motors;
 using Scarlet.Components.Outputs;
@@ -8,12 +10,13 @@ using Scarlet.Components.Sensors;
 using Scarlet.IO;
 using Scarlet.IO.BeagleBone;
 using Scarlet.Utilities;
+using Science.Library;
 
 namespace Science.Systems
 {
     public class Rail : ISubsystem
     {
-        private const float MOTOR_MAX_SPEED = 0.10F;
+        private const float MOTOR_MAX_SPEED = 0.5F;
         private const int INIT_TIMEOUT = 5000;
         private const float ENCODER_MM_PER_TICK = 0.001F; // TODO: Placeholder value. Replace.
 
@@ -34,7 +37,7 @@ namespace Science.Systems
 
         private TalonMC MotorCtrl;
         private LimitSwitch Limit;
-        //private LS7366R Encoder;
+        private LS7366R Encoder;
         //private VL53L0X Ranger;
 
         private LEDController LED;
@@ -44,7 +47,10 @@ namespace Science.Systems
         {
             this.MotorCtrl = new TalonMC(MotorPWM, MOTOR_MAX_SPEED);
             this.Limit = new LimitSwitch(LimitSw, false);
-            //this.Encoder = new LS7366R(EncoderSPI, EncoderCS);
+            this.Encoder = new LS7366R(EncoderSPI, EncoderCS);
+            LS7366R.Configuration Config = LS7366R.DefaultConfig;
+            Config.QuadMode = LS7366R.QuadMode.X1_QUAD;
+            this.Encoder.Configure(Config);
             //this.Ranger = new VL53L0X(RangerBus);
             this.LED = new LEDController(LED);
         }
@@ -59,14 +65,14 @@ namespace Science.Systems
                 this.Initializing = false;
                 this.InitDone = true;
             }
-            if(Event is ElapsedEventArgs && this.Initializing) // We timed out trying to initialize.
+            else if(Event is ElapsedEventArgs && this.Initializing) // We timed out trying to initialize.
             {
                 this.MotorCtrl.SetSpeed(0);
                 Log.Output(Log.Severity.ERROR, Log.Source.MOTORS, "Rail motor timed out while trying to initialize.");
                 this.Initializing = false;
                 this.InitDone = false;
             }
-            if(Event is LimitSwitchToggle && !this.Initializing) // We hit the end during operation.
+            else if(Event is LimitSwitchToggle && !this.Initializing) // We hit the end during operation.
             {
                 this.MotorCtrl.SetEnabled(false); // Immediately stop.
                 this.TopDepth = 0;
@@ -85,14 +91,23 @@ namespace Science.Systems
             TimeoutTrigger.Enabled = true;
             if (this.Limit.State) // We are already at the top, nothing needs to be done.
             {
+                Log.Output(Log.Severity.DEBUG, Log.Source.MOTORS, "Rail already at top. No need for init.");
                 TimeoutTrigger.Enabled = false;
                 this.InitDone = true;
                 this.Initializing = false;
                 this.TopDepth = 0;
                 return;
             }
-            this.MotorCtrl.SetSpeed(-0.05F);
+            this.MotorCtrl.SetSpeed(0.2F);
+            this.MotorCtrl.SetEnabled(true);
             // Either the limit switch will be toggled, or the timeout event will happen after this.
+        }
+
+        //TODO: REMOVE
+        public void SetSpeed(float Speed, bool Enable)
+        {
+            this.MotorCtrl.SetSpeed(Speed);
+            this.MotorCtrl.SetEnabled(Enable);
         }
 
         /// <summary> Moves the rail to the highest position. </summary>
@@ -128,7 +143,13 @@ namespace Science.Systems
         public void UpdateState()
         {
             this.Limit.UpdateState();
-            //this.Encoder.UpdateState();
+            this.Encoder.UpdateState();
+            //Log.Output(Log.Severity.INFO, Log.Source.SENSORS, "Encoder now at " + this.Encoder.Count);
+
+            DateTime Sample = DateTime.Now;
+            byte[] Data = UtilData.ToBytes(this.Encoder.Count).Concat(UtilData.ToBytes(Sample.Ticks)).ToArray();
+            Packet Packet = new Packet(new Message(ScienceConstants.Packets.TESTING, Data), false);
+            Client.Send(Packet);
             //this.Ranger.UpdateState();
             // TODO: Send commands to Talon.
         }

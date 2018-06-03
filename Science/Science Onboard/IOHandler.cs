@@ -27,7 +27,6 @@ namespace Science
 
         public IOHandler()
         {
-
             RaspberryPi.Initialize();
             this.I2C = new I2CBusPi();
             this.PWMGenHighFreq = new PCA9685(this.I2C, 0x4C, -1, PCA9685.OutputInvert.Inverted, PCA9685.OutputDriverMode.OpenDrain);
@@ -36,7 +35,7 @@ namespace Science
             this.PWMGenLowFreq.SetFrequency(50);
 
             //TODO: Is it OK to construct a comms bus more than once for the different systems?
-            //this.RailController = new Rail(this.PWMGenHighFreq.Outputs[1], new DigitalInPi(11), new SPIBusPi(0), new DigitalOutPi(31), new I2CBusPi());
+            this.RailController = new Rail(this.PWMGenHighFreq.Outputs[1], new DigitalInPi(11), new SPIBusPi(0), new DigitalOutPi(31), new I2CBusPi(), null);
             this.DrillController = new Drill(this.PWMGenHighFreq.Outputs[0], this.PWMGenLowFreq.Outputs[0]);
             //this.SampleController = new Sample(this.PWMGenLowFreq.Outputs[1]);
             this.LEDController = new LEDs(this.PWMGenLowFreq.Outputs, this.PWMGenHighFreq.Outputs);
@@ -44,9 +43,9 @@ namespace Science
             this.SysSensors = new SysSensors();
             this.Music = new MusicPlayer();
 
-            this.InitProcedure = new ISubsystem[] { /*this.RailController, */this.DrillController, /*this.SampleController, */this.LEDController, this.AuxSensors, this.SysSensors, this.Music };
+            this.InitProcedure = new ISubsystem[] { this.RailController, this.DrillController, /*this.SampleController, */this.LEDController, this.AuxSensors, this.SysSensors, this.Music };
             this.EStopProcedure = new ISubsystem[] { this.Music, this.RailController, this.DrillController, this.SampleController, this.LEDController, this.AuxSensors, this.SysSensors };
-            this.UpdateProcedure = new ISubsystem[] { /*this.RailController, */this.DrillController, /*this.SampleController, */this.LEDController, this.AuxSensors, this.SysSensors };
+            this.UpdateProcedure = new ISubsystem[] { this.RailController, this.DrillController, /*this.SampleController, */this.LEDController/*, this.AuxSensors, this.SysSensors*/ };
             if (this.EStopProcedure.Length < this.InitProcedure.Length || this.EStopProcedure.Length < this.UpdateProcedure.Length) { throw new Exception("A system is registered for init or updates, but not for emergency stop. For safety reasons, this is not permitted."); }
         }
 

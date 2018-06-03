@@ -286,7 +286,7 @@ namespace Science_Base
 
         private void trackBar1_ValueChanged(object sender, EventArgs e)
         {
-            Science_Base.Controls.DrillSpeedChange(this.DrillSpeed.Value * (this.DrillReverse.Checked ? -1 : 1));
+            Science_Base.Controls.DrillSpeedChange(this.DrillSpeed.Value * (this.DrillReverse.Checked ? -1 : 1) * (Science_Base.Controls.IsDrillEnabled ? 1 : 0));
             this.DrillReverse.Enabled = (this.DrillSpeed.Value == 0 || !Science_Base.Controls.IsDrillEnabled);
         }
 
@@ -294,7 +294,7 @@ namespace Science_Base
         {
             Science_Base.Controls.IsDrillEnabled = !Science_Base.Controls.IsDrillEnabled;
             this.DrillToggle.Text = Science_Base.Controls.IsDrillEnabled ? "STOP" : "START";
-            Science_Base.Controls.DrillSpeedChange(this.DrillSpeed.Value * (this.DrillReverse.Checked ? -1 : 1));
+            Science_Base.Controls.DrillSpeedChange(this.DrillSpeed.Value * (this.DrillReverse.Checked ? -1 : 1) * (Science_Base.Controls.IsDrillEnabled ? 1 : 0));
             this.DrillReverse.Enabled = (this.DrillSpeed.Value == 0 || !Science_Base.Controls.IsDrillEnabled);
         }
 
@@ -320,6 +320,11 @@ namespace Science_Base
         private void ChartAddRight_Click(object sender, EventArgs e)
         {
             foreach (int Selected in this.ChartDataChooser.SelectedIndices) { this.Charts.Right.AddByIndex(Selected); }
+        }
+
+        private void trackBar2_ValueChanged(object sender, EventArgs e)
+        {
+            Science_Base.Controls.RailSpeedChange(this.trackBar2.Value * (this.darkCheckBox1.Checked ? -10 : 10));
         }
     }
 }

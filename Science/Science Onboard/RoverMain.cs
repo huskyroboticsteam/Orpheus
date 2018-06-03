@@ -41,8 +41,8 @@ namespace Science
 
             while (!Console.KeyAvailable)
             {
-                //IOHandler.UpdateStates();
-                Thread.Sleep(20);
+                IOHandler.UpdateStates();
+                Thread.Sleep(100);
             }
             Environment.Exit(0);
 		}

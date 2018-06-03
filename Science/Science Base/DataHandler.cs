@@ -25,18 +25,20 @@ namespace Science_Base
         private static Random Random;
 
         public static DataSeries<double> AIn = new DataSeries<double>("Analogue Input", "Input (Vb)");
+        public static DataSeries<int> Encoder = new DataSeries<int>("Encoder", "Encoder COunt");
 
         public static void Start()
         {
             Random = new Random();
             Parse.SetParseHandler(ScienceConstants.Packets.GND_SENSOR, PacketGroundSensor);
             Parse.SetParseHandler(ScienceConstants.Packets.SYS_SENSOR, PacketSysSensor);
+            Parse.SetParseHandler(ScienceConstants.Packets.TESTING, PacketTesting);
             new Thread(new ThreadStart(DoAdds)).Start();
         }
 
         public static object[] GetSeries()
         {
-            return new object[] { ThermoInt, ThermoExt, UV, AirPollution, SupplyVoltage, SystemCurrent, DrillCurrent, RailCurrent, RandomData, AIn };
+            return new object[] { ThermoInt, ThermoExt, UV, AirPollution, SupplyVoltage, SystemCurrent, DrillCurrent, RailCurrent, RandomData, AIn, Encoder };
         }
 
         public static void PacketGroundSensor(Packet Packet)
@@ -75,6 +77,18 @@ namespace Science_Base
             SystemCurrent.Data.Add(new Datum<double>(Sample, SysA));
             DrillCurrent.Data.Add(new Datum<double>(Sample, DrillA));
             RailCurrent.Data.Add(new Datum<double>(Sample, RailA));
+        }
+
+        public static void PacketTesting(Packet Packet)
+        {
+            if (Packet == null || Packet.Data == null || Packet.Data.Payload == null || Packet.Data.Payload.Length != 12)
+            {
+                Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "System sensor packet invalid. Discarding.");
+                return;
+            }
+            int Enc = UtilData.ToInt(UtilMain.SubArray(Packet.Data.Payload, 0, 4));
+            DateTime Sample = new DateTime(UtilData.ToLong(UtilMain.SubArray(Packet.Data.Payload, 4, 8)));
+            Encoder.Data.Add(new Datum<int>(Sample, Enc));
         }
 
         private static void DoAdds()

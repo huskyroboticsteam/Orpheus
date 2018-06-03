@@ -91,6 +91,7 @@
             this.StatusImgSystem = new System.Windows.Forms.PictureBox();
             this.SecTimer = new System.Windows.Forms.Timer(this.components);
             this.UIUpdate = new System.Windows.Forms.Timer(this.components);
+            this.darkCheckBox1 = new DarkUI.Controls.DarkCheckBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.Control.SuspendLayout();
@@ -435,6 +436,7 @@
             this.tableLayoutPanel9.ColumnCount = 2;
             this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40F));
             this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 60F));
+            this.tableLayoutPanel9.Controls.Add(this.darkCheckBox1, 0, 5);
             this.tableLayoutPanel9.Controls.Add(this.trackBar2, 0, 0);
             this.tableLayoutPanel9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel9.Location = new System.Drawing.Point(3, 16);
@@ -460,6 +462,7 @@
             this.tableLayoutPanel9.SetRowSpan(this.trackBar2, 6);
             this.trackBar2.Size = new System.Drawing.Size(45, 274);
             this.trackBar2.TabIndex = 0;
+            this.trackBar2.ValueChanged += new System.EventHandler(this.trackBar2_ValueChanged);
             // 
             // ChartClearRight
             // 
@@ -928,6 +931,16 @@
             this.UIUpdate.Interval = 33;
             this.UIUpdate.Tick += new System.EventHandler(this.UIUpdate_Tick);
             // 
+            // darkCheckBox1
+            // 
+            this.darkCheckBox1.AutoSize = true;
+            this.darkCheckBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.darkCheckBox1.Location = new System.Drawing.Point(98, 233);
+            this.darkCheckBox1.Name = "darkCheckBox1";
+            this.darkCheckBox1.Size = new System.Drawing.Size(137, 44);
+            this.darkCheckBox1.TabIndex = 3;
+            this.darkCheckBox1.Text = "Reverse";
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1036,5 +1049,6 @@
         private System.Windows.Forms.ListView ChartDataChooser;
         private DarkUI.Controls.DarkButton ChartAddLeft;
         private DarkUI.Controls.DarkButton ChartAddRight;
+        private DarkUI.Controls.DarkCheckBox darkCheckBox1;
     }
 }
