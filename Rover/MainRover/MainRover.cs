@@ -35,8 +35,8 @@ namespace MainRover
             BeagleBone.Initialize(SystemMode.NO_HDMI, true);
             PinConfig();
             Sensors = new List<ISensor>();
-            //Sensors.Add(new BNO055(I2CBBB.I2CBus2));
-            //Sensors.Add(new MTK3339(UARTBBB.UARTBus4));
+            Sensors.Add(new BNO055(I2CBBB.I2CBus2));
+            Sensors.Add(new MTK3339(UARTBBB.UARTBus4));
             LimitSwitch Switch = new LimitSwitch(new DigitalInBBB(Pins.SteeringLimitSwitch));
             Switch.SwitchToggle += (object sender, LimitSwitchToggle e) => Console.WriteLine("PRESSED!");
             Sensors.Add(Switch);
