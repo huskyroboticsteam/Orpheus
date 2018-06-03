@@ -64,49 +64,15 @@ namespace ArmMaster
             Packet p = new Packet(0xD3, true);
             byte[] ID = new byte[1];
             p.Data.Payload = new byte[PacketSize - 1];
-            Thread t = new Thread(() =>
-            {
-                for (; ; )
-                {
-                    if (Slave.BytesAvailable() > 0)
-                    {
-                        Slave.Read(1, ID);
-                        while (Slave.BytesAvailable() < PacketSize - 1) { }
-                        Slave.Read(PacketSize, p.Data.Payload);
-
-                        List<object> fields = UtilData.ToTypes(p.Data.Payload, typeof(int), typeof(int), typeof(int), typeof(byte));
-                        Console.WriteLine($"{ ID[0] }: { (int)fields[0] }, { (int)fields[1] }, { (int)fields[2] }, { (byte)fields[3] }");
-                    }
-                }
-            });
-            t.Start();
             for (; ; )
             {
-                /*Slave.Read(1, ID);
-                Slave.Read(PacketSize, p.Data.Payload);
-                p.Data.ID = ID[0];
-                Client.SendNow(p);*/
-                string @in = Console.ReadLine();
-                if (@in == "quit")
-                    break;
-                if (@in == "s")
+                if (Slave.BytesAvailable() > 0)
                 {
-                    Slave.Write(new byte[] { 0x80 });
-                    MotorControl.EmergencyStop();
-                }
-                else
-                {
-
-                    string[] tokens = @in.Split(' ');
-                    byte id = Byte.Parse(tokens[0], System.Globalization.NumberStyles.HexNumber);
-                    float speed = float.Parse(tokens[1]);
-                    if (0x9A <= id && id <= 0x9C)
-                        MotorControl.SetMotorSpeed(id - 0x9A, speed);
-                    else
-                    {
-                        Slave.Write(new byte[] { id });
-                        Slave.Write(UtilData.ToBytes(speed));
-                    }
+                    Slave.Read(1, ID);
+                    while (Slave.BytesAvailable() < PacketSize - 1) { }
+                    Slave.Read(PacketSize, p.Data.Payload);
+                    p.Data.ID = ID[0];
+                    Client.SendNow(p);
                 }
             }
         }

@@ -6,6 +6,7 @@ using Scarlet.Components;
 using Scarlet.Components.Sensors;
 using Scarlet.Communications;
 using Scarlet.Utilities;
+using System.Threading;
 
 namespace MainRover
 {
@@ -98,18 +99,13 @@ namespace MainRover
             {
                 if (Sensor is MTK3339)
                 {
-                    ((MTK3339)Sensor).HasFix((Fix) =>
-                    {
-                        if (!Fix)
-                            Console.WriteLine("No fix");
-                        var Tup = ((MTK3339)Sensor).GetCoords();
-                        float Lat = Tup.Item1;
-                        float Long = Tup.Item2;
-                        Packet Pack = new Packet((byte)PacketID.DataGPS, true);
-                        Pack.AppendData(UtilData.ToBytes(Lat));
-                        Pack.AppendData(UtilData.ToBytes(Long));
-                        Client.SendNow(Pack);
-                    });
+                    var Tup = ((MTK3339)Sensor).GetCoords();
+                    float Lat = Tup.Item1;
+                    float Long = Tup.Item2;
+                    Packet Pack = new Packet((byte)PacketID.DataGPS, true);
+                    Pack.AppendData(UtilData.ToBytes(Lat));
+                    Pack.AppendData(UtilData.ToBytes(Long));
+                    Client.SendNow(Pack);
                 }
                 if (Sensor is BNO055)
                 {
@@ -137,6 +133,7 @@ namespace MainRover
             {
                 SendSensorData();
                 ProcessInstructions();
+                Thread.Sleep(50);
             } while (!Quit);
         }
     }
