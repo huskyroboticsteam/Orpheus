@@ -52,8 +52,6 @@ namespace HuskyRobotics.BaseStation
                     else if (upPressed) { verticalSpeed = 1; }
                     else if (downPressed) { verticalSpeed = -1; }
 
-                    Console.WriteLine(verticalSpeed + " " + horizontalSpeed);
-
                     xSpeed = Convert.ToInt16(horizontalSpeed * maxSpeed);
                     ySpeed = Convert.ToInt16(verticalSpeed * maxSpeed);
 

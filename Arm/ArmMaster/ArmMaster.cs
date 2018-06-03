@@ -10,7 +10,7 @@ namespace ArmMaster
 {
     class ArmMaster
     {
-        const string CHASSIS_BEAGLEBONE = "192.168.0.5";
+        const string SERVER_IP = "192.168.0.5";
         static IUARTBus Slave;
 
         static void SetupBeagleboneAndPins()
@@ -30,7 +30,7 @@ namespace ArmMaster
 
         static void SetupClient()
         {
-            Client.Start(CHASSIS_BEAGLEBONE, 1025, 1026, "ArmMaster");
+            Client.Start(SERVER_IP, 1025, 1026, "ArmMaster");
             Parse.SetParseHandler(0x80, (Pack) =>
             {
                 MotorControl.SetAllMotorSpeed(0.0f);

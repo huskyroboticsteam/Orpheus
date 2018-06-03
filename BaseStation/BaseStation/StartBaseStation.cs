@@ -21,7 +21,7 @@ namespace HuskyRobotics.BaseStation.Start
         public static void Main(String[] args)
         {
             //temporary example code
-            Server.BaseServer.Start(GamepadFactory.GetDriveGamePad());
+            Server.BaseServer.Start(GamepadFactory.GetDriveGamePad(), GamepadFactory.GetArmGamepad());
             Thread eventloop = new Thread(Server.BaseServer.EventLoop);
             eventloop.IsBackground = true;
             eventloop.Start();
