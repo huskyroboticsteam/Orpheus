@@ -51,14 +51,6 @@ namespace MainRover
                 Parse.SetParseHandler(i, (Packet) => Packets.Enqueue(Packet, 0));
         }
 
-        //public static void SetupArmServer()
-        //{
-        //    Server.Start(1025, 1026);
-        //    Parse.SetParseHandler(0xD3, (Packet) => Client.Send(Packet));
-        //    for (byte i = 0x9A; i <= 0xA0; i++)
-        //        Parse.SetParseHandler(i, (Packet) => Server.SendNow(Packet));
-        //}
-
         public static void ProcessInstructions()
         {
             const int NUM_PACKETS_TO_PROCESS = 20;
