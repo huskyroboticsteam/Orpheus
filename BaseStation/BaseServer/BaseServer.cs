@@ -22,13 +22,13 @@ namespace HuskyRobotics.BaseStation.Server
         private static int RightThumbDeadzone = 8689;
         private static int TriggerThreshold = 30;
 
-        public static void Start()
+        public static void Start(Controller controller)
         {
             Scarlet.Communications.Server.Start(1025, 1026);
             Scarlet.Communications.Server.ClientConnectionChange += ClientConnected;
             Parse.SetParseHandler(0xC0, gpsHandler);
             Parse.SetParseHandler(0xC1, magnetomerHandler);
-            gamepad = GetDriveGamepad();
+            gamepad = controller;
         }
 
         private static void ClientConnected(object sender, EventArgs e)
@@ -37,18 +37,13 @@ namespace HuskyRobotics.BaseStation.Server
             Console.WriteLine(Scarlet.Communications.Server.GetClients());
         }
 
-        private static Controller GetDriveGamepad()
+        private static short PreventOverflow(short shortVal)
         {
-            return new Controller(UserIndex.One);
-        }
-
-        private static short PreventOverflow(short leftThumbX)
-        {
-            if (leftThumbX == -32768)
+            if (shortVal == -32768)
             {
-                leftThumbX++;
+                shortVal++;
             }
-            return leftThumbX;
+            return shortVal;
         }
 
         public static void EventLoop()

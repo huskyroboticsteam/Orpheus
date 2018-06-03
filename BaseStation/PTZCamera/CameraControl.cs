@@ -1,6 +1,5 @@
 ﻿using Scarlet.Utilities;
-using SlimDX.DirectInput;
-using SlimDX.XInput;
+using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,28 +17,45 @@ namespace HuskyRobotics.BaseStation
     /// </summary>
     public static class CameraControl
     {
-        public static void Start()
+        public static void Start(Controller controller)
         {
             int maxSpeed = 100;
-            int xSpeed=0;
-            int ySpeed=0;
+            int xSpeed = 0;
+            int ySpeed = 0;
 
             HttpClient client = new HttpClient();
-            PTZCamera cam = new PTZCamera("192.168.0.42", "admin","1234",client);
-            Joystick joystick = GetJoystick();
+            PTZCamera cam = new PTZCamera("192.168.0.42", "admin", "1234", client);
+            //Joystick joystick = GetJoystick();
 
-            if (joystick != null)
+            if (controller != null)
             {
-                // Acquire the joystick
-                joystick.Acquire();
 
                 while (true)
                 {
-                    joystick.Poll();
-                    var state = joystick.GetCurrentState();
+                    if (!controller.IsConnected)
+                    {
+                        Thread.Sleep(100);
+                        continue;
+                    }
 
-                    xSpeed = Convert.ToInt16(UtilMain.LinearMap(state.X, 0, 65535, -1, 1) * maxSpeed);
-                    ySpeed = Convert.ToInt16(UtilMain.LinearMap(state.Y, 0, 65535, -1, 1) * maxSpeed);
+                    State state = controller.GetState();
+
+                    bool leftPressed = (state.Gamepad.Buttons & GamepadButtonFlags.DPadLeft) != 0;
+                    bool rightPressed = (state.Gamepad.Buttons & GamepadButtonFlags.DPadRight) != 0;
+                    bool upPressed = (state.Gamepad.Buttons & GamepadButtonFlags.DPadUp) != 0;
+                    bool downPressed = (state.Gamepad.Buttons & GamepadButtonFlags.DPadDown) != 0;
+                    int horizontalSpeed = 0;
+                    int verticalSpeed = 0;
+
+                    if (leftPressed) { horizontalSpeed = -1; }
+                    else if (rightPressed) { horizontalSpeed = 1; }
+                    else if (upPressed) { verticalSpeed = 1; }
+                    else if (downPressed) { verticalSpeed = -1; }
+
+                    Console.WriteLine(verticalSpeed + " " + horizontalSpeed);
+
+                    xSpeed = Convert.ToInt16(horizontalSpeed * maxSpeed);
+                    ySpeed = Convert.ToInt16(verticalSpeed * maxSpeed);
 
                     cam.SetSpeeds(xSpeed, ySpeed);
                     Thread.Sleep(10);
@@ -48,34 +64,13 @@ namespace HuskyRobotics.BaseStation
             }
         }
 
-        private static Joystick GetJoystick() {
-            // Initialize DirectInput
-            var directInput = new DirectInput();
-
-            // Find a Joystick Guid
-            var joystickGuid = Guid.Empty;
-
-            // Look for Gamepad
-            foreach (var deviceInstance in directInput.GetDevices(SlimDX.DirectInput.DeviceType.Gamepad,
-                        DeviceEnumerationFlags.AllDevices))
-                joystickGuid = deviceInstance.InstanceGuid;
-
-            // If Gamepad not found, look for a Joystick
-            if (joystickGuid == Guid.Empty)
-                foreach (var deviceInstance in directInput.GetDevices(SlimDX.DirectInput.DeviceType.Joystick,
-                        DeviceEnumerationFlags.AllDevices))
-                    joystickGuid = deviceInstance.InstanceGuid;
-
-            // If Joystick not found, throws an error
-            if (joystickGuid == Guid.Empty)
+        private static short PreventOverflow(short shortVal)
+        {
+            if (shortVal == -32768)
             {
-                Console.WriteLine("No Joystick Found");
-                return null;
+                shortVal++;
             }
-
-            Console.WriteLine("Found Joystick/Gamepad with GUID: {0}", joystickGuid);
-            // Instantiate the joystick
-            return new Joystick(directInput, joystickGuid);
+            return shortVal;
         }
     }
 }

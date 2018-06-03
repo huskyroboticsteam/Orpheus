@@ -28,10 +28,13 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BBBCSIO">
+      <HintPath>..\..\..\Scarlet\bin\Debug\BBBCSIO.dll</HintPath>
+    </Reference>
+    <Reference Include="mscorlib" />
     <Reference Include="Scarlet">
       <HintPath>..\..\..\Scarlet\bin\Debug\Scarlet.dll</HintPath>
     </Reference>
-    <Reference Include="mscorlib" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainRover.cs" />
