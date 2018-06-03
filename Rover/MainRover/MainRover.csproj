@@ -43,4 +43,7 @@
     <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>echo y | "C:\Program Files\PuTTY\pscp.exe" -l debian -pw temppwd "$(TargetDir)*.exe" "$(TargetDir)*.dll" 192.168.0.20:/home/debian</PostBuildEvent>
+  </PropertyGroup>
 </Project>
