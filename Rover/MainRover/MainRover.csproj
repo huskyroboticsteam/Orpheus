@@ -28,10 +28,13 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BBBCSIO">
+      <HintPath>..\..\..\Scarlet\bin\Debug\BBBCSIO.dll</HintPath>
+    </Reference>
+    <Reference Include="mscorlib" />
     <Reference Include="Scarlet">
       <HintPath>..\..\..\Scarlet\bin\Debug\Scarlet.dll</HintPath>
     </Reference>
-    <Reference Include="mscorlib" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainRover.cs" />
@@ -43,4 +46,7 @@
     <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>echo y | "C:\Program Files\PuTTY\pscp.exe" -l debian -pw temppwd "$(TargetDir)*.exe" "$(TargetDir)*.dll" 192.168.0.20:/home/debian</PostBuildEvent>
+  </PropertyGroup>
 </Project>
