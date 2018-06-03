@@ -19,7 +19,7 @@ namespace ArmMaster
         public static void Initialize()
         {
             MotBaseRotation = new CytronMD30C(PWMBBB.PWMDevice2.OutputA, new DigitalOutBBB(Pins.BaseRotationDir), 0.3f, new LowPass<float>());
-            MotShoulder = new TalonMC(PWMBBB.PWMDevice1.OutputA, 0.3f, new LowPass<float>());
+            MotShoulder = new TalonMC(PWMBBB.PWMDevice1.OutputA, 0.6f, new LowPass<float>());
             MotElbow = new TalonMC(PWMBBB.PWMDevice1.OutputB, 0.3f, new LowPass<float>());
         }
 
