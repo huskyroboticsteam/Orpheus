@@ -107,9 +107,9 @@ namespace HuskyRobotics.BaseStation.Server
 
                 float steerSpeed = 0.0f;
                 if (aPressedDrive)
-                    steerSpeed = 1.0f;
+                    steerSpeed = 0.3f;
                 if (bPressedDrive)
-                    steerSpeed = -1.0f;
+                    steerSpeed = -0.3f;
 
                 float wristArmSpeed = 0.0f;
                 if (xPressedArm)
