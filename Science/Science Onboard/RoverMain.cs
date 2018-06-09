@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net;
 using System.Threading;
 using Scarlet.Communications;
 using Scarlet.Utilities;
@@ -66,7 +67,15 @@ namespace Science
                 }
                 if (Args.Length > i + 1) // Dual-part arguments.
                 {
-                    if (Args[i] == "-s" || Args[i] == "--server") { IP = Args[i + 1]; i++; }
+                    if (Args[i] == "-s" || Args[i] == "--server")
+                    {
+                        IP = Args[i + 1]; i++;
+                        if (!IPAddress.TryParse(IP, out IPAddress Addr))
+                        {
+                            IPHostEntry Entries = Dns.GetHostEntry(IP);
+                            if (Entries.AddressList.Length > 0) { IP = Entries.AddressList[0].ToString(); }
+                        }
+                    }
                     if (Args[i] == "-pt" || Args[i] == "--port-tcp") { PortTCP = int.Parse(Args[i + 1]); i++; }
                     if (Args[i] == "-pu" || Args[i] == "--port-udp") { PortUDP = int.Parse(Args[i + 1]); i++; }
                     if (Args[i] == "-l" || Args[i] == "--log")
