@@ -24,7 +24,8 @@ namespace Science_Base
         public static DataSeries<int> RandomData = new DataSeries<int>("Random", "Rubbish");
         private static Random Random;
 
-        public static DataSeries<double> AIn = new DataSeries<double>("Analogue Input", "Input (Vb)");
+        public static DataSeries<double> AIn0 = new DataSeries<double>("Analogue Input 0", "Input (V)");
+        public static DataSeries<double> AIn1 = new DataSeries<double>("Analogue Input 1", "Input (V)");
         public static DataSeries<int> Encoder = new DataSeries<int>("Encoder", "Encoder COunt");
 
         public static void Start()
@@ -38,12 +39,12 @@ namespace Science_Base
 
         public static object[] GetSeries()
         {
-            return new object[] { ThermoInt, ThermoExt, UV, AirPollution, SupplyVoltage, SystemCurrent, DrillCurrent, RailCurrent, RandomData, AIn, Encoder };
+            return new object[] { ThermoInt, ThermoExt, UV, AirPollution, SupplyVoltage, SystemCurrent, DrillCurrent, RailCurrent, RandomData, AIn0, AIn1, Encoder };
         }
 
         public static void PacketGroundSensor(Packet Packet)
         {
-            if(Packet == null || Packet.Data == null || Packet.Data.Payload == null || Packet.Data.Payload.Length != 16)
+            if(Packet == null || Packet.Data == null || Packet.Data.Payload == null || Packet.Data.Payload.Length != 24)
             {
                 Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Ground sensor packet invalid. Discarding.");
                 return;
@@ -51,11 +52,14 @@ namespace Science_Base
             //float SoilMoisture = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 0, 4));
             int UVLight = UtilData.ToInt(UtilMain.SubArray(Packet.Data.Payload, 0, 4));
             uint ThermocoupleData = UtilData.ToUInt(UtilMain.SubArray(Packet.Data.Payload, 4, 4));
-            double AInData = UtilData.ToDouble(UtilMain.SubArray(Packet.Data.Payload, 8, 8));
+            double AIn0Data = UtilData.ToDouble(UtilMain.SubArray(Packet.Data.Payload, 8, 8));
+            double AIn1Data = UtilData.ToDouble(UtilMain.SubArray(Packet.Data.Payload, 16, 8));
+
             ThermoExt.Data.Add(new Datum<float>(DateTime.Now, MAX31855.ConvertExternalFromRaw(ThermocoupleData)));
             ThermoInt.Data.Add(new Datum<float>(DateTime.Now, MAX31855.ConvertInternalFromRaw(ThermocoupleData)));
             UV.Data.Add(new Datum<int>(DateTime.Now, UVLight));
-            AIn.Data.Add(new Datum<double>(DateTime.Now, AInData));
+            AIn0.Data.Add(new Datum<double>(DateTime.Now, AIn0Data));
+            AIn1.Data.Add(new Datum<double>(DateTime.Now, AIn1Data));
         }
 
         public static void PacketSysSensor(Packet Packet)
