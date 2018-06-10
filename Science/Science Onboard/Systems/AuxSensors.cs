@@ -26,7 +26,7 @@ namespace Science.Systems
         private TLV2544 ADC_Cai;
 
         // Sensor endpoints
-        private MAX31855 Thermocouple;
+        //private MAX31855 Thermocouple;
         private VEML6070 UVLight;
         //private BME280 Atmospheric;
         //private MQ135 AirQuality;
@@ -51,10 +51,10 @@ namespace Science.Systems
             //this.ADC = new TLV2544ID(this.SPI0, new DigitalOutPi(16));//, Config);
             this.ADC_Cai = new TLV2544(this.SPI0, new DigitalOutPi(16));
             TLV2544.Configuration Config = TLV2544.DefaultConfig;
-            Config.ConversionClockSrc = TLV2544.ConversionClockSrc.SCLK;
+            Config.VoltageRef = TLV2544.VoltageReference.INTERNAL_2V;
             this.ADC_Cai.Configure(Config);
 
-            this.Thermocouple = new MAX31855(this.SPI0, new DigitalOutPi(18));
+            //this.Thermocouple = new MAX31855(this.SPI0, new DigitalOutPi(18));
             this.UVLight = new VEML6070(this.I2C1);
             //this.Atmospheric = new BME280(this.I2C1);
             //this.Atmospheric.Configure();
@@ -72,7 +72,7 @@ namespace Science.Systems
 
         public void UpdateState()
         {
-            if(this.TakeReadings)
+            if (this.TakeReadings)
             {
                 DateTime Sample = DateTime.Now;
                 //this.Thermocouple.UpdateState();
@@ -80,13 +80,14 @@ namespace Science.Systems
                 //this.Atmospheric.UpdateState();
                 //((TLV2544ID.TLV2544IDInput)this.AIn0).UpdateState();
                 //((TLV2544ID.TLV2544IDInput)this.AIn1).UpdateState();
+                double In0 = this.AIn0.GetInput();
+                double In1 = this.AIn1.GetInput();
                 //Log.Output(Log.Severity.INFO, Log.Source.SENSORS, "Temp: " + this.Atmospheric.Temperature + ", press: " + this.Atmospheric.Pressure + ", humid: " + this.Atmospheric.Humidity + ", on: " + this.Atmospheric.Test());
                 byte[] Data = UtilData.ToBytes(this.UVLight.GetReading())
-                    .Concat(UtilData.ToBytes(this.Thermocouple.GetRawData()))
-                    .Concat(UtilData.ToBytes((double)this.ADC_Cai.Test1()))
-                    .Concat(UtilData.ToBytes((double)this.ADC_Cai.Test3())).ToArray();
-                this.AIn2.GetInput();
-                Log.Output(Log.Severity.DEBUG, Log.Source.SENSORS, "Test1: " + this.ADC_Cai.Test1() + ", Test2: " + this.ADC_Cai.Test2() + ", Config:" + this.ADC_Cai.ReadConfig());
+                    .Concat(UtilData.ToBytes((uint)0))//this.Thermocouple.GetRawData()))
+                    .Concat(UtilData.ToBytes(In0))
+                    .Concat(UtilData.ToBytes(In1)).ToArray();
+                Log.Output(Log.Severity.DEBUG, Log.Source.SENSORS, "[ADC] Test: " + this.ADC_Cai.Test() + ", input 0: " + In0 + "V, input 1: " + In1 + "V");
                 Packet Packet = new Packet(new Message(ScienceConstants.Packets.GND_SENSOR, Data), false);
                 Client.Send(Packet);
             }

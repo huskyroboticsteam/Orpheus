@@ -35,9 +35,9 @@ namespace Science
             this.PWMGenLowFreq.SetFrequency(50);
 
             //TODO: Is it OK to construct a comms bus more than once for the different systems?
-            this.RailController = new Rail(this.PWMGenHighFreq.Outputs[1], new DigitalInPi(11), new SPIBusPi(0), new DigitalOutPi(31), new I2CBusPi(), null);
+            //this.RailController = new Rail(this.PWMGenHighFreq.Outputs[1], new DigitalInPi(11), new SPIBusPi(0), new DigitalOutPi(31), new I2CBusPi(), null);
             this.DrillController = new Drill(this.PWMGenHighFreq.Outputs[0], this.PWMGenLowFreq.Outputs[0]);
-            //this.SampleController = new Sample(this.PWMGenLowFreq.Outputs[1]);
+            this.SampleController = new Sample(this.PWMGenLowFreq.Outputs[1]);
             this.LEDController = new LEDs(this.PWMGenLowFreq.Outputs, this.PWMGenHighFreq.Outputs);
             this.AuxSensors = new AuxSensors();
             this.SysSensors = new SysSensors();
@@ -52,12 +52,12 @@ namespace Science
         /// <summary> Prepares all systems for use by zeroing them. This takes a while. </summary>
         public void InitializeSystems()
         {
-            foreach(ISubsystem System in this.InitProcedure)
+            for(int i = 0; i < this.InitProcedure.Length; i++)
             {
-                try { System.Initialize(); }
+                try { this.InitProcedure[i].Initialize(); }
                 catch(Exception Exc)
                 {
-                    Log.Output(Log.Severity.ERROR, Log.Source.SUBSYSTEM, "Failed to initialize system '" + System + "'.");
+                    Log.Output(Log.Severity.ERROR, Log.Source.SUBSYSTEM, "Failed to initialize system #" + i + ".");
                     Log.Exception(Log.Source.SUBSYSTEM, Exc);
                 }
             }
@@ -66,12 +66,12 @@ namespace Science
         /// <summary> Immediately stops all systems. </summary>
         public void EmergencyStop()
         {
-            foreach (ISubsystem System in this.EStopProcedure)
+            for (int i = 0; i < this.EStopProcedure.Length; i++)
             {
-                try { System.EmergencyStop(); }
+                try { this.EStopProcedure[i].EmergencyStop(); }
                 catch (Exception Exc)
                 {
-                    Log.Output(Log.Severity.FATAL, Log.Source.SUBSYSTEM, "Failed to e-stop system '" + System + "'.");
+                    Log.Output(Log.Severity.FATAL, Log.Source.SUBSYSTEM, "Failed to e-stop system #" + i + ".");
                     Log.Exception(Log.Source.SUBSYSTEM, Exc);
                 }
             }
@@ -79,12 +79,12 @@ namespace Science
 
         public void UpdateStates()
         {
-            foreach (ISubsystem System in this.UpdateProcedure)
+            for (int i = 0; i < this.UpdateProcedure.Length; i++)
             {
-                try { System.UpdateState(); }
+                try { this.UpdateProcedure[i].UpdateState(); }
                 catch (Exception Exc)
                 {
-                    Log.Output(Log.Severity.WARNING, Log.Source.SUBSYSTEM, "Failed to update state for system '" + System + "'.");
+                    Log.Output(Log.Severity.WARNING, Log.Source.SUBSYSTEM, "Failed to update state for system #" + i + ".");
                     Log.Exception(Log.Source.SUBSYSTEM, Exc);
                 }
             }
