@@ -50,7 +50,9 @@ namespace Science.Systems
 
             //this.ADC = new TLV2544ID(this.SPI0, new DigitalOutPi(16));//, Config);
             this.ADC_Cai = new TLV2544(this.SPI0, new DigitalOutPi(16));
-            this.ADC_Cai.Configure();
+            TLV2544.Configuration Config = TLV2544.DefaultConfig;
+            Config.ConversionClockSrc = TLV2544.ConversionClockSrc.SCLK;
+            this.ADC_Cai.Configure(Config);
 
             this.Thermocouple = new MAX31855(this.SPI0, new DigitalOutPi(18));
             this.UVLight = new VEML6070(this.I2C1);
@@ -81,8 +83,8 @@ namespace Science.Systems
                 //Log.Output(Log.Severity.INFO, Log.Source.SENSORS, "Temp: " + this.Atmospheric.Temperature + ", press: " + this.Atmospheric.Pressure + ", humid: " + this.Atmospheric.Humidity + ", on: " + this.Atmospheric.Test());
                 byte[] Data = UtilData.ToBytes(this.UVLight.GetReading())
                     .Concat(UtilData.ToBytes(this.Thermocouple.GetRawData()))
-                    .Concat(UtilData.ToBytes(this.AIn0.GetInput()))
-                    .Concat(UtilData.ToBytes(this.AIn1.GetInput())).ToArray();
+                    .Concat(UtilData.ToBytes((double)this.ADC_Cai.Test1()))
+                    .Concat(UtilData.ToBytes((double)this.ADC_Cai.Test3())).ToArray();
                 this.AIn2.GetInput();
                 Log.Output(Log.Severity.DEBUG, Log.Source.SENSORS, "Test1: " + this.ADC_Cai.Test1() + ", Test2: " + this.ADC_Cai.Test2() + ", Config:" + this.ADC_Cai.ReadConfig());
                 Packet Packet = new Packet(new Message(ScienceConstants.Packets.GND_SENSOR, Data), false);
