@@ -6,7 +6,7 @@ using Scarlet.Components;
 using Scarlet.Components.Sensors;
 using Scarlet.Communications;
 using Scarlet.Utilities;
-
+using System.Threading;
 namespace MainRover
 {
     public class MainRover
@@ -34,8 +34,8 @@ namespace MainRover
             BeagleBone.Initialize(SystemMode.NO_HDMI, true);
             PinConfig();
             Sensors = new List<ISensor>();
-            //Sensors.Add(new BNO055(I2CBBB.I2CBus2));
-            //Sensors.Add(new MTK3339(UARTBBB.UARTBus4));
+            Sensors.Add(new BNO055(I2CBBB.I2CBus2));
+            Sensors.Add(new MTK3339(UARTBBB.UARTBus4));
             LimitSwitch Switch = new LimitSwitch(new DigitalInBBB(Pins.SteeringLimitSwitch));
             Switch.SwitchToggle += (object sender, LimitSwitchToggle e) => Console.WriteLine("PRESSED!");
             Sensors.Add(Switch);
@@ -98,18 +98,13 @@ namespace MainRover
             {
                 if (Sensor is MTK3339)
                 {
-                    ((MTK3339)Sensor).HasFix((Fix) =>
-                    {
-                        if (!Fix)
-                            Console.WriteLine("No fix");
-                        var Tup = ((MTK3339)Sensor).GetCoords();
-                        float Lat = Tup.Item1;
-                        float Long = Tup.Item2;
-                        Packet Pack = new Packet((byte)PacketID.DataGPS, true);
-                        Pack.AppendData(UtilData.ToBytes(Lat));
-                        Pack.AppendData(UtilData.ToBytes(Long));
-                        Client.SendNow(Pack);
-                    });
+                    var Tup = ((MTK3339)Sensor).GetCoords();
+                    float Lat = Tup.Item1;
+                    float Long = Tup.Item2;
+                    Packet Pack = new Packet((byte)PacketID.DataGPS, true);
+                    Pack.AppendData(UtilData.ToBytes(Lat));
+                    Pack.AppendData(UtilData.ToBytes(Long));
+                    Client.SendNow(Pack);
                 }
                 if (Sensor is BNO055)
                 {
@@ -137,6 +132,7 @@ namespace MainRover
             {
                 SendSensorData();
                 ProcessInstructions();
+                Thread.Sleep(50);
             } while (!Quit);
         }
     }
