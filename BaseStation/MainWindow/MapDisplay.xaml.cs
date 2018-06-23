@@ -27,12 +27,11 @@ namespace HuskyRobotics.UI
     {
         private const double RESET_PADDING = 10;
         private Point mousePosition;
-        private List<Image> allImages = new List<Image>();
         private List<Image> waypointIcons = new List<Image>();
         private int ImageWidth;
         private int ImageHeight;
-        private int CenterPixelX;
-        private int CenterPixelY;
+        private int CenterPixelX = 0;
+        private int CenterPixelY = 0;
         private int Zoom;
         private Matrix _waypointTransformMatrix;
         private BitmapImage _waypointBitmap;
@@ -52,6 +51,7 @@ namespace HuskyRobotics.UI
         public MapDisplay()
         {
             InitializeComponent();
+            BaseStation.Server.BaseServer.GPSUpdate += updateRoverPos;
         }
 
         public void DisplayMap(string mapSetFile)
@@ -118,14 +118,17 @@ namespace HuskyRobotics.UI
             Canvas.SetLeft(image, x * width - (width / 2));
             Canvas.SetTop(image, y * height - (height / 2));
             MapCanvas.Children.Add(image);
-            allImages.Add(image);
         }
 
         // removes all images from the map display canvas
         private void ClearCanvas()
         {
             MapCanvas.Children.Clear();
-            allImages.Clear();
+        }
+
+        private void updateRoverPos(object sender, (float, float) e)
+        {
+            
         }
 
         private void WaypointsChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -137,9 +140,9 @@ namespace HuskyRobotics.UI
             var transform = new MatrixTransform(_waypointTransformMatrix);
             foreach (var waypoint in Waypoints)
             {
+                Tuple<int, int> pixelCoords = MapConversion.LatLongToPixelXY(waypoint.Lat, waypoint.Long, Zoom);
                 var waypointIcon = new Image { Source = _waypointBitmap };
                 waypointIcon.RenderTransform = transform;
-                Tuple<int, int> pixelCoords = MapConversion.LatLongToPixelXY(waypoint.Lat, waypoint.Long, Zoom);
                 Canvas.SetLeft(waypointIcon, pixelCoords.Item1 - CenterPixelX - (_waypointBitmap.Width / 2));
                 Canvas.SetTop(waypointIcon, pixelCoords.Item2 - CenterPixelY - (_waypointBitmap.Height / 2));
                 MapCanvas.Children.Add(waypointIcon);
