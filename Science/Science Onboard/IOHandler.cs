@@ -29,8 +29,8 @@ namespace Science
         {
             RaspberryPi.Initialize();
             this.I2C = new I2CBusPi();
-            this.PWMGenHighFreq = new PCA9685(this.I2C, 0x4C, -1, PCA9685.OutputInvert.Inverted, PCA9685.OutputDriverMode.OpenDrain) { TraceLogging = true };
-            this.PWMGenLowFreq = new PCA9685(this.I2C, 0x74, -1, PCA9685.OutputInvert.Inverted, PCA9685.OutputDriverMode.OpenDrain) { TraceLogging = true };
+            this.PWMGenHighFreq = new PCA9685(this.I2C, 0x4C, -1, PCA9685.OutputInvert.Inverted, PCA9685.OutputDriverMode.OpenDrain);
+            this.PWMGenLowFreq = new PCA9685(this.I2C, 0x74, -1, PCA9685.OutputInvert.Inverted, PCA9685.OutputDriverMode.OpenDrain);
             this.PWMGenHighFreq.SetFrequency(333);
             this.PWMGenLowFreq.SetFrequency(50);
 
@@ -39,8 +39,8 @@ namespace Science
             this.DrillController = new Drill(this.PWMGenHighFreq.Outputs[0], this.PWMGenLowFreq.Outputs[0]);
             this.SampleController = new Sample(this.PWMGenLowFreq.Outputs[1]);
             this.LEDController = new LEDs(this.PWMGenLowFreq.Outputs, this.PWMGenHighFreq.Outputs);
-            this.AuxSensors = new AuxSensors() { TraceLogging = true };
-            this.SysSensors = new SysSensors() { TraceLogging = true };
+            this.AuxSensors = new AuxSensors();
+            this.SysSensors = new SysSensors();
             this.Music = new MusicPlayer();
 
             this.InitProcedure = new ISubsystem[] { /*this.RailController,*/ this.DrillController, /*this.SampleController, */this.LEDController, this.AuxSensors, this.SysSensors, this.Music };

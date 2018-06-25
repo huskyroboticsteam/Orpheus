@@ -56,6 +56,7 @@ namespace Science_Base
         // Thanks Sasha!
         public void AddByIndex(int Index)
         {
+            if (DataHandler.GetSeries().Length <= Index) { return; }
             object Series = DataHandler.GetSeries()[Index];
             Type type = Series.GetType();
             Type Generic = type.GetGenericArguments()[0];
