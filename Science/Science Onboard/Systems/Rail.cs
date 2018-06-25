@@ -16,6 +16,8 @@ namespace Science.Systems
 {
     public class Rail : ISubsystem
     {
+        public bool TraceLogging { get; set; }
+
         private const float MOTOR_MAX_SPEED = 0.5F;
         private const int INIT_TIMEOUT = 5000;
         private const float ENCODER_MM_PER_TICK = 0.001F; // TODO: Placeholder value. Replace.

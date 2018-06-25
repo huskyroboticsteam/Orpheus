@@ -13,6 +13,7 @@ namespace Science.Systems
 {
     public class LEDs : ISubsystem
     {
+        public bool TraceLogging { get; set; }
         private RGBLED[] Lights = new RGBLED[8];
 
         public LEDs(IPWMOutput[] LowFreqChannels, IPWMOutput[] HighFreqChannels)

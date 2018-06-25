@@ -16,6 +16,7 @@ namespace Science.Systems
 {
     public class SysSensors : ISubsystem
     {
+        public bool TraceLogging { get; set; }
         private bool TakeReadings = false;
         private Timer Timer;
 
@@ -61,10 +62,9 @@ namespace Science.Systems
                 double SysSV = this.SystemSensor.GetShuntVoltage();
                 double DrlSV = this.DrillSensor.GetShuntVoltage();
 
-                Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Sys A:" + SysA + ", Drill A:" + Drill + ", Rail A:" + RailA + ", Sys V:" + SysV + ", SysShunt V:" + SysSV + ", Working:" + this.SystemSensor.Test());
-                Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Calculated currents: Sys:" + (SysSV / 0.150) + ", Drill:" + (DrlSV / 0.010));
+                if (this.TraceLogging) { Log.Trace(this, string.Format("Sys: {0:N5}A, {1:N5}V (Shunt {2:N5}V). Drill: {3:N5}A. Rail: {4:N5}A. Test: {5}", SysA, SysV, SysSV, Drill, RailA, this.SystemSensor.Test()));  }
 
-                byte[] Data = UtilData.ToBytes(SysSV / 0.150).Concat(UtilData.ToBytes(DrlSV / 0.010)).Concat(UtilData.ToBytes(RailA / 0.002)).Concat(UtilData.ToBytes(SysV)).Concat(UtilData.ToBytes(Sample.Ticks)).ToArray();
+                byte[] Data = UtilData.ToBytes(SysSV / 0.150).Concat(UtilData.ToBytes(DrlSV / 0.010)).Concat(UtilData.ToBytes(RailA / 0.002)).Concat(UtilData.ToBytes(SysV)).Concat(UtilData.ToBytes(Sample.Ticks)).ToArray(); // TODO: Decide if we want to calculate or use device
                 Packet Packet = new Packet(new Message(ScienceConstants.Packets.SYS_SENSOR, Data), false);
                 Client.Send(Packet);
             }

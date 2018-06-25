@@ -11,6 +11,7 @@ namespace Science.Systems
 {
     public class Sample : ISubsystem
     {
+        public bool TraceLogging { get; set; }
         private Servo Servo;
 
         public Sample(IPWMOutput ServoPWM)

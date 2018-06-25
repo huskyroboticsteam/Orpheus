@@ -12,6 +12,8 @@ namespace Science.Systems
 {
     public class Drill : ISubsystem
     {
+        public bool TraceLogging { get; set; }
+
         private const float MOTOR_MAX_SPEED = 1F;
 
         /*private bool P_DoorOpen;
