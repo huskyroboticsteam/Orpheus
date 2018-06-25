@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
 using Scarlet.Communications;
 using Scarlet.Components.Sensors;
@@ -12,7 +11,7 @@ namespace Science_Base
     {
         public static DataSeries<float> ThermoInt = new DataSeries<float>("Thermocouple Internal", "Sensor Temperature (°C)");
         public static DataSeries<float> ThermoExt = new DataSeries<float>("Thermocouple External", "Ground Temperature (°C)");
-        public static DataSeries<int> UV = new DataSeries<int>("UV Light", "UV Light (µm/cm²)");
+        public static DataSeries<int> UV = new DataSeries<int>("UV Light", "UV Light (µW/cm²)");
         public static DataSeries<float> AirPollution = new DataSeries<float>("Air Pollution", "Air Pollution (PPM)");
         // TODO: Add the rest of the serieses.
 
@@ -26,7 +25,7 @@ namespace Science_Base
 
         public static DataSeries<double> AIn0 = new DataSeries<double>("Analogue Input 0", "Input (V)");
         public static DataSeries<double> AIn1 = new DataSeries<double>("Analogue Input 1", "Input (V)");
-        public static DataSeries<int> Encoder = new DataSeries<int>("Encoder", "Encoder COunt");
+        public static DataSeries<int> Encoder = new DataSeries<int>("Encoder", "Encoder Count");
 
         public static void Start()
         {

@@ -27,7 +27,8 @@ namespace Science_Base
             UIHelper.SetMode(this.StatusImgPower, Resources.Power, 3);
             UIHelper.SetMode(this.StatusImgSystem, Resources.CPU, 3);
             this.Charts = new ChartManager(this.ChartLeft, this.ChartRight, null);
-            this.Charts.Left.AddSeries(DataHandler.RandomData);
+            UIHelper.LoadCharts(this.Charts);
+            //this.Charts.Left.AddSeries(DataHandler.RandomData);
         }
 
         private void InitWindow()
@@ -263,6 +264,7 @@ namespace Science_Base
 
         private void MainWindow_FormClosed(object sender, FormClosedEventArgs e)
         {
+            UIHelper.SaveCharts(this.Charts);
             Server.Stop();
             Environment.Exit(0);
         }

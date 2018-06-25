@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Media;
+using Scarlet.Utilities;
 
 namespace Science_Base
 {
@@ -82,6 +83,42 @@ namespace Science_Base
             Rectangle Output = new Rectangle(0, 0, Image.Width, Image.Height);
             Graphics.DrawImage(Image, Output, 0, 0, Image.Width, Image.Height, GraphicsUnit.Pixel, Attributes);
             Box.Image = Image;
+        }
+
+        public static void LoadCharts(ChartManager Charts)
+        {
+            string LeftListRaw = StateStore.GetOrCreate("GraphLeftSeries", string.Empty);
+            string RightListRaw = StateStore.GetOrCreate("GraphRightSeries", string.Empty);
+            AddSeries(LeftListRaw, Charts.Left);
+            AddSeries(RightListRaw, Charts.Right);
+        }
+
+        private static void AddSeries(string Raw, ChartInstance Chart)
+        {
+            if (string.IsNullOrWhiteSpace(Raw)) { return; }
+            string[] Parts = Raw.Split(',');
+            if (Parts == null || Parts.Length == 0) { return; }
+            foreach (string Part in Parts)
+            {
+                if (int.TryParse(Part, out int SeriesID)) { Chart.AddByIndex(SeriesID); }
+            }
+        }
+
+        public static void SaveCharts(ChartManager Charts)
+        {
+            string LeftListRaw = GetSeries(Charts.Left);
+            string RightListRaw = GetSeries(Charts.Right);
+            StateStore.Set("GraphLeftSeries", LeftListRaw);
+            StateStore.Set("GraphRightSeries", RightListRaw);
+            StateStore.Save();
+        }
+
+        private static string GetSeries(ChartInstance Chart)
+        {
+            string Output = string.Empty;
+            if (Chart.GetIndices().Count == 0) { return Output; }
+            foreach (int Index in Chart.GetIndices()) { Output = Output += Index + ","; }
+            return Output.Substring(0, Output.Length - 1); // Trim the last ','
         }
 
     }

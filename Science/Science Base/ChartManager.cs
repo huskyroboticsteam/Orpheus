@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using LiveCharts.Geared;
 using LiveCharts.WinForms;
-using Scarlet.Utilities;
 
 namespace Science_Base
 {
@@ -15,6 +12,8 @@ namespace Science_Base
     {
         public CartesianChart Chart;
         public ListBox DataChooser;
+
+        private HashSet<int> SeriesIndexList = new HashSet<int>();
 
         public ChartInstance(CartesianChart Chart, ListBox Chooser)
         {
@@ -49,6 +48,9 @@ namespace Science_Base
                 PointGeometry = null
             };
             this.Chart.Series.Add(ChartSeries);
+
+            object[] AllSeries = DataHandler.GetSeries();
+            if (AllSeries.Contains(Series)) { this.SeriesIndexList.Add(Array.IndexOf(AllSeries, Series)); }
         }
 
         // Thanks Sasha!
@@ -60,12 +62,16 @@ namespace Science_Base
             MethodInfo Info = this.GetType().GetMethod("AddSeries");
             Info = Info.MakeGenericMethod(Generic);
             Info.Invoke(this, new object[] { Series });
+            this.SeriesIndexList.Add(Index);
         }
+
+        public HashSet<int> GetIndices() { return this.SeriesIndexList; }
 
         public void Clear()
         {
             this.Chart.Series.Clear();
             this.Chart.AxisY.Clear();
+            this.SeriesIndexList.Clear();
         }
     }
 
