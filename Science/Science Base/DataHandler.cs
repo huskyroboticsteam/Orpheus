@@ -13,6 +13,10 @@ namespace Science_Base
         public static DataSeries<float> ThermoExt = new DataSeries<float>("Thermocouple External", "Ground Temperature (°C)");
         public static DataSeries<int> UV = new DataSeries<int>("UV Light", "UV Light (µW/cm²)");
         public static DataSeries<float> AirPollution = new DataSeries<float>("Air Pollution", "Air Pollution (PPM)");
+        public static DataSeries<double> AirTemp = new DataSeries<double>("Air Temperature", "Temperature (°C)");
+        public static DataSeries<double> AirHumidity = new DataSeries<double>("Air Humidity", "Relative Humidity (%)");
+        public static DataSeries<double> AirPressure = new DataSeries<double>("Air Pressure", "Pressure (Pa)");
+        public static DataSeries<float> SoilMoisture = new DataSeries<float>("Soil Moisture", "Volumetric Water Content (%)");
         // TODO: Add the rest of the serieses.
 
         public static DataSeries<double> SupplyVoltage = new DataSeries<double>("Supply Voltage", "Supply Voltage (V)");
@@ -20,12 +24,11 @@ namespace Science_Base
         public static DataSeries<double> DrillCurrent = new DataSeries<double>("Drill Current", "Drill Current (A)");
         public static DataSeries<double> RailCurrent = new DataSeries<double>("Rail Current", "Rail Current (A)");
 
+        public static DataSeries<double> AIn0 = new DataSeries<double>("Analogue 0", "Analogue Input");
+        public static DataSeries<double> AIn1 = new DataSeries<double>("Analogue 1", "Analogue Input");
+
         public static DataSeries<int> RandomData = new DataSeries<int>("Random", "Rubbish");
         private static Random Random;
-
-        public static DataSeries<double> AIn0 = new DataSeries<double>("Analogue Input 0", "Input (V)");
-        public static DataSeries<double> AIn1 = new DataSeries<double>("Analogue Input 1", "Input (V)");
-        public static DataSeries<int> Encoder = new DataSeries<int>("Encoder", "Encoder Count");
 
         public static void Start()
         {
@@ -38,7 +41,7 @@ namespace Science_Base
 
         public static object[] GetSeries()
         {
-            return new object[] { ThermoInt, ThermoExt, UV, AirPollution, SupplyVoltage, SystemCurrent, DrillCurrent, RailCurrent, RandomData, AIn0, AIn1, Encoder };
+            return new object[] { ThermoInt, ThermoExt, UV, AirPollution, AirTemp, AirHumidity, AirPressure, SoilMoisture, SupplyVoltage, SystemCurrent, DrillCurrent, RailCurrent, RandomData, AIn0, AIn1 };
         }
 
         public static void PacketGroundSensor(Packet Packet)
@@ -91,7 +94,6 @@ namespace Science_Base
             }
             int Enc = UtilData.ToInt(UtilMain.SubArray(Packet.Data.Payload, 0, 4));
             DateTime Sample = new DateTime(UtilData.ToLong(UtilMain.SubArray(Packet.Data.Payload, 4, 8)));
-            Encoder.Data.Add(new Datum<int>(Sample, Enc));
         }
 
         private static void DoAdds()

@@ -23,29 +23,30 @@ namespace Science
         public readonly MusicPlayer Music;
 
         private II2CBus I2C;
+        private ISPIBus SPI;
         private PCA9685 PWMGenLowFreq, PWMGenHighFreq;
 
         public IOHandler()
         {
             RaspberryPi.Initialize();
             this.I2C = new I2CBusPi();
+            this.SPI = new SPIBusPi(0);
             this.PWMGenHighFreq = new PCA9685(this.I2C, 0x4C, -1, PCA9685.OutputInvert.Inverted, PCA9685.OutputDriverMode.OpenDrain);
             this.PWMGenLowFreq = new PCA9685(this.I2C, 0x74, -1, PCA9685.OutputInvert.Inverted, PCA9685.OutputDriverMode.OpenDrain);
             this.PWMGenHighFreq.SetFrequency(333);
             this.PWMGenLowFreq.SetFrequency(50);
 
-            //TODO: Is it OK to construct a comms bus more than once for the different systems? Answer: Threading issues!
-            //this.RailController = new Rail(this.PWMGenHighFreq.Outputs[1], new DigitalInPi(11), new SPIBusPi(0), new DigitalOutPi(31), new I2CBusPi(), null);
+            this.RailController = new Rail(this.PWMGenHighFreq.Outputs[1], new DigitalInPi(11), this.SPI, new DigitalOutPi(31), this.I2C, null);
             this.DrillController = new Drill(this.PWMGenHighFreq.Outputs[0], this.PWMGenLowFreq.Outputs[0]);
             this.SampleController = new Sample(this.PWMGenLowFreq.Outputs[1]);
             this.LEDController = new LEDs(this.PWMGenLowFreq.Outputs, this.PWMGenHighFreq.Outputs);
-            this.AuxSensors = new AuxSensors();
+            this.AuxSensors = new AuxSensors(this.SPI, this.I2C);
             this.SysSensors = new SysSensors();
             this.Music = new MusicPlayer();
 
-            this.InitProcedure = new ISubsystem[] { /*this.RailController,*/ this.DrillController, /*this.SampleController, */this.LEDController, this.AuxSensors, this.SysSensors, this.Music };
-            this.EStopProcedure = new ISubsystem[] { this.Music, /*this.RailController,*/ this.DrillController, this.SampleController, this.LEDController, this.AuxSensors, this.SysSensors };
-            this.UpdateProcedure = new ISubsystem[] { /*this.RailController,*/ this.DrillController, /*this.SampleController, */this.LEDController/*, this.AuxSensors, this.SysSensors*/ };
+            this.InitProcedure = new ISubsystem[] { this.RailController, this.DrillController, /*this.SampleController, */this.LEDController, this.AuxSensors, this.SysSensors, this.Music };
+            this.EStopProcedure = new ISubsystem[] { this.Music, this.RailController, this.DrillController, this.SampleController, this.LEDController, this.AuxSensors, this.SysSensors };
+            this.UpdateProcedure = new ISubsystem[] { this.RailController, this.DrillController, /*this.SampleController, */this.LEDController/*, this.AuxSensors, this.SysSensors*/ };
             if (this.EStopProcedure.Length < this.InitProcedure.Length || this.EStopProcedure.Length < this.UpdateProcedure.Length) { throw new Exception("A system is registered for init or updates, but not for emergency stop. For safety reasons, this is not permitted."); }
         }
 
