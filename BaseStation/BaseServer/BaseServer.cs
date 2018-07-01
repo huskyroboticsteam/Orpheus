@@ -2,10 +2,10 @@
 using Scarlet.Utilities;
 using SharpDX.XInput;
 using System;
-using System.Net;
 using System.Linq;
 using System.Threading;
 using System.Collections.Generic;
+using HuskyRobotics.Utilities;
 
 namespace HuskyRobotics.BaseStation.Server
 {
@@ -15,20 +15,23 @@ namespace HuskyRobotics.BaseStation.Server
     /// </summary>
     public static class BaseServer
     {
-
-        private static bool shutdown = false;
-        private static Controller gamepad;
         private static int LeftThumbDeadzone = 7849;
         private static int RightThumbDeadzone = 8689;
         private static int TriggerThreshold = 30;
 
-        public static void Start(Controller controller)
+        private const long CONTROL_SEND_INTERVAL = 100_000_000;
+
+        public static void Setup()
         {
             Scarlet.Communications.Server.Start(1025, 1026);
             Scarlet.Communications.Server.ClientConnectionChange += ClientConnected;
-            Parse.SetParseHandler(0xC0, gpsHandler);
-            Parse.SetParseHandler(0xC1, magnetomerHandler);
-            gamepad = controller;
+            Parse.SetParseHandler(0xC0, GpsHandler);
+            Parse.SetParseHandler(0xC1, MagnetomerHandler);
+        }
+
+        public static void Shutdown()
+        {
+            Scarlet.Communications.Server.Stop();
         }
 
         private static void ClientConnected(object sender, EventArgs e)
@@ -37,32 +40,18 @@ namespace HuskyRobotics.BaseStation.Server
             Console.WriteLine(Scarlet.Communications.Server.GetClients());
         }
 
-        private static short PreventOverflow(short shortVal)
-        {
-            if (shortVal == -32768)
-            {
-                shortVal++;
-            }
-            return shortVal;
-        }
+        private static long lastControlSend = 0;
 
-        public static void EventLoop()
+        public static void Update(Controller controller)
         {
-            while (!shutdown)
+            if (controller.IsConnected && lastControlSend > CONTROL_SEND_INTERVAL)
             {
-                if (!gamepad.IsConnected)
-                {
-                    Console.WriteLine("Gamepad not connected");
-                    Thread.Sleep(100);
-                    continue;
-                }
-                State state = gamepad.GetState();
+                State state = controller.GetState();
                 byte rightTrigger = state.Gamepad.RightTrigger;
                 byte leftTrigger = state.Gamepad.LeftTrigger;
-                short leftThumbX = PreventOverflow(state.Gamepad.LeftThumbX);
+                short leftThumbX = Utility.PreventOverflow(state.Gamepad.LeftThumbX);
 
                 Console.WriteLine(leftThumbX);
-
 
                 if (rightTrigger < TriggerThreshold) { rightTrigger = 0; }
                 if (leftTrigger < TriggerThreshold) { leftTrigger = 0; }
@@ -85,7 +74,6 @@ namespace HuskyRobotics.BaseStation.Server
 
                 Console.WriteLine(steerSpeed);
 
-
                 Packet SteerPack = new Packet(0x8F, true, "MainRover");
                 SteerPack.AppendData(UtilData.ToBytes(steerSpeed));
                 //SteerPack.AppendData(UtilData.ToBytes(steerPos));
@@ -94,12 +82,11 @@ namespace HuskyRobotics.BaseStation.Server
                 Packet SpeedPack = new Packet(0x95, true, "MainRover");
                 SpeedPack.AppendData(UtilData.ToBytes(speed));
                 Scarlet.Communications.Server.Send(SpeedPack);
-
-                Thread.Sleep(100);
+                lastControlSend = DateTime.UtcNow.Ticks * 100; //time in nanoseconds
             }
         }
 
-        private static List<float> convertToFloatArray(Packet data)
+        private static List<float> ConvertToFloatArray(Packet data)
         {
             List<float> ret = new List<float>();
 
@@ -117,9 +104,9 @@ namespace HuskyRobotics.BaseStation.Server
             return ret;
         }
 
-        private static void gpsHandler(Packet gpsData)
+        private static void GpsHandler(Packet gpsData)
         {
-            List<float> vals = convertToFloatArray(gpsData);
+            List<float> vals = ConvertToFloatArray(gpsData);
 
             float lat = vals[0];
             float lng = vals[1];
@@ -127,21 +114,15 @@ namespace HuskyRobotics.BaseStation.Server
             Console.WriteLine(lat + ", " + lng);
         }
 
-        private static void magnetomerHandler(Packet magData)
+        private static void MagnetomerHandler(Packet magData)
         {
-            List<float> vals = convertToFloatArray(magData);
+            List<float> vals = ConvertToFloatArray(magData);
 
             float x = vals[0];
             float y = vals[1];
             float z = vals[2];
 
             Console.WriteLine(x + ", " + y + ", " + z);
-        }
-
-        public static void Shutdown()
-        {
-            shutdown = true;
-            Scarlet.Communications.Server.Stop();
         }
     }
 }
