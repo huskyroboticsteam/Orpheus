@@ -19,7 +19,7 @@ namespace HuskyRobotics.BaseStation.Server
         private static int RightThumbDeadzone = 8689;
         private static int TriggerThreshold = 30;
 
-        private const long CONTROL_SEND_INTERVAL = 100_000_000;
+        private const long CONTROL_SEND_INTERVAL_NANOSECONDS = 100_000_000;
 
         public static void Setup()
         {
@@ -44,7 +44,7 @@ namespace HuskyRobotics.BaseStation.Server
 
         public static void Update(Controller controller)
         {
-            if (controller.IsConnected && lastControlSend > CONTROL_SEND_INTERVAL)
+            if (controller.IsConnected && (TimeNanoseconds() - lastControlSend) > CONTROL_SEND_INTERVAL_NANOSECONDS)
             {
                 State state = controller.GetState();
                 byte rightTrigger = state.Gamepad.RightTrigger;
@@ -82,8 +82,13 @@ namespace HuskyRobotics.BaseStation.Server
                 Packet SpeedPack = new Packet(0x95, true, "MainRover");
                 SpeedPack.AppendData(UtilData.ToBytes(speed));
                 Scarlet.Communications.Server.Send(SpeedPack);
-                lastControlSend = DateTime.UtcNow.Ticks * 100; //time in nanoseconds
+                lastControlSend = TimeNanoseconds(); //time in nanoseconds
             }
+        }
+
+        private static long TimeNanoseconds()
+        {
+            return DateTime.UtcNow.Ticks * 100;
         }
 
         private static List<float> ConvertToFloatArray(Packet data)
