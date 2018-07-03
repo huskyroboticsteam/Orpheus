@@ -49,7 +49,7 @@ namespace HuskyRobotics.BaseStation.Server
                 State state = controller.GetState();
                 byte rightTrigger = state.Gamepad.RightTrigger;
                 byte leftTrigger = state.Gamepad.LeftTrigger;
-                short leftThumbX = Utility.PreventOverflow(state.Gamepad.LeftThumbX);
+                short leftThumbX = PreventOverflow(state.Gamepad.LeftThumbX);
 
                 Console.WriteLine(leftThumbX);
 
@@ -84,6 +84,15 @@ namespace HuskyRobotics.BaseStation.Server
                 Scarlet.Communications.Server.Send(SpeedPack);
                 lastControlSend = TimeNanoseconds(); //time in nanoseconds
             }
+        }
+
+        public static short PreventOverflow(short shortVal)
+        {
+            if (shortVal == -32768)
+            {
+                shortVal++;
+            }
+            return shortVal;
         }
 
         private static long TimeNanoseconds()
