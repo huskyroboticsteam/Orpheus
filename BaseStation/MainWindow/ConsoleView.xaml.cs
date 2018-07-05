@@ -77,8 +77,7 @@ namespace HuskyRobotics.UI
 
             private static int GetIndexAfter(string str, int count)
             {
-                if (str == string.Empty)
-                    return -1;
+                if (str == string.Empty) return -1;
                 int index = -1;
                 while (count > 0 && (index = str.IndexOf(Environment.NewLine, index + Environment.NewLine.Length)) != -1)
                 {
@@ -89,12 +88,12 @@ namespace HuskyRobotics.UI
 
             private static int CountLines(string str)
             {
-                if (str == string.Empty)
-                    return 0;
+                if (str == string.Empty) return 0;
                 int index = -1;
                 int count = 0;
-                while (-1 != (index = str.IndexOf(Environment.NewLine, index + Environment.NewLine.Length)))
-                    count++;
+                while (-1 != (index = str.IndexOf(Environment.NewLine, index + Environment.NewLine.Length))) {
+		    count++;
+		}
                 return count + 1;
             }
         }
