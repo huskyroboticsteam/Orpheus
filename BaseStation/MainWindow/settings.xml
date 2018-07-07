@@ -1,7 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <settings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <devices />
-  <video_devices />
+  <video_devices>
+    <video_devices>
+      <name>Ricoh</name>
+      <port>5555</port>
+      <buffering_ms>50</buffering_ms>
+    </video_devices>
+    <video_devices>
+      <name>ZED</name>
+      <port>5556</port>
+      <buffering_ms>50</buffering_ms>
+    </video_devices>
+    <video_devices>
+      <name>Handy</name>
+      <port>5557</port>
+      <buffering_ms>50</buffering_ms>
+    </video_devices>
+    <video_devices>
+      <name>192.168.0.42</name>
+      <port>0000</port>
+      <buffering_ms>0</buffering_ms>
+    </video_devices>
+  </video_devices>
   <putty_path>C:\Program Files (x86)\PuTTY\putty.exe</putty_path>
-  <current_map_file>UW.map</current_map_file>
+  <current_map_file>New Map.map</current_map_file>
 </settings>
