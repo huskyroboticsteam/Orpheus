@@ -40,6 +40,9 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BBBCSIO, Version=1.6.0.0, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\HuskyRobotics.Scarlet.0.4.0\lib\BBBCSIO.dll</HintPath>
+    </Reference>
     <Reference Include="gio-sharp, Version=3.0.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL">
       <HintPath>..\packages\GstSharp.1.14.0\lib\net45\gio-sharp.dll</HintPath>
     </Reference>
@@ -55,15 +58,12 @@
     <Reference Include="OpenTK, Version=2.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenTK.2.0.0\lib\net20\OpenTK.dll</HintPath>
     </Reference>
+    <Reference Include="Scarlet, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HuskyRobotics.Scarlet.0.4.0\lib\Scarlet.dll</HintPath>
+    </Reference>
     <Reference Include="System.Drawing" />
-    <Reference Include="BBBCSIO, Version=1.6.0.0, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\packages\HuskyRobotics.Scarlet.0.3.1\lib\BBBCSIO.dll</HintPath>
-    </Reference>
     <Reference Include="HuskyRobotics.Arm">
-      <HintPath>..\..\Arm\ArmControl\bin\Debug\HuskyRobotics.Arm.dll</HintPath>
-    </Reference>
-    <Reference Include="Scarlet, Version=0.3.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\HuskyRobotics.Scarlet.0.3.1\lib\Scarlet.dll</HintPath>
+      <HintPath>..\..\Arm\ArmControl\bin\Release\HuskyRobotics.Arm.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
