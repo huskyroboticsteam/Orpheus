@@ -46,22 +46,28 @@ namespace Science_Base
 
         public static void PacketGroundSensor(Packet Packet)
         {
-            if(Packet == null || Packet.Data == null || Packet.Data.Payload == null || Packet.Data.Payload.Length != 24)
+            if(Packet == null || Packet.Data == null || Packet.Data.Payload == null || Packet.Data.Payload.Length != 40)
             {
                 Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Ground sensor packet invalid. Discarding.");
                 return;
             }
-            //float SoilMoisture = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 0, 4));
+            DateTime Timestamp = DateTime.Now;
             int UVLight = UtilData.ToInt(UtilMain.SubArray(Packet.Data.Payload, 0, 4));
-            uint ThermocoupleData = UtilData.ToUInt(UtilMain.SubArray(Packet.Data.Payload, 4, 4));
-            double AIn0Data = UtilData.ToDouble(UtilMain.SubArray(Packet.Data.Payload, 8, 8));
-            double AIn1Data = UtilData.ToDouble(UtilMain.SubArray(Packet.Data.Payload, 16, 8));
+            float AirQuality = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 4, 4));
+            float SoilMoist = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 8, 4));
+            uint ThermocoupleData = UtilData.ToUInt(UtilMain.SubArray(Packet.Data.Payload, 12, 4));
+            double AtmoTemp = UtilData.ToDouble(UtilMain.SubArray(Packet.Data.Payload, 16, 8));
+            double AtmoPres = UtilData.ToDouble(UtilMain.SubArray(Packet.Data.Payload, 24, 8));
+            double AtmoHumid = UtilData.ToDouble(UtilMain.SubArray(Packet.Data.Payload, 32, 8));
 
-            ThermoExt.Data.Add(new Datum<float>(DateTime.Now, MAX31855.ConvertExternalFromRaw(ThermocoupleData)));
-            ThermoInt.Data.Add(new Datum<float>(DateTime.Now, MAX31855.ConvertInternalFromRaw(ThermocoupleData)));
-            UV.Data.Add(new Datum<int>(DateTime.Now, UVLight));
-            AIn0.Data.Add(new Datum<double>(DateTime.Now, AIn0Data));
-            AIn1.Data.Add(new Datum<double>(DateTime.Now, AIn1Data));
+            UV.Data.Add(new Datum<int>(Timestamp, UVLight));
+            AirPollution.Data.Add(new Datum<float>(Timestamp, AirQuality));
+            SoilMoisture.Data.Add(new Datum<float>(Timestamp, SoilMoist));
+            ThermoExt.Data.Add(new Datum<float>(Timestamp, MAX31855.ConvertExternalFromRaw(ThermocoupleData)));
+            ThermoInt.Data.Add(new Datum<float>(Timestamp, MAX31855.ConvertInternalFromRaw(ThermocoupleData)));
+            AirTemp.Data.Add(new Datum<double>(Timestamp, AtmoTemp));
+            AirPressure.Data.Add(new Datum<double>(Timestamp, AtmoPres));
+            AirHumidity.Data.Add(new Datum<double>(Timestamp, AtmoHumid));
         }
 
         public static void PacketSysSensor(Packet Packet)
