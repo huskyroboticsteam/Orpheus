@@ -1,9 +1,8 @@
 ﻿using System;
 using HuskyRobotics.UI;
-using HuskyRobotics.BaseStation;
 using System.Threading;
 using System.Windows;
-using Scarlet.Utilities;
+using HuskyRobotics.BaseStation.Server;
 
 /// <summary>
 /// Contains the entry point to the base station system.
@@ -12,6 +11,8 @@ namespace HuskyRobotics.BaseStation.Start
 {
     public static class StartBaseStation
     {
+        private static readonly SharpDX.XInput.Controller Controller = GamepadFactory.GetDriveGamePad();
+
         /// <summary>
         /// The entry point of the base station system. Starts the base station user interface
 		/// and communication with the rover.
@@ -20,17 +21,35 @@ namespace HuskyRobotics.BaseStation.Start
 		[STAThread]
         public static void Main(String[] args)
         {
-            //temporary example code
-            Server.BaseServer.Start(GamepadFactory.GetDriveGamePad());
-            Thread eventloop = new Thread(Server.BaseServer.EventLoop);
-            eventloop.IsBackground = true;
-            eventloop.Start();
-            Thread ipCameraControl = new Thread(() => CameraControl.Start(GamepadFactory.GetDriveGamePad()));
-            ipCameraControl.IsBackground = true;
-            ipCameraControl.Start();
+            BaseServer.Setup();
+            CameraControl.Setup();
+            new Thread(StartUpdates).Start();
             Application app = new Application();
-            app.Exit += (sd, ev) => Server.BaseServer.Shutdown();
+            app.Exit += (sd, ev) => StopUpdates();
 			app.Run(new MainWindow());
+        }
+
+        private static void Update()
+        {
+            BaseServer.Update(Controller);
+            CameraControl.Update(Controller);
+            Thread.Sleep(1);
+        }
+
+        private static volatile bool exit;
+
+        public static void StartUpdates()
+        {
+            while(!exit)
+            {
+                Update();
+            }
+        }
+
+        public static void StopUpdates()
+        {
+            exit = true;
+            BaseServer.Shutdown();
         }
     }
 }
