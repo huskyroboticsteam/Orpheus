@@ -5,7 +5,6 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Collections.Generic;
-using HuskyRobotics.Utilities;
 
 namespace HuskyRobotics.BaseStation.Server
 {
@@ -19,6 +18,7 @@ namespace HuskyRobotics.BaseStation.Server
         //private static readonly int RightThumbDeadzone = 8689;
         private static readonly int TriggerThreshold = 30;
         private const long CONTROL_SEND_INTERVAL_NANOSECONDS = 100_000_000; //100,000,000 ns == 100 ms
+        public static event EventHandler<(float, float)> GPSUpdate;
         private static long lastControlSend = 0;
 
         public static void Setup()
@@ -47,17 +47,17 @@ namespace HuskyRobotics.BaseStation.Server
 		/// <param name="driveController"></param>
         public static void Update(Controller driveController, Controller armController)
         {
-            Packet SteerPack;
-            Packet SpeedPack;
-            Packet WristPack;
-            Packet ElbowPack;
-            Packet ShoulderPack;
-            Packet BasePack;
-
             if (driveController.IsConnected 
                 && armController.IsConnected 
                 && (TimeNanoseconds() - lastControlSend) > CONTROL_SEND_INTERVAL_NANOSECONDS)
             {
+                Packet SteerPack;
+                Packet SpeedPack;
+                Packet WristPack;
+                Packet ElbowPack;
+                Packet ShoulderPack;
+                Packet BasePack;
+
                 State driveState = driveController.GetState();
                 State armState = armController.GetState();
                 byte rightTrigger = driveState.Gamepad.RightTrigger;
@@ -143,7 +143,7 @@ namespace HuskyRobotics.BaseStation.Server
 
                 lastControlSend = TimeNanoseconds(); //time in nanoseconds
             }
-            else
+            else if ((TimeNanoseconds() - lastControlSend) > CONTROL_SEND_INTERVAL_NANOSECONDS)
             {
                 Console.WriteLine("Gamepad not connected");
                 HaltRoverMotion();
@@ -202,6 +202,8 @@ namespace HuskyRobotics.BaseStation.Server
 
             float lat = vals[0];
             float lng = vals[1];
+
+            GPSUpdate(null, (lat, lng));
 
             Console.WriteLine(lat + ", " + lng);
         }

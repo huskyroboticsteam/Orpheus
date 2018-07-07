@@ -55,10 +55,6 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MainWindow\UserInterface.csproj">
-      <Project>{722B3498-9988-4667-B02C-C9D15D288657}</Project>
-      <Name>UserInterface</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Utilities\Utilities.csproj">
       <Project>{a6dfdff4-614f-4225-8f75-c81c6765f23e}</Project>
       <Name>Utilities</Name>

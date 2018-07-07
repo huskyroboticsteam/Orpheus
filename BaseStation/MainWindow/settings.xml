@@ -24,26 +24,5 @@
     </video_devices>
   </video_devices>
   <putty_path>C:\Program Files (x86)\PuTTY\putty.exe</putty_path>
-  <current_map_file>UW.map</current_map_file>
-  <recording_path>C:\Users\Husky Robotics\Downloads</recording_path>
-  <VideoDevices>
-    <name>Ricoh</name>
-    <port>5555</port>
-    <buffering_ms>50</buffering_ms>
-  </VideoDevices>
-  <VideoDevices>
-    <name>ZED</name>
-    <port>5556</port>
-    <buffering_ms>50</buffering_ms>
-  </VideoDevices>
-  <VideoDevices>
-    <name>Handy</name>
-    <port>5557</port>
-    <buffering_ms>50</buffering_ms>
-  </VideoDevices>
-  <VideoDevices>
-    <name>192.168.0.42</name>
-    <port>0000</port>
-    <buffering_ms>0</buffering_ms>
-  </VideoDevices>
+  <current_map_file>New Map.map</current_map_file>
 </settings>
