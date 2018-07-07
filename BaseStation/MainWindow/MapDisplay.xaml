@@ -12,7 +12,6 @@
             MouseMove="CanvasMouseMove"
             MouseWheel="CanvasMouseWheel">
         <Canvas x:Name="MapCanvas">
-            <Image Source="pack://application:,,,/Icons/RoverIcon.png" Name="Rover"/>
         </Canvas>
         <Button x:Name="ResetButton" Margin="10" Content="Reset Map" Padding="5" Click="ResetButton_Click"/>
     </Canvas>
