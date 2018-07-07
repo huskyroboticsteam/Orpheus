@@ -15,11 +15,11 @@ namespace HuskyRobotics.BaseStation.Server
     /// </summary>
     public static class BaseServer
     {
-        private static int LeftThumbDeadzone = 7849;
-        private static int RightThumbDeadzone = 8689;
-        private static int TriggerThreshold = 30;
+        private static readonly int LeftThumbDeadzone = 7849;
+        //private static readonly int RightThumbDeadzone = 8689;
+        private static readonly int TriggerThreshold = 30;
 
-        private const long CONTROL_SEND_INTERVAL_NANOSECONDS = 100_000_000;
+        private const long CONTROL_SEND_INTERVAL_NANOSECONDS = 100_000_000; //100,000,000 ns == 100 ms
 
         public static void Setup()
         {
@@ -42,6 +42,10 @@ namespace HuskyRobotics.BaseStation.Server
 
         private static long lastControlSend = 0;
 
+		/// <summary>
+		/// Send rover movement control packets.
+		/// </summary>
+		/// <param name="controller"></param>
         public static void Update(Controller controller)
         {
             if (controller.IsConnected && (TimeNanoseconds() - lastControlSend) > CONTROL_SEND_INTERVAL_NANOSECONDS)
@@ -51,7 +55,7 @@ namespace HuskyRobotics.BaseStation.Server
                 byte leftTrigger = state.Gamepad.LeftTrigger;
                 short leftThumbX = PreventOverflow(state.Gamepad.LeftThumbX);
 
-                Console.WriteLine(leftThumbX);
+                //Console.WriteLine(leftThumbX);
 
                 if (rightTrigger < TriggerThreshold) { rightTrigger = 0; }
                 if (leftTrigger < TriggerThreshold) { leftTrigger = 0; }
@@ -60,8 +64,8 @@ namespace HuskyRobotics.BaseStation.Server
                 float speed = (float)UtilMain.LinearMap(rightTrigger - leftTrigger, -255, 255, -1, 1);
                 float steerPos = (float)UtilMain.LinearMap(leftThumbX, -32768, 32767, -1, 1);
 
-                Console.WriteLine("Speed: " + speed);
-                Console.WriteLine("Steer Pos: " + steerPos);
+                //Console.WriteLine("Speed: " + speed);
+                //Console.WriteLine("Steer Pos: " + steerPos);
 
                 bool aPressed = (state.Gamepad.Buttons & GamepadButtonFlags.A) != 0;
                 bool bPressed = (state.Gamepad.Buttons & GamepadButtonFlags.B) != 0;
@@ -72,7 +76,7 @@ namespace HuskyRobotics.BaseStation.Server
                 if (bPressed)
                     steerSpeed = -1.0f;
 
-                Console.WriteLine(steerSpeed);
+                //Console.WriteLine(steerSpeed);
 
                 Packet SteerPack = new Packet(0x8F, true, "MainRover");
                 SteerPack.AppendData(UtilData.ToBytes(steerSpeed));
@@ -86,7 +90,7 @@ namespace HuskyRobotics.BaseStation.Server
             }
         }
 
-        public static short PreventOverflow(short shortVal)
+        private static short PreventOverflow(short shortVal)
         {
             if (shortVal == -32768)
             {

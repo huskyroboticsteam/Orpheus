@@ -19,8 +19,6 @@ namespace HuskyRobotics.UI
         }
 
 		private class ConsoleWriter : TextWriter {
-			private const int BUFFER_SIZE = 500;
-
 			private readonly TextBlock view;
 			private readonly ScrollViewer scroll;
             private readonly TextWriter oldOut;
@@ -92,8 +90,8 @@ namespace HuskyRobotics.UI
                 int index = -1;
                 int count = 0;
                 while (-1 != (index = str.IndexOf(Environment.NewLine, index + Environment.NewLine.Length))) {
-		    count++;
-		}
+					count++;
+				}
                 return count + 1;
             }
         }
