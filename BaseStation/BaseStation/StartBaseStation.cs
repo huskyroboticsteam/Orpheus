@@ -11,7 +11,8 @@ namespace HuskyRobotics.BaseStation.Start
 {
     public static class StartBaseStation
     {
-        private static readonly SharpDX.XInput.Controller Controller = GamepadFactory.GetDriveGamePad();
+        private static readonly SharpDX.XInput.Controller DriveController = GamepadFactory.GetDriveGamePad();
+        private static readonly SharpDX.XInput.Controller ArmController = GamepadFactory.GetArmGamepad();
 
         /// <summary>
         /// The entry point of the base station system. Starts the base station user interface
@@ -31,9 +32,9 @@ namespace HuskyRobotics.BaseStation.Start
 
         private static void Update()
         {
-            BaseServer.Update(Controller);
-            CameraControl.Update(Controller);
-            Thread.Sleep(1);
+            BaseServer.Update(DriveController, ArmController);
+            CameraControl.Update(DriveController);
+            Thread.Sleep(150);
         }
 
         private static volatile bool exit;

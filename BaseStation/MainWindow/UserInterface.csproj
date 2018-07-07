@@ -199,7 +199,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="settings.xml" />
+    <Resource Include="settings.xml">
+      <SubType>Designer</SubType>
+    </Resource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\GstSharp.1.14.0\build\GstSharp.targets" Condition="Exists('..\packages\GstSharp.1.14.0\build\GstSharp.targets')" />
