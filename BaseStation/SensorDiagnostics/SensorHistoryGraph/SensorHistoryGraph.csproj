@@ -51,6 +51,9 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="PresentationFramework.Aero2" />
+    <Reference Include="Scarlet, Version=0.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\HuskyRobotics.Scarlet.0.5.0\lib\Scarlet.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Design">

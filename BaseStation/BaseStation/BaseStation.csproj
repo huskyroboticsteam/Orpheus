@@ -12,6 +12,7 @@
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -24,7 +25,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -37,6 +37,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -48,7 +49,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>HuskyRobotics.BaseStation.Start.StartBaseStation</StartupObject>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>huskyrobotics.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup>
+    <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -77,14 +86,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="BBBCSIO, Version=1.6.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\SensorDLLs\BBBCSIO.dll</HintPath>
-    </Reference>
     <Reference Include="PresentationFramework" />
-    <Reference Include="Scarlet, Version=0.3.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\SensorDLLs\Scarlet.dll</HintPath>
+    <Reference Include="Scarlet, Version=0.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HuskyRobotics.Scarlet.0.5.0\lib\Scarlet.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpDX.4.1.0\lib\net45\SharpDX.dll</HintPath>
@@ -113,9 +117,13 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="huskyrobotics.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy /I /Q /Y "$(SolutionDir)_GStreamerDependencies" "$(TargetDir)"
-xcopy /I /Q /Y "$(SolutionDir)_GStreamerDependencies\_GLib\gstreamer-1.0" "$(TargetDir)lib\gstreamer-1.0"</PostBuildEvent>
+xcopy /I /Q /Y "$(SolutionDir)_GStreamerDependencies\_GLib\gstreamer-1.0" "$(TargetDir)lib\gstreamer-1.0"
+xcopy /I /Q /Y "$(SolutionDir)MainWindow\Icons" "$(TargetDir)Icons"</PostBuildEvent>
   </PropertyGroup>
 </Project>

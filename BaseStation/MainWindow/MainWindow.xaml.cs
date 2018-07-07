@@ -114,7 +114,7 @@ namespace HuskyRobotics.UI {
 
         private void LaunchStream(object sender, RoutedEventArgs e)
         {
-            if (StreamSelect.SelectedItem != null)
+            if (StreamSelect.HasItems && StreamSelect.SelectedItem is VideoDevice)
             {
                 VideoDevice selection = (VideoDevice)StreamSelect.SelectedItem;
                 Streams.Add(new VideoStream(selection.Name, "00:00:00"));

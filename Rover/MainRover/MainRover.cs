@@ -7,6 +7,7 @@ using Scarlet.Components.Sensors;
 using Scarlet.Communications;
 using Scarlet.Utilities;
 using System.Threading;
+
 namespace MainRover
 {
     public class MainRover
@@ -46,7 +47,7 @@ namespace MainRover
         {
             Client.Start(SERVER_IP, 1025, 1026, "MainRover");
             Packets = new QueueBuffer();
-            for (byte i = 0; i < 200; i++)
+            for (byte i = 0x8E; i <= 0x99; i++)
                 Parse.SetParseHandler(i, (Packet) => Packets.Enqueue(Packet, 0));
         }
 
@@ -118,6 +119,7 @@ namespace MainRover
             Quit = false;
             InitBeagleBone();
             SetupClient();
+            SetupArmServer();
             MotorControl.Initialize();
             do
             {
