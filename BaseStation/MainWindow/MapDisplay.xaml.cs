@@ -54,7 +54,7 @@ namespace HuskyRobotics.UI
         public MapDisplay()
         {
             InitializeComponent();
-            BaseServer.GPSUpdate += updateRoverPos;
+            BaseServer.GPSUpdate += UpdateRoverPosition;
             _roverIconBitmap = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"/Icons/RoverIcon.png", UriKind.Absolute));
             _waypointBitmap = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"/Icons/waypoint.png", UriKind.Absolute));
             RoverIcon = new Image { Source = _roverIconBitmap };
@@ -112,7 +112,7 @@ namespace HuskyRobotics.UI
                 WaypointsChanged(null, null); // this loads the waypoints on startup
             }
 
-            updateRoverPos(this, (0,0));
+            UpdateRoverPosition(this, (0,0));
         }
 
         // adds an image to the canvas with the given file location and the coords of where
@@ -133,7 +133,7 @@ namespace HuskyRobotics.UI
             MapCanvas.Children.Clear();
         }
 
-        private void updateRoverPos(object sender, (float, float) e)
+        private void UpdateRoverPosition(object sender, (float, float) e)
         {
             MapCanvas.Children.Remove(RoverIcon);
             Tuple<int, int> pixelCoords = MapConversion.LatLongToPixelXY(e.Item1, e.Item2, Zoom);
