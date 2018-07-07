@@ -1,28 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Xml.Serialization;
 
-namespace HuskyRobotics.UI
-{
-    /// <summary>
-    /// Interaction logic for SettingsPanel.xaml
-    /// </summary>
-    public partial class SettingsPanel : UserControl, INotifyPropertyChanged
+namespace HuskyRobotics.UI {
+	/// <summary>
+	/// Interaction logic for SettingsPanel.xaml
+	/// </summary>
+	public partial class SettingsPanel : UserControl, INotifyPropertyChanged
     {
         private MapConfiguration _mapConfig;
         private Settings _settings;
@@ -53,12 +40,12 @@ namespace HuskyRobotics.UI
         {
             DataContext = this;
             MapConfig = new MapConfiguration();
-            initMapFiles();
+            InitMapFiles();
             InitializeComponent();
         }
 
 
-        private void initMapFiles()
+        private void InitMapFiles()
         {
             _mapSets.Clear();
             string imageFolderPath = Directory.GetCurrentDirectory() + @"\Images";
@@ -92,7 +79,7 @@ namespace HuskyRobotics.UI
             bgw.RunWorkerCompleted += (_, __) =>
             {
                 MapDownloadButton.IsEnabled = true;
-                initMapFiles();
+                InitMapFiles();
                 Settings.CurrentMapFile = MapConfig.MapSetName + ".map";
                 MapStatus.Content = Settings.CurrentMapFile + " downloaded!";
             };

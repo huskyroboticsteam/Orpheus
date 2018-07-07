@@ -2,10 +2,10 @@
 using Scarlet.Utilities;
 using SharpDX.XInput;
 using System;
-using System.Net;
 using System.Linq;
 using System.Threading;
 using System.Collections.Generic;
+using HuskyRobotics.Utilities;
 
 namespace HuskyRobotics.BaseStation.Server
 {
@@ -15,22 +15,24 @@ namespace HuskyRobotics.BaseStation.Server
     /// </summary>
     public static class BaseServer
     {
+        private static readonly int LeftThumbDeadzone = 7849;
+        //private static readonly int RightThumbDeadzone = 8689;
+        private static readonly int TriggerThreshold = 30;
+        private const long CONTROL_SEND_INTERVAL_NANOSECONDS = 100_000_000; //100,000,000 ns == 100 ms
+        private static long lastControlSend = 0;
 
-        private static bool shutdown = false;
-        private static Controller DriveGamepad;
-        private static Controller ArmGamepad;
-        private static int LeftThumbDeadzone = 7849;
-        private static int RightThumbDeadzone = 8689;
-        private static int TriggerThreshold = 30;
-
-        public static void Start(Controller dGamepad, Controller aGamepad)
+        public static void Setup()
         {
             Scarlet.Communications.Server.Start(1025, 1026);
             Scarlet.Communications.Server.ClientConnectionChange += ClientConnected;
-            Parse.SetParseHandler(0xC0, gpsHandler);
-            Parse.SetParseHandler(0xC1, magnetomerHandler);
-            DriveGamepad = dGamepad;
-            ArmGamepad = aGamepad;
+            Parse.SetParseHandler(0xC0, GpsHandler);
+            Parse.SetParseHandler(0xC1, MagnetomerHandler);
+        }
+
+        public static void Shutdown()
+        {
+            HaltRoverMotion();
+            Scarlet.Communications.Server.Stop();
         }
 
         private static void ClientConnected(object sender, EventArgs e)
@@ -39,16 +41,11 @@ namespace HuskyRobotics.BaseStation.Server
             Console.WriteLine(Scarlet.Communications.Server.GetClients());
         }
 
-        private static short PreventOverflow(short shortVal)
-        {
-            if (shortVal == -32768)
-            {
-                shortVal++;
-            }
-            return shortVal;
-        }
-
-        public static void EventLoop()
+		/// <summary>
+		/// Send rover movement control packets.
+		/// </summary>
+		/// <param name="driveController"></param>
+        public static void Update(Controller driveController, Controller armController)
         {
             Packet SteerPack;
             Packet SpeedPack;
@@ -57,26 +54,12 @@ namespace HuskyRobotics.BaseStation.Server
             Packet ShoulderPack;
             Packet BasePack;
 
-            while (!shutdown)
+            if (driveController.IsConnected 
+                && armController.IsConnected 
+                && (TimeNanoseconds() - lastControlSend) > CONTROL_SEND_INTERVAL_NANOSECONDS)
             {
-                if (!DriveGamepad.IsConnected)
-                {
-                    Console.WriteLine("Gamepad not connected");
-                    SteerPack = new Packet(0x8F, true, "MainRover");
-                    SteerPack.AppendData(UtilData.ToBytes(0));
-                    Scarlet.Communications.Server.Send(SteerPack);
-
-                    SpeedPack = new Packet(0x95, true, "MainRover");
-                    SpeedPack.AppendData(UtilData.ToBytes(0));
-                    Scarlet.Communications.Server.Send(SpeedPack);
-
-                    Packet ArmEmergencyStop = new Packet(0x80, true, "ArmMaster");
-                    Scarlet.Communications.Server.Send(ArmEmergencyStop);
-                    Thread.Sleep(100);
-                    continue;
-                }
-                State driveState = DriveGamepad.GetState();
-                State armState = ArmGamepad.GetState();
+                State driveState = driveController.GetState();
+                State armState = armController.GetState();
                 byte rightTrigger = driveState.Gamepad.RightTrigger;
                 byte leftTrigger = driveState.Gamepad.LeftTrigger;
                 short leftThumbX = PreventOverflow(driveState.Gamepad.LeftThumbX);
@@ -88,8 +71,8 @@ namespace HuskyRobotics.BaseStation.Server
                 float speed = (float)UtilMain.LinearMap(rightTrigger - leftTrigger, -255, 255, -1, 1);
                 float steerPos = (float)UtilMain.LinearMap(leftThumbX, -32768, 32767, -1, 1);
 
-                Console.WriteLine("Speed: " + speed);
-                Console.WriteLine("Steer Pos: " + steerPos);
+                //Console.WriteLine("Speed: " + speed);
+                //Console.WriteLine("Steer Pos: " + steerPos);
 
                 bool aPressedDrive = (driveState.Gamepad.Buttons & GamepadButtonFlags.A) != 0;
                 bool bPressedDrive = (driveState.Gamepad.Buttons & GamepadButtonFlags.B) != 0;
@@ -103,7 +86,6 @@ namespace HuskyRobotics.BaseStation.Server
                 bool downPressedArm = (armState.Gamepad.Buttons & GamepadButtonFlags.DPadDown) != 0;
                 bool leftPressedArm = (armState.Gamepad.Buttons & GamepadButtonFlags.DPadLeft) != 0;
                 bool rightPressedArm = (armState.Gamepad.Buttons & GamepadButtonFlags.DPadRight) != 0;
-
 
                 float steerSpeed = 0.0f;
                 if (aPressedDrive)
@@ -159,11 +141,44 @@ namespace HuskyRobotics.BaseStation.Server
                 BasePack.AppendData(UtilData.ToBytes(baseArmSpeed));
                 Scarlet.Communications.Server.Send(BasePack);
 
-                Thread.Sleep(100);
+                lastControlSend = TimeNanoseconds(); //time in nanoseconds
+            }
+            else
+            {
+                Console.WriteLine("Gamepad not connected");
+                HaltRoverMotion();
             }
         }
 
-        private static List<float> convertToFloatArray(Packet data)
+        private static void HaltRoverMotion()
+        {
+            Packet SteerPack = new Packet(0x8F, true, "MainRover");
+            SteerPack.AppendData(UtilData.ToBytes(0));
+            Scarlet.Communications.Server.Send(SteerPack);
+
+            Packet SpeedPack = new Packet(0x95, true, "MainRover");
+            SpeedPack.AppendData(UtilData.ToBytes(0));
+            Scarlet.Communications.Server.Send(SpeedPack);
+
+            Packet ArmEmergencyStop = new Packet(0x80, true, "ArmMaster");
+            Scarlet.Communications.Server.Send(ArmEmergencyStop);
+        }
+
+        private static short PreventOverflow(short shortVal)
+        {
+            if (shortVal == -32768)
+            {
+                shortVal++;
+            }
+            return shortVal;
+        }
+
+        private static long TimeNanoseconds()
+        {
+            return DateTime.UtcNow.Ticks * 100;
+        }
+
+        private static List<float> ConvertToFloatArray(Packet data)
         {
             List<float> ret = new List<float>();
 
@@ -181,9 +196,9 @@ namespace HuskyRobotics.BaseStation.Server
             return ret;
         }
 
-        private static void gpsHandler(Packet gpsData)
+        private static void GpsHandler(Packet gpsData)
         {
-            List<float> vals = convertToFloatArray(gpsData);
+            List<float> vals = ConvertToFloatArray(gpsData);
 
             float lat = vals[0];
             float lng = vals[1];
@@ -191,33 +206,15 @@ namespace HuskyRobotics.BaseStation.Server
             Console.WriteLine(lat + ", " + lng);
         }
 
-        private static void magnetomerHandler(Packet magData)
+        private static void MagnetomerHandler(Packet magData)
         {
-            List<float> vals = convertToFloatArray(magData);
+            List<float> vals = ConvertToFloatArray(magData);
 
             float x = vals[0];
             float y = vals[1];
             float z = vals[2];
 
             Console.WriteLine(x + ", " + y + ", " + z);
-        }
-
-        public static void Shutdown()
-        {
-            shutdown = true;
-
-            Packet SteerPack = new Packet(0x8F, true, "MainRover");
-            SteerPack.AppendData(UtilData.ToBytes(0));
-            Scarlet.Communications.Server.Send(SteerPack);
-
-            Packet SpeedPack = new Packet(0x95, true, "MainRover");
-            SpeedPack.AppendData(UtilData.ToBytes(0));
-            Scarlet.Communications.Server.Send(SpeedPack);
-
-            Packet ArmEmergencyStop = new Packet(0x80, true, "ArmMaster");
-            Scarlet.Communications.Server.Send(ArmEmergencyStop);
-
-            Scarlet.Communications.Server.Stop();
         }
     }
 }

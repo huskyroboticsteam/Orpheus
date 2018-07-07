@@ -1,10 +1,8 @@
 ﻿using System;
 using HuskyRobotics.UI;
-using HuskyRobotics.BaseStation;
 using System.Threading;
 using System.Windows;
-using Scarlet.Utilities;
-using SharpDX.XInput;
+using HuskyRobotics.BaseStation.Server;
 
 /// <summary>
 /// Contains the entry point to the base station system.
@@ -13,6 +11,9 @@ namespace HuskyRobotics.BaseStation.Start
 {
     public static class StartBaseStation
     {
+        private static readonly SharpDX.XInput.Controller DriveController = GamepadFactory.GetDriveGamePad();
+        private static readonly SharpDX.XInput.Controller ArmController = GamepadFactory.GetArmGamepad();
+
         /// <summary>
         /// The entry point of the base station system. Starts the base station user interface
 		/// and communication with the rover.
@@ -21,32 +22,35 @@ namespace HuskyRobotics.BaseStation.Start
 		[STAThread]
         public static void Main(String[] args)
         {
-            //temporary example code
-            Server.BaseServer.Start(GamepadFactory.GetDriveGamePad(), GamepadFactory.GetArmGamepad());
-            Thread eventloop = new Thread(Server.BaseServer.EventLoop);
-            eventloop.IsBackground = true;
-            eventloop.Start();
-            Thread ipCameraControl = new Thread(() => CameraControl.Start(GamepadFactory.GetDriveGamePad()));
-            ipCameraControl.IsBackground = true;
-            ipCameraControl.Start();
-            //Thread armControllerID = new Thread(() => VibrateArmController(GamepadFactory.GetArmGamepad()));
-            //armControllerID.IsBackground = true;
-            //armControllerID.Start();
+            BaseServer.Setup();
+            CameraControl.Setup();
+            new Thread(StartUpdates).Start();
             Application app = new Application();
-            app.Exit += (sd, ev) => Server.BaseServer.Shutdown();
+            app.Exit += (sd, ev) => StopUpdates();
 			app.Run(new MainWindow());
         }
 
-        //private static void VibrateArmController(Controller ArmController)
-        //{
-        //    Vibration vibration = new Vibration();
-        //    vibration.LeftMotorSpeed = 255;
-        //    ArmController.SetVibration(vibration);
+        private static void Update()
+        {
+            BaseServer.Update(DriveController, ArmController);
+            CameraControl.Update(DriveController);
+            Thread.Sleep(1);
+        }
 
-        //    Thread.Sleep(5000);
+        private static volatile bool exit;
 
-        //    vibration.LeftMotorSpeed = 0;
-        //    ArmController.SetVibration(vibration);
-        //}
+        public static void StartUpdates()
+        {
+            while(!exit)
+            {
+                Update();
+            }
+        }
+
+        public static void StopUpdates()
+        {
+            exit = true;
+            BaseServer.Shutdown();
+        }
     }
 }
