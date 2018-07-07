@@ -49,7 +49,7 @@ namespace ControllerClient
         }
 
         // prints the data to the console
-        private static void printData(byte[][] data)
+        private static void PrintData(byte[][] data)
         {
             foreach (byte[] part in data)
             {

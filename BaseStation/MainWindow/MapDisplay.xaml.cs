@@ -17,6 +17,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Text.RegularExpressions;
+using HuskyRobotics.BaseStation.Server;
 
 namespace HuskyRobotics.UI
 {
@@ -53,7 +54,7 @@ namespace HuskyRobotics.UI
         public MapDisplay()
         {
             InitializeComponent();
-            BaseStation.Server.BaseServer.GPSUpdate += updateRoverPos;
+            BaseServer.GPSUpdate += updateRoverPos;
             _roverIconBitmap = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"/Icons/RoverIcon.png", UriKind.Absolute));
             _waypointBitmap = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"/Icons/waypoint.png", UriKind.Absolute));
             RoverIcon = new Image { Source = _roverIconBitmap };
