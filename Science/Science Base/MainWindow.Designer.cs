@@ -611,8 +611,6 @@
             this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 18F));
             this.tableLayoutPanel9.Size = new System.Drawing.Size(238, 281);
             this.tableLayoutPanel9.TabIndex = 1;
-            this.tableLayoutPanel9.MouseEnter += new System.EventHandler(this.BottomDepth_MouseEnter);
-            this.tableLayoutPanel9.MouseLeave += new System.EventHandler(this.BottomDepth_MouseLeave);
             // 
             // trackBar2
             // 
@@ -709,6 +707,8 @@
             this.darkLabel12.Size = new System.Drawing.Size(38, 13);
             this.darkLabel12.TabIndex = 7;
             this.darkLabel12.Text = "?? mm";
+            this.darkLabel12.MouseEnter += new System.EventHandler(this.BottomDepth_MouseEnter);
+            this.darkLabel12.MouseLeave += new System.EventHandler(this.BottomDepth_MouseLeave);
             // 
             // darkButton1
             // 
