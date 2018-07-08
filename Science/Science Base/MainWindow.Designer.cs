@@ -611,6 +611,8 @@
             this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 18F));
             this.tableLayoutPanel9.Size = new System.Drawing.Size(238, 281);
             this.tableLayoutPanel9.TabIndex = 1;
+            this.tableLayoutPanel9.MouseEnter += new System.EventHandler(this.BottomDepth_MouseEnter);
+            this.tableLayoutPanel9.MouseLeave += new System.EventHandler(this.BottomDepth_MouseLeave);
             // 
             // trackBar2
             // 
@@ -636,6 +638,8 @@
             this.darkLabel8.Size = new System.Drawing.Size(137, 18);
             this.darkLabel8.TabIndex = 1;
             this.darkLabel8.Text = "Distance from top:";
+            this.darkLabel8.MouseEnter += new System.EventHandler(this.TopDepth_MouseEnter);
+            this.darkLabel8.MouseLeave += new System.EventHandler(this.TopDepth_MouseLeave);
             // 
             // darkLabel9
             // 
@@ -647,6 +651,8 @@
             this.darkLabel9.Size = new System.Drawing.Size(137, 18);
             this.darkLabel9.TabIndex = 2;
             this.darkLabel9.Text = "?? mm";
+            this.darkLabel9.MouseEnter += new System.EventHandler(this.TopDepth_MouseEnter);
+            this.darkLabel9.MouseLeave += new System.EventHandler(this.TopDepth_MouseLeave);
             // 
             // darkLabel10
             // 
@@ -691,6 +697,8 @@
             this.darkLabel11.Size = new System.Drawing.Size(137, 18);
             this.darkLabel11.TabIndex = 6;
             this.darkLabel11.Text = "Distance above ground:";
+            this.darkLabel11.MouseEnter += new System.EventHandler(this.BottomDepth_MouseEnter);
+            this.darkLabel11.MouseLeave += new System.EventHandler(this.BottomDepth_MouseLeave);
             // 
             // darkLabel12
             // 

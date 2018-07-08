@@ -27,8 +27,27 @@ namespace Science_Base
         }
         private int P_DrillLocaton;
 
-        public bool ShowDistanceTop { get; set; }
-        public bool ShowDistanceBottom { get; set; }
+        public bool ShowDistanceTop
+        {
+            get => this.P_ShowDistanceTop;
+            set
+            {
+                this.P_ShowDistanceTop = value;
+                this.Invalidate();
+            }
+        }
+        private bool P_ShowDistanceTop;
+
+        public bool ShowDistanceBottom
+        {
+            get => this.P_ShowDistanceBottom;
+            set
+            {
+                this.P_ShowDistanceBottom = value;
+                this.Invalidate();
+            }
+        }
+        private bool P_ShowDistanceBottom;
 
         public RailDisplay()
         {
@@ -45,7 +64,7 @@ namespace Science_Base
 
             SolidBrush Fore = new SolidBrush(this.ForeColor);
 
-            Rectangle DiagramArea = ShrinkRect(pe.ClipRectangle, 0, 0, 10, 0); // Leaves space for the height indicators
+            Rectangle DiagramArea = ShrinkRect(pe.ClipRectangle, 0, 0, 15, 0); // Leaves space for the height indicators
 
             Rectangle TopBar = new Rectangle(DiagramArea.Location, new Size(DiagramArea.Width, 5));
             pe.Graphics.FillRectangle(Fore, TopBar);
@@ -57,8 +76,17 @@ namespace Science_Base
             Rectangle GroundLine = new Rectangle(MovePt(DiagramArea.Location, 0, GroundHeight), new Size(DiagramArea.Width, 2));
             pe.Graphics.FillRectangle(new SolidBrush(Color.SandyBrown), GroundLine);
 
+            int DrillHeight = (int)(DiagramArea.Height * 0.2F);
             Rectangle DrillTop = new Rectangle(MovePt(VerticalBar.Location, 2, (int)((GroundHeight - (TopBar.Location.Y + TopBar.Height) - 2) * (100 - this.DrillLocation) / 100.0F) + 2), new Size(DiagramArea.Width / 2, 2));
             pe.Graphics.FillRectangle(Fore, DrillTop);
+
+            Rectangle DrillBounds = new Rectangle(MovePt(DrillTop.Location, (int)(DrillTop.Width * 0.6F), 2), new Size((int)(DrillTop.Width * 0.2F), DrillHeight));
+            pe.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(0x81, 0x14, 0x26)), DrillBounds);
+
+            if (this.ShowDistanceTop)
+            {
+                /// Show the height bar
+            }
         }
 
         private Rectangle ShrinkRect(Rectangle Input, int Left, int Top, int Right, int Bottom)

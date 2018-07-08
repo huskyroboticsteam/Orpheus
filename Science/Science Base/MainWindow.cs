@@ -329,5 +329,11 @@ namespace Science_Base
             //Science_Base.Controls.RailSpeedChange(this.trackBar2.Value * 10);
             railDisplay1.DrillLocation = trackBar2.Value;
         }
+
+        private void TopDepth_MouseEnter(object sender, EventArgs e) { this.railDisplay1.ShowDistanceTop = true; }
+        private void TopDepth_MouseLeave(object sender, EventArgs e) { this.railDisplay1.ShowDistanceTop = false; }
+
+        private void BottomDepth_MouseEnter(object sender, EventArgs e) { this.railDisplay1.ShowDistanceBottom = true; }
+        private void BottomDepth_MouseLeave(object sender, EventArgs e) { this.railDisplay1.ShowDistanceBottom = false; }
     }
 }
