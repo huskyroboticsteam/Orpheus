@@ -326,7 +326,7 @@ namespace Science_Base
 
         private void trackBar2_ValueChanged(object sender, EventArgs e)
         {
-            Science_Base.Controls.RailSpeedChange(this.trackBar2.Value * (this.darkCheckBox1.Checked ? -10 : 10));
+            Science_Base.Controls.RailSpeedChange(this.trackBar2.Value * 10);
         }
     }
 }
