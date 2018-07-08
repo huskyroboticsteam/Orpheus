@@ -1,18 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using OpenTK.Input;
 
 namespace HuskyRobotics.UI
@@ -30,73 +18,56 @@ namespace HuskyRobotics.UI
             }
         }
 
-        private SolidColorBrush lit = new SolidColorBrush(Colors.Gold);
-        private SolidColorBrush unLit = new SolidColorBrush(Colors.Black);
-        private SolidColorBrush backGround = new SolidColorBrush(Colors.LightGray);
-        private SolidColorBrush bigBackGround = new SolidColorBrush(Colors.DarkGray);
-        private SolidColorBrush altLit = new SolidColorBrush(Colors.DarkOrange);
+        private readonly SolidColorBrush lit = new SolidColorBrush(Colors.Gold);
+        private readonly SolidColorBrush unLit = new SolidColorBrush(Colors.Black);
+        private readonly SolidColorBrush backGround = new SolidColorBrush(Colors.LightGray);
+        private readonly SolidColorBrush bigBackGround = new SolidColorBrush(Colors.DarkGray);
+        private readonly SolidColorBrush altLit = new SolidColorBrush(Colors.DarkOrange);
 
         public GamePadView()
         {
             InitializeComponent();
-            Task.Run(new Action(UpdateGamePadState));
-        }
-        private void UpdateGamePadState()
-        {
-            while(true)
-            {
-                GPState = GamePad.GetState(0);
-                Dispatcher.InvokeAsync(UpdateGamePadView);
-                Thread.Sleep(50);
-            }
+            CompositionTarget.Rendering += UpdateGamePadView;
         }
 
-        private void UpdateGamePadView()
+        public void UpdateGamePadView(object sender, EventArgs args)
         {
             // Skittle Buttons
-            if (GPState.Buttons.A == ButtonState.Pressed) A.Foreground = lit;
-            else A.Foreground = unLit;
-            if (GPState.Buttons.B == ButtonState.Pressed) B.Foreground = lit;
-            else B.Foreground = unLit;
-            if (GPState.Buttons.X == ButtonState.Pressed) X.Foreground = lit;
-            else X.Foreground = unLit;
-            if (GPState.Buttons.Y == ButtonState.Pressed) Y.Foreground = altLit;
-            else Y.Foreground = unLit;
+            A.Foreground = (GPState.Buttons.A == ButtonState.Pressed) ? lit : unLit;
+            B.Foreground = (GPState.Buttons.B == ButtonState.Pressed) ? lit : unLit;
+            X.Foreground = (GPState.Buttons.X == ButtonState.Pressed) ? lit : unLit;
+            Y.Foreground = (GPState.Buttons.Y == ButtonState.Pressed) ? altLit : unLit;
+            
             // D-Pad
-            if (GPState.DPad.Up == ButtonState.Pressed) Up.Fill = lit;
-            else Up.Fill = backGround;
-            if (GPState.DPad.Down == ButtonState.Pressed) Down.Fill = lit;
-            else Down.Fill = backGround;
-            if (GPState.DPad.Left == ButtonState.Pressed) Left.Fill = lit;
-            else Left.Fill = backGround;
-            if (GPState.DPad.Right == ButtonState.Pressed) Right.Fill = lit;
-            else Right.Fill = backGround;
-            // Bumpers
-            if (GPState.Buttons.LeftShoulder == ButtonState.Pressed) LBump.Fill = lit;
-            else LBump.Fill = unLit;
-            if (GPState.Buttons.RightShoulder == ButtonState.Pressed) RBump.Fill = lit;
-            else RBump.Fill = unLit;
+            Up.Fill = (GPState.DPad.Up == ButtonState.Pressed) ? lit : backGround;
+            Down.Fill = (GPState.DPad.Down == ButtonState.Pressed) ? lit : backGround;
+            Left.Fill = (GPState.DPad.Left == ButtonState.Pressed) ? lit : backGround;
+            Right.Fill = (GPState.DPad.Right == ButtonState.Pressed) ? lit : backGround;
+
             // Center Buttons
-            if (GPState.Buttons.Back == ButtonState.Pressed) Back.Fill = lit;
-            else Back.Fill = unLit;
-            if (GPState.Buttons.BigButton == ButtonState.Pressed) Big.Fill = lit;
-            else Big.Fill = bigBackGround;
-            if (GPState.Buttons.Start == ButtonState.Pressed) Start.Fill = lit;
-            else Start.Fill = unLit;
+            Back.Fill = (GPState.Buttons.Back == ButtonState.Pressed) ? lit : unLit;
+            Big.Fill = (GPState.Buttons.BigButton == ButtonState.Pressed) ? lit : unLit;
+            Start.Fill = (GPState.Buttons.Start == ButtonState.Pressed) ? lit : unLit;
+
+            // Bumpers
+            LBump.Fill = (GPState.Buttons.LeftShoulder == ButtonState.Pressed) ? lit : unLit;
+            RBump.Fill = (GPState.Buttons.RightShoulder == ButtonState.Pressed) ? lit : unLit;
+
             // Thumbsticks
-            if (GPState.Buttons.LeftStick == ButtonState.Pressed) LeftThumb.Fill = lit;
-            else LeftThumb.Fill = unLit;
-            if (GPState.Buttons.RightStick == ButtonState.Pressed) RightThumb.Fill = lit;
-            else RightThumb.Fill = unLit;
+            LeftThumb.Fill = (GPState.Buttons.LeftStick == ButtonState.Pressed) ? lit : unLit;
+            RightThumb.Fill = (GPState.Buttons.RightStick == ButtonState.Pressed) ? lit : unLit;
+
+            // Triggers
+            LTrig.Width = (int)(5 - (4 * GPState.Triggers.Left));
+            RTrig.Width = (int)(5 - (4 * GPState.Triggers.Right));
+
+            //Thumbstick positions
             TranslateTransform moveL = new TranslateTransform
                 ((5 * GPState.ThumbSticks.Left.X) + 38, - (5 * GPState.ThumbSticks.Left.Y) + 46);
             LeftThumb.RenderTransform = moveL;
             TranslateTransform moveR = new TranslateTransform
                 ((5 * GPState.ThumbSticks.Right.X) + 98, -(5 * GPState.ThumbSticks.Right.Y) + 46);
             RightThumb.RenderTransform = moveR;
-            // Triggers
-            LTrig.Width = (int)(5 - (4 * GPState.Triggers.Left));
-            RTrig.Width = (int)(5 - (4 * GPState.Triggers.Right));
         }
     }
 }

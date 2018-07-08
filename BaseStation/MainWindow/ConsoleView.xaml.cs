@@ -11,7 +11,6 @@ namespace HuskyRobotics.UI
     public partial class ConsoleView : ScrollViewer {
 		public ConsoleView() {
 			TextBlock child = new TextBlock();
-			VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
 			AddChild(child);
 			child.FontFamily = new System.Windows.Media.FontFamily("consolas");
 			child.FontSize = 16;
@@ -20,8 +19,6 @@ namespace HuskyRobotics.UI
         }
 
 		private class ConsoleWriter : TextWriter {
-			private const int BUFFER_SIZE = 500;
-
 			private readonly TextBlock view;
 			private readonly ScrollViewer scroll;
             private readonly TextWriter oldOut;
@@ -34,32 +31,69 @@ namespace HuskyRobotics.UI
 
  			public override Encoding Encoding => Encoding.UTF8;
 
-			public override void Write(char value) {
-                oldOut.Write(value);
-				view.Dispatcher.BeginInvoke(new Action(() => {
-					view.Text += value;
-					UpdateView();
-				}));
-			}
-
-			public override void Write(string value)
+            public override void Write(char value)
             {
                 oldOut.Write(value);
-                view.Dispatcher.BeginInvoke(new Action(() => {
-					view.Text += value;
-					UpdateView();
-				}));
-			}
+                view.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    view.Text += value;
+                    UpdateView();
+                }));
+            }
 
-			//removes extra text (prevent memory leak)
-			//and scrolls view to bottom (like a console)
-			private void UpdateView() {
+            public override void Write(char[] buffer, int index, int count)
+            {
+                oldOut.Write(buffer, index, count);
+                view.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    view.Text += new string(buffer, index, count);
+                    UpdateView();
+                }));
+            }
+
+            //removes extra text (prevent memory leak)
+            //and scrolls view to bottom (like a console)
+            private void UpdateView() {
 				int len = view.Text.Length;
-				int removeSize = Math.Max(0, Math.Min(len - BUFFER_SIZE, BUFFER_SIZE));
-				view.Text =
-					view.Text.Substring(removeSize, len - removeSize);
+                double scrollHeight = scroll.ViewportHeight;
+                double viewHeight = view.ActualHeight;
+                int totalLines = CountLines(view.Text);
+                int lineHeight = (int)viewHeight/totalLines;
+                int possibleVisibleLines = (int)(scrollHeight/lineHeight);
+                if (viewHeight > scrollHeight * 2) //if stored text is partially offscreen, the 2 is there to buffer the text so there isn't so much garbage produced
+                {
+                    view.Text = GetFinalLines(view.Text, totalLines, Math.Min(totalLines, possibleVisibleLines));
+                }
 				scroll.ScrollToEnd();
 			}
-		}
+
+            private static string GetFinalLines(string text, int totalLines, int lineCount)
+            {
+                int ind = GetIndexAfter(text, totalLines - lineCount);
+                return text.Substring(ind);
+            }
+
+            private static int GetIndexAfter(string str, int count)
+            {
+                if (str == string.Empty) return -1;
+                int index = -1;
+                while (count > 0 && (index = str.IndexOf(Environment.NewLine, index + Environment.NewLine.Length)) != -1)
+                {
+                    count--;
+                }
+                return index + Environment.NewLine.Length;
+            }
+
+            private static int CountLines(string str)
+            {
+                if (str == string.Empty) return 0;
+                int index = -1;
+                int count = 0;
+                while (-1 != (index = str.IndexOf(Environment.NewLine, index + Environment.NewLine.Length))) {
+					count++;
+				}
+                return count + 1;
+            }
+        }
 	}
 }

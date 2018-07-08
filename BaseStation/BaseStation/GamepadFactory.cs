@@ -9,17 +9,29 @@ namespace HuskyRobotics.BaseStation
 {
     public static class GamepadFactory
     {
-        private static Controller gamepad;
+        private static Controller DriveGamepad;
+        private static Controller ArmGamepad;
 
         public static Controller GetDriveGamePad()
         {
-            if (gamepad == null)
+            if (DriveGamepad == null)
             {
-                gamepad = new Controller(UserIndex.One);
-                return gamepad;
+                DriveGamepad = new Controller(UserIndex.One);
+                return DriveGamepad;
             }
 
-            return gamepad;
+            return DriveGamepad;
+        }
+
+        public static Controller GetArmGamepad()
+        {
+            if (ArmGamepad == null)
+            {
+                ArmGamepad = new Controller(UserIndex.Two);
+                return ArmGamepad;
+            }
+
+            return ArmGamepad;
         }
     }
 }
