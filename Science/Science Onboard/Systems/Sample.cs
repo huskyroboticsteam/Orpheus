@@ -33,5 +33,7 @@ namespace Science.Systems
         {
             
         }
+
+        public void Exit() { }
     }
 }

@@ -36,11 +36,11 @@ namespace Science
             this.PWMGenHighFreq.SetFrequency(333);
             this.PWMGenLowFreq.SetFrequency(50);
 
-            this.RailController = new Rail(this.PWMGenHighFreq.Outputs[1], new DigitalInPi(11), this.SPI, new DigitalOutPi(31), this.I2C, null);
+            this.RailController = new Rail(this.PWMGenHighFreq.Outputs[1], new DigitalInPi(11), this.SPI, new DigitalOutPi(29), this.I2C, null) { TraceLogging = true };
             this.DrillController = new Drill(this.PWMGenHighFreq.Outputs[0], this.PWMGenLowFreq.Outputs[0]);
             this.SampleController = new Sample(this.PWMGenLowFreq.Outputs[1]);
             this.LEDController = new LEDs(this.PWMGenLowFreq.Outputs, this.PWMGenHighFreq.Outputs);
-            this.AuxSensors = new AuxSensors(this.SPI, this.I2C) { TraceLogging = true };
+            this.AuxSensors = new AuxSensors(this.SPI, this.I2C);// { TraceLogging = true };
             this.SysSensors = new SysSensors();
             this.Music = new MusicPlayer();
 
@@ -86,6 +86,19 @@ namespace Science
                 catch (Exception Exc)
                 {
                     Log.Output(Log.Severity.WARNING, Log.Source.SUBSYSTEM, "Failed to update state for system #" + i + ".");
+                    Log.Exception(Log.Source.SUBSYSTEM, Exc);
+                }
+            }
+        }
+
+        public void Exit()
+        {
+            for (int i = this.UpdateProcedure.Length - 1; i > 0; i--)
+            {
+                try { this.UpdateProcedure[i].Exit(); }
+                catch (Exception Exc)
+                {
+                    Log.Output(Log.Severity.WARNING, Log.Source.SUBSYSTEM, "Failed to exit for system #" + i + ".");
                     Log.Exception(Log.Source.SUBSYSTEM, Exc);
                 }
             }

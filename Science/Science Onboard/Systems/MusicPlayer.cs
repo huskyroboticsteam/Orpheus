@@ -82,5 +82,11 @@ namespace Science.Systems
             return (Frequency - MOTOR_FREQUENCY_INTERCEPT) / MOTOR_FREQUENCY_SLOPE;
         }
 
+        public void Exit()
+        {
+            this.PlayerThread.Abort();
+            RoverMain.IOHandler.DrillController.SetSpeed(0, true);
+        }
+
     }
 }

@@ -86,5 +86,11 @@ namespace Science.Systems
         }
 
         public void UpdateState() { }
+
+        public void Exit()
+        {
+            this.DoUpdates = false;
+            foreach (RGBLED LED in this.Lights) { LED.SetEnabled(false); }
+        }
     }
 }

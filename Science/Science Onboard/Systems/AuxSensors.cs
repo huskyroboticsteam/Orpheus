@@ -92,5 +92,10 @@ namespace Science.Systems
                 Client.Send(Packet);
             }
         }
+
+        public void Exit()
+        {
+
+        }
     }
 }

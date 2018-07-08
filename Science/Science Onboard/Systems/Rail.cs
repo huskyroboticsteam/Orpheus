@@ -51,7 +51,7 @@ namespace Science.Systems
             this.Limit = new LimitSwitch(LimitSw, false);
             this.Encoder = new LS7366R(EncoderSPI, EncoderCS);
             LS7366R.Configuration Config = LS7366R.DefaultConfig;
-            Config.QuadMode = LS7366R.QuadMode.X1_QUAD;
+            Config.QuadMode = LS7366R.QuadMode.X4_QUAD;
             this.Encoder.Configure(Config);
             //this.Ranger = new VL53L0X(RangerBus);
             this.LED = new LEDController(LED);
@@ -146,7 +146,7 @@ namespace Science.Systems
         {
             this.Limit.UpdateState();
             this.Encoder.UpdateState();
-            //Log.Output(Log.Severity.INFO, Log.Source.SENSORS, "Encoder now at " + this.Encoder.Count);
+            if (this.TraceLogging) { Log.Trace(this, "Encoder now at " + this.Encoder.Count); }
 
             DateTime Sample = DateTime.Now;
             byte[] Data = UtilData.ToBytes(this.Encoder.Count).Concat(UtilData.ToBytes(Sample.Ticks)).ToArray();
@@ -154,6 +154,12 @@ namespace Science.Systems
             Client.Send(Packet);
             //this.Ranger.UpdateState();
             // TODO: Send commands to Talon.
+        }
+
+        public void Exit()
+        {
+            this.TargetLocation = this.TopDepth;
+            this.MotorCtrl.SetEnabled(false);
         }
 
         private class LEDController

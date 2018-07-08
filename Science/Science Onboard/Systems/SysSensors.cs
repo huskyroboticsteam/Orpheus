@@ -82,5 +82,10 @@ namespace Science.Systems
                 RoverMain.IOHandler.LEDController.SystemCurrent.SetOutput(SysCurrentColour);
             }
         }
+
+        public void Exit()
+        {
+            this.TakeReadings = false;
+        }
     }
 }
