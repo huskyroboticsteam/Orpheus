@@ -35,6 +35,9 @@
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Science-Icon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="DarkUI">
       <HintPath>..\Libraries\DarkUI.dll</HintPath>
@@ -128,6 +131,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Icons\CPU.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Science-Icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

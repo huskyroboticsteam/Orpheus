@@ -75,7 +75,6 @@
             this.darkTextBox1 = new DarkUI.Controls.DarkTextBox();
             this.darkLabel13 = new DarkUI.Controls.DarkLabel();
             this.darkLabel14 = new DarkUI.Controls.DarkLabel();
-            this.railDisplay1 = new Science_Base.RailDisplay();
             this.ChartClearRight = new DarkUI.Controls.DarkButton();
             this.ChartClearLeft = new DarkUI.Controls.DarkButton();
             this.ChartDataChooser = new System.Windows.Forms.ListView();
@@ -112,6 +111,7 @@
             this.StatusImgSystem = new System.Windows.Forms.PictureBox();
             this.SecTimer = new System.Windows.Forms.Timer(this.components);
             this.UIUpdate = new System.Windows.Forms.Timer(this.components);
+            this.railDisplay1 = new Science_Base.RailDisplay();
             this.tableLayoutPanel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.Control.SuspendLayout();
@@ -758,20 +758,6 @@
             this.darkLabel14.Text = "?? mm/s";
             this.darkLabel14.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
-            // railDisplay1
-            // 
-            this.railDisplay1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.railDisplay1.DrillLocation = 75;
-            this.railDisplay1.ForeColor = System.Drawing.Color.Gainsboro;
-            this.railDisplay1.Location = new System.Drawing.Point(3, 56);
-            this.railDisplay1.Name = "railDisplay1";
-            this.tableLayoutPanel9.SetRowSpan(this.railDisplay1, 12);
-            this.railDisplay1.ShowDistanceBottom = false;
-            this.railDisplay1.ShowDistanceTop = false;
-            this.railDisplay1.Size = new System.Drawing.Size(89, 222);
-            this.railDisplay1.TabIndex = 12;
-            this.railDisplay1.Text = "railDisplay1";
-            // 
             // ChartClearRight
             // 
             this.ChartClearRight.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -1239,6 +1225,20 @@
             this.UIUpdate.Interval = 33;
             this.UIUpdate.Tick += new System.EventHandler(this.UIUpdate_Tick);
             // 
+            // railDisplay1
+            // 
+            this.railDisplay1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.railDisplay1.DrillLocation = 75;
+            this.railDisplay1.ForeColor = System.Drawing.Color.Gainsboro;
+            this.railDisplay1.Location = new System.Drawing.Point(3, 56);
+            this.railDisplay1.Name = "railDisplay1";
+            this.tableLayoutPanel9.SetRowSpan(this.railDisplay1, 12);
+            this.railDisplay1.ShowDistanceBottom = false;
+            this.railDisplay1.ShowDistanceTop = false;
+            this.railDisplay1.Size = new System.Drawing.Size(89, 222);
+            this.railDisplay1.TabIndex = 12;
+            this.railDisplay1.Text = "railDisplay1";
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1248,7 +1248,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(540, 358);
             this.Name = "MainWindow";
-            this.Text = "Science!";
+            this.Text = "Husky Robotics 2017-18 Science Station Control";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainWindow_FormClosed);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);

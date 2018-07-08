@@ -25,7 +25,7 @@ namespace Science_Base
                 this.Invalidate();
             }
         }
-        private int P_DrillLocaton;
+        private int P_DrillLocaton; // TODO: Adjust these value to reflect the diagram, and measure the physical properties of the science station.
 
         public bool ShowDistanceTop
         {
