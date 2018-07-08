@@ -326,7 +326,8 @@ namespace Science_Base
 
         private void trackBar2_ValueChanged(object sender, EventArgs e)
         {
-            Science_Base.Controls.RailSpeedChange(this.trackBar2.Value * 10);
+            //Science_Base.Controls.RailSpeedChange(this.trackBar2.Value * 10);
+            railDisplay1.DrillLocation = trackBar2.Value;
         }
     }
 }

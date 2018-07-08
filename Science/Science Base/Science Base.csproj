@@ -89,6 +89,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="RailDisplay.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="RailDisplay.Designer.cs">
+      <DependentUpon>RailDisplay.cs</DependentUpon>
+    </Compile>
     <Compile Include="UIHelper.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -109,6 +115,9 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RailDisplay.resx">
+      <DependentUpon>RailDisplay.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

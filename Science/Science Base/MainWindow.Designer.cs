@@ -51,6 +51,7 @@
             this.darkLabel4 = new DarkUI.Controls.DarkLabel();
             this.darkLabel5 = new DarkUI.Controls.DarkLabel();
             this.SampleTubeStatus = new DarkUI.Controls.DarkLabel();
+            this.SampleCupStatus = new DarkUI.Controls.DarkLabel();
             this.SampleTubeToggle = new DarkUI.Controls.DarkButton();
             this.SampleCupToggle = new DarkUI.Controls.DarkButton();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -58,9 +59,23 @@
             this.DrillSpeed = new System.Windows.Forms.TrackBar();
             this.DrillToggle = new DarkUI.Controls.DarkButton();
             this.DrillReverse = new DarkUI.Controls.DarkCheckBox();
+            this.darkLabel6 = new DarkUI.Controls.DarkLabel();
+            this.darkLabel7 = new DarkUI.Controls.DarkLabel();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel9 = new System.Windows.Forms.TableLayoutPanel();
             this.trackBar2 = new System.Windows.Forms.TrackBar();
+            this.darkLabel8 = new DarkUI.Controls.DarkLabel();
+            this.darkLabel9 = new DarkUI.Controls.DarkLabel();
+            this.darkLabel10 = new DarkUI.Controls.DarkLabel();
+            this.GoToTop = new DarkUI.Controls.DarkButton();
+            this.GoToGround = new DarkUI.Controls.DarkButton();
+            this.darkLabel11 = new DarkUI.Controls.DarkLabel();
+            this.darkLabel12 = new DarkUI.Controls.DarkLabel();
+            this.darkButton1 = new DarkUI.Controls.DarkButton();
+            this.darkTextBox1 = new DarkUI.Controls.DarkTextBox();
+            this.darkLabel13 = new DarkUI.Controls.DarkLabel();
+            this.darkLabel14 = new DarkUI.Controls.DarkLabel();
+            this.railDisplay1 = new Science_Base.RailDisplay();
             this.ChartClearRight = new DarkUI.Controls.DarkButton();
             this.ChartClearLeft = new DarkUI.Controls.DarkButton();
             this.ChartDataChooser = new System.Windows.Forms.ListView();
@@ -97,20 +112,6 @@
             this.StatusImgSystem = new System.Windows.Forms.PictureBox();
             this.SecTimer = new System.Windows.Forms.Timer(this.components);
             this.UIUpdate = new System.Windows.Forms.Timer(this.components);
-            this.SampleCupStatus = new DarkUI.Controls.DarkLabel();
-            this.darkLabel6 = new DarkUI.Controls.DarkLabel();
-            this.darkLabel7 = new DarkUI.Controls.DarkLabel();
-            this.darkLabel8 = new DarkUI.Controls.DarkLabel();
-            this.darkLabel9 = new DarkUI.Controls.DarkLabel();
-            this.darkLabel10 = new DarkUI.Controls.DarkLabel();
-            this.GoToTop = new DarkUI.Controls.DarkButton();
-            this.GoToGround = new DarkUI.Controls.DarkButton();
-            this.darkLabel11 = new DarkUI.Controls.DarkLabel();
-            this.darkLabel12 = new DarkUI.Controls.DarkLabel();
-            this.darkButton1 = new DarkUI.Controls.DarkButton();
-            this.darkTextBox1 = new DarkUI.Controls.DarkTextBox();
-            this.darkLabel13 = new DarkUI.Controls.DarkLabel();
-            this.darkLabel14 = new DarkUI.Controls.DarkLabel();
             this.tableLayoutPanel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.Control.SuspendLayout();
@@ -432,6 +433,17 @@
             this.SampleTubeStatus.TabIndex = 2;
             this.SampleTubeStatus.Text = "Unknown";
             // 
+            // SampleCupStatus
+            // 
+            this.SampleCupStatus.AutoSize = true;
+            this.SampleCupStatus.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SampleCupStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.SampleCupStatus.Location = new System.Drawing.Point(122, 43);
+            this.SampleCupStatus.Name = "SampleCupStatus";
+            this.SampleCupStatus.Size = new System.Drawing.Size(113, 41);
+            this.SampleCupStatus.TabIndex = 3;
+            this.SampleCupStatus.Text = "Unknown";
+            // 
             // SampleTubeToggle
             // 
             this.SampleTubeToggle.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -522,6 +534,31 @@
             this.DrillReverse.TabIndex = 2;
             this.DrillReverse.Text = "Reverse";
             // 
+            // darkLabel6
+            // 
+            this.darkLabel6.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.darkLabel6.AutoSize = true;
+            this.darkLabel6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.darkLabel6.Location = new System.Drawing.Point(3, 35);
+            this.darkLabel6.Name = "darkLabel6";
+            this.darkLabel6.Size = new System.Drawing.Size(113, 13);
+            this.darkLabel6.TabIndex = 3;
+            this.darkLabel6.Text = "0 RPM";
+            // 
+            // darkLabel7
+            // 
+            this.darkLabel7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.darkLabel7.AutoSize = true;
+            this.darkLabel7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.darkLabel7.Location = new System.Drawing.Point(122, 35);
+            this.darkLabel7.Name = "darkLabel7";
+            this.darkLabel7.Size = new System.Drawing.Size(113, 13);
+            this.darkLabel7.TabIndex = 4;
+            this.darkLabel7.Text = "? RPM";
+            this.darkLabel7.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.tableLayoutPanel9);
@@ -552,6 +589,7 @@
             this.tableLayoutPanel9.Controls.Add(this.darkTextBox1, 1, 9);
             this.tableLayoutPanel9.Controls.Add(this.darkLabel13, 0, 1);
             this.tableLayoutPanel9.Controls.Add(this.darkLabel14, 1, 1);
+            this.tableLayoutPanel9.Controls.Add(this.railDisplay1, 0, 2);
             this.tableLayoutPanel9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel9.Location = new System.Drawing.Point(3, 16);
             this.tableLayoutPanel9.Margin = new System.Windows.Forms.Padding(0);
@@ -578,11 +616,153 @@
             // 
             this.tableLayoutPanel9.SetColumnSpan(this.trackBar2, 2);
             this.trackBar2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.trackBar2.LargeChange = 50;
             this.trackBar2.Location = new System.Drawing.Point(3, 3);
+            this.trackBar2.Maximum = 100;
             this.trackBar2.Name = "trackBar2";
             this.trackBar2.Size = new System.Drawing.Size(232, 29);
+            this.trackBar2.SmallChange = 10;
             this.trackBar2.TabIndex = 0;
+            this.trackBar2.TickFrequency = 10;
             this.trackBar2.ValueChanged += new System.EventHandler(this.trackBar2_ValueChanged);
+            // 
+            // darkLabel8
+            // 
+            this.darkLabel8.AutoSize = true;
+            this.darkLabel8.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.darkLabel8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.darkLabel8.Location = new System.Drawing.Point(98, 53);
+            this.darkLabel8.Name = "darkLabel8";
+            this.darkLabel8.Size = new System.Drawing.Size(137, 18);
+            this.darkLabel8.TabIndex = 1;
+            this.darkLabel8.Text = "Distance from top:";
+            // 
+            // darkLabel9
+            // 
+            this.darkLabel9.AutoSize = true;
+            this.darkLabel9.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.darkLabel9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.darkLabel9.Location = new System.Drawing.Point(98, 71);
+            this.darkLabel9.Name = "darkLabel9";
+            this.darkLabel9.Size = new System.Drawing.Size(137, 18);
+            this.darkLabel9.TabIndex = 2;
+            this.darkLabel9.Text = "?? mm";
+            // 
+            // darkLabel10
+            // 
+            this.darkLabel10.AutoSize = true;
+            this.darkLabel10.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.darkLabel10.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.darkLabel10.Location = new System.Drawing.Point(98, 107);
+            this.darkLabel10.Name = "darkLabel10";
+            this.darkLabel10.Size = new System.Drawing.Size(137, 18);
+            this.darkLabel10.TabIndex = 3;
+            this.darkLabel10.Text = "Go To:";
+            // 
+            // GoToTop
+            // 
+            this.GoToTop.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.GoToTop.Location = new System.Drawing.Point(96, 126);
+            this.GoToTop.Margin = new System.Windows.Forms.Padding(1);
+            this.GoToTop.Name = "GoToTop";
+            this.GoToTop.Padding = new System.Windows.Forms.Padding(5);
+            this.GoToTop.Size = new System.Drawing.Size(141, 23);
+            this.GoToTop.TabIndex = 4;
+            this.GoToTop.Text = "Top";
+            // 
+            // GoToGround
+            // 
+            this.GoToGround.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.GoToGround.Location = new System.Drawing.Point(96, 151);
+            this.GoToGround.Margin = new System.Windows.Forms.Padding(1);
+            this.GoToGround.Name = "GoToGround";
+            this.GoToGround.Padding = new System.Windows.Forms.Padding(5);
+            this.GoToGround.Size = new System.Drawing.Size(141, 23);
+            this.GoToGround.TabIndex = 5;
+            this.GoToGround.Text = "Ground";
+            // 
+            // darkLabel11
+            // 
+            this.darkLabel11.AutoSize = true;
+            this.darkLabel11.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.darkLabel11.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.darkLabel11.Location = new System.Drawing.Point(98, 245);
+            this.darkLabel11.Name = "darkLabel11";
+            this.darkLabel11.Size = new System.Drawing.Size(137, 18);
+            this.darkLabel11.TabIndex = 6;
+            this.darkLabel11.Text = "Distance above ground:";
+            // 
+            // darkLabel12
+            // 
+            this.darkLabel12.AutoSize = true;
+            this.darkLabel12.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.darkLabel12.Location = new System.Drawing.Point(98, 263);
+            this.darkLabel12.Name = "darkLabel12";
+            this.darkLabel12.Size = new System.Drawing.Size(38, 13);
+            this.darkLabel12.TabIndex = 7;
+            this.darkLabel12.Text = "?? mm";
+            // 
+            // darkButton1
+            // 
+            this.darkButton1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.darkButton1.Location = new System.Drawing.Point(96, 203);
+            this.darkButton1.Margin = new System.Windows.Forms.Padding(1);
+            this.darkButton1.Name = "darkButton1";
+            this.darkButton1.Padding = new System.Windows.Forms.Padding(5);
+            this.darkButton1.Size = new System.Drawing.Size(141, 23);
+            this.darkButton1.TabIndex = 8;
+            this.darkButton1.Text = "^ mm above Ground";
+            // 
+            // darkTextBox1
+            // 
+            this.darkTextBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.darkTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.darkTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.darkTextBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.darkTextBox1.Location = new System.Drawing.Point(96, 181);
+            this.darkTextBox1.Margin = new System.Windows.Forms.Padding(1);
+            this.darkTextBox1.Name = "darkTextBox1";
+            this.darkTextBox1.Size = new System.Drawing.Size(141, 20);
+            this.darkTextBox1.TabIndex = 9;
+            // 
+            // darkLabel13
+            // 
+            this.darkLabel13.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.darkLabel13.AutoSize = true;
+            this.darkLabel13.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.darkLabel13.Location = new System.Drawing.Point(3, 35);
+            this.darkLabel13.Name = "darkLabel13";
+            this.darkLabel13.Size = new System.Drawing.Size(89, 13);
+            this.darkLabel13.TabIndex = 10;
+            this.darkLabel13.Text = "0 mm/s";
+            // 
+            // darkLabel14
+            // 
+            this.darkLabel14.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.darkLabel14.AutoSize = true;
+            this.darkLabel14.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.darkLabel14.Location = new System.Drawing.Point(98, 35);
+            this.darkLabel14.Name = "darkLabel14";
+            this.darkLabel14.Size = new System.Drawing.Size(137, 13);
+            this.darkLabel14.TabIndex = 11;
+            this.darkLabel14.Text = "?? mm/s";
+            this.darkLabel14.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // railDisplay1
+            // 
+            this.railDisplay1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.railDisplay1.DrillLocation = 75;
+            this.railDisplay1.ForeColor = System.Drawing.Color.Gainsboro;
+            this.railDisplay1.Location = new System.Drawing.Point(3, 56);
+            this.railDisplay1.Name = "railDisplay1";
+            this.tableLayoutPanel9.SetRowSpan(this.railDisplay1, 12);
+            this.railDisplay1.ShowDistanceBottom = false;
+            this.railDisplay1.ShowDistanceTop = false;
+            this.railDisplay1.Size = new System.Drawing.Size(89, 222);
+            this.railDisplay1.TabIndex = 12;
+            this.railDisplay1.Text = "railDisplay1";
             // 
             // ChartClearRight
             // 
@@ -1051,166 +1231,6 @@
             this.UIUpdate.Interval = 33;
             this.UIUpdate.Tick += new System.EventHandler(this.UIUpdate_Tick);
             // 
-            // SampleCupStatus
-            // 
-            this.SampleCupStatus.AutoSize = true;
-            this.SampleCupStatus.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SampleCupStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.SampleCupStatus.Location = new System.Drawing.Point(122, 43);
-            this.SampleCupStatus.Name = "SampleCupStatus";
-            this.SampleCupStatus.Size = new System.Drawing.Size(113, 41);
-            this.SampleCupStatus.TabIndex = 3;
-            this.SampleCupStatus.Text = "Unknown";
-            // 
-            // darkLabel6
-            // 
-            this.darkLabel6.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.darkLabel6.AutoSize = true;
-            this.darkLabel6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkLabel6.Location = new System.Drawing.Point(3, 35);
-            this.darkLabel6.Name = "darkLabel6";
-            this.darkLabel6.Size = new System.Drawing.Size(113, 13);
-            this.darkLabel6.TabIndex = 3;
-            this.darkLabel6.Text = "0 RPM";
-            // 
-            // darkLabel7
-            // 
-            this.darkLabel7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.darkLabel7.AutoSize = true;
-            this.darkLabel7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkLabel7.Location = new System.Drawing.Point(122, 35);
-            this.darkLabel7.Name = "darkLabel7";
-            this.darkLabel7.Size = new System.Drawing.Size(113, 13);
-            this.darkLabel7.TabIndex = 4;
-            this.darkLabel7.Text = "? RPM";
-            this.darkLabel7.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
-            // darkLabel8
-            // 
-            this.darkLabel8.AutoSize = true;
-            this.darkLabel8.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.darkLabel8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkLabel8.Location = new System.Drawing.Point(98, 53);
-            this.darkLabel8.Name = "darkLabel8";
-            this.darkLabel8.Size = new System.Drawing.Size(137, 18);
-            this.darkLabel8.TabIndex = 1;
-            this.darkLabel8.Text = "Distance from top:";
-            // 
-            // darkLabel9
-            // 
-            this.darkLabel9.AutoSize = true;
-            this.darkLabel9.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.darkLabel9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkLabel9.Location = new System.Drawing.Point(98, 71);
-            this.darkLabel9.Name = "darkLabel9";
-            this.darkLabel9.Size = new System.Drawing.Size(137, 18);
-            this.darkLabel9.TabIndex = 2;
-            this.darkLabel9.Text = "?? mm";
-            // 
-            // darkLabel10
-            // 
-            this.darkLabel10.AutoSize = true;
-            this.darkLabel10.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.darkLabel10.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkLabel10.Location = new System.Drawing.Point(98, 107);
-            this.darkLabel10.Name = "darkLabel10";
-            this.darkLabel10.Size = new System.Drawing.Size(137, 18);
-            this.darkLabel10.TabIndex = 3;
-            this.darkLabel10.Text = "Go To:";
-            // 
-            // GoToTop
-            // 
-            this.GoToTop.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.GoToTop.Location = new System.Drawing.Point(96, 126);
-            this.GoToTop.Margin = new System.Windows.Forms.Padding(1);
-            this.GoToTop.Name = "GoToTop";
-            this.GoToTop.Padding = new System.Windows.Forms.Padding(5);
-            this.GoToTop.Size = new System.Drawing.Size(141, 23);
-            this.GoToTop.TabIndex = 4;
-            this.GoToTop.Text = "Top";
-            // 
-            // GoToGround
-            // 
-            this.GoToGround.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.GoToGround.Location = new System.Drawing.Point(96, 151);
-            this.GoToGround.Margin = new System.Windows.Forms.Padding(1);
-            this.GoToGround.Name = "GoToGround";
-            this.GoToGround.Padding = new System.Windows.Forms.Padding(5);
-            this.GoToGround.Size = new System.Drawing.Size(141, 23);
-            this.GoToGround.TabIndex = 5;
-            this.GoToGround.Text = "Ground";
-            // 
-            // darkLabel11
-            // 
-            this.darkLabel11.AutoSize = true;
-            this.darkLabel11.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.darkLabel11.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkLabel11.Location = new System.Drawing.Point(98, 245);
-            this.darkLabel11.Name = "darkLabel11";
-            this.darkLabel11.Size = new System.Drawing.Size(137, 18);
-            this.darkLabel11.TabIndex = 6;
-            this.darkLabel11.Text = "Distance above ground:";
-            // 
-            // darkLabel12
-            // 
-            this.darkLabel12.AutoSize = true;
-            this.darkLabel12.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkLabel12.Location = new System.Drawing.Point(98, 263);
-            this.darkLabel12.Name = "darkLabel12";
-            this.darkLabel12.Size = new System.Drawing.Size(38, 13);
-            this.darkLabel12.TabIndex = 7;
-            this.darkLabel12.Text = "?? mm";
-            // 
-            // darkButton1
-            // 
-            this.darkButton1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.darkButton1.Location = new System.Drawing.Point(96, 203);
-            this.darkButton1.Margin = new System.Windows.Forms.Padding(1);
-            this.darkButton1.Name = "darkButton1";
-            this.darkButton1.Padding = new System.Windows.Forms.Padding(5);
-            this.darkButton1.Size = new System.Drawing.Size(141, 23);
-            this.darkButton1.TabIndex = 8;
-            this.darkButton1.Text = "^ mm above Ground";
-            // 
-            // darkTextBox1
-            // 
-            this.darkTextBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.darkTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.darkTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.darkTextBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkTextBox1.Location = new System.Drawing.Point(96, 181);
-            this.darkTextBox1.Margin = new System.Windows.Forms.Padding(1);
-            this.darkTextBox1.Name = "darkTextBox1";
-            this.darkTextBox1.Size = new System.Drawing.Size(141, 20);
-            this.darkTextBox1.TabIndex = 9;
-            // 
-            // darkLabel13
-            // 
-            this.darkLabel13.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.darkLabel13.AutoSize = true;
-            this.darkLabel13.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkLabel13.Location = new System.Drawing.Point(3, 35);
-            this.darkLabel13.Name = "darkLabel13";
-            this.darkLabel13.Size = new System.Drawing.Size(89, 13);
-            this.darkLabel13.TabIndex = 10;
-            this.darkLabel13.Text = "0 mm/s";
-            // 
-            // darkLabel14
-            // 
-            this.darkLabel14.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.darkLabel14.AutoSize = true;
-            this.darkLabel14.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkLabel14.Location = new System.Drawing.Point(98, 35);
-            this.darkLabel14.Name = "darkLabel14";
-            this.darkLabel14.Size = new System.Drawing.Size(137, 13);
-            this.darkLabel14.TabIndex = 11;
-            this.darkLabel14.Text = "?? mm/s";
-            this.darkLabel14.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1342,5 +1362,6 @@
         private DarkUI.Controls.DarkTextBox darkTextBox1;
         private DarkUI.Controls.DarkLabel darkLabel13;
         private DarkUI.Controls.DarkLabel darkLabel14;
+        private RailDisplay railDisplay1;
     }
 }
