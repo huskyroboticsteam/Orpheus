@@ -54,7 +54,7 @@ namespace Science.Systems
 
             this.Thermocouple = new MAX31855(this.SPI0, new DigitalOutPi(18));
             this.UVLight = new VEML6070(this.I2C1);
-            this.Atmospheric = new BME280(this.SPI0, new DigitalOutPi(18));
+            this.Atmospheric = new BME280(this.I2C1);
             this.Atmospheric.Configure();
             
             this.Atmospheric.ChangeMode(BME280.Mode.NORMAL);

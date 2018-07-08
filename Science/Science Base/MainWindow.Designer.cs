@@ -47,6 +47,12 @@
             this.GaugeSysVoltage = new LiveCharts.WinForms.AngularGauge();
             this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.tableLayoutPanel10 = new System.Windows.Forms.TableLayoutPanel();
+            this.darkLabel4 = new DarkUI.Controls.DarkLabel();
+            this.darkLabel5 = new DarkUI.Controls.DarkLabel();
+            this.SampleTubeStatus = new DarkUI.Controls.DarkLabel();
+            this.SampleTubeToggle = new DarkUI.Controls.DarkButton();
+            this.SampleCupToggle = new DarkUI.Controls.DarkButton();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
             this.DrillSpeed = new System.Windows.Forms.TrackBar();
@@ -54,6 +60,7 @@
             this.DrillReverse = new DarkUI.Controls.DarkCheckBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel9 = new System.Windows.Forms.TableLayoutPanel();
+            this.darkCheckBox1 = new DarkUI.Controls.DarkCheckBox();
             this.trackBar2 = new System.Windows.Forms.TrackBar();
             this.ChartClearRight = new DarkUI.Controls.DarkButton();
             this.ChartClearLeft = new DarkUI.Controls.DarkButton();
@@ -91,13 +98,15 @@
             this.StatusImgSystem = new System.Windows.Forms.PictureBox();
             this.SecTimer = new System.Windows.Forms.Timer(this.components);
             this.UIUpdate = new System.Windows.Forms.Timer(this.components);
-            this.darkCheckBox1 = new DarkUI.Controls.DarkCheckBox();
+            this.SampleCupStatus = new DarkUI.Controls.DarkLabel();
             this.tableLayoutPanel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.Control.SuspendLayout();
             this.tableLayoutPanel5.SuspendLayout();
             this.GaugeTable.SuspendLayout();
             this.tableLayoutPanel7.SuspendLayout();
+            this.groupBox4.SuspendLayout();
+            this.tableLayoutPanel10.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.tableLayoutPanel8.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DrillSpeed)).BeginInit();
@@ -334,22 +343,104 @@
             this.tableLayoutPanel7.RowCount = 4;
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 30F));
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 70F));
-            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
-            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
+            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
+            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
             this.tableLayoutPanel7.Size = new System.Drawing.Size(500, 415);
             this.tableLayoutPanel7.TabIndex = 2;
             // 
             // groupBox4
             // 
             this.tableLayoutPanel7.SetColumnSpan(this.groupBox4, 2);
+            this.groupBox4.Controls.Add(this.tableLayoutPanel10);
             this.groupBox4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox4.ForeColor = System.Drawing.Color.White;
             this.groupBox4.Location = new System.Drawing.Point(3, 3);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(244, 104);
+            this.groupBox4.Size = new System.Drawing.Size(244, 103);
             this.groupBox4.TabIndex = 9;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Sample";
+            // 
+            // tableLayoutPanel10
+            // 
+            this.tableLayoutPanel10.ColumnCount = 2;
+            this.tableLayoutPanel10.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel10.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel10.Controls.Add(this.darkLabel4, 0, 0);
+            this.tableLayoutPanel10.Controls.Add(this.darkLabel5, 1, 0);
+            this.tableLayoutPanel10.Controls.Add(this.SampleTubeStatus, 0, 2);
+            this.tableLayoutPanel10.Controls.Add(this.SampleCupStatus, 1, 2);
+            this.tableLayoutPanel10.Controls.Add(this.SampleTubeToggle, 0, 1);
+            this.tableLayoutPanel10.Controls.Add(this.SampleCupToggle, 1, 1);
+            this.tableLayoutPanel10.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel10.Location = new System.Drawing.Point(3, 16);
+            this.tableLayoutPanel10.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanel10.Name = "tableLayoutPanel10";
+            this.tableLayoutPanel10.RowCount = 3;
+            this.tableLayoutPanel10.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 18F));
+            this.tableLayoutPanel10.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
+            this.tableLayoutPanel10.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel10.Size = new System.Drawing.Size(238, 84);
+            this.tableLayoutPanel10.TabIndex = 0;
+            // 
+            // darkLabel4
+            // 
+            this.darkLabel4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.darkLabel4.AutoSize = true;
+            this.darkLabel4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.darkLabel4.Location = new System.Drawing.Point(3, 0);
+            this.darkLabel4.Name = "darkLabel4";
+            this.darkLabel4.Size = new System.Drawing.Size(113, 13);
+            this.darkLabel4.TabIndex = 0;
+            this.darkLabel4.Text = "Tube";
+            this.darkLabel4.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // darkLabel5
+            // 
+            this.darkLabel5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.darkLabel5.AutoSize = true;
+            this.darkLabel5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.darkLabel5.Location = new System.Drawing.Point(122, 0);
+            this.darkLabel5.Name = "darkLabel5";
+            this.darkLabel5.Size = new System.Drawing.Size(113, 13);
+            this.darkLabel5.TabIndex = 1;
+            this.darkLabel5.Text = "Cup";
+            this.darkLabel5.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // SampleTubeStatus
+            // 
+            this.SampleTubeStatus.AutoSize = true;
+            this.SampleTubeStatus.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SampleTubeStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.SampleTubeStatus.Location = new System.Drawing.Point(3, 43);
+            this.SampleTubeStatus.Name = "SampleTubeStatus";
+            this.SampleTubeStatus.Size = new System.Drawing.Size(113, 41);
+            this.SampleTubeStatus.TabIndex = 2;
+            this.SampleTubeStatus.Text = "Unknown";
+            // 
+            // SampleTubeToggle
+            // 
+            this.SampleTubeToggle.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SampleTubeToggle.Location = new System.Drawing.Point(2, 19);
+            this.SampleTubeToggle.Margin = new System.Windows.Forms.Padding(2, 1, 2, 1);
+            this.SampleTubeToggle.Name = "SampleTubeToggle";
+            this.SampleTubeToggle.Padding = new System.Windows.Forms.Padding(5);
+            this.SampleTubeToggle.Size = new System.Drawing.Size(115, 23);
+            this.SampleTubeToggle.TabIndex = 4;
+            this.SampleTubeToggle.Text = "Toggle";
+            // 
+            // SampleCupToggle
+            // 
+            this.SampleCupToggle.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SampleCupToggle.Location = new System.Drawing.Point(121, 19);
+            this.SampleCupToggle.Margin = new System.Windows.Forms.Padding(2, 1, 2, 1);
+            this.SampleCupToggle.Name = "SampleCupToggle";
+            this.SampleCupToggle.Padding = new System.Windows.Forms.Padding(5);
+            this.SampleCupToggle.Size = new System.Drawing.Size(115, 23);
+            this.SampleCupToggle.TabIndex = 5;
+            this.SampleCupToggle.Text = "Toggle";
             // 
             // groupBox2
             // 
@@ -358,7 +449,7 @@
             this.groupBox2.ForeColor = System.Drawing.Color.White;
             this.groupBox2.Location = new System.Drawing.Point(253, 3);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(244, 104);
+            this.groupBox2.Size = new System.Drawing.Size(244, 103);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Drill";
@@ -377,9 +468,9 @@
             this.tableLayoutPanel8.Name = "tableLayoutPanel8";
             this.tableLayoutPanel8.RowCount = 3;
             this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 18F));
             this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.tableLayoutPanel8.Size = new System.Drawing.Size(238, 85);
+            this.tableLayoutPanel8.Size = new System.Drawing.Size(238, 84);
             this.tableLayoutPanel8.TabIndex = 1;
             // 
             // DrillSpeed
@@ -390,7 +481,7 @@
             this.DrillSpeed.Location = new System.Drawing.Point(3, 3);
             this.DrillSpeed.Maximum = 100;
             this.DrillSpeed.Name = "DrillSpeed";
-            this.DrillSpeed.Size = new System.Drawing.Size(232, 29);
+            this.DrillSpeed.Size = new System.Drawing.Size(232, 35);
             this.DrillSpeed.TabIndex = 0;
             this.DrillSpeed.TickFrequency = 10;
             this.DrillSpeed.TickStyle = System.Windows.Forms.TickStyle.Both;
@@ -399,7 +490,7 @@
             // DrillToggle
             // 
             this.DrillToggle.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.DrillToggle.Location = new System.Drawing.Point(120, 61);
+            this.DrillToggle.Location = new System.Drawing.Point(120, 60);
             this.DrillToggle.Margin = new System.Windows.Forms.Padding(1);
             this.DrillToggle.Name = "DrillToggle";
             this.DrillToggle.Padding = new System.Windows.Forms.Padding(5);
@@ -412,7 +503,7 @@
             // 
             this.DrillReverse.AutoSize = true;
             this.DrillReverse.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.DrillReverse.Location = new System.Drawing.Point(3, 63);
+            this.DrillReverse.Location = new System.Drawing.Point(3, 62);
             this.DrillReverse.Name = "DrillReverse";
             this.DrillReverse.Size = new System.Drawing.Size(113, 19);
             this.DrillReverse.TabIndex = 2;
@@ -423,10 +514,10 @@
             this.groupBox3.Controls.Add(this.tableLayoutPanel9);
             this.groupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox3.ForeColor = System.Drawing.Color.White;
-            this.groupBox3.Location = new System.Drawing.Point(253, 113);
+            this.groupBox3.Location = new System.Drawing.Point(253, 112);
             this.groupBox3.Name = "groupBox3";
             this.tableLayoutPanel7.SetRowSpan(this.groupBox3, 3);
-            this.groupBox3.Size = new System.Drawing.Size(244, 299);
+            this.groupBox3.Size = new System.Drawing.Size(244, 300);
             this.groupBox3.TabIndex = 2;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Rail";
@@ -449,8 +540,18 @@
             this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
             this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
             this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
-            this.tableLayoutPanel9.Size = new System.Drawing.Size(238, 280);
+            this.tableLayoutPanel9.Size = new System.Drawing.Size(238, 281);
             this.tableLayoutPanel9.TabIndex = 1;
+            // 
+            // darkCheckBox1
+            // 
+            this.darkCheckBox1.AutoSize = true;
+            this.darkCheckBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.darkCheckBox1.Location = new System.Drawing.Point(98, 233);
+            this.darkCheckBox1.Name = "darkCheckBox1";
+            this.darkCheckBox1.Size = new System.Drawing.Size(137, 45);
+            this.darkCheckBox1.TabIndex = 3;
+            this.darkCheckBox1.Text = "Reverse";
             // 
             // trackBar2
             // 
@@ -460,18 +561,18 @@
             this.trackBar2.Name = "trackBar2";
             this.trackBar2.Orientation = System.Windows.Forms.Orientation.Vertical;
             this.tableLayoutPanel9.SetRowSpan(this.trackBar2, 6);
-            this.trackBar2.Size = new System.Drawing.Size(45, 274);
+            this.trackBar2.Size = new System.Drawing.Size(45, 275);
             this.trackBar2.TabIndex = 0;
             this.trackBar2.ValueChanged += new System.EventHandler(this.trackBar2_ValueChanged);
             // 
             // ChartClearRight
             // 
             this.ChartClearRight.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ChartClearRight.Location = new System.Drawing.Point(127, 392);
+            this.ChartClearRight.Location = new System.Drawing.Point(127, 390);
             this.ChartClearRight.Margin = new System.Windows.Forms.Padding(2, 1, 5, 1);
             this.ChartClearRight.Name = "ChartClearRight";
             this.ChartClearRight.Padding = new System.Windows.Forms.Padding(5);
-            this.ChartClearRight.Size = new System.Drawing.Size(118, 22);
+            this.ChartClearRight.Size = new System.Drawing.Size(118, 24);
             this.ChartClearRight.TabIndex = 7;
             this.ChartClearRight.Text = "Clear Right";
             this.ChartClearRight.Click += new System.EventHandler(this.ChartClearRight_Click);
@@ -479,11 +580,11 @@
             // ChartClearLeft
             // 
             this.ChartClearLeft.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ChartClearLeft.Location = new System.Drawing.Point(5, 392);
+            this.ChartClearLeft.Location = new System.Drawing.Point(5, 390);
             this.ChartClearLeft.Margin = new System.Windows.Forms.Padding(5, 1, 2, 1);
             this.ChartClearLeft.Name = "ChartClearLeft";
             this.ChartClearLeft.Padding = new System.Windows.Forms.Padding(5);
-            this.ChartClearLeft.Size = new System.Drawing.Size(118, 22);
+            this.ChartClearLeft.Size = new System.Drawing.Size(118, 24);
             this.ChartClearLeft.TabIndex = 8;
             this.ChartClearLeft.Text = "Clear Left";
             this.ChartClearLeft.Click += new System.EventHandler(this.ChartClearLeft_Click);
@@ -494,10 +595,10 @@
             this.tableLayoutPanel7.SetColumnSpan(this.ChartDataChooser, 2);
             this.ChartDataChooser.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ChartDataChooser.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.ChartDataChooser.Location = new System.Drawing.Point(3, 119);
+            this.ChartDataChooser.Location = new System.Drawing.Point(3, 118);
             this.ChartDataChooser.Margin = new System.Windows.Forms.Padding(3, 9, 3, 1);
             this.ChartDataChooser.Name = "ChartDataChooser";
-            this.ChartDataChooser.Size = new System.Drawing.Size(244, 248);
+            this.ChartDataChooser.Size = new System.Drawing.Size(244, 245);
             this.ChartDataChooser.TabIndex = 10;
             this.ChartDataChooser.UseCompatibleStateImageBehavior = false;
             this.ChartDataChooser.View = System.Windows.Forms.View.List;
@@ -505,11 +606,11 @@
             // ChartAddLeft
             // 
             this.ChartAddLeft.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ChartAddLeft.Location = new System.Drawing.Point(5, 369);
+            this.ChartAddLeft.Location = new System.Drawing.Point(5, 365);
             this.ChartAddLeft.Margin = new System.Windows.Forms.Padding(5, 1, 2, 1);
             this.ChartAddLeft.Name = "ChartAddLeft";
             this.ChartAddLeft.Padding = new System.Windows.Forms.Padding(5);
-            this.ChartAddLeft.Size = new System.Drawing.Size(118, 21);
+            this.ChartAddLeft.Size = new System.Drawing.Size(118, 23);
             this.ChartAddLeft.TabIndex = 11;
             this.ChartAddLeft.Text = "Add Left";
             this.ChartAddLeft.Click += new System.EventHandler(this.ChartAddLeft_Click);
@@ -517,11 +618,11 @@
             // ChartAddRight
             // 
             this.ChartAddRight.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ChartAddRight.Location = new System.Drawing.Point(127, 369);
+            this.ChartAddRight.Location = new System.Drawing.Point(127, 365);
             this.ChartAddRight.Margin = new System.Windows.Forms.Padding(2, 1, 5, 1);
             this.ChartAddRight.Name = "ChartAddRight";
             this.ChartAddRight.Padding = new System.Windows.Forms.Padding(5);
-            this.ChartAddRight.Size = new System.Drawing.Size(118, 21);
+            this.ChartAddRight.Size = new System.Drawing.Size(118, 23);
             this.ChartAddRight.TabIndex = 12;
             this.ChartAddRight.Text = "Add Right";
             this.ChartAddRight.Click += new System.EventHandler(this.ChartAddRight_Click);
@@ -931,15 +1032,16 @@
             this.UIUpdate.Interval = 33;
             this.UIUpdate.Tick += new System.EventHandler(this.UIUpdate_Tick);
             // 
-            // darkCheckBox1
+            // SampleCupStatus
             // 
-            this.darkCheckBox1.AutoSize = true;
-            this.darkCheckBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.darkCheckBox1.Location = new System.Drawing.Point(98, 233);
-            this.darkCheckBox1.Name = "darkCheckBox1";
-            this.darkCheckBox1.Size = new System.Drawing.Size(137, 44);
-            this.darkCheckBox1.TabIndex = 3;
-            this.darkCheckBox1.Text = "Reverse";
+            this.SampleCupStatus.AutoSize = true;
+            this.SampleCupStatus.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SampleCupStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.SampleCupStatus.Location = new System.Drawing.Point(122, 43);
+            this.SampleCupStatus.Name = "SampleCupStatus";
+            this.SampleCupStatus.Size = new System.Drawing.Size(113, 41);
+            this.SampleCupStatus.TabIndex = 3;
+            this.SampleCupStatus.Text = "Unknown";
             // 
             // MainWindow
             // 
@@ -959,6 +1061,9 @@
             this.GaugeTable.ResumeLayout(false);
             this.GaugeTable.PerformLayout();
             this.tableLayoutPanel7.ResumeLayout(false);
+            this.groupBox4.ResumeLayout(false);
+            this.tableLayoutPanel10.ResumeLayout(false);
+            this.tableLayoutPanel10.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.tableLayoutPanel8.ResumeLayout(false);
             this.tableLayoutPanel8.PerformLayout();
@@ -1050,5 +1155,12 @@
         private DarkUI.Controls.DarkButton ChartAddLeft;
         private DarkUI.Controls.DarkButton ChartAddRight;
         private DarkUI.Controls.DarkCheckBox darkCheckBox1;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel10;
+        private DarkUI.Controls.DarkLabel darkLabel4;
+        private DarkUI.Controls.DarkLabel darkLabel5;
+        private DarkUI.Controls.DarkLabel SampleTubeStatus;
+        private DarkUI.Controls.DarkButton SampleTubeToggle;
+        private DarkUI.Controls.DarkButton SampleCupToggle;
+        private DarkUI.Controls.DarkLabel SampleCupStatus;
     }
 }
