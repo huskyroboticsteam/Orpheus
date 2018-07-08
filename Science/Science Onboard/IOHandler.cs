@@ -40,7 +40,7 @@ namespace Science
             this.DrillController = new Drill(this.PWMGenHighFreq.Outputs[0], this.PWMGenLowFreq.Outputs[0]);
             this.SampleController = new Sample(this.PWMGenLowFreq.Outputs[1]);
             this.LEDController = new LEDs(this.PWMGenLowFreq.Outputs, this.PWMGenHighFreq.Outputs);
-            this.AuxSensors = new AuxSensors(this.SPI, this.I2C);
+            this.AuxSensors = new AuxSensors(this.SPI, this.I2C) { TraceLogging = true };
             this.SysSensors = new SysSensors();
             this.Music = new MusicPlayer();
 

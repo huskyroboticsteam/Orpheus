@@ -44,7 +44,7 @@ namespace Science.Systems
 
         public void Initialize()
         {
-            this.ADC = new TLV2544(this.SPI0, new DigitalOutPi(16)) { TraceLogging = true };
+            this.ADC = new TLV2544(this.SPI0, new DigitalOutPi(16));// { TraceLogging = true };
             TLV2544.Configuration Config = TLV2544.DefaultConfig;
             Config.VoltageRef = TLV2544.VoltageReference.INTERNAL_2V;
             Config.ConversionClockSrc = TLV2544.ConversionClockSrc.INTERNAL;
@@ -86,7 +86,7 @@ namespace Science.Systems
                     .Concat(UtilData.ToBytes(this.Atmospheric.Pressure))
                     .Concat(UtilData.ToBytes(this.Atmospheric.Humidity))
                     .ToArray();
-                //if (this.TraceLogging) { Log.Trace(this, "Tests: " + /*this.ADC_Cai.Test() +*/ ", input 0: " + In0 + "V, input 1: " + In1 + "V"); }
+                if (this.TraceLogging) { Log.Trace(this, "UV: " + this.UVLight.GetReading() + ", AirQ: " + this.AirQuality.GetReadingUncalibrated() + ", Soil: " + this.SoilMoisture.GetReading() + ", AirTemp: " + this.Atmospheric.Temperature); }
                 
                 Packet Packet = new Packet(new Message(ScienceConstants.Packets.GND_SENSOR, Data), false);
                 Client.Send(Packet);
