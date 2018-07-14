@@ -8,28 +8,33 @@ namespace HuskyRobotics.UI
     /// <summary>
     /// Interaction logic for ConsoleView.xaml
     /// </summary>
-    public partial class ConsoleView : ScrollViewer {
-		public ConsoleView() {
-			TextBlock child = new TextBlock();
-			AddChild(child);
-			child.FontFamily = new System.Windows.Media.FontFamily("consolas");
-			child.FontSize = 16;
-			Console.SetOut(new ConsoleWriter(child, this, Console.Out));
-			InitializeComponent();
+    public partial class ConsoleView : ScrollViewer
+    {
+        public ConsoleView()
+        {
+            TextBlock child = new TextBlock();
+            AddChild(child);
+            child.FontFamily = new System.Windows.Media.FontFamily("consolas");
+            child.FontSize = 16;
+            Console.SetOut(new ConsoleWriter(child, this, Console.Out));
+            InitializeComponent();
         }
 
-		private class ConsoleWriter : TextWriter {
-			private readonly TextBlock view;
-			private readonly ScrollViewer scroll;
+        private class ConsoleWriter : TextWriter
+        {
+            private readonly TextBlock view;
+            private readonly ScrollViewer scroll;
             private readonly TextWriter oldOut;
 
-			public ConsoleWriter(TextBlock view, ScrollViewer scroll, TextWriter oldOut) {
-				this.view = view;
-				this.scroll = scroll;
+            public ConsoleWriter(TextBlock view, ScrollViewer scroll, TextWriter oldOut)
+            {
+                this.view = view;
+                this.scroll = scroll;
                 this.oldOut = oldOut;
-			}
+                view.TextWrapping = System.Windows.TextWrapping.Wrap;
+            }
 
- 			public override Encoding Encoding => Encoding.UTF8;
+            public override Encoding Encoding => Encoding.UTF8;
 
             public override void Write(char value)
             {
@@ -53,19 +58,20 @@ namespace HuskyRobotics.UI
 
             //removes extra text (prevent memory leak)
             //and scrolls view to bottom (like a console)
-            private void UpdateView() {
-				int len = view.Text.Length;
+            private void UpdateView()
+            {
+                int len = view.Text.Length;
                 double scrollHeight = scroll.ViewportHeight;
                 double viewHeight = view.ActualHeight;
                 int totalLines = CountLines(view.Text);
-                int lineHeight = (int)viewHeight/totalLines;
-                int possibleVisibleLines = (int)(scrollHeight/lineHeight);
+                int lineHeight = (int)viewHeight / totalLines;
+                int possibleVisibleLines = (int)(scrollHeight / lineHeight);
                 if (viewHeight > scrollHeight * 2) //if stored text is partially offscreen, the 2 is there to buffer the text so there isn't so much garbage produced
                 {
                     view.Text = GetFinalLines(view.Text, totalLines, Math.Min(totalLines, possibleVisibleLines));
                 }
-				scroll.ScrollToEnd();
-			}
+                scroll.ScrollToEnd();
+            }
 
             private static string GetFinalLines(string text, int totalLines, int lineCount)
             {
@@ -89,11 +95,12 @@ namespace HuskyRobotics.UI
                 if (str == string.Empty) return 0;
                 int index = -1;
                 int count = 0;
-                while (-1 != (index = str.IndexOf(Environment.NewLine, index + Environment.NewLine.Length))) {
-					count++;
-				}
+                while (-1 != (index = str.IndexOf(Environment.NewLine, index + Environment.NewLine.Length)))
+                {
+                    count++;
+                }
                 return count + 1;
             }
         }
-	}
+    }
 }
