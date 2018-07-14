@@ -4,19 +4,11 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using HuskyRobotics.Utilities;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Text.RegularExpressions;
 using HuskyRobotics.BaseStation.Server;
 
 namespace HuskyRobotics.UI
@@ -55,9 +47,14 @@ namespace HuskyRobotics.UI
         {
             InitializeComponent();
             BaseServer.GPSUpdate += UpdateRoverPosition;
-            _roverIconBitmap = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"/Icons/RoverIcon.png", UriKind.Absolute));
-            _waypointBitmap = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"/Icons/waypoint.png", UriKind.Absolute));
+            _roverIconBitmap = LoadImageFromRelativeFile("Icons/RoverIcon.png");
+            _waypointBitmap = LoadImageFromRelativeFile("Icons/waypoint.png");
             RoverIcon = new Image { Source = _roverIconBitmap };
+        }
+
+        private static BitmapImage LoadImageFromRelativeFile(string file)
+        {
+            return new BitmapImage(new Uri(Path.Combine(Directory.GetCurrentDirectory(), file), UriKind.Absolute));
         }
 
         public void DisplayMap(string mapSetFile)
@@ -65,10 +62,11 @@ namespace HuskyRobotics.UI
             ClearCanvas();
             // load in individual images
             // TODO get the path from the settings
-            if (File.Exists(Directory.GetCurrentDirectory() + @"\Images\" + mapSetFile))
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "Images", mapSetFile);
+            if (File.Exists(path))
             {
                 String waypointsFile = (mapSetFile.Replace(".map", ".waypoints"));
-                using (StreamReader file = new StreamReader(Directory.GetCurrentDirectory() + @"\Images\" + mapSetFile))
+                using (var file = new StreamReader(path))
                 {
                     string line = file.ReadLine();
                     string[] config = line.Split('|');
@@ -101,11 +99,9 @@ namespace HuskyRobotics.UI
                     {
                         string[] parts = line.Split('|');
                         string[] location = parts[0].Split(',');
-                        int x = 0;
-                        int y = 0;
-                        Int32.TryParse(location[0], out x);
-                        Int32.TryParse(location[1], out y);
-                        AddImage(Directory.GetCurrentDirectory() + @"\Images\" + parts[1] + ".jpg", x, y, ImageWidth, ImageHeight);
+                        Int32.TryParse(location[0], out int x);
+                        Int32.TryParse(location[1], out int y);
+                        AddImage(LoadImageFromRelativeFile(Path.Combine("Images", parts[1] + ".jpg")), x, y, ImageWidth, ImageHeight);
                     }
                 }
                 
@@ -117,10 +113,10 @@ namespace HuskyRobotics.UI
 
         // adds an image to the canvas with the given file location and the coords of where
         // on the canvas it goes
-        private void AddImage(String location, int x, int y, int width, int height)
+        private void AddImage(BitmapImage bitmap, int x, int y, int width, int height)
         {
-            var uri = new Uri(location, UriKind.Absolute);
-            var bitmap = new BitmapImage(uri);
+           // var uri = new Uri(location, UriKind.Absolute);
+            //var bitmap = new BitmapImage(uri);
             var image = new Image { Source = bitmap, Width = width, Height = height };
             Canvas.SetLeft(image, x * width - (width / 2));
             Canvas.SetTop(image, y * height - (height / 2));
