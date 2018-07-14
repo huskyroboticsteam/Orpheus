@@ -4,22 +4,16 @@ using Scarlet.Utilities;
 using Scarlet.Communications;
 using Scarlet.IO.BeagleBone;
 using Scarlet.IO;
+using System.Threading;
 
 namespace ArmMaster
 {
     class ArmMaster
     {
-        const string CHASSIS_BEAGLEBONE = "192.168.0.5";
+        const string SERVER_IP = "192.168.0.5";
         static IUARTBus Slave;
 
-        static void SetupBeaglebone()
-        {
-            Slave = UARTBBB.UARTBus1;
-            StateStore.Start("ArmMaster");
-            BeagleBone.Initialize(SystemMode.DEFAULT, true);
-        }
-
-        static void SetupPins()
+        static void SetupBeagleboneAndPins()
         {
             BBBPinManager.AddMappingUART(Pins.SlaveRX);
             BBBPinManager.AddMappingUART(Pins.SlaveTX);
@@ -30,11 +24,13 @@ namespace ArmMaster
             BBBPinManager.AddMappingADC(Pins.ShoulderPot);
             BBBPinManager.AddMappingGPIO(Pins.ElbowLimitSwitch, false, ResistorState.PULL_UP);
             BBBPinManager.ApplyPinSettings(BBBPinManager.ApplicationMode.APPLY_IF_NONE);
+            Slave = UARTBBB.UARTBus1;
+            BeagleBone.Initialize(SystemMode.DEFAULT, true);
         }
 
         static void SetupClient()
         {
-            Client.Start(CHASSIS_BEAGLEBONE, 1025, 1026, "ArmMaster");
+            Client.Start(SERVER_IP, 1025, 1026, "ArmMaster");
             Parse.SetParseHandler(0x80, (Pack) =>
             {
                 MotorControl.SetAllMotorSpeed(0.0f);
@@ -60,33 +56,25 @@ namespace ArmMaster
 
         static void Main(string[] args)
         {
-
-            SetupBeaglebone();
-            SetupPins();
+            StateStore.Start("ArmMaster");
+            SetupBeagleboneAndPins();
             SetupClient();
-
+            MotorControl.Initialize();
             const int PacketSize = sizeof(byte) + sizeof(int) + sizeof(int) + sizeof(int) + sizeof(byte);
             Packet p = new Packet(0xD3, true);
             byte[] ID = new byte[1];
             p.Data.Payload = new byte[PacketSize - 1];
             for (; ; )
             {
-                /*Slave.Read(1, ID);
-                Slave.Read(PacketSize, p.Data.Payload);
-                p.Data.ID = ID[0];
-                Client.SendNow(p);*/
-                string[] tokens = Console.ReadLine().Split(' ');
-                byte id = Byte.Parse(tokens[0], System.Globalization.NumberStyles.HexNumber);
-                float speed = float.Parse(tokens[1]);
-                if (0x9A <= id && id <= 0x9C)
-                    MotorControl.SetMotorSpeed(id - 0x9A, speed);
-                else
+                if (Slave.BytesAvailable() > 0)
                 {
-                    Slave.Write(new byte[] { id });
-                    Slave.Write(UtilData.ToBytes(speed));
+                    Slave.Read(1, ID);
+                    while (Slave.BytesAvailable() < PacketSize - 1) { }
+                    Slave.Read(PacketSize, p.Data.Payload);
+                    p.Data.ID = ID[0];
+                    Client.SendNow(p);
                 }
             }
-
         }
     }
 }
