@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using HuskyRobotics.BaseStation.Server;
 
 namespace HuskyRobotics.UI
 {
@@ -24,21 +25,23 @@ namespace HuskyRobotics.UI
 
         public BeaconFinder()
         {
+            BaseServer.RFUpdate += UpdateHeading;
             InitializeComponent();
         }
 
-        private void ResetMax(object sender, RoutedEventArgs e)
+        private void ResetHeading(object sender, RoutedEventArgs e)
         {
             MaxVoltage = 0;
-        }
+            RotateTransform transform = new RotateTransform(0, 5, 55);
+            Heading.RenderTransform = transform;        }
 
-        private void UpdateMax(double voltage, double angle)
+        private void UpdateHeading(object sender, (double, double) vals)
         {
-            if (voltage > MaxVoltage)
+            if (vals.Item2 > MaxVoltage)
             {
-                MaxVoltage = voltage;
+                MaxVoltage = vals.Item2;
 
-                RotateTransform transform = new RotateTransform(angle, 5, 55);
+                RotateTransform transform = new RotateTransform(vals.Item1, 5, 55);
                 Heading.RenderTransform = transform;
             }
         }
