@@ -16,7 +16,7 @@
         </local:RoverView>
         <Label Content="Max:" Canvas.Left="60" Canvas.Top="210" FontSize="15"/>
         <TextBox Canvas.Top="215" Canvas.Left="120" FontSize="15" Width="50" Text="{Binding MaxVoltage, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True"/>
-        <Button Content="Reset" Canvas.Left="200" Canvas.Top="215" Click="ResetMax"/>
+        <Button Content="Reset" Canvas.Left="200" Canvas.Top="215" Click="ResetHeading"/>
         <Polygon Points="5,0 10,5 0,5" Fill="Red" Canvas.Left="145" Canvas.Top="50" Name="Heading"/>
     </Canvas>
 </UserControl>
