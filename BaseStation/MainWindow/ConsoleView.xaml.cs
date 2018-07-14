@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace HuskyRobotics.UI
 {
@@ -9,46 +10,50 @@ namespace HuskyRobotics.UI
     /// Interaction logic for ConsoleView.xaml
     /// </summary>
     public partial class ConsoleView : ScrollViewer {
-		public ConsoleView() {
-			TextBlock child = new TextBlock();
-			AddChild(child);
-			child.FontFamily = new System.Windows.Media.FontFamily("consolas");
-			child.FontSize = 16;
-			Console.SetOut(new ConsoleWriter(child, this, Console.Out));
-			InitializeComponent();
+        private readonly ConsoleWriter writer;
+
+        public TextWriter Writer => writer;
+
+        public ConsoleView() {
+            TextBox box = new TextBox {
+                FontFamily = new FontFamily("consolas"),
+                FontSize = 16,
+                IsReadOnly = true,
+                IsReadOnlyCaretVisible = false,
+                BorderThickness = new System.Windows.Thickness(0),
+                TextWrapping = System.Windows.TextWrapping.Wrap
+            };
+
+            AddChild(box);
+            writer = new ConsoleWriter(box, this);
+            InitializeComponent();
         }
 
 		private class ConsoleWriter : TextWriter {
-			private readonly TextBlock view;
+			private readonly TextBox view;
 			private readonly ScrollViewer scroll;
-            private readonly TextWriter oldOut;
 
-			public ConsoleWriter(TextBlock view, ScrollViewer scroll, TextWriter oldOut) {
+			public ConsoleWriter(TextBox view, ScrollViewer scroll) {
 				this.view = view;
 				this.scroll = scroll;
-                this.oldOut = oldOut;
 			}
 
- 			public override Encoding Encoding => Encoding.UTF8;
+            public override Encoding Encoding => Encoding.UTF8;
 
             public override void Write(char value)
             {
-                oldOut.Write(value);
-                view.Dispatcher.BeginInvoke(new Action(() =>
-                {
-                    view.Text += value;
+                view.Dispatcher.InvokeAsync(() => {
+                    view.AppendText(value.ToString());
                     UpdateView();
-                }));
+                });
             }
 
             public override void Write(char[] buffer, int index, int count)
             {
-                oldOut.Write(buffer, index, count);
-                view.Dispatcher.BeginInvoke(new Action(() =>
-                {
-                    view.Text += new string(buffer, index, count);
+                view.Dispatcher.InvokeAsync(() => {
+                    view.AppendText(new string(buffer, index, count));
                     UpdateView();
-                }));
+                });
             }
 
             //removes extra text (prevent memory leak)
@@ -58,10 +63,9 @@ namespace HuskyRobotics.UI
                 double scrollHeight = scroll.ViewportHeight;
                 double viewHeight = view.ActualHeight;
                 int totalLines = CountLines(view.Text);
-                int lineHeight = (int)viewHeight/totalLines;
-                int possibleVisibleLines = (int)(scrollHeight/lineHeight);
-                if (viewHeight > scrollHeight * 2) //if stored text is partially offscreen, the 2 is there to buffer the text so there isn't so much garbage produced
-                {
+                int lineHeight = (int)viewHeight / totalLines;
+                int possibleVisibleLines = (int)(scrollHeight / lineHeight);
+                if (viewHeight > scrollHeight) {
                     view.Text = GetFinalLines(view.Text, totalLines, Math.Min(totalLines, possibleVisibleLines));
                 }
 				scroll.ScrollToEnd();
