@@ -73,11 +73,11 @@ namespace HuskyRobotics.UI
 
             private static string GetFinalLines(string text, int totalLines, int lineCount)
             {
-                int ind = GetIndexAfter(text, totalLines - lineCount);
+                int ind = GetIndexAfterNewline(text, totalLines - lineCount);
                 return text.Substring(ind);
             }
 
-            private static int GetIndexAfter(string str, int count)
+            private static int GetIndexAfterNewline(string str, int count)
             {
                 if (str == string.Empty) return -1;
                 int index = -1;
