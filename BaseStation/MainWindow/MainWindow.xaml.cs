@@ -35,6 +35,7 @@ namespace HuskyRobotics.UI {
             Gst.Application.Init();
             Properties = new MockObservableMap();
             InitializeComponent();
+            Console.SetOut(((ConsoleView)FindName("console")).Writer);
             WindowState = WindowState.Maximized;
             this.Closing += OnCloseEvent;
             DataContext = this;
@@ -50,11 +51,10 @@ namespace HuskyRobotics.UI {
 
             Settings.PropertyChanged += SettingChanged;
             SettingPanel.Settings = Settings;
-            if (!File.Exists(Directory.GetCurrentDirectory() + @"\Images\" + Settings.CurrentMapFile))
+            if (!File.Exists(Path.Combine(Directory.GetCurrentDirectory(), "Images", Settings.CurrentMapFile)))
             {
-                string[] mapFiles = Directory.GetFiles
-                    (Directory.GetCurrentDirectory() + @"\Images", "*.map");
-                if (mapFiles.Count() != 0)
+                string[] mapFiles = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "Images"), "*.map");
+                if (mapFiles.Count() > 0)
                 {
                     Settings.CurrentMapFile = Path.GetFileName(mapFiles[0]);
                 }
@@ -170,16 +170,13 @@ namespace HuskyRobotics.UI {
             for (int i = VideoWindows.Count - 1; i >= 0; i--)
             {
                 VideoWindow window = VideoWindows[i];
-                if(window is Window)
+                if(window is Window videoWindowAsWindow)
                 {
-                    Window videoWindowAsWindow = window as Window;
-                    videoWindowAsWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() =>
-                    {
-                        videoWindowAsWindow.Hide();
-                        videoWindowAsWindow.Close(); // Closing takes awhile so hide the window
-                    }));
+                    videoWindowAsWindow.Dispatcher.InvokeAsync(() => {
+                        videoWindowAsWindow.Hide(); //Closing takes awhile so hide the window
+                        videoWindowAsWindow.Close();
+                    }, System.Windows.Threading.DispatcherPriority.Normal);
                 }
-
                 VideoWindows.RemoveAt(i);
             }
         }
