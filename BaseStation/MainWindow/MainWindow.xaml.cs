@@ -35,8 +35,9 @@ namespace HuskyRobotics.UI {
             Gst.Application.Init();
             Properties = new MockObservableMap();
             InitializeComponent();
-            Console.SetOut(((ConsoleView)FindName("console")).Writer);
-            WindowState = WindowState.Maximized;
+			((ConsoleView)FindName("console")).Writer.WriteLine("ConsoleView disabled due to performance issues, use Command Prompt view instead.");
+			//Console.SetOut(((ConsoleView)FindName("console")).Writer);
+			WindowState = WindowState.Maximized;
             this.Closing += OnCloseEvent;
             DataContext = this;
 
