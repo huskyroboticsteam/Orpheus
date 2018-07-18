@@ -112,7 +112,7 @@ namespace HuskyRobotics.UI
                 WaypointsChanged(null, null); // this loads the waypoints on startup
             }
 
-            UpdateRoverPosition(this, (0, 0));
+            UpdateRoverPosition(this, (0,0));
         }
 
         // adds an image to the canvas with the given file location and the coords of where

@@ -104,6 +104,9 @@
       <DependentUpon>SettingsPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="Settings\VideoDevice.cs" />
+    <Compile Include="BeaconFinder.xaml.cs">
+      <DependentUpon>BeaconFinder.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Utilities\MockObservableMap.cs" />
     <Compile Include="Utilities\ProportionToDegree.cs" />
     <Compile Include="RoverView.xaml.cs">
@@ -150,6 +153,10 @@
     <Page Include="Settings\SettingsPanel.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="BeaconFinder.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="VideoStreamer\RTSPVideoWindow.xaml">
       <SubType>Designer</SubType>

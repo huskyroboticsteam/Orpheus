@@ -18,8 +18,10 @@ namespace HuskyRobotics.BaseStation.Server
         //private static readonly int RightThumbDeadzone = 8689;
         private static readonly int TriggerThreshold = 30;
         private const long CONTROL_SEND_INTERVAL_NANOSECONDS = 100_000_000; //100,000,000 ns == 100 ms
-        public static event EventHandler<(float, float)> GPSUpdate;
         private static long lastControlSend = 0;
+
+        public static event EventHandler<(float, float)> GPSUpdate;
+        public static event EventHandler<(double, double)> RFUpdate;
 
         public static void Setup()
         {
@@ -27,6 +29,7 @@ namespace HuskyRobotics.BaseStation.Server
             Scarlet.Communications.Server.ClientConnectionChange += ClientConnected;
             Parse.SetParseHandler(0xC0, GpsHandler);
             Parse.SetParseHandler(0xC1, MagnetomerHandler);
+            Parse.SetParseHandler(0xD4, RFSignalHandler);
         }
 
         public static void Shutdown()
@@ -196,6 +199,24 @@ namespace HuskyRobotics.BaseStation.Server
             return ret;
         }
 
+        private static List<double> ConvertToDoubleArray(Packet data)
+        {
+            List<double> ret = new List<double>();
+
+            byte[][] chunks = data.Data.Payload
+                        .Select((s, i) => new { Value = s, Index = i })
+                        .GroupBy(x => x.Index / 8)
+                        .Select(grp => grp.Select(x => x.Value).ToArray())
+                        .ToArray();
+
+            foreach (var chunk in chunks)
+            {
+                ret.Add(UtilData.ToDouble(chunk));
+            }
+
+            return ret;
+        }
+
         private static void GpsHandler(Packet gpsData)
         {
             List<float> vals = ConvertToFloatArray(gpsData);
@@ -217,6 +238,16 @@ namespace HuskyRobotics.BaseStation.Server
             float z = vals[2];
 
             Console.WriteLine(x + ", " + y + ", " + z);
+        }
+
+        private static void RFSignalHandler(Packet data)
+        {
+            List<double> vals = ConvertToDoubleArray(data);
+
+            double angle = vals[0];
+            double strength = vals[1];
+
+            RFUpdate(null, (angle, strength));
         }
     }
 }
