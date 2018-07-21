@@ -116,7 +116,7 @@
                 <ui:SettingsPanel x:Name="SettingPanel"/>
             </TabItem>
             <TabItem Header="Console">
-                <ui:ConsoleView Grid.Column="3"></ui:ConsoleView>
+                <ui:ConsoleView x:Name="console" Grid.Column="3"/>
             </TabItem>
         </TabControl>
     </DockPanel>
