@@ -59,10 +59,11 @@ namespace HuskyRobotics.UI
 
         public void DisplayMap(string mapSetFile)
         {
+            
             ClearCanvas();
             // load in individual images
             // TODO get the path from the settings
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "Images", mapSetFile);
+            string path = Directory.GetCurrentDirectory() + @"\Images\" + mapSetFile;
             if (File.Exists(path))
             {
                 String waypointsFile = (mapSetFile.Replace(".map", ".waypoints"));

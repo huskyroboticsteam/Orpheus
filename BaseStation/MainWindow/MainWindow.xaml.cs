@@ -52,7 +52,8 @@ namespace HuskyRobotics.UI {
 
             Settings.PropertyChanged += SettingChanged;
             SettingPanel.Settings = Settings;
-            if (!File.Exists(Path.Combine(Directory.GetCurrentDirectory(), "Images", Settings.CurrentMapFile)))
+
+            if (!File.Exists(Directory.GetCurrentDirectory() + @"\Images\" + Settings.CurrentMapFile))
             {
                 string[] mapFiles = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "Images"), "*.map");
                 if (mapFiles.Count() > 0)
