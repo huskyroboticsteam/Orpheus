@@ -47,7 +47,7 @@ namespace Science
         {
             if (CheckPacket(Packet, 5, "Rail Target"))
             {
-                float TargetDist = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 1, 4);
+                float TargetDist = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 1, 4));
                 switch (Packet.Data.Payload[0])
                 {
                     case 0x00:

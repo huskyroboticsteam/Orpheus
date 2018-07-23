@@ -28,6 +28,16 @@ namespace Science_Base
             // TODO: Implement rail speed packet.
         }
 
+        public static void RailTargetChange(bool FromTop, float TargetDist)
+        {
+            byte Command;
+            if (FromTop && (TargetDist == float.NaN)) { Command = 0x00; }
+            else if (!FromTop && (TargetDist == float.NaN)) { Command = 0x01; }
+            else { Command = (byte)(FromTop ? 0x02 : 0x03); }
+            Packet Packet = new Packet(new Message(ScienceConstants.Packets.RAIL_TARGET_SET, new byte[] { Command }.Concat(UtilData.ToBytes(TargetDist)).ToArray()), false, ScienceConstants.CLIENT_NAME);
+            Server.Send(Packet);
+        }
+
         public static void SampleDoorChange(bool NewValue)
         {
             Packet Packet = new Packet(new Message(ScienceConstants.Packets.SERVO_SET, new byte[]

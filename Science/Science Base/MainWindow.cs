@@ -339,5 +339,23 @@ namespace Science_Base
             Science_Base.Controls.SampleDoorChange(Science_Base.Controls.SampleDoorState);
             this.SampleTubeStatus.Text = (Science_Base.Controls.SampleDoorState ? "Open" : "Closed");
         }
+
+        private void GoToTop_Click(object sender, EventArgs e)
+        {
+            Science_Base.Controls.RailTargetChange(true, float.NaN);
+        }
+
+        private void GoToGround_Click(object sender, EventArgs e)
+        {
+            Science_Base.Controls.RailTargetChange(false, float.NaN);
+        }
+
+        private void darkButton1_Click_1(object sender, EventArgs e)
+        {
+            if (int.TryParse(this.RailDistEntry.Text, out int TargetDepth))
+            {
+                Science_Base.Controls.RailTargetChange(true, TargetDepth); // TODO: Change this to distance from bottom.
+            }
+        }
     }
 }

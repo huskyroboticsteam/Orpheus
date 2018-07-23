@@ -80,10 +80,10 @@ namespace Science.Systems
             {
                 this.MotorCtrl.SetEnabled(false); // Immediately stop.
                 this.TopDepth = 0;
+                this.TargetLocation = 0;
+                this.TargetLocationRefIsTop = true;
                 Log.Output(Log.Severity.WARNING, Log.Source.MOTORS, "Rail motor hit limit switch and was stopped for safety.");
             }
-            this.TargetLocation = this.TopDepth; // Don't move any more, since an event happened.
-            this.TargetLocationRefIsTop = true;
         }
 
         /// <summary> Prepares the rail for use by moving the motor all the way up to the top to find the zero position. </summary>
@@ -145,21 +145,24 @@ namespace Science.Systems
             this.Encoder.UpdateState();
             this.TopDepth += ((this.LastEncoderCount - this.Encoder.Count) * ENCODER_MM_PER_TICK);
             this.LastEncoderCount = this.Encoder.Count;
-            if (this.TraceLogging) { Log.Trace(this, "Encoder now at " + this.Encoder.Count); }
+            //if (this.TraceLogging) { Log.Trace(this, "Encoder now at " + this.Encoder.Count); }
 
             DateTime Sample = DateTime.Now;
             byte[] Data = UtilData.ToBytes(this.Encoder.Count).Concat(UtilData.ToBytes(Sample.Ticks)).ToArray();
             Packet Packet = new Packet(new Message(ScienceConstants.Packets.TESTING, Data), false);
             Client.Send(Packet);
             //this.Ranger.UpdateState();
-            if (this.TraceLogging) { Log.Trace(this, "Ranger seeing " + this.Ranger.GetDistance() + "mm."); }
+            //if (this.TraceLogging) { Log.Trace(this, "Ranger seeing " + this.Ranger.GetDistance() + "mm."); }
             // TODO: Send commands to Talon.
 
             if (!this.InitDone) { return; } // Don't try to move the rail if we don't know where we are.
 
+            if (this.TraceLogging) { Log.Trace(this, "Rail at " + this.TopDepth.ToString("F2") + "mm from top, and wants to be at " + this.TargetLocation.ToString("F2") + "mm from " + (this.TargetLocationRefIsTop ? "top" : "bottom") + "."); }
+
             if (this.TargetLocationRefIsTop && (Math.Abs(this.TargetLocation - this.TopDepth) > 5)) // The rail needs to be moved.
             {
-                this.MotorCtrl.SetSpeed(this.RailSpeed * ((this.TargetLocation - this.TopDepth) > 0 ? -1 : 1));
+                if (this.TraceLogging) { Log.Trace(this, "Moving at " + (this.RailSpeed * (((this.TargetLocation - this.TopDepth) > 0) ? -1 : 1))); }
+                this.MotorCtrl.SetSpeed(this.RailSpeed * (((this.TargetLocation - this.TopDepth) > 0) ? -1 : 1));
             }
             else { this.MotorCtrl.SetSpeed(0); }
         }

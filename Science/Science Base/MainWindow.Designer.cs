@@ -72,7 +72,7 @@
             this.darkLabel11 = new DarkUI.Controls.DarkLabel();
             this.darkLabel12 = new DarkUI.Controls.DarkLabel();
             this.darkButton1 = new DarkUI.Controls.DarkButton();
-            this.darkTextBox1 = new DarkUI.Controls.DarkTextBox();
+            this.RailDistEntry = new DarkUI.Controls.DarkTextBox();
             this.darkLabel13 = new DarkUI.Controls.DarkLabel();
             this.darkLabel14 = new DarkUI.Controls.DarkLabel();
             this.railDisplay1 = new Science_Base.RailDisplay();
@@ -587,7 +587,7 @@
             this.tableLayoutPanel9.Controls.Add(this.darkLabel11, 1, 12);
             this.tableLayoutPanel9.Controls.Add(this.darkLabel12, 1, 13);
             this.tableLayoutPanel9.Controls.Add(this.darkButton1, 1, 10);
-            this.tableLayoutPanel9.Controls.Add(this.darkTextBox1, 1, 9);
+            this.tableLayoutPanel9.Controls.Add(this.RailDistEntry, 1, 9);
             this.tableLayoutPanel9.Controls.Add(this.darkLabel13, 0, 1);
             this.tableLayoutPanel9.Controls.Add(this.darkLabel14, 1, 1);
             this.tableLayoutPanel9.Controls.Add(this.railDisplay1, 0, 2);
@@ -674,6 +674,7 @@
             this.GoToTop.Size = new System.Drawing.Size(141, 23);
             this.GoToTop.TabIndex = 4;
             this.GoToTop.Text = "Top";
+            this.GoToTop.Click += new System.EventHandler(this.GoToTop_Click);
             // 
             // GoToGround
             // 
@@ -685,6 +686,7 @@
             this.GoToGround.Size = new System.Drawing.Size(141, 23);
             this.GoToGround.TabIndex = 5;
             this.GoToGround.Text = "Ground";
+            this.GoToGround.Click += new System.EventHandler(this.GoToGround_Click);
             // 
             // darkLabel11
             // 
@@ -721,18 +723,19 @@
             this.darkButton1.Size = new System.Drawing.Size(141, 23);
             this.darkButton1.TabIndex = 8;
             this.darkButton1.Text = "^ mm above Ground";
+            this.darkButton1.Click += new System.EventHandler(this.darkButton1_Click_1);
             // 
-            // darkTextBox1
+            // RailDistEntry
             // 
-            this.darkTextBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.darkTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.darkTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.darkTextBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkTextBox1.Location = new System.Drawing.Point(96, 181);
-            this.darkTextBox1.Margin = new System.Windows.Forms.Padding(1);
-            this.darkTextBox1.Name = "darkTextBox1";
-            this.darkTextBox1.Size = new System.Drawing.Size(141, 20);
-            this.darkTextBox1.TabIndex = 9;
+            this.RailDistEntry.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.RailDistEntry.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.RailDistEntry.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.RailDistEntry.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.RailDistEntry.Location = new System.Drawing.Point(96, 181);
+            this.RailDistEntry.Margin = new System.Windows.Forms.Padding(1);
+            this.RailDistEntry.Name = "RailDistEntry";
+            this.RailDistEntry.Size = new System.Drawing.Size(141, 20);
+            this.RailDistEntry.TabIndex = 9;
             // 
             // darkLabel13
             // 
@@ -1368,7 +1371,7 @@
         private DarkUI.Controls.DarkLabel darkLabel11;
         private DarkUI.Controls.DarkLabel darkLabel12;
         private DarkUI.Controls.DarkButton darkButton1;
-        private DarkUI.Controls.DarkTextBox darkTextBox1;
+        private DarkUI.Controls.DarkTextBox RailDistEntry;
         private DarkUI.Controls.DarkLabel darkLabel13;
         private DarkUI.Controls.DarkLabel darkLabel14;
         private RailDisplay railDisplay1;
