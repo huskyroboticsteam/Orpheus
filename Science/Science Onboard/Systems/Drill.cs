@@ -4,8 +4,6 @@ using Scarlet.Components;
 using Scarlet.Components.Motors;
 using Scarlet.Components.Sensors;
 using Scarlet.IO;
-using Scarlet.IO.BeagleBone;
-using Scarlet.IO.RaspberryPi;
 using Scarlet.Utilities;
 
 namespace Science.Systems
@@ -16,20 +14,20 @@ namespace Science.Systems
 
         private const float MOTOR_MAX_SPEED = 1F;
 
-        /*private bool P_DoorOpen;
+        private bool P_DoorOpen;
         public bool DoorOpen
         {
             get { return this.P_DoorOpen; }
             set
             {
-                this.DoorServo.SetPosition(value ? 300 : 0);
+                this.DoorServo.SetPosition(value ? 150 : 30);
                 this.P_DoorOpen = value;
             }
-        }*/
+        }
 
-        private TalonMC MotorCtrl;
-        //private Servo DoorServo;
-        private IPWMOutput Out;
+        private readonly TalonMC MotorCtrl;
+        private readonly Servo DoorServo;
+        private readonly IPWMOutput Out;
 
         public Drill(IPWMOutput MotorPWM, IPWMOutput ServoPWM)
         {
@@ -37,7 +35,8 @@ namespace Science.Systems
             ((Scarlet.Components.Outputs.PCA9685.PWMOutputPCA9685)MotorPWM).Reset();
             ((Scarlet.Components.Outputs.PCA9685.PWMOutputPCA9685)MotorPWM).SetPolarity(true);
             this.MotorCtrl = new TalonMC(MotorPWM, MOTOR_MAX_SPEED);
-            //this.DoorServo = new Servo(ServoPWM);
+            this.DoorServo = new Servo(ServoPWM) { TraceLogging = true };
+            this.DoorServo.SetEnabled(true);
         }
 
         public void SwitchToggle(object Sender, EventArgs evt)
@@ -48,7 +47,7 @@ namespace Science.Systems
         public void EmergencyStop()
         {
             this.MotorCtrl.SetEnabled(false);
-            //this.DoorServo.SetEnabled(false);
+            this.DoorServo.SetEnabled(false);
         }
 
         public void SetSpeed(float Speed, bool Enable)

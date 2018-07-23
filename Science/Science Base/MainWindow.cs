@@ -335,5 +335,12 @@ namespace Science_Base
 
         private void BottomDepth_MouseEnter(object sender, EventArgs e) { this.railDisplay1.ShowDistanceBottom = true; }
         private void BottomDepth_MouseLeave(object sender, EventArgs e) { this.railDisplay1.ShowDistanceBottom = false; }
+
+        private void SampleTubeToggle_Click(object sender, EventArgs e)
+        {
+            Science_Base.Controls.SampleDoorState = !Science_Base.Controls.SampleDoorState;
+            Science_Base.Controls.SampleDoorChange(Science_Base.Controls.SampleDoorState);
+            this.SampleTubeStatus.Text = (Science_Base.Controls.SampleDoorState ? "Open" : "Closed");
+        }
     }
 }

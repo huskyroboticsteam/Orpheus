@@ -76,7 +76,9 @@ namespace Science.Systems
                 this.Atmospheric.UpdateState();
                 this.AirQuality.UpdateState();
                 this.SoilMoisture.UpdateState();
-                
+
+                if (this.TraceLogging) { Log.Trace(this, "Thermocouple: int " + this.Thermocouple.GetInternalTemp() + " ext " + this.Thermocouple.GetExternalTemp() + " faults " + this.Thermocouple.GetFaults()); }
+
                 //Log.Output(Log.Severity.INFO, Log.Source.SENSORS, "Temp: " + this.Atmospheric.Temperature + ", press: " + this.Atmospheric.Pressure + ", humid: " + this.Atmospheric.Humidity + ", on: " + this.Atmospheric.Test());
                 byte[] Data = UtilData.ToBytes(this.UVLight.GetReading())
                     .Concat(UtilData.ToBytes(this.AirQuality.GetReadingUncalibrated()))

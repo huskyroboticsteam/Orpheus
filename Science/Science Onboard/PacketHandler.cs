@@ -11,15 +11,60 @@ namespace Science
         {
             Parse.SetParseHandler(ScienceConstants.Packets.ERROR, ParseErrorPacket);
             Parse.SetParseHandler(ScienceConstants.Packets.EMERGENCY_STOP, ParseStopPacket);
-            Parse.SetParseHandler(ScienceConstants.Packets.CONTROL, ParseControlPacket);
+            Parse.SetParseHandler(ScienceConstants.Packets.DRILL_SPEED_SET, ParseDrillSpeedPacket);
+            Parse.SetParseHandler(ScienceConstants.Packets.SERVO_SET, ParseServoPacket);
+            Parse.SetParseHandler(ScienceConstants.Packets.RAIL_TARGET_SET, ParseRailTargetPacket);
         }
 
-        public static void ParseControlPacket(Packet Packet)
+        public static void ParseDrillSpeedPacket(Packet Packet)
         {
-            if (CheckPacket(Packet, 4, "Control"))
+            if (CheckPacket(Packet, 2, "Drill Speed"))
             {
-                RoverMain.IOHandler.DrillController.SetSpeed(Packet.Data.Payload[0] / 100.0F * ((Packet.Data.Payload[1] == 0) ? 1 : -1), true);
-                RoverMain.IOHandler.RailController.SetSpeed(Packet.Data.Payload[2] / 100.0F * ((Packet.Data.Payload[3] == 0) ? 1 : -1), true);
+                bool Enable = (Packet.Data.Payload[0] & 0b1) == 0b1;
+                bool Reverse = (Packet.Data.Payload[0] & 0b10) == 0b10;
+                RoverMain.IOHandler.DrillController.SetSpeed(Packet.Data.Payload[1] / 100.0F * (Reverse ? -1 : 1), Enable);
+            }
+        }
+
+        public static void ParseServoPacket(Packet Packet)
+        {
+            if (CheckPacket(Packet, 5, "Servo Set"))
+            {
+                if(Packet.Data.Payload[0] == 0x00) // Sample Door
+                {
+                    RoverMain.IOHandler.DrillController.DoorOpen = (UtilData.ToInt(UtilMain.SubArray(Packet.Data.Payload, 1, 4)) == 1);
+                }
+                // TODO: Implement sample cup.
+            }
+        }
+
+        public static void ParseRailSpeedPacket(Packet Packet)
+        {
+
+        }
+
+        public static void ParseRailTargetPacket(Packet Packet)
+        {
+            if (CheckPacket(Packet, 5, "Rail Target"))
+            {
+                float TargetDist = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 1, 4);
+                switch (Packet.Data.Payload[0])
+                {
+                    case 0x00:
+                        RoverMain.IOHandler.RailController.GotoTop();
+                        break;
+                    case 0x01:
+                        RoverMain.IOHandler.RailController.GotoDrillGround();
+                        break;
+                    case 0x02:
+                        RoverMain.IOHandler.RailController.TargetLocation = TargetDist;
+                        RoverMain.IOHandler.RailController.TargetLocationRefIsTop = true;
+                        break;
+                    case 0x03:
+                        RoverMain.IOHandler.RailController.TargetLocation = TargetDist;
+                        RoverMain.IOHandler.RailController.TargetLocationRefIsTop = false;
+                        break;
+                }
             }
         }
 
