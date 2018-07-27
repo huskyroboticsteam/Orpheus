@@ -18,7 +18,6 @@ namespace Science_Base
         public MainWindow()
         {
             UIHelper.Init();
-
             InitializeComponent();
             InitWindow();
             this.EmergencyStopBtn.NotifyDefault(false);
@@ -28,7 +27,6 @@ namespace Science_Base
             UIHelper.SetMode(this.StatusImgSystem, Resources.CPU, 3);
             this.Charts = new ChartManager(this.ChartLeft, this.ChartRight, null);
             UIHelper.LoadCharts(this.Charts);
-            //this.Charts.Left.AddSeries(DataHandler.RandomData);
         }
 
         private void InitWindow()
@@ -158,6 +156,7 @@ namespace Science_Base
                 Fill = UIHelper.GaugeRedColour
             });
 
+            // Chart Series Chooser
             ListViewItem[] Items = new ListViewItem[DataHandler.GetSeries().Length];
             for (int i = 0; i < Items.Length; i++)
             {
@@ -283,13 +282,13 @@ namespace Science_Base
             });
         }
 
-        private void trackBar1_ValueChanged(object sender, EventArgs e)
+        private void DrillSpeed_ValueChanged(object sender, EventArgs e)
         {
             Science_Base.Controls.DrillSpeedChange(this.DrillSpeed.Value * (this.DrillReverse.Checked ? -1 : 1) * (Science_Base.Controls.IsDrillEnabled ? 1 : 0));
             this.DrillReverse.Enabled = (this.DrillSpeed.Value == 0 || !Science_Base.Controls.IsDrillEnabled);
         }
 
-        private void darkButton1_Click(object sender, EventArgs e)
+        private void DrillToggle_Click(object sender, EventArgs e)
         {
             Science_Base.Controls.IsDrillEnabled = !Science_Base.Controls.IsDrillEnabled;
             this.DrillToggle.Text = Science_Base.Controls.IsDrillEnabled ? "STOP" : "START";
@@ -321,10 +320,10 @@ namespace Science_Base
             foreach (int Selected in this.ChartDataChooser.SelectedIndices) { this.Charts.Right.AddByIndex(Selected); }
         }
 
-        private void trackBar2_ValueChanged(object sender, EventArgs e)
+        private void RailSpeed_ValueChanged(object sender, EventArgs e)
         {
             //Science_Base.Controls.RailSpeedChange(this.trackBar2.Value * 10);
-            railDisplay1.DrillLocation = trackBar2.Value;
+            this.railDisplay1.DrillLocation = this.RailSpeed.Value;
         }
 
         private void TopDepth_MouseEnter(object sender, EventArgs e) { this.railDisplay1.ShowDistanceTop = true; }
@@ -350,7 +349,7 @@ namespace Science_Base
             Science_Base.Controls.RailTargetChange(false, float.NaN);
         }
 
-        private void darkButton1_Click_1(object sender, EventArgs e)
+        private void RailGoCustom_Click(object sender, EventArgs e)
         {
             if (int.TryParse(this.RailDistEntry.Text, out int TargetDepth))
             {
