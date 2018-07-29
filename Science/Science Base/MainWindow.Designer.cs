@@ -557,7 +557,7 @@
             this.darkLabel7.Name = "darkLabel7";
             this.darkLabel7.Size = new System.Drawing.Size(113, 13);
             this.darkLabel7.TabIndex = 4;
-            this.darkLabel7.Text = "? RPM";
+            this.darkLabel7.Text = "55 RPM";
             this.darkLabel7.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // groupBox3

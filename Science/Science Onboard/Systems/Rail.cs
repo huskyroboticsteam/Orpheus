@@ -8,7 +8,6 @@ using Scarlet.Components.Motors;
 using Scarlet.Components.Outputs;
 using Scarlet.Components.Sensors;
 using Scarlet.IO;
-using Scarlet.IO.BeagleBone;
 using Scarlet.Utilities;
 using Science.Library;
 
@@ -32,12 +31,15 @@ namespace Science.Systems
                 this.LED?.InitStateChange(value);
             }
         }
-        private bool InitDone = false;
+        private bool InitDone = false; // Whether the rail has initialized successfully (i.e. knows how far away from the top it is).
         private double TopDepth; // The distance that the top of the rail is away from the very top position (limit switch), in mm.
-        public bool TargetLocationRefIsTop = true; // The following terget distance is from the top of the rail (true) or the ground (false).
+        private double GroundHeight; // The distance that the bottom of the drill is away from the ground, in mm (below ground is negative).
+        private int LastEncoderCount; // Where the encoder was during the most recent update.
+
+        public bool TargetLocationRefIsTop = true; // The following target distance is from the top of the rail (true) or the ground (false).
         public double TargetLocation; // Where the operator would like the rail to go.
-        private int LastEncoderCount;
-        public float RailSpeed = 0.3F;
+
+        public float RailSpeed = 0.3F; // The speed that the rail should move at when applicable.
 
         private readonly TalonMC MotorCtrl;
         private readonly LimitSwitch Limit;
@@ -106,7 +108,7 @@ namespace Science.Systems
                 this.TopDepth = 0;
                 return;
             }
-            this.MotorCtrl.SetSpeed(0.3F);
+            this.MotorCtrl.SetSpeed(this.RailSpeed);
             this.MotorCtrl.SetEnabled(true);
             // Either the limit switch will be toggled, or the timeout event will happen after this.
         }
@@ -114,7 +116,7 @@ namespace Science.Systems
         /// <summary> Moves the rail to the highest position. </summary>
         public void GotoTop()
         {
-            if(!this.InitDone) { Log.Output(Log.Severity.ERROR, Log.Source.MOTORS, "Tried to move rail to top without having done init."); return; }
+            if (!this.InitDone) { Log.Output(Log.Severity.ERROR, Log.Source.MOTORS, "Tried to move rail to top without having done init."); return; }
             this.TargetLocation = 20;
             this.TargetLocationRefIsTop = true;
         }
@@ -159,12 +161,19 @@ namespace Science.Systems
 
             if (this.TraceLogging) { Log.Trace(this, "Rail at " + this.TopDepth.ToString("F2") + "mm from top, and wants to be at " + this.TargetLocation.ToString("F2") + "mm from " + (this.TargetLocationRefIsTop ? "top" : "bottom") + "."); }
 
+            float TargetSpeed = 0;
             if (this.TargetLocationRefIsTop && (Math.Abs(this.TargetLocation - this.TopDepth) > 5)) // The rail needs to be moved.
             {
                 if (this.TraceLogging) { Log.Trace(this, "Moving at " + (this.RailSpeed * (((this.TargetLocation - this.TopDepth) > 0) ? -1 : 1))); }
-                this.MotorCtrl.SetSpeed(this.RailSpeed * (((this.TargetLocation - this.TopDepth) > 0) ? -1 : 1));
+                TargetSpeed = this.RailSpeed * (((this.TargetLocation - this.TopDepth) > 0) ? -1 : 1);
             }
-            else { this.MotorCtrl.SetSpeed(0); }
+            else { TargetSpeed = 0; }
+
+            // Now we know our intentions, check if there is anything that should stop movement.
+            if (this.TopDepth > 500) { TargetSpeed = 0; } // TODO: Verify safe maximum extension of the rail.
+            if (this.GroundHeight < -110) { TargetSpeed = 0; } // TODO: Verify safe maximum drill depth.
+
+            this.MotorCtrl.SetSpeed(TargetSpeed);
         }
 
         public void Exit()

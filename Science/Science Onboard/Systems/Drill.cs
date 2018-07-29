@@ -52,22 +52,22 @@ namespace Science.Systems
 
         public void SetSpeed(float Speed, bool Enable)
         {
-            this.MotorCtrl.SetSpeed(Speed);
-            //this.Out.SetOutput(0.5F);
-            //this.Out.SetEnabled(true);
             this.MotorCtrl.SetEnabled(Enable);
+            if (Enable) { this.MotorCtrl.SetSpeed(Speed); }
+            else { this.MotorCtrl.SetSpeed(0); }
         }
 
-        public void UpdateState()
-        {
-            
-        }
+        public void UpdateState() { }
 
         public void Initialize()
         {
             
         }
 
-        public void Exit() { }
+        public void Exit()
+        {
+            this.MotorCtrl.SetEnabled(false);
+            this.DoorServo.SetEnabled(false);
+        }
     }
 }

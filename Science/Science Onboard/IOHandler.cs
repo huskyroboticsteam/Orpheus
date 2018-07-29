@@ -22,9 +22,9 @@ namespace Science
         public readonly SysSensors SysSensors;
         public readonly MusicPlayer Music;
 
-        private II2CBus I2C;
-        private ISPIBus SPI;
-        private PCA9685 PWMGenLowFreq, PWMGenHighFreq;
+        private readonly II2CBus I2C;
+        private readonly ISPIBus SPI;
+        private readonly PCA9685 PWMGenLowFreq, PWMGenHighFreq;
 
         public IOHandler()
         {
@@ -55,6 +55,7 @@ namespace Science
         {
             for(int i = 0; i < this.InitProcedure.Length; i++)
             {
+                Log.Output(Log.Severity.DEBUG, Log.Source.SUBSYSTEM, "Initializing system #" + i + ".");
                 try { this.InitProcedure[i].Initialize(); }
                 catch(Exception Exc)
                 {
@@ -69,6 +70,7 @@ namespace Science
         {
             for (int i = 0; i < this.EStopProcedure.Length; i++)
             {
+                Log.Output(Log.Severity.DEBUG, Log.Source.SUBSYSTEM, "E-Stopping system #" + i + ".");
                 try { this.EStopProcedure[i].EmergencyStop(); }
                 catch (Exception Exc)
                 {
@@ -93,9 +95,10 @@ namespace Science
 
         public void Exit()
         {
-            for (int i = this.UpdateProcedure.Length - 1; i > 0; i--)
+            for (int i = this.InitProcedure.Length - 1; i >= 0; i--)
             {
-                try { this.UpdateProcedure[i].Exit(); }
+                Log.Output(Log.Severity.DEBUG, Log.Source.SUBSYSTEM, "Exiting system #" + i + ".");
+                try { this.InitProcedure[i].Exit(); }
                 catch (Exception Exc)
                 {
                     Log.Output(Log.Severity.WARNING, Log.Source.SUBSYSTEM, "Failed to exit for system #" + i + ".");
