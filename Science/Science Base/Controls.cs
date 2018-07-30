@@ -31,8 +31,8 @@ namespace Science_Base
         public static void RailTargetChange(bool FromTop, float TargetDist)
         {
             byte Command;
-            if (FromTop && (TargetDist == float.NaN)) { Command = 0x00; }
-            else if (!FromTop && (TargetDist == float.NaN)) { Command = 0x01; }
+            if (FromTop && float.IsNaN(TargetDist)) { Command = 0x00; }
+            else if (!FromTop && float.IsNaN(TargetDist)) { Command = 0x01; }
             else { Command = (byte)(FromTop ? 0x02 : 0x03); }
             Packet Packet = new Packet(new Message(ScienceConstants.Packets.RAIL_TARGET_SET, new byte[] { Command }.Concat(UtilData.ToBytes(TargetDist)).ToArray()), false, ScienceConstants.CLIENT_NAME);
             Server.Send(Packet);
