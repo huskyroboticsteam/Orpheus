@@ -21,8 +21,8 @@ namespace Science.Systems
 
         public bool TraceLogging { get; set; }
 
-        private const float MOTOR_FREQUENCY_SLOPE = 711.67F;
-        private const float MOTOR_FREQUENCY_INTERCEPT = 1.1111F;
+        private const float MOTOR_FREQUENCY_SLOPE = 730.48F;
+        private const float MOTOR_FREQUENCY_INTERCEPT = -33.393F;
 
         private Thread PlayerThread;
 

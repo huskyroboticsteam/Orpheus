@@ -7,7 +7,9 @@ using Scarlet.Components;
 using Scarlet.Components.Motors;
 using Scarlet.Components.Outputs;
 using Scarlet.Components.Sensors;
+using Scarlet.Filters;
 using Scarlet.IO;
+using Scarlet.IO.Utilities;
 using Scarlet.Utilities;
 using Science.Library;
 
@@ -19,7 +21,8 @@ namespace Science.Systems
 
         private const float MOTOR_MAX_SPEED = 0.5F;
         private const int INIT_TIMEOUT = 5000;
-        private const float ENCODER_MM_PER_TICK = 0.9F; // TODO: Placeholder value. Replace.
+        private const float ENCODER_MM_PER_TICK = 0.935F; // TODO: Placeholder value. Replace.
+        private const bool ENABLE_VELOCITY_TRACKING = true;
 
         private bool P_Initializing = false;
         private bool Initializing
@@ -33,8 +36,9 @@ namespace Science.Systems
         }
         private bool InitDone = false; // Whether the rail has initialized successfully (i.e. knows how far away from the top it is).
         private double TopDepth; // The distance that the top of the rail is away from the very top position (limit switch), in mm.
-        private double GroundHeight; // The distance that the bottom of the drill is away from the ground, in mm (below ground is negative).
+        private Average<double> GroundHeightFilter; // Filter used on measurements meaning distance that the bottom of the drill is away from the ground, in mm (below ground is negative).
         private int LastEncoderCount; // Where the encoder was during the most recent update.
+        private Average<double> VelocityTracker; // Used to detect faulty hardware or stalls by comparing motor output speed with actual movement.
 
         public bool TargetLocationRefIsTop = true; // The following target distance is from the top of the rail (true) or the ground (false).
         public double TargetLocation; // Where the operator would like the rail to go.
@@ -52,16 +56,20 @@ namespace Science.Systems
         public Rail(IPWMOutput MotorPWM, IDigitalIn LimitSw, ISPIBus EncoderSPI, IDigitalOut EncoderCS, II2CBus RangerBus, RGBLED LED)
         {
             this.MotorCtrl = new TalonMC(MotorPWM, MOTOR_MAX_SPEED);
-            this.Limit = new LimitSwitch(LimitSw, false);
+            IDigitalIn FakeInterrupt = new SoftwareInterrupt(LimitSw) { TraceLogging = true };
+            
+            this.Limit = new LimitSwitch(FakeInterrupt, false);
             this.Encoder = new LS7366R(EncoderSPI, EncoderCS); // Note: Count goes down when the rail moves down.
             LS7366R.Configuration Config = LS7366R.DefaultConfig;
             Config.QuadMode = LS7366R.QuadMode.X4_QUAD;
             this.Encoder.Configure(Config);
+            this.GroundHeightFilter = new Average<double>(4);
+            this.VelocityTracker = new Average<double>(10);
             this.Ranger = new VL53L0X_MVP(RangerBus);
             this.LED = new LEDController(LED);
         }
 
-        public void EventTriggered(object Sender, EventArgs Event)
+        private void EventTriggered(object Sender, EventArgs Event)
         {
             if(Event is LimitSwitchToggle && this.Initializing) // We hit the end.
             {
@@ -134,7 +142,7 @@ namespace Science.Systems
         {
             this.TargetLocation = this.TopDepth;
             this.MotorCtrl.SetEnabled(false);
-            this.UpdateState();
+            UpdateState();
             this.MotorCtrl.SetEnabled(false);
         }
 
@@ -153,15 +161,18 @@ namespace Science.Systems
             byte[] Data = UtilData.ToBytes(this.Encoder.Count).Concat(UtilData.ToBytes(Sample.Ticks)).ToArray();
             Packet Packet = new Packet(new Message(ScienceConstants.Packets.TESTING, Data), false);
             Client.Send(Packet);
-            //this.Ranger.UpdateState();
-            //if (this.TraceLogging) { Log.Trace(this, "Ranger seeing " + this.Ranger.GetDistance() + "mm."); }
-            // TODO: Send commands to Talon.
+
+            this.Ranger.UpdateState();
+            if (this.TraceLogging) { Log.Trace(this, "Ranger seeing " + this.Ranger.GetDistance() + "mm."); }
+            uint GroundDist = this.Ranger.GetDistance();
+            if (GroundDist == 0 || this.Ranger.LastHadTimeout()) { Log.Output(Log.Severity.INFO, Log.Source.SENSORS, "VL53L0X did not return a valid distance."); }
+            else { this.GroundHeightFilter.Feed(GroundDist - 110); } // TODO: Measure distance sensor to drill tip distance.
 
             if (!this.InitDone) { return; } // Don't try to move the rail if we don't know where we are.
 
             if (this.TraceLogging) { Log.Trace(this, "Rail at " + this.TopDepth.ToString("F2") + "mm from top, and wants to be at " + this.TargetLocation.ToString("F2") + "mm from " + (this.TargetLocationRefIsTop ? "top" : "bottom") + "."); }
 
-            float TargetSpeed = 0;
+            float TargetSpeed;
             if (this.TargetLocationRefIsTop && (Math.Abs(this.TargetLocation - this.TopDepth) > 5)) // The rail needs to be moved.
             {
                 if (this.TraceLogging) { Log.Trace(this, "Moving at " + (this.RailSpeed * (((this.TargetLocation - this.TopDepth) > 0) ? -1 : 1))); }
@@ -171,7 +182,7 @@ namespace Science.Systems
 
             // Now we know our intentions, check if there is anything that should stop movement.
             if (this.TopDepth > 500) { TargetSpeed = 0; } // TODO: Verify safe maximum extension of the rail.
-            if (this.GroundHeight < -110) { TargetSpeed = 0; } // TODO: Verify safe maximum drill depth.
+            if (this.GroundHeightFilter.GetOutput() < -110) { TargetSpeed = 0; } // TODO: Verify safe maximum drill depth.
 
             this.MotorCtrl.SetSpeed(TargetSpeed);
         }
@@ -200,13 +211,13 @@ namespace Science.Systems
 
             public void InitStateChange(bool NewState)
             {
-                if(!NewState) // Initializtion stopped
+                if(!NewState) // Initialization stopped
                 {
                     //
                 }
             }
 
-            // Run on a seperate thread to keep LED updates from slowing down Rail controls.
+            // Run on a separate thread to keep LED updates from slowing down Rail controls.
             private void DoUpdates()
             {
 
