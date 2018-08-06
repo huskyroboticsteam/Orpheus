@@ -354,7 +354,15 @@ namespace Science_Base
         {
             if (int.TryParse(this.RailDistEntry.Text, out int TargetDepth))
             {
-                Science_Base.Controls.RailTargetChange(true, TargetDepth); // TODO: Change this to distance from bottom.
+                Science_Base.Controls.RailTargetChange(true, TargetDepth);
+            }
+        }
+
+        private void RailGoCustomBottom_Click(object sender, EventArgs e)
+        {
+            if (int.TryParse(this.RailDistEntry.Text, out int TargetDepth))
+            {
+                Science_Base.Controls.RailTargetChange(false, TargetDepth);
             }
         }
 
@@ -367,5 +375,6 @@ namespace Science_Base
             this.RailGoCustomTop.Enabled = Enable;
             this.RailGoCustomBottom.Enabled = Enable;
         }
+
     }
 }
