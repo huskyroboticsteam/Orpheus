@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Windows.Forms;
 using System.Collections.Generic;
+using System.Windows.Forms.VisualStyles;
 using Science.Library;
 using LiveCharts.Wpf;
 using Science_Base.Properties;
@@ -355,6 +356,16 @@ namespace Science_Base
             {
                 Science_Base.Controls.RailTargetChange(true, TargetDepth); // TODO: Change this to distance from bottom.
             }
+        }
+
+        private void RailDistEntry_TextChanged(object sender, EventArgs e)
+        {
+            bool Enable = true;
+            if (!int.TryParse(this.RailDistEntry.Text, out int TargetDepth)) { Enable = false; }
+            if (TargetDepth > 500 || TargetDepth < -110) { Enable = false; }
+
+            this.RailGoCustomTop.Enabled = Enable;
+            this.RailGoCustomBottom.Enabled = Enable;
         }
     }
 }

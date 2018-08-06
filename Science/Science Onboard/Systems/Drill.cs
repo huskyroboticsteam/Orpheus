@@ -39,11 +39,6 @@ namespace Science.Systems
             this.DoorServo.SetEnabled(true);
         }
 
-        public void SwitchToggle(object Sender, EventArgs evt)
-        {
-            Log.Output(Log.Severity.INFO, Log.Source.MOTORS, "Limit switch toggled.");
-        }
-
         public void EmergencyStop()
         {
             this.MotorCtrl.SetEnabled(false);
@@ -59,10 +54,7 @@ namespace Science.Systems
 
         public void UpdateState() { }
 
-        public void Initialize()
-        {
-            
-        }
+        public void Initialize() { }
 
         public void Exit()
         {

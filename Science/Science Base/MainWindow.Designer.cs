@@ -71,11 +71,9 @@
             this.RailGoGround = new DarkUI.Controls.DarkButton();
             this.darkLabel11 = new DarkUI.Controls.DarkLabel();
             this.darkLabel12 = new DarkUI.Controls.DarkLabel();
-            this.RailGoCustom = new DarkUI.Controls.DarkButton();
             this.RailDistEntry = new DarkUI.Controls.DarkTextBox();
             this.darkLabel13 = new DarkUI.Controls.DarkLabel();
             this.darkLabel14 = new DarkUI.Controls.DarkLabel();
-            this.railDisplay1 = new Science_Base.RailDisplay();
             this.ChartClearRight = new DarkUI.Controls.DarkButton();
             this.ChartClearLeft = new DarkUI.Controls.DarkButton();
             this.ChartDataChooser = new System.Windows.Forms.ListView();
@@ -112,6 +110,9 @@
             this.StatusImgSystem = new System.Windows.Forms.PictureBox();
             this.SecTimer = new System.Windows.Forms.Timer(this.components);
             this.UIUpdate = new System.Windows.Forms.Timer(this.components);
+            this.RailGoCustomTop = new DarkUI.Controls.DarkButton();
+            this.RailGoCustomBottom = new DarkUI.Controls.DarkButton();
+            this.railDisplay1 = new Science_Base.RailDisplay();
             this.tableLayoutPanel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.Control.SuspendLayout();
@@ -575,19 +576,21 @@
             // 
             // tableLayoutPanel9
             // 
-            this.tableLayoutPanel9.ColumnCount = 2;
+            this.tableLayoutPanel9.ColumnCount = 3;
             this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40F));
-            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 60F));
+            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
+            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
+            this.tableLayoutPanel9.Controls.Add(this.RailGoCustomBottom, 2, 9);
             this.tableLayoutPanel9.Controls.Add(this.RailSpeed, 0, 0);
             this.tableLayoutPanel9.Controls.Add(this.darkLabel8, 1, 2);
             this.tableLayoutPanel9.Controls.Add(this.darkLabel9, 1, 3);
             this.tableLayoutPanel9.Controls.Add(this.darkLabel10, 1, 5);
             this.tableLayoutPanel9.Controls.Add(this.RailGoTop, 1, 6);
-            this.tableLayoutPanel9.Controls.Add(this.RailGoGround, 1, 7);
-            this.tableLayoutPanel9.Controls.Add(this.darkLabel11, 1, 12);
-            this.tableLayoutPanel9.Controls.Add(this.darkLabel12, 1, 13);
-            this.tableLayoutPanel9.Controls.Add(this.RailGoCustom, 1, 10);
-            this.tableLayoutPanel9.Controls.Add(this.RailDistEntry, 1, 9);
+            this.tableLayoutPanel9.Controls.Add(this.RailGoGround, 2, 6);
+            this.tableLayoutPanel9.Controls.Add(this.darkLabel11, 1, 11);
+            this.tableLayoutPanel9.Controls.Add(this.darkLabel12, 1, 12);
+            this.tableLayoutPanel9.Controls.Add(this.RailGoCustomTop, 1, 9);
+            this.tableLayoutPanel9.Controls.Add(this.RailDistEntry, 1, 8);
             this.tableLayoutPanel9.Controls.Add(this.darkLabel13, 0, 1);
             this.tableLayoutPanel9.Controls.Add(this.darkLabel14, 1, 1);
             this.tableLayoutPanel9.Controls.Add(this.railDisplay1, 0, 2);
@@ -595,7 +598,7 @@
             this.tableLayoutPanel9.Location = new System.Drawing.Point(3, 16);
             this.tableLayoutPanel9.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel9.Name = "tableLayoutPanel9";
-            this.tableLayoutPanel9.RowCount = 14;
+            this.tableLayoutPanel9.RowCount = 13;
             this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
             this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 18F));
             this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 18F));
@@ -603,8 +606,7 @@
             this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 18F));
             this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 5F));
+            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 9F));
             this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 22F));
             this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
             this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
@@ -615,7 +617,7 @@
             // 
             // RailSpeed
             // 
-            this.tableLayoutPanel9.SetColumnSpan(this.RailSpeed, 2);
+            this.tableLayoutPanel9.SetColumnSpan(this.RailSpeed, 3);
             this.RailSpeed.Dock = System.Windows.Forms.DockStyle.Fill;
             this.RailSpeed.LargeChange = 50;
             this.RailSpeed.Location = new System.Drawing.Point(3, 3);
@@ -630,6 +632,7 @@
             // darkLabel8
             // 
             this.darkLabel8.AutoSize = true;
+            this.tableLayoutPanel9.SetColumnSpan(this.darkLabel8, 2);
             this.darkLabel8.Dock = System.Windows.Forms.DockStyle.Fill;
             this.darkLabel8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.darkLabel8.Location = new System.Drawing.Point(98, 53);
@@ -643,6 +646,7 @@
             // darkLabel9
             // 
             this.darkLabel9.AutoSize = true;
+            this.tableLayoutPanel9.SetColumnSpan(this.darkLabel9, 2);
             this.darkLabel9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.darkLabel9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.darkLabel9.Location = new System.Drawing.Point(98, 71);
@@ -656,9 +660,10 @@
             // darkLabel10
             // 
             this.darkLabel10.AutoSize = true;
+            this.tableLayoutPanel9.SetColumnSpan(this.darkLabel10, 2);
             this.darkLabel10.Dock = System.Windows.Forms.DockStyle.Fill;
             this.darkLabel10.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkLabel10.Location = new System.Drawing.Point(98, 107);
+            this.darkLabel10.Location = new System.Drawing.Point(98, 117);
             this.darkLabel10.Name = "darkLabel10";
             this.darkLabel10.Size = new System.Drawing.Size(137, 18);
             this.darkLabel10.TabIndex = 3;
@@ -667,11 +672,11 @@
             // RailGoTop
             // 
             this.RailGoTop.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.RailGoTop.Location = new System.Drawing.Point(96, 126);
+            this.RailGoTop.Location = new System.Drawing.Point(96, 136);
             this.RailGoTop.Margin = new System.Windows.Forms.Padding(1);
             this.RailGoTop.Name = "RailGoTop";
             this.RailGoTop.Padding = new System.Windows.Forms.Padding(5);
-            this.RailGoTop.Size = new System.Drawing.Size(141, 23);
+            this.RailGoTop.Size = new System.Drawing.Size(69, 23);
             this.RailGoTop.TabIndex = 4;
             this.RailGoTop.Text = "Top";
             this.RailGoTop.Click += new System.EventHandler(this.GoToTop_Click);
@@ -679,11 +684,11 @@
             // RailGoGround
             // 
             this.RailGoGround.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.RailGoGround.Location = new System.Drawing.Point(96, 151);
+            this.RailGoGround.Location = new System.Drawing.Point(167, 136);
             this.RailGoGround.Margin = new System.Windows.Forms.Padding(1);
             this.RailGoGround.Name = "RailGoGround";
             this.RailGoGround.Padding = new System.Windows.Forms.Padding(5);
-            this.RailGoGround.Size = new System.Drawing.Size(141, 23);
+            this.RailGoGround.Size = new System.Drawing.Size(70, 23);
             this.RailGoGround.TabIndex = 5;
             this.RailGoGround.Text = "Ground";
             this.RailGoGround.Click += new System.EventHandler(this.GoToGround_Click);
@@ -691,9 +696,10 @@
             // darkLabel11
             // 
             this.darkLabel11.AutoSize = true;
+            this.tableLayoutPanel9.SetColumnSpan(this.darkLabel11, 2);
             this.darkLabel11.Dock = System.Windows.Forms.DockStyle.Fill;
             this.darkLabel11.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkLabel11.Location = new System.Drawing.Point(98, 245);
+            this.darkLabel11.Location = new System.Drawing.Point(98, 244);
             this.darkLabel11.Name = "darkLabel11";
             this.darkLabel11.Size = new System.Drawing.Size(137, 18);
             this.darkLabel11.TabIndex = 6;
@@ -704,38 +710,30 @@
             // darkLabel12
             // 
             this.darkLabel12.AutoSize = true;
+            this.tableLayoutPanel9.SetColumnSpan(this.darkLabel12, 2);
+            this.darkLabel12.Dock = System.Windows.Forms.DockStyle.Fill;
             this.darkLabel12.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkLabel12.Location = new System.Drawing.Point(98, 263);
+            this.darkLabel12.Location = new System.Drawing.Point(98, 262);
             this.darkLabel12.Name = "darkLabel12";
-            this.darkLabel12.Size = new System.Drawing.Size(38, 13);
+            this.darkLabel12.Size = new System.Drawing.Size(137, 19);
             this.darkLabel12.TabIndex = 7;
             this.darkLabel12.Text = "?? mm";
             this.darkLabel12.MouseEnter += new System.EventHandler(this.BottomDepth_MouseEnter);
             this.darkLabel12.MouseLeave += new System.EventHandler(this.BottomDepth_MouseLeave);
             // 
-            // RailGoCustom
-            // 
-            this.RailGoCustom.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.RailGoCustom.Location = new System.Drawing.Point(96, 203);
-            this.RailGoCustom.Margin = new System.Windows.Forms.Padding(1);
-            this.RailGoCustom.Name = "RailGoCustom";
-            this.RailGoCustom.Padding = new System.Windows.Forms.Padding(5);
-            this.RailGoCustom.Size = new System.Drawing.Size(141, 23);
-            this.RailGoCustom.TabIndex = 8;
-            this.RailGoCustom.Text = "^ mm above Ground";
-            this.RailGoCustom.Click += new System.EventHandler(this.RailGoCustom_Click);
-            // 
             // RailDistEntry
             // 
             this.RailDistEntry.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.RailDistEntry.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tableLayoutPanel9.SetColumnSpan(this.RailDistEntry, 2);
             this.RailDistEntry.Dock = System.Windows.Forms.DockStyle.Fill;
             this.RailDistEntry.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.RailDistEntry.Location = new System.Drawing.Point(96, 181);
+            this.RailDistEntry.Location = new System.Drawing.Point(96, 170);
             this.RailDistEntry.Margin = new System.Windows.Forms.Padding(1);
             this.RailDistEntry.Name = "RailDistEntry";
             this.RailDistEntry.Size = new System.Drawing.Size(141, 20);
             this.RailDistEntry.TabIndex = 9;
+            this.RailDistEntry.TextChanged += new System.EventHandler(this.RailDistEntry_TextChanged);
             // 
             // darkLabel13
             // 
@@ -754,6 +752,7 @@
             this.darkLabel14.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.darkLabel14.AutoSize = true;
+            this.tableLayoutPanel9.SetColumnSpan(this.darkLabel14, 2);
             this.darkLabel14.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.darkLabel14.Location = new System.Drawing.Point(98, 35);
             this.darkLabel14.Name = "darkLabel14";
@@ -761,20 +760,6 @@
             this.darkLabel14.TabIndex = 11;
             this.darkLabel14.Text = "?? mm/s";
             this.darkLabel14.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
-            // railDisplay1
-            // 
-            this.railDisplay1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.railDisplay1.DrillLocation = 75;
-            this.railDisplay1.ForeColor = System.Drawing.Color.Gainsboro;
-            this.railDisplay1.Location = new System.Drawing.Point(3, 56);
-            this.railDisplay1.Name = "railDisplay1";
-            this.tableLayoutPanel9.SetRowSpan(this.railDisplay1, 12);
-            this.railDisplay1.ShowDistanceBottom = false;
-            this.railDisplay1.ShowDistanceTop = false;
-            this.railDisplay1.Size = new System.Drawing.Size(89, 222);
-            this.railDisplay1.TabIndex = 12;
-            this.railDisplay1.Text = "railDisplay1";
             // 
             // ChartClearRight
             // 
@@ -1243,6 +1228,43 @@
             this.UIUpdate.Interval = 33;
             this.UIUpdate.Tick += new System.EventHandler(this.UIUpdate_Tick);
             // 
+            // RailGoCustomTop
+            // 
+            this.RailGoCustomTop.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.RailGoCustomTop.Location = new System.Drawing.Point(96, 192);
+            this.RailGoCustomTop.Margin = new System.Windows.Forms.Padding(1);
+            this.RailGoCustomTop.Name = "RailGoCustomTop";
+            this.RailGoCustomTop.Padding = new System.Windows.Forms.Padding(5);
+            this.RailGoCustomTop.Size = new System.Drawing.Size(69, 23);
+            this.RailGoCustomTop.TabIndex = 8;
+            this.RailGoCustomTop.Text = "From Top";
+            this.RailGoCustomTop.Click += new System.EventHandler(this.RailGoCustom_Click);
+            // 
+            // RailGoCustomBottom
+            // 
+            this.RailGoCustomBottom.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.RailGoCustomBottom.Location = new System.Drawing.Point(167, 192);
+            this.RailGoCustomBottom.Margin = new System.Windows.Forms.Padding(1);
+            this.RailGoCustomBottom.Name = "RailGoCustomBottom";
+            this.RailGoCustomBottom.Padding = new System.Windows.Forms.Padding(5);
+            this.RailGoCustomBottom.Size = new System.Drawing.Size(70, 23);
+            this.RailGoCustomBottom.TabIndex = 13;
+            this.RailGoCustomBottom.Text = "From Gnd";
+            // 
+            // railDisplay1
+            // 
+            this.railDisplay1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.railDisplay1.DrillLocation = 75;
+            this.railDisplay1.ForeColor = System.Drawing.Color.Gainsboro;
+            this.railDisplay1.Location = new System.Drawing.Point(3, 56);
+            this.railDisplay1.Name = "railDisplay1";
+            this.tableLayoutPanel9.SetRowSpan(this.railDisplay1, 11);
+            this.railDisplay1.ShowDistanceBottom = false;
+            this.railDisplay1.ShowDistanceTop = false;
+            this.railDisplay1.Size = new System.Drawing.Size(89, 222);
+            this.railDisplay1.TabIndex = 12;
+            this.railDisplay1.Text = "railDisplay1";
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1370,10 +1392,11 @@
         private DarkUI.Controls.DarkButton RailGoGround;
         private DarkUI.Controls.DarkLabel darkLabel11;
         private DarkUI.Controls.DarkLabel darkLabel12;
-        private DarkUI.Controls.DarkButton RailGoCustom;
         private DarkUI.Controls.DarkTextBox RailDistEntry;
         private DarkUI.Controls.DarkLabel darkLabel13;
         private DarkUI.Controls.DarkLabel darkLabel14;
         private RailDisplay railDisplay1;
+        private DarkUI.Controls.DarkButton RailGoCustomBottom;
+        private DarkUI.Controls.DarkButton RailGoCustomTop;
     }
 }
