@@ -10,6 +10,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using HuskyRobotics.BaseStation.Server;
+using HuskyRobotics;
 
 namespace HuskyRobotics.UI
 {
@@ -25,7 +26,7 @@ namespace HuskyRobotics.UI
         private int ImageHeight;
         private int CenterPixelX = 0;
         private int CenterPixelY = 0;
-        private int Zoom = 0;
+        private int Zoom = 0;   
         private Matrix _waypointTransformMatrix;
         private BitmapImage _waypointBitmap;
         private BitmapImage _roverIconBitmap;
@@ -47,7 +48,7 @@ namespace HuskyRobotics.UI
         {
             InitializeComponent();
             BaseServer.GPSUpdate += UpdateRoverPosition;
-            _roverIconBitmap = LoadImageFromRelativeFile("Icons/RoverIcon.png");
+            _roverIconBitmap = LoadImageFromRelativeFile("Icons/RealRoverIcon.png");
             _waypointBitmap = LoadImageFromRelativeFile("Icons/waypoint.png");
             RoverIcon = new Image { Source = _roverIconBitmap };
         }
@@ -140,6 +141,7 @@ namespace HuskyRobotics.UI
                 RoverIcon.RenderTransform = transform;
                 Canvas.SetLeft(RoverIcon, pixelCoords.Item1 - CenterPixelX - (_roverIconBitmap.Width / 2));
                 Canvas.SetTop(RoverIcon, pixelCoords.Item2 - CenterPixelY - (_roverIconBitmap.Height / 2));
+                RoverIcon.ToolTip = e.Item1 + ", " + e.Item2; 
                 MapCanvas.Children.Add(RoverIcon);
             });
         }
