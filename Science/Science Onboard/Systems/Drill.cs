@@ -20,7 +20,7 @@ namespace Science.Systems
             get { return this.P_DoorOpen; }
             set
             {
-                this.DoorServo.SetPosition(value ? 150 : 30);
+                this.DoorServo.SetPosition(value ? 0 : 300);
                 this.P_DoorOpen = value;
             }
         }

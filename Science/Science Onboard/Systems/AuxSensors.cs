@@ -52,7 +52,7 @@ namespace Science.Systems
             //Config.UseLongSample = true;
             this.ADC.Configure(Config);
 
-            this.Thermocouple = new MAX31855(this.SPI0, new DigitalOutPi(18));
+            this.Thermocouple = new MAX31855(this.SPI0, new DigitalOutPi(18)) {TraceLogging = true};
             this.UVLight = new VEML6070(this.I2C1);
             this.Atmospheric = new BME280(this.I2C1);
             this.Atmospheric.Configure();
@@ -72,6 +72,7 @@ namespace Science.Systems
             {
                 DateTime Sample = DateTime.Now;
                 this.Thermocouple.UpdateState();
+                if (this.Thermocouple.GetFaults() != MAX31855.Fault.NONE) { Log.Output(Log.Severity.WARNING, Log.Source.SENSORS, "Thermocouple has faults: " + this.Thermocouple.GetFaults());}
                 this.UVLight.UpdateState();
                 this.Atmospheric.UpdateState();
                 this.AirQuality.UpdateState();
