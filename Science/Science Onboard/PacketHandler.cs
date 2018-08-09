@@ -34,7 +34,6 @@ namespace Science
                 {
                     RoverMain.IOHandler.DrillController.DoorOpen = (UtilData.ToInt(UtilMain.SubArray(Packet.Data.Payload, 1, 4)) == 1);
                 }
-                // TODO: Implement sample cup.
             }
         }
 

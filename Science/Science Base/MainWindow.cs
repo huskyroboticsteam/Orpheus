@@ -376,5 +376,17 @@ namespace Science_Base
             this.RailGoCustomBottom.Enabled = Enable;
         }
 
+        public void UpdateRail(float CurrentRailSpeed, float DistTop, float DistGround, float DistTarget, bool TargetTopRef, bool InitInProgress, bool InitDone)
+        {
+            Invoke((MethodInvoker) delegate
+            {
+                this.DistTopMeasurementLabel.Text = DistTop.ToString("N1") + " mm";
+                this.DistBottomMeasurementLabel.Text = DistGround.ToString("N1") + " mm";
+                if(InitDone) { this.railDisplay1.InitStatus = 2; }
+                else if(InitInProgress) { this.railDisplay1.InitStatus = 1; }
+                else { this.railDisplay1.InitStatus = 0; }
+            });
+        }
+
     }
 }

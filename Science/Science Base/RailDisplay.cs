@@ -22,7 +22,7 @@ namespace Science_Base
             set
             {
                 this.P_DrillLocaton = value;
-                this.Invalidate();
+                Invalidate();
             }
         }
         private int P_DrillLocaton; // TODO: Adjust these value to reflect the diagram, and measure the physical properties of the science station.
@@ -33,7 +33,7 @@ namespace Science_Base
             set
             {
                 this.P_ShowDistanceTop = value;
-                this.Invalidate();
+                Invalidate();
             }
         }
         private bool P_ShowDistanceTop;
@@ -44,10 +44,21 @@ namespace Science_Base
             set
             {
                 this.P_ShowDistanceBottom = value;
-                this.Invalidate();
+                Invalidate();
             }
         }
         private bool P_ShowDistanceBottom;
+
+        public byte InitStatus
+        {
+            get => this.P_InitStatus;
+            set
+            {
+                this.P_InitStatus = value;
+                Invalidate();
+            }
+        }
+        private byte P_InitStatus;
 
         public RailDisplay()
         {
@@ -81,7 +92,12 @@ namespace Science_Base
             pe.Graphics.FillRectangle(Fore, DrillTop);
 
             Rectangle DrillBounds = new Rectangle(MovePt(DrillTop.Location, (int)(DrillTop.Width * 0.6F), 2), new Size((int)(DrillTop.Width * 0.2F), DrillHeight));
-            Pen DrillPen = new Pen(Fore, 1);
+            Color DrillColor;
+            if (this.InitStatus == 1) { DrillColor = Color.Yellow; }
+            else if (this.InitStatus == 2) { DrillColor = Color.Green; }
+            else { DrillColor = Color.Red; }
+
+            Pen DrillPen = new Pen(DrillColor, 1);
             int BottomStraight = DrillBounds.Bottom - (DrillBounds.Width / 2); // Top of where the drill begins the v shape at the bottom.
             pe.Graphics.DrawLine(DrillPen, DrillBounds.Left, DrillBounds.Top, DrillBounds.Left, BottomStraight); // Left
             pe.Graphics.DrawLine(DrillPen, DrillBounds.Right, DrillBounds.Top, DrillBounds.Right, BottomStraight); // Right

@@ -66,12 +66,12 @@
             this.RailGoCustomBottom = new DarkUI.Controls.DarkButton();
             this.RailSpeed = new System.Windows.Forms.TrackBar();
             this.darkLabel8 = new DarkUI.Controls.DarkLabel();
-            this.darkLabel9 = new DarkUI.Controls.DarkLabel();
+            this.DistTopMeasurementLabel = new DarkUI.Controls.DarkLabel();
             this.darkLabel10 = new DarkUI.Controls.DarkLabel();
             this.RailGoTop = new DarkUI.Controls.DarkButton();
             this.RailGoGround = new DarkUI.Controls.DarkButton();
             this.darkLabel11 = new DarkUI.Controls.DarkLabel();
-            this.darkLabel12 = new DarkUI.Controls.DarkLabel();
+            this.DistBottomMeasurementLabel = new DarkUI.Controls.DarkLabel();
             this.RailGoCustomTop = new DarkUI.Controls.DarkButton();
             this.RailDistEntry = new DarkUI.Controls.DarkTextBox();
             this.darkLabel13 = new DarkUI.Controls.DarkLabel();
@@ -583,12 +583,12 @@
             this.tableLayoutPanel9.Controls.Add(this.RailGoCustomBottom, 2, 9);
             this.tableLayoutPanel9.Controls.Add(this.RailSpeed, 0, 0);
             this.tableLayoutPanel9.Controls.Add(this.darkLabel8, 1, 2);
-            this.tableLayoutPanel9.Controls.Add(this.darkLabel9, 1, 3);
+            this.tableLayoutPanel9.Controls.Add(this.DistTopMeasurementLabel, 1, 3);
             this.tableLayoutPanel9.Controls.Add(this.darkLabel10, 1, 5);
             this.tableLayoutPanel9.Controls.Add(this.RailGoTop, 1, 6);
             this.tableLayoutPanel9.Controls.Add(this.RailGoGround, 2, 6);
             this.tableLayoutPanel9.Controls.Add(this.darkLabel11, 1, 11);
-            this.tableLayoutPanel9.Controls.Add(this.darkLabel12, 1, 12);
+            this.tableLayoutPanel9.Controls.Add(this.DistBottomMeasurementLabel, 1, 12);
             this.tableLayoutPanel9.Controls.Add(this.RailGoCustomTop, 1, 9);
             this.tableLayoutPanel9.Controls.Add(this.RailDistEntry, 1, 8);
             this.tableLayoutPanel9.Controls.Add(this.darkLabel13, 0, 1);
@@ -655,19 +655,19 @@
             this.darkLabel8.MouseEnter += new System.EventHandler(this.TopDepth_MouseEnter);
             this.darkLabel8.MouseLeave += new System.EventHandler(this.TopDepth_MouseLeave);
             // 
-            // darkLabel9
+            // DistTopMeasurementLabel
             // 
-            this.darkLabel9.AutoSize = true;
-            this.tableLayoutPanel9.SetColumnSpan(this.darkLabel9, 2);
-            this.darkLabel9.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.darkLabel9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkLabel9.Location = new System.Drawing.Point(98, 71);
-            this.darkLabel9.Name = "darkLabel9";
-            this.darkLabel9.Size = new System.Drawing.Size(137, 18);
-            this.darkLabel9.TabIndex = 2;
-            this.darkLabel9.Text = "?? mm";
-            this.darkLabel9.MouseEnter += new System.EventHandler(this.TopDepth_MouseEnter);
-            this.darkLabel9.MouseLeave += new System.EventHandler(this.TopDepth_MouseLeave);
+            this.DistTopMeasurementLabel.AutoSize = true;
+            this.tableLayoutPanel9.SetColumnSpan(this.DistTopMeasurementLabel, 2);
+            this.DistTopMeasurementLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.DistTopMeasurementLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.DistTopMeasurementLabel.Location = new System.Drawing.Point(98, 71);
+            this.DistTopMeasurementLabel.Name = "DistTopMeasurementLabel";
+            this.DistTopMeasurementLabel.Size = new System.Drawing.Size(137, 18);
+            this.DistTopMeasurementLabel.TabIndex = 2;
+            this.DistTopMeasurementLabel.Text = "?? mm";
+            this.DistTopMeasurementLabel.MouseEnter += new System.EventHandler(this.TopDepth_MouseEnter);
+            this.DistTopMeasurementLabel.MouseLeave += new System.EventHandler(this.TopDepth_MouseLeave);
             // 
             // darkLabel10
             // 
@@ -719,19 +719,19 @@
             this.darkLabel11.MouseEnter += new System.EventHandler(this.BottomDepth_MouseEnter);
             this.darkLabel11.MouseLeave += new System.EventHandler(this.BottomDepth_MouseLeave);
             // 
-            // darkLabel12
+            // DistBottomMeasurementLabel
             // 
-            this.darkLabel12.AutoSize = true;
-            this.tableLayoutPanel9.SetColumnSpan(this.darkLabel12, 2);
-            this.darkLabel12.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.darkLabel12.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkLabel12.Location = new System.Drawing.Point(98, 262);
-            this.darkLabel12.Name = "darkLabel12";
-            this.darkLabel12.Size = new System.Drawing.Size(137, 19);
-            this.darkLabel12.TabIndex = 7;
-            this.darkLabel12.Text = "?? mm";
-            this.darkLabel12.MouseEnter += new System.EventHandler(this.BottomDepth_MouseEnter);
-            this.darkLabel12.MouseLeave += new System.EventHandler(this.BottomDepth_MouseLeave);
+            this.DistBottomMeasurementLabel.AutoSize = true;
+            this.tableLayoutPanel9.SetColumnSpan(this.DistBottomMeasurementLabel, 2);
+            this.DistBottomMeasurementLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.DistBottomMeasurementLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.DistBottomMeasurementLabel.Location = new System.Drawing.Point(98, 262);
+            this.DistBottomMeasurementLabel.Name = "DistBottomMeasurementLabel";
+            this.DistBottomMeasurementLabel.Size = new System.Drawing.Size(137, 19);
+            this.DistBottomMeasurementLabel.TabIndex = 7;
+            this.DistBottomMeasurementLabel.Text = "?? mm";
+            this.DistBottomMeasurementLabel.MouseEnter += new System.EventHandler(this.BottomDepth_MouseEnter);
+            this.DistBottomMeasurementLabel.MouseLeave += new System.EventHandler(this.BottomDepth_MouseLeave);
             // 
             // RailGoCustomTop
             // 
@@ -1387,12 +1387,12 @@
         private DarkUI.Controls.DarkLabel darkLabel6;
         private DarkUI.Controls.DarkLabel darkLabel7;
         private DarkUI.Controls.DarkLabel darkLabel8;
-        private DarkUI.Controls.DarkLabel darkLabel9;
+        private DarkUI.Controls.DarkLabel DistTopMeasurementLabel;
         private DarkUI.Controls.DarkLabel darkLabel10;
         private DarkUI.Controls.DarkButton RailGoTop;
         private DarkUI.Controls.DarkButton RailGoGround;
         private DarkUI.Controls.DarkLabel darkLabel11;
-        private DarkUI.Controls.DarkLabel darkLabel12;
+        private DarkUI.Controls.DarkLabel DistBottomMeasurementLabel;
         private DarkUI.Controls.DarkTextBox RailDistEntry;
         private DarkUI.Controls.DarkLabel darkLabel13;
         private DarkUI.Controls.DarkLabel darkLabel14;

@@ -66,6 +66,7 @@ namespace Science.Systems
             this.GroundHeightFilter = new Average<double>(4);
             this.VelocityTracker = new Average<double>(10);
             this.Ranger = new VL53L0X_MVP(RangerBus);
+            
             this.LED = new LEDController(LED);
         }
 
@@ -125,7 +126,7 @@ namespace Science.Systems
         public void GotoTop()
         {
             if (!this.InitDone) { Log.Output(Log.Severity.ERROR, Log.Source.MOTORS, "Tried to move rail to top without having done init."); return; }
-            this.TargetLocation = 20;
+            this.TargetLocation = 0;
             this.TargetLocationRefIsTop = true;
         }
 
@@ -155,12 +156,23 @@ namespace Science.Systems
             this.Encoder.UpdateState();
             this.TopDepth += ((this.LastEncoderCount - this.Encoder.Count) * ENCODER_MM_PER_TICK);
             this.LastEncoderCount = this.Encoder.Count;
-            //if (this.TraceLogging) { Log.Trace(this, "Encoder now at " + this.Encoder.Count); }
 
-            DateTime Sample = DateTime.Now;
-            byte[] Data = UtilData.ToBytes(this.Encoder.Count).Concat(UtilData.ToBytes(Sample.Ticks)).ToArray();
-            Packet Packet = new Packet(new Message(ScienceConstants.Packets.TESTING, Data), false);
-            Client.Send(Packet);
+            try
+            {
+                byte[] Data = new byte[] { (byte)((this.InitDone ? 0b1 : 0b0) | (this.Initializing ? 0b10 : 0b00) | (this.TargetLocationRefIsTop ? 0b100 : 0b000)) } // Basic Data
+                    .Concat(UtilData.ToBytes(this.RailSpeed)) // Rail Speed
+                    .Concat(UtilData.ToBytes((float)this.TopDepth)) // Depth from top
+                    .Concat(UtilData.ToBytes((float)this.GroundHeightFilter.GetOutput())) // Height from GND
+                    .Concat(UtilData.ToBytes((float)this.TargetLocation)) // Target depth
+                    .ToArray();
+                Packet Packet = new Packet(new Message(ScienceConstants.Packets.RAIL_STATUS, Data), false);
+                Client.Send(Packet);
+            }
+            catch(Exception Exc)
+            {
+                Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Failed to send rail status packet.");
+                Log.Exception(Log.Source.NETWORK, Exc);
+            }
 
             this.Ranger.UpdateState();
             if (this.TraceLogging) { Log.Trace(this, "Ranger seeing " + this.Ranger.GetDistance() + "mm."); }

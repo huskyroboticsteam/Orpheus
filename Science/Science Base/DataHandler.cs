@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Windows.Threading;
 using Scarlet.Communications;
 using Scarlet.Components.Sensors;
 using Scarlet.Utilities;
@@ -35,7 +36,7 @@ namespace Science_Base
             Random = new Random();
             Parse.SetParseHandler(ScienceConstants.Packets.GND_SENSOR, PacketGroundSensor);
             Parse.SetParseHandler(ScienceConstants.Packets.SYS_SENSOR, PacketSysSensor);
-            Parse.SetParseHandler(ScienceConstants.Packets.TESTING, PacketTesting);
+            Parse.SetParseHandler(ScienceConstants.Packets.RAIL_STATUS, PacketRailStatus);
             new Thread(new ThreadStart(DoAdds)).Start();
         }
 
@@ -48,7 +49,7 @@ namespace Science_Base
         {
             if(Packet == null || Packet.Data == null || Packet.Data.Payload == null || Packet.Data.Payload.Length != 40)
             {
-                Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Ground sensor packet invalid. Discarding.");
+                Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Ground sensor packet invalid. Discarding. Length: " + Packet?.Data?.Payload?.Length);
                 return;
             }
             DateTime Timestamp = DateTime.Now;
@@ -74,7 +75,7 @@ namespace Science_Base
         {
             if (Packet == null || Packet.Data == null || Packet.Data.Payload == null || Packet.Data.Payload.Length != 40)
             {
-                Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "System sensor packet invalid. Discarding.");
+                Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "System sensor packet invalid. Discarding. Length: " + Packet?.Data?.Payload?.Length);
                 return;
             }
             double SysA = UtilData.ToDouble(UtilMain.SubArray(Packet.Data.Payload, 0, 8));
@@ -95,22 +96,38 @@ namespace Science_Base
         {
             if (Packet == null || Packet.Data == null || Packet.Data.Payload == null || Packet.Data.Payload.Length != 12)
             {
-                Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "System sensor packet invalid. Discarding.");
+                Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "System sensor packet invalid. Discarding. Length: " + Packet?.Data?.Payload?.Length);
                 return;
             }
             int Enc = UtilData.ToInt(UtilMain.SubArray(Packet.Data.Payload, 0, 4));
             DateTime Sample = new DateTime(UtilData.ToLong(UtilMain.SubArray(Packet.Data.Payload, 4, 8)));
         }
 
+        public static void PacketRailStatus(Packet Packet)
+        {
+            if (Packet == null || Packet.Data == null || Packet.Data.Payload == null || Packet.Data.Payload.Length != 17)
+            {
+                Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Rail status packet invalid. Discarding. Length: " + Packet?.Data?.Payload?.Length);
+                return;
+            }
+
+            byte Status = Packet.Data.Payload[0];
+            float RailSpeed = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 1, 4));
+            float DepthTop = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 5, 4));
+            float HeightGround = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 9, 4));
+            float Target = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 13, 4));
+            BaseMain.Window.UpdateRail(RailSpeed, DepthTop, HeightGround, Target, ((Status & 0b100) == 0b100), ((Status & 0b10) == 0b10), ((Status & 0b1) == 0b1));
+        }
+
         private static void DoAdds()
         {
-            Log.Output(Log.Severity.INFO, Log.Source.GUI, "Beginning data addition.");
+            Log.Output(Log.Severity.DEBUG, Log.Source.GUI, "Beginning random data addition.");
             for (int i = 0; i < 600; i++)
             {
                 Thread.Sleep(150);
                 RandomData.Data.Add(new Datum<int>(DateTime.Now, Random.Next(100)));
             }
-            Log.Output(Log.Severity.INFO, Log.Source.GUI, "Data addition ended.");
+            Log.Output(Log.Severity.DEBUG, Log.Source.GUI, "Random data addition finished.");
             
         }
 
