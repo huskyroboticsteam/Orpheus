@@ -66,7 +66,7 @@ namespace Science.Systems
             this.GroundHeightFilter = new Average<double>(4);
             this.VelocityTracker = new Average<double>(10);
             this.Ranger = new VL53L0X_MVP(RangerBus);
-            
+            this.Ranger.SetMeasurementTimingBudget(50000);
             this.LED = new LEDController(LED);
         }
 

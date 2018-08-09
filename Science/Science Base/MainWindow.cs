@@ -75,29 +75,29 @@ namespace Science_Base
 
             // System Current
             this.GaugeSysCurrent.FromValue = 0;
-            this.GaugeSysCurrent.ToValue = 10;
+            this.GaugeSysCurrent.ToValue = 3;
             this.GaugeSysCurrent.Wedge = 240;
-            this.GaugeSysCurrent.LabelsStep = 2;
-            this.GaugeSysCurrent.TickStep = 0.25;
+            this.GaugeSysCurrent.LabelsStep = 0.5;
+            this.GaugeSysCurrent.TickStep = 0.125;
             this.GaugeSysCurrent.SectionsInnerRadius = 0.96;
             this.GaugeSysCurrent.Base.Foreground = UIHelper.TextColour;
             this.GaugeSysCurrent.NeedleFill = UIHelper.TextColour;
             this.GaugeSysCurrent.Sections.Add(new AngularSection() // Green
             {
                 FromValue = 0,
-                ToValue = 6,
+                ToValue = 1.5,
                 Fill = UIHelper.GaugeGreenColour
             });
             this.GaugeSysCurrent.Sections.Add(new AngularSection() // High Yellow
             {
-                FromValue = 6,
-                ToValue = 8,
+                FromValue = 1.5,
+                ToValue = 2.25,
                 Fill = UIHelper.GaugeYellowColour
             });
             this.GaugeSysCurrent.Sections.Add(new AngularSection() // High Red
             {
-                FromValue = 8,
-                ToValue = 10,
+                FromValue = 2.25,
+                ToValue = 3,
                 Fill = UIHelper.GaugeRedColour
             });
 
