@@ -22,6 +22,7 @@ namespace HuskyRobotics.BaseStation.Server
 
         public static event EventHandler<(float, float)> GPSUpdate;
         public static event EventHandler<(double, double)> RFUpdate;
+        public static event EventHandler<(float, float, float)> MagnetometerUpdate;
 
         public static void Setup()
         {
@@ -216,6 +217,7 @@ namespace HuskyRobotics.BaseStation.Server
             float z = vals[2];
 
             Console.WriteLine(x + ", " + y + ", " + z);
+            MagnetometerUpdate(null, (x, y, z));
         }
 
         private static void RFSignalHandler(Packet data)
