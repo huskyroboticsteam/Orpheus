@@ -131,17 +131,17 @@ namespace HuskyRobotics.UI
             MapCanvas.Children.Clear();
         }
 
-        private void UpdateRoverPosition(object sender, (float, float) e)
+        private void UpdateRoverPosition(object sender, (float, float) data)
         {
             Dispatcher.Invoke(() =>
             {
                 MapCanvas.Children.Remove(RoverIcon);
-                Tuple<int, int> pixelCoords = MapConversion.LatLongToPixelXY(e.Item1, e.Item2, Zoom);
+                Tuple<int, int> pixelCoords = MapConversion.LatLongToPixelXY(data.Item1, data.Item2, Zoom);
                 var transform = new MatrixTransform(_waypointTransformMatrix);
                 RoverIcon.RenderTransform = transform;
                 Canvas.SetLeft(RoverIcon, pixelCoords.Item1 - CenterPixelX - (_roverIconBitmap.Width / 2));
                 Canvas.SetTop(RoverIcon, pixelCoords.Item2 - CenterPixelY - (_roverIconBitmap.Height / 2));
-                RoverIcon.ToolTip = e.Item1 + ", " + e.Item2; 
+                RoverIcon.ToolTip = data.Item1 + ", " + data.Item2; 
                 MapCanvas.Children.Add(RoverIcon);
             });
         }

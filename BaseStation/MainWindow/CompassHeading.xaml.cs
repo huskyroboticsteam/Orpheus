@@ -28,9 +28,9 @@ namespace HuskyRobotics.UI
             BaseServer.MagnetometerUpdate += UpdateHeading;
         }
 
-        public void UpdateHeading(Object sender, (float, float, float) e)
+        public void UpdateHeading(Object sender, (float, float, float) data)
         {
-            double angle = Math.Atan2(e.Item2, e.Item1);
+            double angle = Math.Atan2(data.Item2, data.Item1);
             Transform transform = new RotateTransform(angle, 0, 35);
             Heading.RenderTransform = transform;
         }
