@@ -47,7 +47,7 @@ namespace HuskyRobotics.UI
         {
             InitializeComponent();
             BaseServer.GPSUpdate += UpdateRoverPosition;
-            _roverIconBitmap = LoadImageFromRelativeFile("Icons/RoverIcon.png");
+            _roverIconBitmap = LoadImageFromRelativeFile("Icons/RealRoverIcon.png");
             _waypointBitmap = LoadImageFromRelativeFile("Icons/waypoint.png");
             RoverIcon = new Image { Source = _roverIconBitmap };
         }

@@ -25,25 +25,25 @@ namespace HuskyRobotics.UI
 
         public BeaconFinder()
         {
-            BaseServer.RFUpdate += UpdateHeading;
+            BaseServer.RFUpdate += UpdateVoltage;
             InitializeComponent();
+        }
+
+        private void UpdateVoltage(object sender, (double, double) data)
+        {
+            if (data.Item2 > MaxVoltage) MaxVoltage = data.Item2;
         }
 
         private void ResetHeading(object sender, RoutedEventArgs e)
         {
             MaxVoltage = 0;
-            RotateTransform transform = new RotateTransform(0, 5, 55);
-            Heading.RenderTransform = transform;        }
+        }
 
-        private void UpdateHeading(object sender, (double, double) vals)
+        private void Canvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (vals.Item2 > MaxVoltage)
-            {
-                MaxVoltage = vals.Item2;
-
-                RotateTransform transform = new RotateTransform(vals.Item1, 5, 55);
-                Heading.RenderTransform = transform;
-            }
+            Point position = e.GetPosition(this);
+            Heading.X2 = position.X;
+            Heading.Y2 = position.Y;
         }
     }
 }
