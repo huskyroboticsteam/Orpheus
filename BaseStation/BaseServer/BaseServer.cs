@@ -26,7 +26,7 @@ namespace HuskyRobotics.BaseStation.Server
 
         public static void Setup()
         {
-            Scarlet.Communications.Server.Start(1025, 1026);
+            Scarlet.Communications.Server.Start(1025, 1026, OperationPeriod:1);
             Scarlet.Communications.Server.ClientConnectionChange += ClientConnected;
             Parse.SetParseHandler(0xC0, GpsHandler);
             Parse.SetParseHandler(0xC1, MagnetomerHandler);
@@ -228,6 +228,12 @@ namespace HuskyRobotics.BaseStation.Server
             double strength = vals[1];
 
             RFUpdate(null, (angle, strength));
+            try
+            {
+                Packet packet = new Packet(data.Data, true, "RDFGraph");
+                Scarlet.Communications.Server.Send(packet);
+            }
+            catch { /* Do nothing */ }
         }
     }
 }
