@@ -103,57 +103,57 @@ namespace Science_Base
 
             // Drill Current
             this.GaugeDrillCurrent.FromValue = 0;
-            this.GaugeDrillCurrent.ToValue = 15;
+            this.GaugeDrillCurrent.ToValue = 5;
             this.GaugeDrillCurrent.Wedge = 240;
-            this.GaugeDrillCurrent.LabelsStep = 3;
-            this.GaugeDrillCurrent.TickStep = 0.5;
+            this.GaugeDrillCurrent.LabelsStep = 1;
+            this.GaugeDrillCurrent.TickStep = 0.25;
             this.GaugeDrillCurrent.SectionsInnerRadius = 0.96;
             this.GaugeDrillCurrent.Base.Foreground = UIHelper.TextColour;
             this.GaugeDrillCurrent.NeedleFill = UIHelper.TextColour;
             this.GaugeDrillCurrent.Sections.Add(new AngularSection() // Green
             {
                 FromValue = 0,
-                ToValue = 9,
+                ToValue = 2,
                 Fill = UIHelper.GaugeGreenColour
             });
             this.GaugeDrillCurrent.Sections.Add(new AngularSection() // High Yellow
             {
-                FromValue = 9,
-                ToValue = 12,
+                FromValue = 2,
+                ToValue = 3.5,
                 Fill = UIHelper.GaugeYellowColour
             });
             this.GaugeDrillCurrent.Sections.Add(new AngularSection() // High Red
             {
-                FromValue = 12,
-                ToValue = 15,
+                FromValue = 3.5,
+                ToValue = 5,
                 Fill = UIHelper.GaugeRedColour
             });
 
             // Rail Current
             this.GaugeRailCurrent.FromValue = 0;
-            this.GaugeRailCurrent.ToValue = 60;
+            this.GaugeRailCurrent.ToValue = 8;
             this.GaugeRailCurrent.Wedge = 240;
-            this.GaugeRailCurrent.LabelsStep = 10;
-            this.GaugeRailCurrent.TickStep = 2;
+            this.GaugeRailCurrent.LabelsStep = 2;
+            this.GaugeRailCurrent.TickStep = 0.5;
             this.GaugeRailCurrent.SectionsInnerRadius = 0.96;
             this.GaugeRailCurrent.Base.Foreground = UIHelper.TextColour;
             this.GaugeRailCurrent.NeedleFill = UIHelper.TextColour;
             this.GaugeRailCurrent.Sections.Add(new AngularSection() // Green
             {
                 FromValue = 0,
-                ToValue = 35,
+                ToValue = 5,
                 Fill = UIHelper.GaugeGreenColour
             });
             this.GaugeRailCurrent.Sections.Add(new AngularSection() // High Yellow
             {
-                FromValue = 35,
-                ToValue = 45,
+                FromValue = 5,
+                ToValue = 7,
                 Fill = UIHelper.GaugeYellowColour
             });
             this.GaugeRailCurrent.Sections.Add(new AngularSection() // High Red
             {
-                FromValue = 45,
-                ToValue = 60,
+                FromValue = 7,
+                ToValue = 8,
                 Fill = UIHelper.GaugeRedColour
             });
 
