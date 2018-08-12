@@ -39,6 +39,7 @@ namespace Science.Systems
         private Average<double> GroundHeightFilter; // Filter used on measurements meaning distance that the bottom of the drill is away from the ground, in mm (below ground is negative).
         private int LastEncoderCount; // Where the encoder was during the most recent update.
         private Average<double> VelocityTracker; // Used to detect faulty hardware or stalls by comparing motor output speed with actual movement.
+        private byte VelocityWarningTimes = 0;
 
         public bool TargetLocationRefIsTop = true; // The following target distance is from the top of the rail (true) or the ground (false).
         public double TargetLocation; // Where the operator would like the rail to go.
@@ -64,7 +65,7 @@ namespace Science.Systems
             Config.QuadMode = LS7366R.QuadMode.X4_QUAD;
             this.Encoder.Configure(Config);
             this.GroundHeightFilter = new Average<double>(4);
-            this.VelocityTracker = new Average<double>(10);
+            this.VelocityTracker = new Average<double>(6);
             this.Ranger = new VL53L0X_MVP(RangerBus);
             this.Ranger.SetMeasurementTimingBudget(50000);
             this.LED = new LEDController(LED);
@@ -103,7 +104,7 @@ namespace Science.Systems
             this.Initializing = true;
             this.Limit.SwitchToggle += this.EventTriggered;
 
-            System.Timers.Timer TimeoutTrigger = new System.Timers.Timer() { Interval = INIT_TIMEOUT, AutoReset = false };
+            System.Timers.Timer TimeoutTrigger = new System.Timers.Timer() { Interval = (ENABLE_VELOCITY_TRACKING ? 30000 : INIT_TIMEOUT), AutoReset = false };
             TimeoutTrigger.Elapsed += this.EventTriggered;
             TimeoutTrigger.Enabled = true;
             this.Encoder.UpdateState();
@@ -155,6 +156,11 @@ namespace Science.Systems
             this.Limit.UpdateState();
             this.Encoder.UpdateState();
             this.TopDepth += ((this.LastEncoderCount - this.Encoder.Count) * ENCODER_MM_PER_TICK);
+            if (ENABLE_VELOCITY_TRACKING)
+            {
+                this.VelocityTracker.Feed((this.LastEncoderCount - this.Encoder.Count) * ENCODER_MM_PER_TICK / 0.020);
+                if (this.TraceLogging) { Log.Trace(this, "Velocity: " + this.VelocityTracker.GetOutput()); }
+            }
             this.LastEncoderCount = this.Encoder.Count;
 
             try
@@ -179,6 +185,21 @@ namespace Science.Systems
             uint GroundDist = this.Ranger.GetDistance();
             if (GroundDist == 0 || this.Ranger.LastHadTimeout()) { Log.Output(Log.Severity.INFO, Log.Source.SENSORS, "VL53L0X did not return a valid distance."); }
             else { this.GroundHeightFilter.Feed((int)GroundDist - 140); }
+
+            if (this.Initializing && ENABLE_VELOCITY_TRACKING)
+            {
+                double Vel = this.VelocityTracker.GetOutput();
+                if (Vel > -30) { this.VelocityWarningTimes++; } // We should be moving up.
+                else { this.VelocityWarningTimes = 0; }
+
+                if (this.VelocityWarningTimes >= 20) // Something is going wrong, we should be moving but aren't.
+                {
+                    this.MotorCtrl.SetSpeed(0);
+                    Log.Output(Log.Severity.ERROR, Log.Source.MOTORS, "Rail initialization cancelled, we weren't moving.");
+                    this.Initializing = false;
+                    this.InitDone = false;
+                }
+            }
 
             if (!this.InitDone) { return; } // Don't try to move the rail if we don't know where we are.
 
