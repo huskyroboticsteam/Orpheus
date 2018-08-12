@@ -22,10 +22,9 @@ namespace Science_Base
         
         public static void RailSpeedChange(int NewValue)
         {
-            if (NewValue < -100 || NewValue > 100) { NewValue = 0; }
+            if (NewValue < 0 || NewValue > 100) { NewValue = 0; }
             RailSpd = NewValue;
-            //SendDrillSpdPacket();
-            // TODO: Implement rail speed packet.
+            SendRailSpdPacket();
         }
 
         public static void RailTargetChange(bool FromTop, float TargetDist)
@@ -53,7 +52,16 @@ namespace Science_Base
             {
                 (byte)(((DrillSpd < 0) ? 0b10 : 0b00) | (IsDrillEnabled ? 0b01 : 0b00)),
                 (byte)Math.Abs(DrillSpd)
-            }), true, ScienceConstants.CLIENT_NAME);
+            }), false, ScienceConstants.CLIENT_NAME);
+            if (Server.GetClients().Contains(ScienceConstants.CLIENT_NAME)) { Server.Send(Packet); }
+        }
+
+        private static void SendRailSpdPacket()
+        {
+            Packet Packet = new Packet(new Message(ScienceConstants.Packets.RAIL_SPEED_SET, new byte[]
+            {
+                (byte)Math.Abs(RailSpd)
+            }), false, ScienceConstants.CLIENT_NAME);
             if (Server.GetClients().Contains(ScienceConstants.CLIENT_NAME)) { Server.Send(Packet); }
         }
 

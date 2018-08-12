@@ -631,14 +631,15 @@
             // 
             this.tableLayoutPanel9.SetColumnSpan(this.RailSpeed, 3);
             this.RailSpeed.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.RailSpeed.LargeChange = 50;
+            this.RailSpeed.LargeChange = 10;
             this.RailSpeed.Location = new System.Drawing.Point(3, 3);
             this.RailSpeed.Maximum = 100;
             this.RailSpeed.Name = "RailSpeed";
             this.RailSpeed.Size = new System.Drawing.Size(232, 29);
-            this.RailSpeed.SmallChange = 10;
+            this.RailSpeed.SmallChange = 5;
             this.RailSpeed.TabIndex = 0;
-            this.RailSpeed.TickFrequency = 10;
+            this.RailSpeed.TickFrequency = 5;
+            this.RailSpeed.Value = 30;
             this.RailSpeed.ValueChanged += new System.EventHandler(this.RailSpeed_ValueChanged);
             // 
             // darkLabel8
@@ -790,6 +791,7 @@
             this.railDisplay1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.railDisplay1.DrillLocation = 75;
             this.railDisplay1.ForeColor = System.Drawing.Color.Gainsboro;
+            this.railDisplay1.InitStatus = ((byte)(0));
             this.railDisplay1.Location = new System.Drawing.Point(3, 56);
             this.railDisplay1.Name = "railDisplay1";
             this.tableLayoutPanel9.SetRowSpan(this.railDisplay1, 11);

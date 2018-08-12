@@ -20,6 +20,7 @@
             public const byte DRILL_SPEED_SET = 0xA6;
             public const byte SERVO_SET = 0xA7;
             public const byte RAIL_TARGET_SET = 0xA8;
+            public const byte RAIL_SPEED_SET = 0xA9;
             #endregion
 
             #region Rover to Base (0xDC through 0xE4)

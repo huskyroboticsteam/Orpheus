@@ -323,7 +323,7 @@ namespace Science_Base
 
         private void RailSpeed_ValueChanged(object sender, EventArgs e)
         {
-            //Science_Base.Controls.RailSpeedChange(this.trackBar2.Value * 10);
+            Science_Base.Controls.RailSpeedChange(this.RailSpeed.Value);
             this.railDisplay1.DrillLocation = this.RailSpeed.Value;
         }
 

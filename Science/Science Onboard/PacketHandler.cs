@@ -14,6 +14,7 @@ namespace Science
             Parse.SetParseHandler(ScienceConstants.Packets.DRILL_SPEED_SET, ParseDrillSpeedPacket);
             Parse.SetParseHandler(ScienceConstants.Packets.SERVO_SET, ParseServoPacket);
             Parse.SetParseHandler(ScienceConstants.Packets.RAIL_TARGET_SET, ParseRailTargetPacket);
+            Parse.SetParseHandler(ScienceConstants.Packets.RAIL_SPEED_SET, ParseRailSpeedPacket);
         }
 
         public static void ParseDrillSpeedPacket(Packet Packet)
@@ -39,7 +40,10 @@ namespace Science
 
         public static void ParseRailSpeedPacket(Packet Packet)
         {
-
+            if (CheckPacket(Packet, 1, "Rail Speed"))
+            {
+                RoverMain.IOHandler.RailController.RailSpeed = Packet.Data.Payload[0] / 100F;
+            }
         }
 
         public static void ParseRailTargetPacket(Packet Packet)
