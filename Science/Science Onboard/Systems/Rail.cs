@@ -178,7 +178,7 @@ namespace Science.Systems
             if (this.TraceLogging) { Log.Trace(this, "Ranger seeing " + this.Ranger.GetDistance() + "mm."); }
             uint GroundDist = this.Ranger.GetDistance();
             if (GroundDist == 0 || this.Ranger.LastHadTimeout()) { Log.Output(Log.Severity.INFO, Log.Source.SENSORS, "VL53L0X did not return a valid distance."); }
-            else { this.GroundHeightFilter.Feed(GroundDist - 110); } // TODO: Measure distance sensor to drill tip distance.
+            else { this.GroundHeightFilter.Feed((int)GroundDist - 140); }
 
             if (!this.InitDone) { return; } // Don't try to move the rail if we don't know where we are.
 
@@ -195,6 +195,8 @@ namespace Science.Systems
             // Now we know our intentions, check if there is anything that should stop movement.
             if (this.TopDepth > 500) { TargetSpeed = 0; } // TODO: Verify safe maximum extension of the rail.
             if (this.GroundHeightFilter.GetOutput() < -110) { TargetSpeed = 0; } // TODO: Verify safe maximum drill depth.
+
+            if (TargetSpeed > 0) { TargetSpeed += 0.1F; } // Up is much slower than down, so we correct this here.
 
             this.MotorCtrl.SetSpeed(TargetSpeed);
         }

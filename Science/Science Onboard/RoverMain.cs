@@ -29,7 +29,7 @@ namespace Science
             Log.Destination = Log.WriteDestination.ALL;
             Log.Begin();
             Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Science Station - Rover Side");
-            Client.Start(IP, PortTCP, PortUDP, ScienceConstants.CLIENT_NAME);
+            Client.Start(IP, PortTCP, PortUDP, ScienceConstants.CLIENT_NAME, OperationPeriod:5);
 		    //Client.TraceLogging = true;
             PacketHandler Handler = new PacketHandler();
             //BeagleBone.Initialize(SystemMode.DEFAULT, true);
