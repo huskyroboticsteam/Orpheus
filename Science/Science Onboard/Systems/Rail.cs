@@ -21,7 +21,7 @@ namespace Science.Systems
 
         private const float MOTOR_MAX_SPEED = 0.5F;
         private const int INIT_TIMEOUT = 5000;
-        private const float ENCODER_MM_PER_TICK = 0.935F; // TODO: Placeholder value. Replace.
+        private const float ENCODER_MM_PER_TICK = 0.935F;
         private const bool ENABLE_VELOCITY_TRACKING = true;
 
         private bool P_Initializing = false;
@@ -185,18 +185,21 @@ namespace Science.Systems
             if (this.TraceLogging) { Log.Trace(this, "Rail at " + this.TopDepth.ToString("F2") + "mm from top, and wants to be at " + this.TargetLocation.ToString("F2") + "mm from " + (this.TargetLocationRefIsTop ? "top" : "bottom") + "."); }
 
             float TargetSpeed;
-            if (this.TargetLocationRefIsTop && (Math.Abs(this.TargetLocation - this.TopDepth) > 5)) // The rail needs to be moved.
+            if (this.TargetLocationRefIsTop && (Math.Abs(this.TargetLocation - this.TopDepth) > 2.5)) // The rail needs to be moved.
             {
-                if (this.TraceLogging) { Log.Trace(this, "Moving at " + (this.RailSpeed * (((this.TargetLocation - this.TopDepth) > 0) ? -1 : 1))); }
                 TargetSpeed = this.RailSpeed * (((this.TargetLocation - this.TopDepth) > 0) ? -1 : 1);
+                if((TargetSpeed < -0.15F || TargetSpeed > 0.25F) && Math.Abs(this.TargetLocation - this.TopDepth) < 40) { TargetSpeed += (TargetSpeed < 0 ? 0.1F : -0.1F); } // We are close, go slower.
+                if (this.TraceLogging) { Log.Trace(this, "Moving at " + (TargetSpeed * 100).ToString("N1") + "%."); }
             }
             else { TargetSpeed = 0; }
 
-            // Now we know our intentions, check if there is anything that should stop movement.
-            if (this.TopDepth > 500) { TargetSpeed = 0; } // TODO: Verify safe maximum extension of the rail.
-            if (this.GroundHeightFilter.GetOutput() < -110) { TargetSpeed = 0; } // TODO: Verify safe maximum drill depth.
-
             if (TargetSpeed > 0) { TargetSpeed += 0.1F; } // Up is much slower than down, so we correct this here.
+
+            if (TargetSpeed > 0.4) { TargetSpeed = 0.4F; } // We shouldn't move up very fast (high speeds only for down)
+
+            // Now we know our intentions, check if there is anything that should stop movement.
+            if (this.TopDepth > 500) { TargetSpeed = 0; }
+            if (this.GroundHeightFilter.GetOutput() < -110) { TargetSpeed = 0; }
 
             this.MotorCtrl.SetSpeed(TargetSpeed);
         }
