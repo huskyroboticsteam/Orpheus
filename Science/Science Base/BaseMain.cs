@@ -15,15 +15,16 @@ namespace Science_Base
         static void Main(string[] args)
         {
             Log.SetGlobalOutputLevel(Log.Severity.INFO);
-            //Log.SetSingleOutputLevel(Log.Source.NETWORK, Log.Severity.DEBUG);
             Log.ErrorCodes = ScienceErrors.ERROR_CODES;
             Log.SystemNames = ScienceErrors.SYSTEMS;
             Log.Begin();
             Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Science Station - Base Side");
 
+            StateStore.Start("ScienceBase");
+
             Window = new MainWindow();
             Application.EnableVisualStyles();
-            Server.Start(ScienceConstants.DEFAULT_PORT_TCP, ScienceConstants.DEFAULT_PORT_UDP);
+            Server.Start(ScienceConstants.DEFAULT_PORT_TCP, ScienceConstants.DEFAULT_PORT_UDP, OperationPeriod:5);
             Server.ClientConnectionChange += Window.UpdateClientList;
             DataHandler.Start();
             Application.Run(Window);

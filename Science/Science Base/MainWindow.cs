@@ -5,47 +5,29 @@ using System;
 using System.Linq;
 using System.Windows.Forms;
 using System.Collections.Generic;
-using System.Net;
+using System.Windows.Forms.VisualStyles;
 using Science.Library;
-using LiveCharts.Configurations;
 using LiveCharts.Wpf;
-using LiveCharts;
-using System.Windows.Media;
-using System.Drawing.Imaging;
-using System.Drawing;
 using Science_Base.Properties;
 
 namespace Science_Base
 {
     public partial class MainWindow : DarkForm
     {
-        public static SolidColorBrush ScarletColour = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x81, 0x14, 0x26));
-        public static SolidColorBrush ScarletBackColour = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0x3F, 0x81, 0x14, 0x26));
-        public static SolidColorBrush TextColour = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0xCC, 0xCC, 0xCC));
-        public static SolidColorBrush GaugeRedColour = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0xD1, 0x26, 0x26));
-        public static SolidColorBrush GaugeYellowColour = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0xD1, 0xD1, 0x26));
-        public static SolidColorBrush GaugeGreenColour = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x26, 0xD1, 0x26));
-
         private ChartManager Charts;
 
         public MainWindow()
         {
-            ScarletColour.Freeze();
-            ScarletBackColour.Freeze();
-            TextColour.Freeze();
-            GaugeRedColour.Freeze();
-            GaugeYellowColour.Freeze();
-            GaugeGreenColour.Freeze();
-
+            UIHelper.Init();
             InitializeComponent();
             InitWindow();
             this.EmergencyStopBtn.NotifyDefault(false);
             this.UIUpdate.Enabled = true;
-            SetMode(this.StatusImgNetwork, Resources.Network, 2);
-            SetMode(this.StatusImgPower, Resources.Power, 3);
-            SetMode(this.StatusImgSystem, Resources.CPU, 3);
+            UIHelper.SetMode(this.StatusImgNetwork, Resources.Network, 2);
+            UIHelper.SetMode(this.StatusImgPower, Resources.Power, 3);
+            UIHelper.SetMode(this.StatusImgSystem, Resources.CPU, 3);
             this.Charts = new ChartManager(this.ChartLeft, this.ChartRight, null);
-            this.Charts.Left.AddSeries(DataHandler.RandomData);
+            UIHelper.LoadCharts(this.Charts);
         }
 
         private void InitWindow()
@@ -58,123 +40,124 @@ namespace Science_Base
             this.GaugeSysVoltage.TickStep = 0.25;
             this.GaugeSysVoltage.Value = 22;
             this.GaugeSysVoltage.SectionsInnerRadius = 0.96;
-            this.GaugeSysVoltage.Base.Foreground = TextColour;
-            this.GaugeSysVoltage.NeedleFill = TextColour;
+            this.GaugeSysVoltage.Base.Foreground = UIHelper.TextColour;
+            this.GaugeSysVoltage.NeedleFill = UIHelper.TextColour;
             this.GaugeSysVoltage.Sections.Add(new AngularSection() // Low Red
             {
                 FromValue = 22,
                 ToValue = 22.5,
-                Fill = GaugeRedColour
+                Fill = UIHelper.GaugeRedColour
             });
             this.GaugeSysVoltage.Sections.Add(new AngularSection() // Low Yellow
             {
                 FromValue = 22.5,
                 ToValue = 23.5,
-                Fill = GaugeYellowColour
+                Fill = UIHelper.GaugeYellowColour
             });
             this.GaugeSysVoltage.Sections.Add(new AngularSection() // Green
             {
                 FromValue = 23.5,
                 ToValue = 28.5,
-                Fill = GaugeGreenColour
+                Fill = UIHelper.GaugeGreenColour
             });
             this.GaugeSysVoltage.Sections.Add(new AngularSection() // High Yellow
             {
                 FromValue = 28.5,
                 ToValue = 29.25,
-                Fill = GaugeYellowColour
+                Fill = UIHelper.GaugeYellowColour
             });
             this.GaugeSysVoltage.Sections.Add(new AngularSection() // High Red
             {
                 FromValue = 29.25,
                 ToValue = 30,
-                Fill = GaugeRedColour
+                Fill = UIHelper.GaugeRedColour
             });
 
             // System Current
             this.GaugeSysCurrent.FromValue = 0;
-            this.GaugeSysCurrent.ToValue = 10;
+            this.GaugeSysCurrent.ToValue = 3;
             this.GaugeSysCurrent.Wedge = 240;
-            this.GaugeSysCurrent.LabelsStep = 2;
-            this.GaugeSysCurrent.TickStep = 0.25;
+            this.GaugeSysCurrent.LabelsStep = 0.5;
+            this.GaugeSysCurrent.TickStep = 0.125;
             this.GaugeSysCurrent.SectionsInnerRadius = 0.96;
-            this.GaugeSysCurrent.Base.Foreground = TextColour;
-            this.GaugeSysCurrent.NeedleFill = TextColour;
+            this.GaugeSysCurrent.Base.Foreground = UIHelper.TextColour;
+            this.GaugeSysCurrent.NeedleFill = UIHelper.TextColour;
             this.GaugeSysCurrent.Sections.Add(new AngularSection() // Green
             {
                 FromValue = 0,
-                ToValue = 6,
-                Fill = GaugeGreenColour
+                ToValue = 1.5,
+                Fill = UIHelper.GaugeGreenColour
             });
             this.GaugeSysCurrent.Sections.Add(new AngularSection() // High Yellow
             {
-                FromValue = 6,
-                ToValue = 8,
-                Fill = GaugeYellowColour
+                FromValue = 1.5,
+                ToValue = 2.25,
+                Fill = UIHelper.GaugeYellowColour
             });
             this.GaugeSysCurrent.Sections.Add(new AngularSection() // High Red
             {
-                FromValue = 8,
-                ToValue = 10,
-                Fill = GaugeRedColour
+                FromValue = 2.25,
+                ToValue = 3,
+                Fill = UIHelper.GaugeRedColour
             });
 
             // Drill Current
             this.GaugeDrillCurrent.FromValue = 0;
-            this.GaugeDrillCurrent.ToValue = 15;
+            this.GaugeDrillCurrent.ToValue = 5;
             this.GaugeDrillCurrent.Wedge = 240;
-            this.GaugeDrillCurrent.LabelsStep = 3;
-            this.GaugeDrillCurrent.TickStep = 0.5;
+            this.GaugeDrillCurrent.LabelsStep = 1;
+            this.GaugeDrillCurrent.TickStep = 0.25;
             this.GaugeDrillCurrent.SectionsInnerRadius = 0.96;
-            this.GaugeDrillCurrent.Base.Foreground = TextColour;
-            this.GaugeDrillCurrent.NeedleFill = TextColour;
+            this.GaugeDrillCurrent.Base.Foreground = UIHelper.TextColour;
+            this.GaugeDrillCurrent.NeedleFill = UIHelper.TextColour;
             this.GaugeDrillCurrent.Sections.Add(new AngularSection() // Green
             {
                 FromValue = 0,
-                ToValue = 9,
-                Fill = GaugeGreenColour
+                ToValue = 2,
+                Fill = UIHelper.GaugeGreenColour
             });
             this.GaugeDrillCurrent.Sections.Add(new AngularSection() // High Yellow
             {
-                FromValue = 9,
-                ToValue = 12,
-                Fill = GaugeYellowColour
+                FromValue = 2,
+                ToValue = 3.5,
+                Fill = UIHelper.GaugeYellowColour
             });
             this.GaugeDrillCurrent.Sections.Add(new AngularSection() // High Red
             {
-                FromValue = 12,
-                ToValue = 15,
-                Fill = GaugeRedColour
+                FromValue = 3.5,
+                ToValue = 5,
+                Fill = UIHelper.GaugeRedColour
             });
 
             // Rail Current
             this.GaugeRailCurrent.FromValue = 0;
-            this.GaugeRailCurrent.ToValue = 60;
+            this.GaugeRailCurrent.ToValue = 8;
             this.GaugeRailCurrent.Wedge = 240;
-            this.GaugeRailCurrent.LabelsStep = 10;
-            this.GaugeRailCurrent.TickStep = 2;
+            this.GaugeRailCurrent.LabelsStep = 2;
+            this.GaugeRailCurrent.TickStep = 0.5;
             this.GaugeRailCurrent.SectionsInnerRadius = 0.96;
-            this.GaugeRailCurrent.Base.Foreground = TextColour;
-            this.GaugeRailCurrent.NeedleFill = TextColour;
+            this.GaugeRailCurrent.Base.Foreground = UIHelper.TextColour;
+            this.GaugeRailCurrent.NeedleFill = UIHelper.TextColour;
             this.GaugeRailCurrent.Sections.Add(new AngularSection() // Green
             {
                 FromValue = 0,
-                ToValue = 35,
-                Fill = GaugeGreenColour
+                ToValue = 5,
+                Fill = UIHelper.GaugeGreenColour
             });
             this.GaugeRailCurrent.Sections.Add(new AngularSection() // High Yellow
             {
-                FromValue = 35,
-                ToValue = 45,
-                Fill = GaugeYellowColour
+                FromValue = 5,
+                ToValue = 7,
+                Fill = UIHelper.GaugeYellowColour
             });
             this.GaugeRailCurrent.Sections.Add(new AngularSection() // High Red
             {
-                FromValue = 45,
-                ToValue = 60,
-                Fill = GaugeRedColour
+                FromValue = 7,
+                ToValue = 8,
+                Fill = UIHelper.GaugeRedColour
             });
 
+            // Chart Series Chooser
             ListViewItem[] Items = new ListViewItem[DataHandler.GetSeries().Length];
             for (int i = 0; i < Items.Length; i++)
             {
@@ -183,72 +166,6 @@ namespace Science_Base
             }
             this.ChartDataChooser.Items.AddRange(Items);
         }
-
-        public void SetMode(PictureBox Box, Image Original, byte Mode)
-        {
-            float[][] Good =
-            {
-                new float[] { 0, 0, 0, 0, 0 },
-                new float[] { 0, 0.8F, 0, 0, 0 },
-                new float[] { 0, 0, 0, 0, 0 },
-                new float[] { 0, 0, 0, 1, 0 },
-                new float[] { 0, 0, 0, 0, 0 }
-            };
-
-            float[][] Warning =
-            {
-                new float[] { 0.8F, 0, 0, 0, 0 },
-                new float[] { 0, 0.8F, 0, 0, 0 },
-                new float[] { 0, 0, 0, 0, 0 },
-                new float[] { 0, 0, 0, 1, 0 },
-                new float[] { 0, 0, 0, 0, 0 }
-            };
-
-            float[][] Error =
-            {
-                new float[] { 0.8F, 0, 0, 0, 0 },
-                new float[] { 0, 0, 0, 0, 0 },
-                new float[] { 0, 0, 0, 0, 0 },
-                new float[] { 0, 0, 0, 1, 0 },
-                new float[] { 0, 0, 0, 0, 0 }
-            };
-
-            float[][] Default =
-            {
-                new float[] { 0.8F, 0, 0, 0, 0 },
-                new float[] { 0, 0.8F, 0, 0, 0 },
-                new float[] { 0, 0, 0.8F, 0, 0 },
-                new float[] { 0, 0, 0, 1, 0 },
-                new float[] { 0, 0, 0, 0, 0 }
-            };
-
-            ColorMatrix Matrix;
-            switch(Mode)
-            {
-                case 0: Matrix = new ColorMatrix(Good); break;
-                case 1: Matrix = new ColorMatrix(Warning); break;
-                case 2: Matrix = new ColorMatrix(Error); break;
-                default: Matrix = new ColorMatrix(Default); break;
-            }
-            ImageAttributes Attributes = new ImageAttributes();
-            Attributes.SetColorMatrix(Matrix);
-            Image Image = (Image)Original.Clone();
-            Graphics Graphics = Graphics.FromImage(Image);
-            Rectangle Output = new Rectangle(0, 0, Image.Width, Image.Height);
-            Graphics.DrawImage(Image, Output, 0, 0, Image.Width, Image.Height, GraphicsUnit.Pixel, Attributes);
-            Box.Image = Image;
-        }
-
-        /*public void UpdateGraph()
-        {
-            Invoke((MethodInvoker)delegate
-            {
-
-                this.cartesianChart1.Series.First().Values = new ChartValues<DataUnit>(DataHandler.RandomData);
-                this.cartesianChart1.Update();
-                Log.Output(Log.Severity.INFO, Log.Source.GUI, "Updating graph");
-            });
-        }*/
 
         private void EmergencyStopClick(object sender, EventArgs e)
         {
@@ -270,17 +187,14 @@ namespace Science_Base
         {
             try
             {
-                for(int i = 0; i < 100; i++)
-                {
-                    byte[] Timestamp = UtilMain.StringToBytes(this.TimestampTextbox.Text).Reverse().ToArray();
-                    byte ID = UtilMain.StringToBytes(this.IDTextbox.Text)[0];
-                    byte[] Data = InterpretInput(this.DataTextbox.Text.ToCharArray());
-                    Packet Pack = new Packet(ID, this.SendAsUDP.Checked, this.ClientSelector.SelectedItem.ToString());
-                    Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Sending packet with data length: " + Data.Length);
-                    Pack.AppendData(Data);
-                    Server.Send(Pack);
-                    Log.Output(Log.Severity.INFO, Log.Source.GUI, "Sending custom packet: " + Pack.ToString());
-                }
+                byte[] Timestamp = UtilMain.StringToBytes(this.TimestampTextbox.Text).Reverse().ToArray();
+                byte ID = UtilMain.StringToBytes(this.IDTextbox.Text)[0];
+                byte[] Data = InterpretInput(this.DataTextbox.Text.ToCharArray());
+                Packet Pack = new Packet(ID, this.SendAsUDP.Checked, this.ClientSelector.SelectedItem.ToString());
+                Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Sending packet with data length: " + Data.Length);
+                Pack.AppendData(Data);
+                Server.Send(Pack);
+                Log.Output(Log.Severity.INFO, Log.Source.GUI, "Sending custom packet: " + Pack.ToString());
             }
             catch(Exception Exc)
             {
@@ -297,10 +211,7 @@ namespace Science_Base
                 ParsedTime = ParsedTime.AddSeconds(Convert.ToInt32(this.TimestampTextbox.Text.Replace(" ", ""), 16)).ToLocalTime();
                 this.InterpretationTimestamp.Text = ParsedTime.ToLongDateString() + " " + ParsedTime.ToLongTimeString() + " UTC";
             }
-            catch
-            {
-                this.InterpretationTimestamp.Text = "Unknown";
-            }
+            catch { this.InterpretationTimestamp.Text = "Unknown"; }
         }
 
         private void IDTextbox_TextChanged(object sender, EventArgs e)
@@ -310,10 +221,7 @@ namespace Science_Base
                 byte[] ID = UtilMain.StringToBytes(this.IDTextbox.Text);
                 this.InterpretationID.Text = "0x" + UtilMain.BytesToNiceString(new byte[] { ID.Last() }, false);
             }
-            catch
-            {
-                this.InterpretationID.Text = "Unknown";
-            }
+            catch { this.InterpretationID.Text = "Unknown"; }
         }
 
         private void DataTextbox_TextChanged(object sender, EventArgs e)
@@ -323,10 +231,7 @@ namespace Science_Base
                 byte[] Data = InterpretInput(this.DataTextbox.Text.ToCharArray());
                 this.InterpretationData.Text = "0x" + UtilMain.BytesToNiceString(Data, true);
             }
-            catch
-            {
-                this.InterpretationData.Text = "Unknown";
-            }
+            catch { this.InterpretationData.Text = "Unknown"; }
         }
 
         private void UseCurrentTime_CheckedChanged(object sender, EventArgs e)
@@ -336,15 +241,9 @@ namespace Science_Base
             UpdateTime();
         }
 
-        private void UpdateTime()
-        {
-            this.TimestampTextbox.Text = UtilMain.BytesToNiceString(Packet.GetCurrentTime(), true);
-        }
+        private void UpdateTime() { this.TimestampTextbox.Text = UtilMain.BytesToNiceString(Packet.GetCurrentTime(), true); }
 
-        private void SecTimer_Tick(object sender, EventArgs e)
-        {
-            UpdateTime();
-        }
+        private void SecTimer_Tick(object sender, EventArgs e) { UpdateTime(); }
 
         private byte[] InterpretInput(char[] Input)
         {
@@ -362,6 +261,7 @@ namespace Science_Base
 
         private void MainWindow_FormClosed(object sender, FormClosedEventArgs e)
         {
+            UIHelper.SaveCharts(this.Charts);
             Server.Stop();
             Environment.Exit(0);
         }
@@ -378,22 +278,22 @@ namespace Science_Base
             {
                 this.ClientSelector.Items.Clear();
                 this.ClientSelector.Items.AddRange(Server.GetClients().ToArray());
-                if (Server.GetClients().Contains(ScienceConstants.CLIENT_NAME)) { SetMode(this.StatusImgNetwork, Resources.Network, 0); }
-                else { SetMode(this.StatusImgNetwork, Resources.Network, 2); }
+                if (Server.GetClients().Contains(ScienceConstants.CLIENT_NAME)) { UIHelper.SetMode(this.StatusImgNetwork, Resources.Network, 0); }
+                else { UIHelper.SetMode(this.StatusImgNetwork, Resources.Network, 2); }
             });
         }
 
-        private void trackBar1_ValueChanged(object sender, EventArgs e)
+        private void DrillSpeed_ValueChanged(object sender, EventArgs e)
         {
-            Science_Base.Controls.DrillSpeedChange(this.DrillSpeed.Value * (this.DrillReverse.Checked ? -1 : 1));
+            Science_Base.Controls.DrillSpeedChange(this.DrillSpeed.Value * (this.DrillReverse.Checked ? -1 : 1) * (Science_Base.Controls.IsDrillEnabled ? 1 : 0));
             this.DrillReverse.Enabled = (this.DrillSpeed.Value == 0 || !Science_Base.Controls.IsDrillEnabled);
         }
 
-        private void darkButton1_Click(object sender, EventArgs e)
+        private void DrillToggle_Click(object sender, EventArgs e)
         {
             Science_Base.Controls.IsDrillEnabled = !Science_Base.Controls.IsDrillEnabled;
             this.DrillToggle.Text = Science_Base.Controls.IsDrillEnabled ? "STOP" : "START";
-            Science_Base.Controls.DrillSpeedChange(this.DrillSpeed.Value * (this.DrillReverse.Checked ? -1 : 1));
+            Science_Base.Controls.DrillSpeedChange(this.DrillSpeed.Value * (this.DrillReverse.Checked ? -1 : 1) * (Science_Base.Controls.IsDrillEnabled ? 1 : 0));
             this.DrillReverse.Enabled = (this.DrillSpeed.Value == 0 || !Science_Base.Controls.IsDrillEnabled);
         }
 
@@ -413,18 +313,80 @@ namespace Science_Base
 
         private void ChartAddLeft_Click(object sender, EventArgs e)
         {
-            foreach(int Selected in this.ChartDataChooser.SelectedIndices)
-            {
-                this.Charts.Left.AddByIndex(Selected);
-            }
+            foreach(int Selected in this.ChartDataChooser.SelectedIndices) { this.Charts.Left.AddByIndex(Selected); }
         }
 
         private void ChartAddRight_Click(object sender, EventArgs e)
         {
-            foreach (int Selected in this.ChartDataChooser.SelectedIndices)
+            foreach (int Selected in this.ChartDataChooser.SelectedIndices) { this.Charts.Right.AddByIndex(Selected); }
+        }
+
+        private void RailSpeed_ValueChanged(object sender, EventArgs e)
+        {
+            Science_Base.Controls.RailSpeedChange(this.RailSpeed.Value);
+            this.railDisplay1.DrillLocation = this.RailSpeed.Value;
+        }
+
+        private void TopDepth_MouseEnter(object sender, EventArgs e) { this.railDisplay1.ShowDistanceTop = true; }
+        private void TopDepth_MouseLeave(object sender, EventArgs e) { this.railDisplay1.ShowDistanceTop = false; }
+
+        private void BottomDepth_MouseEnter(object sender, EventArgs e) { this.railDisplay1.ShowDistanceBottom = true; }
+        private void BottomDepth_MouseLeave(object sender, EventArgs e) { this.railDisplay1.ShowDistanceBottom = false; }
+
+        private void SampleTubeToggle_Click(object sender, EventArgs e)
+        {
+            Science_Base.Controls.SampleDoorState = !Science_Base.Controls.SampleDoorState;
+            Science_Base.Controls.SampleDoorChange(Science_Base.Controls.SampleDoorState);
+            this.SampleTubeStatus.Text = (Science_Base.Controls.SampleDoorState ? "Open" : "Closed");
+        }
+
+        private void GoToTop_Click(object sender, EventArgs e)
+        {
+            Science_Base.Controls.RailTargetChange(true, float.NaN);
+        }
+
+        private void GoToGround_Click(object sender, EventArgs e)
+        {
+            Science_Base.Controls.RailTargetChange(false, float.NaN);
+        }
+
+        private void RailGoCustom_Click(object sender, EventArgs e)
+        {
+            if (int.TryParse(this.RailDistEntry.Text, out int TargetDepth))
             {
-                this.Charts.Right.AddByIndex(Selected);
+                Science_Base.Controls.RailTargetChange(true, TargetDepth);
             }
         }
+
+        private void RailGoCustomBottom_Click(object sender, EventArgs e)
+        {
+            if (int.TryParse(this.RailDistEntry.Text, out int TargetDepth))
+            {
+                Science_Base.Controls.RailTargetChange(false, TargetDepth);
+            }
+        }
+
+        private void RailDistEntry_TextChanged(object sender, EventArgs e)
+        {
+            bool Enable = true;
+            if (!int.TryParse(this.RailDistEntry.Text, out int TargetDepth)) { Enable = false; }
+            if (TargetDepth > 500 || TargetDepth < -110) { Enable = false; }
+
+            this.RailGoCustomTop.Enabled = Enable;
+            this.RailGoCustomBottom.Enabled = Enable;
+        }
+
+        public void UpdateRail(float CurrentRailSpeed, float DistTop, float DistGround, float DistTarget, bool TargetTopRef, bool InitInProgress, bool InitDone)
+        {
+            Invoke((MethodInvoker) delegate
+            {
+                this.DistTopMeasurementLabel.Text = DistTop.ToString("N1") + " mm";
+                this.DistBottomMeasurementLabel.Text = DistGround.ToString("N1") + " mm";
+                if(InitDone) { this.railDisplay1.InitStatus = 2; }
+                else if(InitInProgress) { this.railDisplay1.InitStatus = 1; }
+                else { this.railDisplay1.InitStatus = 0; }
+            });
+        }
+
     }
 }

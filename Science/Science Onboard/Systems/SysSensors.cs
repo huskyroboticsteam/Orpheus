@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Scarlet.Communications;
 using Scarlet.Components;
+using Scarlet.Components.Outputs;
 using Scarlet.Components.Sensors;
 using Scarlet.IO;
 using Scarlet.IO.RaspberryPi;
@@ -16,6 +17,7 @@ namespace Science.Systems
 {
     public class SysSensors : ISubsystem
     {
+        public bool TraceLogging { get; set; }
         private bool TakeReadings = false;
         private Timer Timer;
 
@@ -31,8 +33,6 @@ namespace Science.Systems
         }
 
         public void EmergencyStop() { this.TakeReadings = false; }
-
-        public void EventTriggered(object Sender, EventArgs Event) { }
 
         public void Initialize()
         {
@@ -63,13 +63,29 @@ namespace Science.Systems
                 double SysSV = this.SystemSensor.GetShuntVoltage();
                 double DrlSV = this.DrillSensor.GetShuntVoltage();
 
-                Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Sys A:" + SysA + ", Drill A:" + Drill + ", Rail A:" + RailA + ", Sys V:" + SysV + ", SysShunt V:" + SysSV + ", Working:" + this.SystemSensor.Test());
-                Log.Output(Log.Severity.DEBUG, Log.Source.NETWORK, "Calculated currents: Sys:" + (SysSV / 0.150) + ", Drill:" + (DrlSV / 0.010));
+                if (this.TraceLogging) { Log.Trace(this, string.Format("Sys: {0:N5}A, {1:N5}V (Shunt {2:N5}V). Drill: {3:N5}A. Rail: {4:N5}A. Test: {5}", SysA, SysV, SysSV, Drill, RailA, this.SystemSensor.Test()));  }
 
-                byte[] Data = UtilData.ToBytes(SysSV / 0.150).Concat(UtilData.ToBytes(DrlSV / 0.010)).Concat(UtilData.ToBytes(RailA / 0.002)).Concat(UtilData.ToBytes(SysV)).Concat(UtilData.ToBytes(Sample.Ticks)).ToArray();
+                byte[] Data = UtilData.ToBytes(SysSV / 0.150).Concat(UtilData.ToBytes(DrlSV / 0.010)).Concat(UtilData.ToBytes(RailA / 0.002)).Concat(UtilData.ToBytes(SysV)).Concat(UtilData.ToBytes(Sample.Ticks)).ToArray(); // TODO: Decide if we want to calculate or use device
                 Packet Packet = new Packet(new Message(ScienceConstants.Packets.SYS_SENSOR, Data), false);
                 Client.Send(Packet);
+
+                uint SysVoltColour;
+                if (SysV <= 25) { SysVoltColour = RGBLED.RedGreenGradient(SysV, 22, 26); }
+                else if (SysV <= 28) { SysVoltColour = 0x00FF00; }
+                else { SysVoltColour = RGBLED.RedGreenGradient(SysV, 30, 28); }
+                RoverMain.IOHandler.LEDController.SystemVoltage.SetOutput(SysVoltColour);
+
+                uint SysCurrentColour;
+                if (SysA <= 2) { SysCurrentColour = 0x00FF00; }
+                else if (SysA >= 5) { SysCurrentColour = 0xFF0000; }
+                else { SysCurrentColour = RGBLED.RedGreenGradient(SysA, 5, 2); }
+                RoverMain.IOHandler.LEDController.SystemCurrent.SetOutput(SysCurrentColour);
             }
+        }
+
+        public void Exit()
+        {
+            this.TakeReadings = false;
         }
     }
 }
