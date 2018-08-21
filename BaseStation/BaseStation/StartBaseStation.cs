@@ -34,7 +34,7 @@ namespace HuskyRobotics.BaseStation.Start
         {
             BaseServer.Update(DriveController, ArmController);
             CameraControl.Update(DriveController);
-            Thread.Sleep(150);
+            Thread.Sleep(100);
         }
 
         private static volatile bool exit;

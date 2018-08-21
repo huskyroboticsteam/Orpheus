@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using LiveCharts.Geared;
 using LiveCharts.WinForms;
-using Scarlet.Utilities;
 
 namespace Science_Base
 {
@@ -15,6 +12,8 @@ namespace Science_Base
     {
         public CartesianChart Chart;
         public ListBox DataChooser;
+
+        private HashSet<int> SeriesIndexList = new HashSet<int>();
 
         public ChartInstance(CartesianChart Chart, ListBox Chooser)
         {
@@ -34,7 +33,7 @@ namespace Science_Base
 
         public void AddSeries<T>(DataSeries<T> Series)
         {
-            Log.Output(Log.Severity.INFO, Log.Source.GUI, "Adding series, current series count:" + this.Chart.Series.Count);
+            if (this.Chart.Series.Count == 0) { this.Chart.AxisY.Clear(); }
             LiveCharts.Wpf.Axis Y = new LiveCharts.Wpf.Axis()
             {
                 Title = Series.AxisLabel
@@ -44,28 +43,36 @@ namespace Science_Base
             GLineSeries ChartSeries = new GLineSeries(Series.GetMapper())
             {
                 Values = Series.Data,
-                Stroke = MainWindow.ScarletColour,
-                Fill = MainWindow.ScarletBackColour,
+                Stroke = UIHelper.ScarletColour,
+                Fill = UIHelper.ScarletBackColour,
                 PointGeometry = null
             };
             this.Chart.Series.Add(ChartSeries);
+
+            object[] AllSeries = DataHandler.GetSeries();
+            if (AllSeries.Contains(Series)) { this.SeriesIndexList.Add(Array.IndexOf(AllSeries, Series)); }
         }
 
         // Thanks Sasha!
         public void AddByIndex(int Index)
         {
+            if (DataHandler.GetSeries().Length <= Index) { return; }
             object Series = DataHandler.GetSeries()[Index];
             Type type = Series.GetType();
             Type Generic = type.GetGenericArguments()[0];
             MethodInfo Info = this.GetType().GetMethod("AddSeries");
             Info = Info.MakeGenericMethod(Generic);
             Info.Invoke(this, new object[] { Series });
+            this.SeriesIndexList.Add(Index);
         }
+
+        public HashSet<int> GetIndices() { return this.SeriesIndexList; }
 
         public void Clear()
         {
             this.Chart.Series.Clear();
             this.Chart.AxisY.Clear();
+            this.SeriesIndexList.Clear();
         }
     }
 

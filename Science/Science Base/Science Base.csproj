@@ -35,6 +35,9 @@
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Science-Icon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="DarkUI">
       <HintPath>..\Libraries\DarkUI.dll</HintPath>
@@ -89,6 +92,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="RailDisplay.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="RailDisplay.Designer.cs">
+      <DependentUpon>RailDisplay.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UIHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -109,6 +119,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="RailDisplay.resx">
+      <DependentUpon>RailDisplay.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="Icons\Network.png" />
@@ -118,6 +131,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Icons\CPU.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Science-Icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

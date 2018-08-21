@@ -4,20 +4,13 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using HuskyRobotics.Utilities;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Text.RegularExpressions;
 using HuskyRobotics.BaseStation.Server;
+using HuskyRobotics;
 
 namespace HuskyRobotics.UI
 {
@@ -33,7 +26,7 @@ namespace HuskyRobotics.UI
         private int ImageHeight;
         private int CenterPixelX = 0;
         private int CenterPixelY = 0;
-        private int Zoom = 0;
+        private int Zoom = 0;   
         private Matrix _waypointTransformMatrix;
         private BitmapImage _waypointBitmap;
         private BitmapImage _roverIconBitmap;
@@ -55,20 +48,27 @@ namespace HuskyRobotics.UI
         {
             InitializeComponent();
             BaseServer.GPSUpdate += UpdateRoverPosition;
-            _roverIconBitmap = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"/Icons/RoverIcon.png", UriKind.Absolute));
-            _waypointBitmap = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"/Icons/waypoint.png", UriKind.Absolute));
+            _roverIconBitmap = LoadImageFromRelativeFile("Icons/RealRoverIcon.png");
+            _waypointBitmap = LoadImageFromRelativeFile("Icons/waypoint.png");
             RoverIcon = new Image { Source = _roverIconBitmap };
+        }
+
+        private static BitmapImage LoadImageFromRelativeFile(string file)
+        {
+            return new BitmapImage(new Uri(Path.Combine(Directory.GetCurrentDirectory(), file), UriKind.Absolute));
         }
 
         public void DisplayMap(string mapSetFile)
         {
+            
             ClearCanvas();
             // load in individual images
             // TODO get the path from the settings
-            if (File.Exists(Directory.GetCurrentDirectory() + @"\Images\" + mapSetFile))
+            string path = Directory.GetCurrentDirectory() + @"\Images\" + mapSetFile;
+            if (File.Exists(path))
             {
                 String waypointsFile = (mapSetFile.Replace(".map", ".waypoints"));
-                using (StreamReader file = new StreamReader(Directory.GetCurrentDirectory() + @"\Images\" + mapSetFile))
+                using (var file = new StreamReader(path))
                 {
                     string line = file.ReadLine();
                     string[] config = line.Split('|');
@@ -101,14 +101,12 @@ namespace HuskyRobotics.UI
                     {
                         string[] parts = line.Split('|');
                         string[] location = parts[0].Split(',');
-                        int x = 0;
-                        int y = 0;
-                        Int32.TryParse(location[0], out x);
-                        Int32.TryParse(location[1], out y);
-                        AddImage(Directory.GetCurrentDirectory() + @"\Images\" + parts[1] + ".jpg", x, y, ImageWidth, ImageHeight);
+                        Int32.TryParse(location[0], out int x);
+                        Int32.TryParse(location[1], out int y);
+                        AddImage(LoadImageFromRelativeFile(Path.Combine("Images", parts[1] + ".jpg")), x, y, ImageWidth, ImageHeight);
                     }
                 }
-                
+
                 WaypointsChanged(null, null); // this loads the waypoints on startup
             }
 
@@ -117,10 +115,10 @@ namespace HuskyRobotics.UI
 
         // adds an image to the canvas with the given file location and the coords of where
         // on the canvas it goes
-        private void AddImage(String location, int x, int y, int width, int height)
+        private void AddImage(BitmapImage bitmap, int x, int y, int width, int height)
         {
-            var uri = new Uri(location, UriKind.Absolute);
-            var bitmap = new BitmapImage(uri);
+           // var uri = new Uri(location, UriKind.Absolute);
+            //var bitmap = new BitmapImage(uri);
             var image = new Image { Source = bitmap, Width = width, Height = height };
             Canvas.SetLeft(image, x * width - (width / 2));
             Canvas.SetTop(image, y * height - (height / 2));
@@ -133,20 +131,25 @@ namespace HuskyRobotics.UI
             MapCanvas.Children.Clear();
         }
 
-        private void UpdateRoverPosition(object sender, (float, float) e)
+        private void UpdateRoverPosition(object sender, (float, float) data)
         {
-            MapCanvas.Children.Remove(RoverIcon);
-            Tuple<int, int> pixelCoords = MapConversion.LatLongToPixelXY(e.Item1, e.Item2, Zoom);
-            var transform = new MatrixTransform(_waypointTransformMatrix);
-            RoverIcon.RenderTransform = transform;
-            Canvas.SetLeft(RoverIcon, pixelCoords.Item1 - CenterPixelX - (_roverIconBitmap.Width / 2));
-            Canvas.SetTop(RoverIcon, pixelCoords.Item2 - CenterPixelY - (_roverIconBitmap.Height / 2));
-            MapCanvas.Children.Add(RoverIcon);
+            Dispatcher.Invoke(() =>
+            {
+                MapCanvas.Children.Remove(RoverIcon);
+                Tuple<int, int> pixelCoords = MapConversion.LatLongToPixelXY(data.Item1, data.Item2, Zoom);
+                var transform = new MatrixTransform(_waypointTransformMatrix);
+                RoverIcon.RenderTransform = transform;
+                Canvas.SetLeft(RoverIcon, pixelCoords.Item1 - CenterPixelX - (_roverIconBitmap.Width / 2));
+                Canvas.SetTop(RoverIcon, pixelCoords.Item2 - CenterPixelY - (_roverIconBitmap.Height / 2));
+                RoverIcon.ToolTip = data.Item1 + ", " + data.Item2; 
+                MapCanvas.Children.Add(RoverIcon);
+            });
         }
 
         private void WaypointsChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            foreach (var oldIcon in waypointIcons) {
+            foreach (var oldIcon in waypointIcons)
+            {
                 MapCanvas.Children.Remove(oldIcon);
             }
 
@@ -190,13 +193,13 @@ namespace HuskyRobotics.UI
 
         private void CanvasMouseWheel(object sender, MouseWheelEventArgs e)
         {
-            double scale = Math.Pow(1.1, -e.Delta/20.0);
+            double scale = Math.Pow(1.1, -e.Delta / 20.0);
             var position = e.GetPosition(MapCanvas);
             var matrix = MapCanvas.RenderTransform.Value;
             matrix.ScaleAtPrepend(scale, scale, position.X, position.Y);
             MapCanvas.RenderTransform = new MatrixTransform(matrix);
 
-            _waypointTransformMatrix.ScaleAt(1 / scale, 1 / scale, _waypointBitmap.Width/ 2, _waypointBitmap.Height / 2);
+            _waypointTransformMatrix.ScaleAt(1 / scale, 1 / scale, _waypointBitmap.Width / 2, _waypointBitmap.Height / 2);
             var transform = new MatrixTransform(_waypointTransformMatrix);
             foreach (var waypoint in waypointIcons)
             {

@@ -4,30 +4,30 @@ using Scarlet.Components;
 using Scarlet.Components.Motors;
 using Scarlet.Components.Sensors;
 using Scarlet.IO;
-using Scarlet.IO.BeagleBone;
-using Scarlet.IO.RaspberryPi;
 using Scarlet.Utilities;
 
 namespace Science.Systems
 {
     public class Drill : ISubsystem
     {
+        public bool TraceLogging { get; set; }
+
         private const float MOTOR_MAX_SPEED = 1F;
 
-        /*private bool P_DoorOpen;
+        private bool P_DoorOpen;
         public bool DoorOpen
         {
             get { return this.P_DoorOpen; }
             set
             {
-                this.DoorServo.SetPosition(value ? 300 : 0);
+                this.DoorServo.SetPosition(value ? 0 : 300);
                 this.P_DoorOpen = value;
             }
-        }*/
+        }
 
-        private TalonMC MotorCtrl;
-        //private Servo DoorServo;
-        private IPWMOutput Out;
+        private readonly TalonMC MotorCtrl;
+        private readonly Servo DoorServo;
+        private readonly IPWMOutput Out;
 
         public Drill(IPWMOutput MotorPWM, IPWMOutput ServoPWM)
         {
@@ -35,41 +35,31 @@ namespace Science.Systems
             ((Scarlet.Components.Outputs.PCA9685.PWMOutputPCA9685)MotorPWM).Reset();
             ((Scarlet.Components.Outputs.PCA9685.PWMOutputPCA9685)MotorPWM).SetPolarity(true);
             this.MotorCtrl = new TalonMC(MotorPWM, MOTOR_MAX_SPEED);
-            //this.DoorServo = new Servo(ServoPWM);
-        }
-
-        public void SwitchToggle(object Sender, EventArgs evt)
-        {
-            Log.Output(Log.Severity.INFO, Log.Source.MOTORS, "Limit switch toggled.");
+            this.DoorServo = new Servo(ServoPWM) { TraceLogging = true };
+            this.DoorServo.SetEnabled(true);
         }
 
         public void EmergencyStop()
         {
             this.MotorCtrl.SetEnabled(false);
-            //this.DoorServo.SetEnabled(false);
-        }
-
-        public void EventTriggered(object Sender, EventArgs Event)
-        {
-            
+            this.DoorServo.SetEnabled(false);
         }
 
         public void SetSpeed(float Speed, bool Enable)
         {
-            this.MotorCtrl.SetSpeed(Speed);
-            //this.Out.SetOutput(0.5F);
-            //this.Out.SetEnabled(true);
             this.MotorCtrl.SetEnabled(Enable);
+            if (Enable) { this.MotorCtrl.SetSpeed(Speed); }
+            else { this.MotorCtrl.SetSpeed(0); }
         }
 
-        public void UpdateState()
-        {
-            
-        }
+        public void UpdateState() { }
 
-        public void Initialize()
+        public void Initialize() { }
+
+        public void Exit()
         {
-            
+            this.MotorCtrl.SetEnabled(false);
+            this.DoorServo.SetEnabled(false);
         }
     }
 }

@@ -11,6 +11,7 @@ namespace Science.Systems
 {
     public class Sample : ISubsystem
     {
+        public bool TraceLogging { get; set; }
         private Servo Servo;
 
         public Sample(IPWMOutput ServoPWM)
@@ -23,11 +24,6 @@ namespace Science.Systems
             
         }
 
-        public void EventTriggered(object Sender, EventArgs Event)
-        {
-
-        }
-
         public void Initialize()
         {
             
@@ -37,5 +33,7 @@ namespace Science.Systems
         {
             
         }
+
+        public void Exit() { }
     }
 }

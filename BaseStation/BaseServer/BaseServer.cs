@@ -18,15 +18,19 @@ namespace HuskyRobotics.BaseStation.Server
         //private static readonly int RightThumbDeadzone = 8689;
         private static readonly int TriggerThreshold = 30;
         private const long CONTROL_SEND_INTERVAL_NANOSECONDS = 100_000_000; //100,000,000 ns == 100 ms
-        public static event EventHandler<(float, float)> GPSUpdate;
         private static long lastControlSend = 0;
+
+        public static event EventHandler<(float, float)> GPSUpdate;
+        public static event EventHandler<(double, double)> RFUpdate;
+        public static event EventHandler<(float, float, float)> MagnetometerUpdate;
 
         public static void Setup()
         {
-            Scarlet.Communications.Server.Start(1025, 1026);
+            Scarlet.Communications.Server.Start(1025, 1026, OperationPeriod:1);
             Scarlet.Communications.Server.ClientConnectionChange += ClientConnected;
             Parse.SetParseHandler(0xC0, GpsHandler);
             Parse.SetParseHandler(0xC1, MagnetomerHandler);
+            Parse.SetParseHandler(0xD4, RFSignalHandler);
         }
 
         public static void Shutdown()
@@ -47,106 +51,93 @@ namespace HuskyRobotics.BaseStation.Server
 		/// <param name="driveController"></param>
         public static void Update(Controller driveController, Controller armController)
         {
-            if (driveController.IsConnected 
-                && armController.IsConnected 
-                && (TimeNanoseconds() - lastControlSend) > CONTROL_SEND_INTERVAL_NANOSECONDS)
-            {
-                Packet SteerPack;
-                Packet SpeedPack;
-                Packet WristPack;
-                Packet ElbowPack;
-                Packet ShoulderPack;
-                Packet BasePack;
+            if(SendIntervalElapsed()) {
+                if(driveController.IsConnected && armController.IsConnected) {
+                    State driveState = driveController.GetState();
+                    State armState = armController.GetState();
+                    byte rightTrigger = driveState.Gamepad.RightTrigger;
+                    byte leftTrigger = driveState.Gamepad.LeftTrigger;
+                    short leftThumbX = PreventOverflow(driveState.Gamepad.LeftThumbX);
 
-                State driveState = driveController.GetState();
-                State armState = armController.GetState();
-                byte rightTrigger = driveState.Gamepad.RightTrigger;
-                byte leftTrigger = driveState.Gamepad.LeftTrigger;
-                short leftThumbX = PreventOverflow(driveState.Gamepad.LeftThumbX);
+                    if (rightTrigger < TriggerThreshold) { rightTrigger = 0; }
+                    if (leftTrigger < TriggerThreshold) { leftTrigger = 0; }
+                    if (Math.Abs(leftThumbX) < LeftThumbDeadzone) { leftThumbX = 0; }
 
-                if (rightTrigger < TriggerThreshold) { rightTrigger = 0; }
-                if (leftTrigger < TriggerThreshold) { leftTrigger = 0; }
-                if (Math.Abs(leftThumbX) < LeftThumbDeadzone) { leftThumbX = 0; }
+                    float speed = (float)UtilMain.LinearMap(rightTrigger - leftTrigger, -255, 255, -1, 1);
+                    float steerPos = (float)UtilMain.LinearMap(leftThumbX, -32768, 32767, -1, 1);
 
-                float speed = (float)UtilMain.LinearMap(rightTrigger - leftTrigger, -255, 255, -1, 1);
-                float steerPos = (float)UtilMain.LinearMap(leftThumbX, -32768, 32767, -1, 1);
+                    bool aPressedDrive = (driveState.Gamepad.Buttons & GamepadButtonFlags.A) != 0;
+                    bool bPressedDrive = (driveState.Gamepad.Buttons & GamepadButtonFlags.B) != 0;
 
-                //Console.WriteLine("Speed: " + speed);
-                //Console.WriteLine("Steer Pos: " + steerPos);
+                    bool aPressedArm = (armState.Gamepad.Buttons & GamepadButtonFlags.A) != 0;
+                    bool bPressedArm = (armState.Gamepad.Buttons & GamepadButtonFlags.B) != 0;
+                    bool xPressedArm = (armState.Gamepad.Buttons & GamepadButtonFlags.X) != 0;
+                    bool yPressedArm = (armState.Gamepad.Buttons & GamepadButtonFlags.Y) != 0;
 
-                bool aPressedDrive = (driveState.Gamepad.Buttons & GamepadButtonFlags.A) != 0;
-                bool bPressedDrive = (driveState.Gamepad.Buttons & GamepadButtonFlags.B) != 0;
+                    bool upPressedArm = (armState.Gamepad.Buttons & GamepadButtonFlags.DPadUp) != 0;
+                    bool downPressedArm = (armState.Gamepad.Buttons & GamepadButtonFlags.DPadDown) != 0;
+                    bool leftPressedArm = (armState.Gamepad.Buttons & GamepadButtonFlags.DPadLeft) != 0;
+                    bool rightPressedArm = (armState.Gamepad.Buttons & GamepadButtonFlags.DPadRight) != 0;
 
-                bool aPressedArm = (armState.Gamepad.Buttons & GamepadButtonFlags.A) != 0;
-                bool bPressedArm = (armState.Gamepad.Buttons & GamepadButtonFlags.B) != 0;
-                bool xPressedArm = (armState.Gamepad.Buttons & GamepadButtonFlags.X) != 0;
-                bool yPressedArm = (armState.Gamepad.Buttons & GamepadButtonFlags.Y) != 0;
+                    float steerSpeed = 0.0f;
+                    if (bPressedDrive)
+                        steerSpeed = -0.3f;
+                    else if (aPressedDrive)
+                        steerSpeed = 0.3f;
 
-                bool upPressedArm = (armState.Gamepad.Buttons & GamepadButtonFlags.DPadUp) != 0;
-                bool downPressedArm = (armState.Gamepad.Buttons & GamepadButtonFlags.DPadDown) != 0;
-                bool leftPressedArm = (armState.Gamepad.Buttons & GamepadButtonFlags.DPadLeft) != 0;
-                bool rightPressedArm = (armState.Gamepad.Buttons & GamepadButtonFlags.DPadRight) != 0;
+                    float wristArmSpeed = 0.0f;
+                    if (yPressedArm)
+                        wristArmSpeed = -0.5f;
+                    else if (xPressedArm)
+                        wristArmSpeed = 0.5f;
 
-                float steerSpeed = 0.0f;
-                if (aPressedDrive)
-                    steerSpeed = 0.3f;
-                if (bPressedDrive)
-                    steerSpeed = -0.3f;
+                    float elbowArmSpeed = 0.0f;
+                    if (bPressedArm)
+                        elbowArmSpeed = -0.5f;
+                    else if (aPressedArm)
+                        elbowArmSpeed = 0.5f;
 
-                float wristArmSpeed = 0.0f;
-                if (xPressedArm)
-                    wristArmSpeed = 0.5f;
-                if (yPressedArm)
-                    wristArmSpeed = -0.5f;
+                    float shoulderArmSpeed = 0.0f;
+                    if (downPressedArm)
+                        shoulderArmSpeed = -1.0f;
+                    else if (upPressedArm)
+                        shoulderArmSpeed = 1.0f;
 
-                float elbowArmSpeed = 0.0f;
-                if (aPressedArm)
-                    elbowArmSpeed = 0.5f;
-                if (bPressedArm)
-                    elbowArmSpeed = -0.5f;
+                    float baseArmSpeed = 0.0f;
+                    if (rightPressedArm)
+                        baseArmSpeed = -0.5f;
+                    else if (leftPressedArm)
+                        baseArmSpeed = 0.5f;
 
-                float shoulderArmSpeed = 0.0f;
-                if (upPressedArm)
-                    shoulderArmSpeed = 1.0f;
-                if (downPressedArm)
-                    shoulderArmSpeed = -1.0f;
+                    Packet SteerPack = new Packet(0x8F, true, "MainRover");
+                    SteerPack.AppendData(UtilData.ToBytes(steerSpeed));
+                    Scarlet.Communications.Server.Send(SteerPack);
 
-                float baseArmSpeed = 0.0f;
-                if (leftPressedArm)
-                    baseArmSpeed = 0.5f;
-                if (rightPressedArm)
-                    baseArmSpeed = -0.5f;
+                    Packet SpeedPack = new Packet(0x95, true, "MainRover");
+                    SpeedPack.AppendData(UtilData.ToBytes(speed));
+                    Scarlet.Communications.Server.Send(SpeedPack);
 
-                SteerPack = new Packet(0x8F, true, "MainRover");
-                SteerPack.AppendData(UtilData.ToBytes(steerSpeed));
-                Scarlet.Communications.Server.Send(SteerPack);
+                    Packet WristPack = new Packet(0x9D, true, "ArmMaster");
+                    WristPack.AppendData(UtilData.ToBytes(wristArmSpeed));
+                    Scarlet.Communications.Server.Send(WristPack);
 
-                SpeedPack = new Packet(0x95, true, "MainRover");
-                SpeedPack.AppendData(UtilData.ToBytes(speed));
-                Scarlet.Communications.Server.Send(SpeedPack);
+                    Packet ElbowPack = new Packet(0x9C, true, "ArmMaster");
+                    ElbowPack.AppendData(UtilData.ToBytes(elbowArmSpeed));
+                    Scarlet.Communications.Server.Send(ElbowPack);
 
-                WristPack = new Packet(0x9D, true, "ArmMaster");
-                WristPack.AppendData(UtilData.ToBytes(wristArmSpeed));
-                Scarlet.Communications.Server.Send(WristPack);
+                    Packet ShoulderPack = new Packet(0x9B, true, "ArmMaster");
+                    ShoulderPack.AppendData(UtilData.ToBytes(shoulderArmSpeed));
+                    Scarlet.Communications.Server.Send(ShoulderPack);
 
-                ElbowPack = new Packet(0x9C, true, "ArmMaster");
-                ElbowPack.AppendData(UtilData.ToBytes(elbowArmSpeed));
-                Scarlet.Communications.Server.Send(ElbowPack);
+                    Packet BasePack = new Packet(0x9A, true, "ArmMaster");
+                    BasePack.AppendData(UtilData.ToBytes(baseArmSpeed));
+                    Scarlet.Communications.Server.Send(BasePack);
+                } else {
+                    Console.WriteLine("Gamepad not connected!");
+                    HaltRoverMotion();
+                }
 
-                ShoulderPack = new Packet(0x9B, true, "ArmMaster");
-                ShoulderPack.AppendData(UtilData.ToBytes(shoulderArmSpeed));
-                Scarlet.Communications.Server.Send(ShoulderPack);
-
-                BasePack = new Packet(0x9A, true, "ArmMaster");
-                BasePack.AppendData(UtilData.ToBytes(baseArmSpeed));
-                Scarlet.Communications.Server.Send(BasePack);
-
-                lastControlSend = TimeNanoseconds(); //time in nanoseconds
-            }
-            else if ((TimeNanoseconds() - lastControlSend) > CONTROL_SEND_INTERVAL_NANOSECONDS)
-            {
-                Console.WriteLine("Gamepad not connected");
-                HaltRoverMotion();
+                lastControlSend = TimeNanoseconds();
             }
         }
 
@@ -164,19 +155,10 @@ namespace HuskyRobotics.BaseStation.Server
             Scarlet.Communications.Server.Send(ArmEmergencyStop);
         }
 
-        private static short PreventOverflow(short shortVal)
-        {
-            if (shortVal == -32768)
-            {
-                shortVal++;
-            }
-            return shortVal;
-        }
+        private static short PreventOverflow(short shortVal) => shortVal == -32768 ? (short)(shortVal + 1) : shortVal;
 
-        private static long TimeNanoseconds()
-        {
-            return DateTime.UtcNow.Ticks * 100;
-        }
+        private static bool SendIntervalElapsed() => (TimeNanoseconds() - lastControlSend) > CONTROL_SEND_INTERVAL_NANOSECONDS;
+        private static long TimeNanoseconds() => DateTime.UtcNow.Ticks * 100;
 
         private static List<float> ConvertToFloatArray(Packet data)
         {
@@ -191,6 +173,24 @@ namespace HuskyRobotics.BaseStation.Server
             foreach (var chunk in chunks)
             {
                 ret.Add(UtilData.ToFloat(chunk));
+            }
+
+            return ret;
+        }
+
+        private static List<double> ConvertToDoubleArray(Packet data)
+        {
+            List<double> ret = new List<double>();
+
+            byte[][] chunks = data.Data.Payload
+                        .Select((s, i) => new { Value = s, Index = i })
+                        .GroupBy(x => x.Index / 8)
+                        .Select(grp => grp.Select(x => x.Value).ToArray())
+                        .ToArray();
+
+            foreach (var chunk in chunks)
+            {
+                ret.Add(UtilData.ToDouble(chunk));
             }
 
             return ret;
@@ -217,6 +217,23 @@ namespace HuskyRobotics.BaseStation.Server
             float z = vals[2];
 
             Console.WriteLine(x + ", " + y + ", " + z);
+            MagnetometerUpdate(null, (x, y, z));
+        }
+
+        private static void RFSignalHandler(Packet data)
+        {
+            List<double> vals = ConvertToDoubleArray(data);
+
+            double angle = vals[0];
+            double strength = vals[1];
+
+            RFUpdate(null, (angle, strength));
+            try
+            {
+                Packet packet = new Packet(data.Data, true, "RDFGraph");
+                Scarlet.Communications.Server.Send(packet);
+            }
+            catch { /* Do nothing */ }
         }
     }
 }

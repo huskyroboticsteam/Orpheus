@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net;
 using System.Threading;
 using Scarlet.Communications;
 using Scarlet.Utilities;
@@ -28,7 +29,8 @@ namespace Science
             Log.Destination = Log.WriteDestination.ALL;
             Log.Begin();
             Log.ForceOutput(Log.Severity.INFO, Log.Source.OTHER, "Science Station - Rover Side");
-            Client.Start(IP, PortTCP, PortUDP, ScienceConstants.CLIENT_NAME);
+            Client.Start(IP, PortTCP, PortUDP, ScienceConstants.CLIENT_NAME, OperationPeriod:5);
+		    //Client.TraceLogging = true;
             PacketHandler Handler = new PacketHandler();
             //BeagleBone.Initialize(SystemMode.DEFAULT, true);
 
@@ -41,9 +43,11 @@ namespace Science
 
             while (!Console.KeyAvailable)
             {
-                //IOHandler.UpdateStates();
+                IOHandler.UpdateStates();
                 Thread.Sleep(20);
             }
+            IOHandler.Exit();
+            Client.Stop();
             Environment.Exit(0);
 		}
 
@@ -66,7 +70,15 @@ namespace Science
                 }
                 if (Args.Length > i + 1) // Dual-part arguments.
                 {
-                    if (Args[i] == "-s" || Args[i] == "--server") { IP = Args[i + 1]; i++; }
+                    if (Args[i] == "-s" || Args[i] == "--server")
+                    {
+                        IP = Args[i + 1]; i++;
+                        if (!IPAddress.TryParse(IP, out IPAddress Addr))
+                        {
+                            IPHostEntry Entries = Dns.GetHostEntry(IP);
+                            if (Entries.AddressList.Length > 0) { IP = Entries.AddressList[0].ToString(); }
+                        }
+                    }
                     if (Args[i] == "-pt" || Args[i] == "--port-tcp") { PortTCP = int.Parse(Args[i + 1]); i++; }
                     if (Args[i] == "-pu" || Args[i] == "--port-udp") { PortUDP = int.Parse(Args[i + 1]); i++; }
                     if (Args[i] == "-l" || Args[i] == "--log")

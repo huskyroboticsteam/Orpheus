@@ -66,6 +66,12 @@ namespace HuskyRobotics.UI {
             MapStatus.Content = "Downloading map...";
             MapDownloadButton.IsEnabled = false;
 
+			foreach(RadioButton radio in MapTypeContainer.Children) {
+				if (radio.IsChecked.HasValue && radio.IsChecked.Value) {
+					MapConfig.MapType = radio.Content.ToString().ToLower();
+				}
+			}
+
             var bgw = new BackgroundWorker();
             bgw.WorkerReportsProgress = true;
             bgw.DoWork += (worker, _) =>

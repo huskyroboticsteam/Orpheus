@@ -19,14 +19,14 @@ namespace Science.Systems
         public static bool AutoOctaveDown = true;
         public static bool AutoOctaveUp = false;
 
-        private const float MOTOR_FREQUENCY_SLOPE = 711.67F;
-        private const float MOTOR_FREQUENCY_INTERCEPT = 1.1111F;
+        public bool TraceLogging { get; set; }
+
+        private const float MOTOR_FREQUENCY_SLOPE = 730.48F;
+        private const float MOTOR_FREQUENCY_INTERCEPT = -33.393F;
 
         private Thread PlayerThread;
 
         public void EmergencyStop() { this.PlayerThread.Abort(); }
-
-        public void EventTriggered(object Sender, EventArgs Event) { }
 
         public void UpdateState() { }
 
@@ -52,7 +52,7 @@ namespace Science.Systems
                     if (NoteToPercent(Note.NoteNumber + (OctaveShift * 12)) > 1 && AutoOctaveDown) { Note.NoteNumber = (SevenBitNumber)(Note.NoteNumber - 12); }
                     if (NoteToPercent(Note.NoteNumber + ((OctaveShift + 1) * 12)) <= 1 && AutoOctaveUp) { Note.NoteNumber = (SevenBitNumber)(Note.NoteNumber + 12); }
                     RoverMain.IOHandler.DrillController.SetSpeed(NoteToPercent(Note.NoteNumber + (OctaveShift * 12)), true);
-                    Log.Output(Log.Severity.DEBUG, Log.Source.MOTORS, "Outputting note " + Note.NoteNumber + " at speed " + NoteToPercent(Note.NoteNumber + (OctaveShift * 12)) + " for " + (LengthUS / 1000) + "ms.");
+                    if (this.TraceLogging) { Log.Trace(this, "Outputting note " + Note.NoteNumber + " at speed " + NoteToPercent(Note.NoteNumber + (OctaveShift * 12)) + " for " + (LengthUS / 1000) + "ms."); }
                     Thread.Sleep((int)(LengthUS / 1000));
                     RoverMain.IOHandler.DrillController.SetSpeed(0, true);
                     PlayerPositionUS = StartUS + LengthUS; // The player is now at the end of the note we just played.
@@ -80,6 +80,12 @@ namespace Science.Systems
         {
             float Frequency = 261.63F / (float)(Math.Pow(Math.Pow(2, (1.0 / 12)), 60 - Note));
             return (Frequency - MOTOR_FREQUENCY_INTERCEPT) / MOTOR_FREQUENCY_SLOPE;
+        }
+
+        public void Exit()
+        {
+            this.PlayerThread.Abort();
+            RoverMain.IOHandler.DrillController.SetSpeed(0, true);
         }
 
     }

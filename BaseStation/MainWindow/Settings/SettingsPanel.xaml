@@ -19,7 +19,7 @@
               <Label Content="PuTTY Path:" />
               <TextBox Text="{Binding Settings.PuttyPath}" />
           </StackPanel>
-          <StackPanel Margin="3" Width="280">
+          <StackPanel Margin="3" Width="350">
               <Label Content="Load Existing Map:"/>
               <ComboBox ItemsSource="{Binding MapSets}" SelectedValue="{Binding Settings.CurrentMapFile}"/>
               <Label Content="Add new map set:"/>
@@ -51,10 +51,15 @@
                   <Label Content="Zoom:"/>
                   <TextBox Width="50" Height="21" Text="{Binding MapConfig.Zoom}"/>
               </StackPanel>
-              <StackPanel Orientation="Horizontal" Margin="2">
+                <StackPanel Orientation="Horizontal" Margin="2">
                   <Label Content="Map Type:"/>
-                  <TextBox Width="100" Height="21" Text="{Binding MapConfig.MapType}"/>
-              </StackPanel>
+                   <StackPanel x:Name="MapTypeContainer" Orientation="Horizontal">
+                      <RadioButton Margin="3" GroupName="MapType" IsChecked="True" Content="Satellite"/>
+                      <RadioButton Margin="3" GroupName="MapType" Content="Hybrid"/>
+                      <RadioButton Margin="3" GroupName="MapType" Content="Roadmap"/>
+                      <RadioButton Margin="3" GroupName="MapType" Content="Terrain"/>
+                  </StackPanel>
+                </StackPanel>
               <Button Content="Get Map" Click="Button_GetMap" Name="MapDownloadButton"/>
               <Label Name="MapStatus" />
           </StackPanel>

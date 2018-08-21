@@ -37,9 +37,23 @@
                             <ColumnDefinition Width="220" />
                         </Grid.ColumnDefinitions>
                         <ui:GamePadView Grid.Column="0" Margin="5"></ui:GamePadView>
-                        <ui:RoverView Grid.Column="1"></ui:RoverView>
+                        <ui:RoverView Grid.Column="1">
+                            <ui:RoverView.RenderTransform>
+                                <RotateTransform Angle="90"
+                                                 CenterX="155"
+                                                 CenterY="120"/>
+                            </ui:RoverView.RenderTransform>
+
+                        </ui:RoverView>
+                        <ui:ArmTopView x:Name="ArmTopViewer" Grid.Column="1">
+                            <ui:ArmTopView.RenderTransform>
+                                <TranslateTransform X="30"/>
+                            </ui:ArmTopView.RenderTransform>
+                        </ui:ArmTopView>
                         <ui:ArmSideView x:Name="ArmSideViewer" Grid.Column="2"></ui:ArmSideView>
-                        <ui:ArmTopView x:Name="ArmTopViewer" Grid.Column="3"></ui:ArmTopView>
+                        <ui:BeaconFinder Grid.Column="3">
+                            
+                        </ui:BeaconFinder>
                         <StackPanel Grid.Column="4" Orientation="Vertical">
                             <Label Content="Devices" />
                             <Button Content="Connect with PuTTY" Click="PuTTY_Button_Click"></Button>
@@ -102,7 +116,7 @@
                 <ui:SettingsPanel x:Name="SettingPanel"/>
             </TabItem>
             <TabItem Header="Console">
-                <ui:ConsoleView Grid.Column="3"></ui:ConsoleView>
+                <ui:ConsoleView x:Name="console" Grid.Column="3"/>
             </TabItem>
         </TabControl>
     </DockPanel>
