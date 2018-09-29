@@ -76,6 +76,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BBBCSIO, Version=1.6.0.0, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\HuskyRobotics.Scarlet.0.5.1\lib\BBBCSIO.dll</HintPath>
+    </Reference>
     <Reference Include="gio-sharp, Version=3.0.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL">
       <HintPath>..\packages\GstSharp.1.14.0\lib\net45\gio-sharp.dll</HintPath>
     </Reference>
@@ -94,12 +97,15 @@
     <Reference Include="OpenTK, Version=3.0.1.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenTK.3.0.1\lib\net20\OpenTK.dll</HintPath>
     </Reference>
-    <Reference Include="Scarlet, Version=0.5.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\HuskyRobotics.Scarlet.0.5.0\lib\Scarlet.dll</HintPath>
+    <Reference Include="Scarlet, Version=0.5.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HuskyRobotics.Scarlet.0.5.1\lib\Scarlet.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Half, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HuskyRobotics.Scarlet.0.5.1\lib\System.Half.dll</HintPath>
+    </Reference>
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
     </Reference>
@@ -261,4 +267,7 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\GstSharp.1.14.0\build\GstSharp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GstSharp.1.14.0\build\GstSharp.targets'))" />
   </Target>
+  <PropertyGroup>
+    <PreBuildEvent>"$(DevEnvDir)..\..\MSBuild\15.0\Bin\MSBuild.exe" /t:restore;build /m "$(SolutionDir)..\Arm\ArmBaseStation\Arm.sln"</PreBuildEvent>
+  </PropertyGroup>
 </Project>
