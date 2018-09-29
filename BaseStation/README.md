@@ -6,15 +6,19 @@ information from it.
 ## Project Layout
 The BaseStation project contains the entry point of the base station in the
 HuskyRobotics.BaseStation.StartBaseStation class. The user interface
-components are contained in the UserInterface project. The VideoStreamer
-project is for video streaming UI elements. Utilities contains methods
-for use by all base station projects. The BaseServer project is for
-server logic, but may be merged with the BaseStation project.
+components are contained in the UserInterface project. Utilities contains methods
+for use by all base station projects.
 
 ## UI Functions
  - Navigation
  - Diagnostics
  - Video Feed
+ 
+## Status Info UI
+ - Wheel spinning/stuck status
+ - Direction of wheels
+ - See the encoders, BE the encoders
+ - Same with arm
 
 ## Orientation/Informational Map
  - Show current position and direction of rover
@@ -27,15 +31,9 @@ server logic, but may be merged with the BaseStation project.
  - Named waypoints
  - Goal waypoint
  
-## Status Info UI
- - Wheel spinning/stuck status
- - Direction of wheels
- - See the encoders, BE the encoders
- - Same with arm
- 
 ## Video Feeds
  - separate windows
  - Always on top option
  
 ## Required Libraries
- - GStreamer must be installed for VideoStreamer to work
+ - GStreamer must be installed for video feeds to work.
