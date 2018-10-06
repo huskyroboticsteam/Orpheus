@@ -8,6 +8,8 @@ using OpenTK.Input;
 using Scarlet.Communications;
 using Scarlet.Utilities;
 
+using SharpDX.XInput;
+
 // this code will be used for the basestation and takes in all of the controller inputs then sends
 // them to the rover side. Whichever is client or server side has yet to be determined
 
@@ -18,6 +20,8 @@ namespace ControllerServer
         private static byte PacketID = 0; // Packet ID must be formalized, 0 is just a placeholder
         static void Main(string[] args)
         {
+			var controller = new SharpDX.XInput.Controller(UserIndex.Any);
+			Console.WriteLine(controller.IsConnected);
             int PortTCP = 5287;
             int PortUDP = 5288;
             Parse.SetParseHandler(PacketID, PrintPacketData);
