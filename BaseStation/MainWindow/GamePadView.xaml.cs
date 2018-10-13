@@ -1,73 +1,81 @@
 ﻿using System;
 using System.Windows.Controls;
 using System.Windows.Media;
-using OpenTK.Input;
+using SharpDX.XInput;
+using Buttons = SharpDX.XInput.GamepadButtonFlags;
 
-namespace HuskyRobotics.UI
-{
-    /// <summary>
-    /// Interaction logic for GamePadView.xaml
-    /// </summary>
-    public partial class GamePadView : UserControl
-    {
-        private GamePadState _gPState;
-        public GamePadState GPState {
-            get => _gPState;
-            set {
-                _gPState = value;
-            }
-        }
+namespace HuskyRobotics.UI {
+	/// <summary>
+	/// Interaction logic for GamePadView.xaml
+	/// </summary>
+	public partial class GamePadView : UserControl {
+		public Controller Controller {
+			get;
+			set;
+		}
 
-        private readonly SolidColorBrush lit = new SolidColorBrush(Colors.Gold);
-        private readonly SolidColorBrush unLit = new SolidColorBrush(Colors.Black);
-        private readonly SolidColorBrush backGround = new SolidColorBrush(Colors.LightGray);
-        private readonly SolidColorBrush bigBackGround = new SolidColorBrush(Colors.DarkGray);
-        private readonly SolidColorBrush altLit = new SolidColorBrush(Colors.DarkOrange);
+		private readonly SolidColorBrush lit = new SolidColorBrush(Colors.Gold);
+		private readonly SolidColorBrush unLit = new SolidColorBrush(Colors.Black);
+		private readonly SolidColorBrush backGround = new SolidColorBrush(Colors.LightGray);
+		private readonly SolidColorBrush bigBackGround = new SolidColorBrush(Colors.DarkGray);
+		private readonly SolidColorBrush altLit = new SolidColorBrush(Colors.DarkOrange);
+		private readonly SolidColorBrush lowBattery = new SolidColorBrush(Colors.Red);
+		private readonly SolidColorBrush highBattery = new SolidColorBrush(Colors.Green);
 
-        public GamePadView()
-        {
-            InitializeComponent();
-            CompositionTarget.Rendering += UpdateGamePadView;
-        }
+		public GamePadView() {
+			InitializeComponent();
+			CompositionTarget.Rendering += UpdateGamePadView;
+		}
 
-        public void UpdateGamePadView(object sender, EventArgs args)
-        {
-            // Skittle Buttons
-            A.Foreground = (GPState.Buttons.A == ButtonState.Pressed) ? lit : unLit;
-            B.Foreground = (GPState.Buttons.B == ButtonState.Pressed) ? lit : unLit;
-            X.Foreground = (GPState.Buttons.X == ButtonState.Pressed) ? lit : unLit;
-            Y.Foreground = (GPState.Buttons.Y == ButtonState.Pressed) ? altLit : unLit;
-            
-            // D-Pad
-            Up.Fill = (GPState.DPad.Up == ButtonState.Pressed) ? lit : backGround;
-            Down.Fill = (GPState.DPad.Down == ButtonState.Pressed) ? lit : backGround;
-            Left.Fill = (GPState.DPad.Left == ButtonState.Pressed) ? lit : backGround;
-            Right.Fill = (GPState.DPad.Right == ButtonState.Pressed) ? lit : backGround;
+		public void UpdateGamePadView(object sender, EventArgs args) {
+			if (Controller != null && Controller.IsConnected) {
+				Gamepad gamepad = Controller.GetState().Gamepad;
+				GamepadButtonFlags buttons = gamepad.Buttons;
 
-            // Center Buttons
-            Back.Fill = (GPState.Buttons.Back == ButtonState.Pressed) ? lit : unLit;
-            Big.Fill = (GPState.Buttons.BigButton == ButtonState.Pressed) ? lit : unLit;
-            Start.Fill = (GPState.Buttons.Start == ButtonState.Pressed) ? lit : unLit;
+				// Skittle Buttons
+				A.Foreground = IsPressed(buttons, Buttons.A) ? lit : unLit;
+				B.Foreground = IsPressed(buttons, Buttons.B) ? lit : unLit;
+				X.Foreground = IsPressed(buttons, Buttons.X) ? lit : unLit;
+				Y.Foreground = IsPressed(buttons, Buttons.Y) ? altLit : unLit;
 
-            // Bumpers
-            LBump.Fill = (GPState.Buttons.LeftShoulder == ButtonState.Pressed) ? lit : unLit;
-            RBump.Fill = (GPState.Buttons.RightShoulder == ButtonState.Pressed) ? lit : unLit;
+				// D-Pad
+				Up.Fill = IsPressed(buttons, Buttons.DPadUp) ? lit : backGround;
+				Down.Fill = IsPressed(buttons, Buttons.DPadDown) ? lit : backGround;
+				Left.Fill = IsPressed(buttons, Buttons.DPadLeft) ? lit : backGround;
+				Right.Fill = IsPressed(buttons, Buttons.DPadRight) ? lit : backGround;
 
-            // Thumbsticks
-            LeftThumb.Fill = (GPState.Buttons.LeftStick == ButtonState.Pressed) ? lit : unLit;
-            RightThumb.Fill = (GPState.Buttons.RightStick == ButtonState.Pressed) ? lit : unLit;
+				// Center Buttons
+				Back.Fill = IsPressed(buttons, Buttons.Back) ? lit : unLit;
+				Start.Fill = IsPressed(buttons, Buttons.Start) ? lit : unLit;
 
-            // Triggers
-            LTrig.Width = (int)(5 - (4 * GPState.Triggers.Left));
-            RTrig.Width = (int)(5 - (4 * GPState.Triggers.Right));
+				// Bumpers
+				LBump.Fill = IsPressed(buttons, Buttons.LeftShoulder) ? lit : unLit;
+				RBump.Fill = IsPressed(buttons, Buttons.RightShoulder) ? lit : unLit;
 
-            //Thumbstick positions
-            TranslateTransform moveL = new TranslateTransform
-                ((5 * GPState.ThumbSticks.Left.X) + 38, - (5 * GPState.ThumbSticks.Left.Y) + 46);
-            LeftThumb.RenderTransform = moveL;
-            TranslateTransform moveR = new TranslateTransform
-                ((5 * GPState.ThumbSticks.Right.X) + 98, -(5 * GPState.ThumbSticks.Right.Y) + 46);
-            RightThumb.RenderTransform = moveR;
-        }
-    }
+				// Thumbsticks
+				LeftThumb.Fill = IsPressed(buttons, Buttons.LeftThumb) ? lit : unLit;
+				RightThumb.Fill = IsPressed(buttons, Buttons.RightThumb) ? lit : unLit;
+
+				//use the middle big button as a battery indicator (gren for high/med, red for low)
+				BatteryLevel battery = Controller.GetBatteryInformation(BatteryDeviceType.Gamepad).BatteryLevel;
+				BatteryIndicator.Fill = battery == BatteryLevel.Full || battery == BatteryLevel.Full ? highBattery : lowBattery;
+
+				// Triggers TODO adjust threshholds/range
+				LTrig.Width = gamepad.LeftTrigger / 10;
+				RTrig.Width = gamepad.RightTrigger / 10;
+
+				//Thumbstick positions
+				LeftThumb.RenderTransform = new TranslateTransform(gamepad.LeftThumbX, gamepad.LeftThumbY);
+				//TranslateTransform moveL = new TranslateTransform
+				//    ((5 * GPState.ThumbSticks.Left.X) + 38, - (5 * GPState.ThumbSticks.Left.Y) + 46);
+				RightThumb.RenderTransform = new TranslateTransform(gamepad.RightThumbX, gamepad.RightThumbY);
+				//TranslateTransform moveR = new TranslateTransform
+				//    ((5 * GPState.ThumbSticks.Right.X) + 98, -(5 * GPState.ThumbSticks.Right.Y) + 46);
+			}
+		}
+
+		private static bool IsPressed(GamepadButtonFlags flags, GamepadButtonFlags button) {
+			return (flags & button) != 0;
+		}
+	}
 }
