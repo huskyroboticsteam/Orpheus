@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SensorRealTimeGraph", "Sens
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PTZCamera", "PTZCamera\PTZCamera.csproj", "{0506B166-5028-4C08-B98E-3C3B1F1E75DE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csproj", "{D85C3799-A5D9-4993-8356-030483406E22}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -111,6 +113,18 @@ Global
 		{0506B166-5028-4C08-B98E-3C3B1F1E75DE}.Release|x64.Build.0 = Release|Any CPU
 		{0506B166-5028-4C08-B98E-3C3B1F1E75DE}.Release|x86.ActiveCfg = Release|Any CPU
 		{0506B166-5028-4C08-B98E-3C3B1F1E75DE}.Release|x86.Build.0 = Release|Any CPU
+		{D85C3799-A5D9-4993-8356-030483406E22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D85C3799-A5D9-4993-8356-030483406E22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D85C3799-A5D9-4993-8356-030483406E22}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D85C3799-A5D9-4993-8356-030483406E22}.Debug|x64.Build.0 = Debug|Any CPU
+		{D85C3799-A5D9-4993-8356-030483406E22}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D85C3799-A5D9-4993-8356-030483406E22}.Debug|x86.Build.0 = Debug|Any CPU
+		{D85C3799-A5D9-4993-8356-030483406E22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D85C3799-A5D9-4993-8356-030483406E22}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D85C3799-A5D9-4993-8356-030483406E22}.Release|x64.ActiveCfg = Release|Any CPU
+		{D85C3799-A5D9-4993-8356-030483406E22}.Release|x64.Build.0 = Release|Any CPU
+		{D85C3799-A5D9-4993-8356-030483406E22}.Release|x86.ActiveCfg = Release|Any CPU
+		{D85C3799-A5D9-4993-8356-030483406E22}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

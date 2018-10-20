@@ -1,13 +1,6 @@
-﻿using Scarlet.Utilities;
-using SharpDX.XInput;
+﻿using SharpDX.XInput;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 
 namespace HuskyRobotics.BaseStation
@@ -22,8 +15,9 @@ namespace HuskyRobotics.BaseStation
 
         public static void Setup() => cam = new PTZCamera("192.168.0.42", "admin", "1234", new HttpClient());
 
-        public static void Update(Controller controller)
+        public static void Update()
         {
+			Controller controller = GamepadFactory.DriveGamepad;
             if(controller.IsConnected)
             {
                 State state = controller.GetState();

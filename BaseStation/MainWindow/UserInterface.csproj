@@ -247,6 +247,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Server\Server.csproj">
+      <Project>{d85c3799-a5d9-4993-8356-030483406e22}</Project>
+      <Name>Server</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Utilities\Utilities.csproj">
       <Project>{A6DFDFF4-614F-4225-8F75-C81C6765F23E}</Project>
       <Name>Utilities</Name>

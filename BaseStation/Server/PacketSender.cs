@@ -12,9 +12,9 @@ namespace HuskyRobotics.BaseStation.Server
     /// Contains functionality to communicate with the client/rover.
     /// Acts as an abstraction over Scarlet communications API.
     /// </summary>
-    public static class BaseServer
+    public static class PacketSender
     {
-        private static readonly int LeftThumbDeadzone = 7849;
+		private static readonly int LeftThumbDeadzone = 7849;
         //private static readonly int RightThumbDeadzone = 8689;
         private static readonly int TriggerThreshold = 30;
         private const long CONTROL_SEND_INTERVAL_NANOSECONDS = 100_000_000; //100,000,000 ns == 100 ms
@@ -49,9 +49,12 @@ namespace HuskyRobotics.BaseStation.Server
 		/// Send rover movement control packets.
 		/// </summary>
 		/// <param name="driveController"></param>
-        public static void Update(Controller driveController, Controller armController)
+        public static void Update()
         {
-            if(SendIntervalElapsed()) {
+			Controller driveController = GamepadFactory.DriveGamepad;
+			Controller armController = GamepadFactory.ArmGamepad;
+
+			if (SendIntervalElapsed()) {
                 if(driveController.IsConnected && armController.IsConnected) {
                     State driveState = driveController.GetState();
                     State armState = armController.GetState();

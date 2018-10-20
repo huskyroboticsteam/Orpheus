@@ -64,9 +64,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PacketSender.cs" />
-    <Compile Include="GamepadFactory.cs" />
-    <Compile Include="PacketSenderBulk.cs" />
     <Compile Include="StartBaseStation.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -78,6 +75,10 @@
       <Project>{0506b166-5028-4c08-b98e-3c3b1f1e75de}</Project>
       <Name>PTZCamera</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Server\Server.csproj">
+      <Project>{d85c3799-a5d9-4993-8356-030483406e22}</Project>
+      <Name>Server</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Utilities\Utilities.csproj">
       <Project>{a6dfdff4-614f-4225-8f75-c81c6765f23e}</Project>
       <Name>Utilities</Name>
@@ -88,15 +89,6 @@
       <HintPath>..\packages\HuskyRobotics.Scarlet.0.5.1\lib\BBBCSIO.dll</HintPath>
     </Reference>
     <Reference Include="PresentationFramework" />
-    <Reference Include="Scarlet, Version=0.5.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\HuskyRobotics.Scarlet.0.5.1\lib\Scarlet.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpDX.4.2.0\lib\net45\SharpDX.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.XInput, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpDX.XInput.4.2.0\lib\net45\SharpDX.XInput.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Half, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\HuskyRobotics.Scarlet.0.5.1\lib\System.Half.dll</HintPath>

@@ -25,7 +25,7 @@ namespace HuskyRobotics.UI
 
         public BeaconFinder()
         {
-            BaseServer.RFUpdate += UpdateVoltage;
+            PacketSender.RFUpdate += UpdateVoltage;
             InitializeComponent();
         }
 
