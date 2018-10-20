@@ -64,14 +64,12 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseServer.cs" />
     <Compile Include="GamepadFactory.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="StartBaseStation.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BaseServer\BaseServer.csproj">
-      <Project>{5fca414a-cf38-44cb-888d-95d151a5c662}</Project>
-      <Name>BaseServer</Name>
-    </ProjectReference>
     <ProjectReference Include="..\MainWindow\UserInterface.csproj">
       <Project>{722b3498-9988-4667-b02c-c9d15d288657}</Project>
       <Name>UserInterface</Name>
