@@ -80,13 +80,13 @@
       <HintPath>..\packages\HuskyRobotics.Scarlet.0.5.1\lib\BBBCSIO.dll</HintPath>
     </Reference>
     <Reference Include="gio-sharp, Version=3.0.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL">
-      <HintPath>..\packages\GstSharp.1.14.0\lib\net45\gio-sharp.dll</HintPath>
+      <HintPath>..\packages\GstSharp.1.14.2\lib\net45\gio-sharp.dll</HintPath>
     </Reference>
     <Reference Include="glib-sharp, Version=3.0.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL">
-      <HintPath>..\packages\GstSharp.1.14.0\lib\net45\glib-sharp.dll</HintPath>
+      <HintPath>..\packages\GstSharp.1.14.2\lib\net45\glib-sharp.dll</HintPath>
     </Reference>
     <Reference Include="gstreamer-sharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=5cbf79803e97ff61, processorArchitecture=MSIL">
-      <HintPath>..\packages\GstSharp.1.14.0\lib\net45\gstreamer-sharp.dll</HintPath>
+      <HintPath>..\packages\GstSharp.1.14.2\lib\net45\gstreamer-sharp.dll</HintPath>
     </Reference>
     <Reference Include="HuskyRobotics.Arm">
       <HintPath>..\..\Arm\ArmBaseStation\ArmVisualizer\bin\Debug\HuskyRobotics.Arm.dll</HintPath>
@@ -94,11 +94,14 @@
     <Reference Include="ImageProcessor, Version=2.6.2.25, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ImageProcessor.2.6.2.25\lib\net452\ImageProcessor.dll</HintPath>
     </Reference>
-    <Reference Include="OpenTK, Version=3.0.1.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <HintPath>..\packages\OpenTK.3.0.1\lib\net20\OpenTK.dll</HintPath>
-    </Reference>
     <Reference Include="Scarlet, Version=0.5.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\HuskyRobotics.Scarlet.0.5.1\lib\Scarlet.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpDX.4.2.0\lib\net45\SharpDX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.XInput, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpDX.XInput.4.2.0\lib\net45\SharpDX.XInput.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System" />
@@ -234,7 +237,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -260,14 +262,14 @@
     </Resource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\packages\GstSharp.1.14.0\build\GstSharp.targets" Condition="Exists('..\packages\GstSharp.1.14.0\build\GstSharp.targets')" />
+  <PropertyGroup>
+    <PreBuildEvent>"$(DevEnvDir)..\..\MSBuild\15.0\Bin\MSBuild.exe" /t:restore;build /m "$(SolutionDir)..\Arm\ArmBaseStation\Arm.sln"</PreBuildEvent>
+  </PropertyGroup>
+  <Import Project="..\packages\GstSharp.1.14.2\build\GstSharp.targets" Condition="Exists('..\packages\GstSharp.1.14.2\build\GstSharp.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\GstSharp.1.14.0\build\GstSharp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GstSharp.1.14.0\build\GstSharp.targets'))" />
+    <Error Condition="!Exists('..\packages\GstSharp.1.14.2\build\GstSharp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GstSharp.1.14.2\build\GstSharp.targets'))" />
   </Target>
-  <PropertyGroup>
-    <PreBuildEvent>"$(DevEnvDir)..\..\MSBuild\15.0\Bin\MSBuild.exe" /t:restore;build /m "$(SolutionDir)..\Arm\ArmBaseStation\Arm.sln"</PreBuildEvent>
-  </PropertyGroup>
 </Project>
