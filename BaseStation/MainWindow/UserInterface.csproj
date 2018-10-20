@@ -126,25 +126,25 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArmSideView.cs" />
-    <Compile Include="ArmTopView.cs" />
-    <Compile Include="ArmView.xaml.cs">
+    <Compile Include="Arm\ArmSideView.cs" />
+    <Compile Include="Arm\ArmTopView.cs" />
+    <Compile Include="Elements\ArmView.xaml.cs">
       <DependentUpon>ArmView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CompassHeading.xaml.cs">
+    <Compile Include="Elements\CompassHeading.xaml.cs">
       <DependentUpon>CompassHeading.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ConsoleView.xaml.cs">
+    <Compile Include="Elements\ConsoleView.xaml.cs">
       <DependentUpon>ConsoleView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GamePadView.xaml.cs">
+    <Compile Include="Elements\GamePadView.xaml.cs">
       <DependentUpon>GamePadView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MapConfiguration.cs" />
-    <Compile Include="MapDisplay.xaml.cs">
+    <Compile Include="Map\MapConfiguration.cs" />
+    <Compile Include="Elements\MapDisplay.xaml.cs">
       <DependentUpon>MapDisplay.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MapTileDownloadManager.cs" />
+    <Compile Include="Map\MapTileDownloadManager.cs" />
     <Compile Include="Settings\RemoteDevice.cs" />
     <Compile Include="Settings\Settings.cs" />
     <Compile Include="Settings\SettingsFile.cs" />
@@ -152,12 +152,12 @@
       <DependentUpon>SettingsPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="Settings\VideoDevice.cs" />
-    <Compile Include="BeaconFinder.xaml.cs">
+    <Compile Include="Elements\BeaconFinder.xaml.cs">
       <DependentUpon>BeaconFinder.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utilities\MockObservableMap.cs" />
     <Compile Include="Utilities\ProportionToDegree.cs" />
-    <Compile Include="RoverView.xaml.cs">
+    <Compile Include="Elements\RoverView.xaml.cs">
       <DependentUpon>RoverView.xaml</DependentUpon>
     </Compile>
     <Compile Include="VideoStreamer\RTSPVideoWindow.xaml.cs">
@@ -168,37 +168,37 @@
       <DependentUpon>RTPVideoWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="VideoStreamer\VideoWindow.cs" />
-    <Compile Include="Waypoint.cs" />
-    <Compile Include="WaypointsFile.cs" />
-    <Page Include="ArmView.xaml">
+    <Compile Include="Map\Waypoint.cs" />
+    <Compile Include="Map\WaypointsFile.cs" />
+    <Page Include="Elements\ArmView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="CompassHeading.xaml">
+    <Page Include="Elements\CompassHeading.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ConsoleView.xaml">
+    <Page Include="Elements\ConsoleView.xaml">
       <SubType>Designer</SubType>
       <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
-    <Page Include="GamePadView.xaml">
+    <Page Include="Elements\GamePadView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindow.xaml">
+    <Page Include="Elements\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="Elements\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="MapDisplay.xaml">
+    <Page Include="Elements\MapDisplay.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="RoverView.xaml">
+    <Page Include="Elements\RoverView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -206,7 +206,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="BeaconFinder.xaml">
+    <Page Include="Elements\BeaconFinder.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -247,9 +247,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BaseServer\BaseServer.csproj">
-      <Project>{5fca414a-cf38-44cb-888d-95d151a5c662}</Project>
-      <Name>BaseServer</Name>
+    <ProjectReference Include="..\Server\Server.csproj">
+      <Project>{d85c3799-a5d9-4993-8356-030483406e22}</Project>
+      <Name>Server</Name>
     </ProjectReference>
     <ProjectReference Include="..\Utilities\Utilities.csproj">
       <Project>{A6DFDFF4-614F-4225-8F75-C81C6765F23E}</Project>

@@ -25,7 +25,7 @@ namespace HuskyRobotics.UI
         public CompassHeading()
         {
             InitializeComponent();
-            BaseServer.MagnetometerUpdate += UpdateHeading;
+            PacketSender.MagnetometerUpdate += UpdateHeading;
         }
 
         public void UpdateHeading(Object sender, (float, float, float) data)
