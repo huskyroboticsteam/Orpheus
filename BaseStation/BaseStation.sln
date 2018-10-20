@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities", "Utilities\Util
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserInterface", "MainWindow\UserInterface.csproj", "{722B3498-9988-4667-B02C-C9D15D288657}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseStation", "BaseStation\BaseStation.csproj", "{717939F0-9BDC-4D66-99B5-AE34D586488E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntryPoint", "BaseStation\EntryPoint.csproj", "{717939F0-9BDC-4D66-99B5-AE34D586488E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SensorDiagnosticsServer", "SensorDiagnostics\SensorDiagnosticsServer\SensorDiagnosticsServer.csproj", "{43D3828E-57A1-47A5-B7F6-3BCA1B3C2BC3}"
 EndProject
