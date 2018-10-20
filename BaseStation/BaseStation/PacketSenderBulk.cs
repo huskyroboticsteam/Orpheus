@@ -1,21 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using OpenTK.Input;
+using ScSvr = Scarlet.Communications.Server;
 using Scarlet.Communications;
 using Scarlet.Utilities;
+using OpenTK.Input;
 
 using SharpDX.XInput;
 
 // this code will be used for the basestation and takes in all of the controller inputs then sends
 // them to the rover side. Whichever is client or server side has yet to be determined
 
-namespace ControllerServer
+namespace HuskyRobotics.BaseStation.Server
 {
-    class Program
+    class PacketSenderBulk
     {
         private static byte PacketID = 0; // Packet ID must be formalized, 0 is just a placeholder
         static void Main(string[] args)
@@ -27,7 +24,7 @@ namespace ControllerServer
             Parse.SetParseHandler(PacketID, PrintPacketData);
 
             Log.SetGlobalOutputLevel(Log.Severity.ERROR);
-            Server.Start(PortTCP, PortUDP);
+            ScSvr.Start(PortTCP, PortUDP);
             SendGamePadData();
         }
 
@@ -36,7 +33,7 @@ namespace ControllerServer
         {
             while (true)
             {
-                if (Server.GetClients().Contains("Controller Parser"))
+                if (ScSvr.GetClients().Contains("Controller Parser"))
                 {
                     GamePadState state = GamePad.GetState(0);
                     Packet info = new Packet(new Message(PacketID,
@@ -62,7 +59,7 @@ namespace ControllerServer
                     info.AppendData(UtilData.ToBytes((int)state.Buttons.Start));
                     info.AppendData(UtilData.ToBytes((int)state.Buttons.BigButton));
 
-                    Server.Send(info);
+                    ScSvr.Send(info);
                 }
                 Thread.Sleep(50);
             }

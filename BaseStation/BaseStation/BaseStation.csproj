@@ -64,9 +64,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BaseServer.cs" />
+    <Compile Include="PacketSender.cs" />
     <Compile Include="GamepadFactory.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="PacketSenderBulk.cs" />
     <Compile Include="StartBaseStation.cs" />
   </ItemGroup>
   <ItemGroup>
