@@ -263,7 +263,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>"$(DevEnvDir)..\..\MSBuild\15.0\Bin\MSBuild.exe" /t:restore;build /m "$(SolutionDir)..\Arm\ArmBaseStation\Arm.sln"</PreBuildEvent>
+    <PreBuildEvent>if "$(DevEnvDir)" == "" (echo Building) else ("$(DevEnvDir)..\..\MSBuild\15.0\Bin\MSBuild.exe" /t:restore;build /m "$(SolutionDir)..\Arm\ArmBaseStation\Arm.sln")</PreBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\GstSharp.1.14.2\build\GstSharp.targets" Condition="Exists('..\packages\GstSharp.1.14.2\build\GstSharp.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
