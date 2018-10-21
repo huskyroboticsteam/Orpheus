@@ -67,7 +67,7 @@
     <Compile Include="StartBaseStation.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MainWindow\UserInterface.csproj">
+    <ProjectReference Include="..\UserInterface\UserInterface.csproj">
       <Project>{722b3498-9988-4667-b02c-c9d15d288657}</Project>
       <Name>UserInterface</Name>
     </ProjectReference>
