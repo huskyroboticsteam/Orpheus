@@ -36,4 +36,4 @@ for use by all base station projects.
  - Always on top option
  
 ## Required Libraries
- - GStreamer must be installed for video feeds to work.
+ - GStreamer must be installed for video feeds to work (see UserInterface readme for required .dll files)
