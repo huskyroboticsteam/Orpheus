@@ -4,10 +4,11 @@ along with the server code that will communicate with rover to control it and re
 information from it.
 
 ## Project Layout
-The BaseStation project contains the entry point of the base station in the
-HuskyRobotics.BaseStation.StartBaseStation class. The user interface
-components are contained in the UserInterface project. Utilities contains methods
-for use by all base station projects.
+ - EntryPoint: the "main method" of the base station, in the HuskyRobotics.BaseStation.StartBaseStation class. 
+ - UserInterface: user interface, displaying map and other info. 
+ - Utilities: methods for use by all base station projects.
+ - Server: networking code for communicating with the rover.
+ - PTZCamera: networking code for communicating with rover camera.
 
 ## UI Functions
  - Navigation
@@ -32,7 +33,7 @@ for use by all base station projects.
  - Goal waypoint
  
 ## Video Feeds
- - separate windows
+ - Separate windows
  - Always on top option
  
 ## Required Libraries
