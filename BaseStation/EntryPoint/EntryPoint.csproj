@@ -47,10 +47,10 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>
-    </StartupObject>
+    <StartupObject>HuskyRobotics.BaseStation.Start.StartBaseStation</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>huskyrobotics.ico</ApplicationIcon>
@@ -117,7 +117,10 @@
     <Content Include="huskyrobotics.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>xcopy /I /Q /Y "$(SolutionDir)UserInterface\Icons" "$(TargetDir)Icons"</PostBuildEvent>
-  </PropertyGroup>
+  <Target Name="AfterBuild"> <!-- Custom build tasks -->
+    <ItemGroup>
+		<IconFiles Include="$(SolutionDir)\UserInterface\Icons\*.*"/>
+	</ItemGroup>
+	<Copy SkipUnchangedFiles="true" SourceFiles="@(IconFiles)" DestinationFolder="$(OutputPath)\Icons" /> <!-- Copy the map icons -->
+  </Target>
 </Project>
