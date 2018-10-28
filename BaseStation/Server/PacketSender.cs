@@ -26,6 +26,7 @@ namespace HuskyRobotics.BaseStation.Server
 
         public static void Setup()
         {
+			Log.SetGlobalOutputLevel(Log.Severity.ERROR);
             Scarlet.Communications.Server.Start(1025, 1026, OperationPeriod:1);
             Scarlet.Communications.Server.ClientConnectionChange += ClientConnected;
             Parse.SetParseHandler(0xC0, GpsHandler);
@@ -136,7 +137,6 @@ namespace HuskyRobotics.BaseStation.Server
                     BasePack.AppendData(UtilData.ToBytes(baseArmSpeed));
                     Scarlet.Communications.Server.Send(BasePack);
                 } else {
-                    Console.WriteLine("Gamepad not connected!");
                     HaltRoverMotion();
                 }
 
