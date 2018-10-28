@@ -18,7 +18,7 @@ after_build:
 
     Compress-Archive -Path * -DestinationPath build.zip
 artifacts:
-- path: BaseStation\BaseStation\bin\Debug\build.zip
+- path: BaseStation\EntryPoint\bin\Debug\build.zip
   name: BaseStation Zip
 deploy:
 - provider: GitHub
