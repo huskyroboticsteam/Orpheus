@@ -16,4 +16,4 @@ Contains all the UI code. The MainWindow class contains the layout of the user i
  - libwinpthread-1.dll
  - libz.dll
  
- (.dll files need to be put in bin/Debug folder for the EntryPoint BaseStation project)
+ (.dll files need to be put in the libraries folder, in a folder or not)
