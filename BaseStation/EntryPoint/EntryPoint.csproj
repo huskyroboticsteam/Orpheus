@@ -120,7 +120,9 @@
   <Target Name="AfterBuild"> <!-- Custom build tasks -->
     <ItemGroup>
 		<IconFiles Include="$(SolutionDir)\UserInterface\Icons\*.*"/>
+		<LibraryBinaries Include="$(SolutionDir)\libraries\**\*.*"/>
 	</ItemGroup>
 	<Copy SkipUnchangedFiles="true" SourceFiles="@(IconFiles)" DestinationFolder="$(OutputPath)\Icons" /> <!-- Copy the map icons -->
+	<Copy SkipUnchangedFiles="true" SourceFiles="@(LibraryBinaries)" DestinationFolder="$(OutputPath)" /> <!-- Copy the map icons -->
   </Target>
 </Project>

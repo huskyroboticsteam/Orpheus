@@ -1,10 +1,9 @@
 *.suo
 *.pdb
 
-packages/
-
-#Don't include library binaries
-/Libraries/
+#Don't include library binaries or NuGet package binaries
+/packages/
+/libraries/
 
 # Created by https://www.gitignore.io/api/visualstudio
 
