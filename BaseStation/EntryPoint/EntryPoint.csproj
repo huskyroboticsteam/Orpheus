@@ -123,6 +123,6 @@
 		<LibraryBinaries Include="$(SolutionDir)\libraries\**\*.*"/>
 	</ItemGroup>
 	<Copy SkipUnchangedFiles="true" SourceFiles="@(IconFiles)" DestinationFolder="$(OutputPath)\Icons" /> <!-- Copy the map icons -->
-	<Copy SkipUnchangedFiles="true" SourceFiles="@(LibraryBinaries)" DestinationFolder="$(OutputPath)" /> <!-- Copy the map icons -->
+	<Copy SkipUnchangedFiles="true" SourceFiles="@(LibraryBinaries)" DestinationFolder="$(OutputPath)" /> <!-- Copy library binaries -->
   </Target>
 </Project>
