@@ -16,7 +16,7 @@ after_build:
 - ps: >-
     cd EntryPoint\bin\Debug
 
-    Compress-Archive -Path * -DestinationPath build$(appveyor_build_version).zip
+    Compress-Archive -Path * -DestinationPath build.zip
 artifacts:
 - path: BaseStation\BaseStation\bin\Debug\build.zip
   name: BaseStation Zip
