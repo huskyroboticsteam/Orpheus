@@ -4,6 +4,7 @@ branches:
   - master
 skip_tags: true
 image: Visual Studio 2017
+configuration: Release
 before_build:
 - ps: >-
     cd BaseStation
@@ -20,11 +21,11 @@ build:
   verbosity: minimal
 after_build:
 - ps: >-
-    cd EntryPoint\bin\Debug
+    cd EntryPoint\bin\Release
 
     Compress-Archive -Path * -DestinationPath build.zip
 artifacts:
-- path: BaseStation\EntryPoint\bin\Debug\build.zip
+- path: BaseStation\EntryPoint\bin\Release\build.zip
   name: BaseStation Zip
 deploy:
 - provider: GitHub
