@@ -5,7 +5,7 @@ branches:
 skip_tags: true
 image: Visual Studio 2017
 before_build:
-- cmd: >-
+- ps: >-
     cd BaseStation
     
     $libFile = "libs.zip"
