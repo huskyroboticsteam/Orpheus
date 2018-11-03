@@ -7,9 +7,13 @@ image: Visual Studio 2017
 before_build:
 - cmd: >-
     cd BaseStation
-    $libFile = "libs.zip";
+    
+    $libFile = "libs.zip"
+    
     Invoke-WebRequest "https://students.washington.edu/uwrobots/libraries.zip" -OutFile $libFile
+    
     Expand-Archive -Path $libFile -DestinationPath "libraries"
+    
     nuget restore
 build:
   project: BaseStation\BaseStation.sln
