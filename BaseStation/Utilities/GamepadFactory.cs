@@ -14,7 +14,7 @@ namespace HuskyRobotics.BaseStation
 
         public static Controller ArmGamepad {
 			get {
-				return arm ?? (arm = new Controller(UserIndex.Two));
+				return drive ?? (arm = new Controller(UserIndex.Two));
 			}
 		}
     }

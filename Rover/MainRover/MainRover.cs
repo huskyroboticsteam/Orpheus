@@ -21,12 +21,13 @@ namespace MainRover
         public static void PinConfig()
         {
             BBBPinManager.AddBusCAN(0);
-            BBBPinManager.AddMappingUART(Pins.MTK3339_RX);
-            BBBPinManager.AddMappingUART(Pins.MTK3339_TX);
-            BBBPinManager.AddMappingsI2C(Pins.BNO055_SCL, Pins.BNO055_SDA);
-            BBBPinManager.AddMappingGPIO(Pins.SteeringLimitSwitch, false, Scarlet.IO.ResistorState.PULL_UP, true);
-            BBBPinManager.AddMappingPWM(Pins.SteeringMotor);
-            BBBPinManager.ApplyPinSettings(BBBPinManager.ApplicationMode.NO_CHANGES);
+            //BBBPinManager.AddMappingUART(Pins.MTK3339_RX);
+            //BBBPinManager.AddMappingUART(Pins.MTK3339_TX);
+            //BBBPinManager.AddMappingsI2C(Pins.BNO055_SCL, Pins.BNO055_SDA);
+            //BBBPinManager.AddMappingGPIO(Pins.SteeringLimitSwitch, false, Scarlet.IO.ResistorState.PULL_UP, true);
+            //BBBPinManager.AddMappingPWM(Pins.SteeringMotor);
+            //BBBPinManager.ApplyPinSettings(BBBPinManager.ApplicationMode.NO_CHANGES);
+            BBBPinManager.ApplyPinSettings(BBBPinManager.ApplicationMode.APPLY_IF_NONE);
         }
 
         public static void InitBeagleBone()
@@ -35,11 +36,22 @@ namespace MainRover
             BeagleBone.Initialize(SystemMode.NO_HDMI, true);
             PinConfig();
             Sensors = new List<ISensor>();
-            Sensors.Add(new BNO055(I2CBBB.I2CBus2));
-            Sensors.Add(new MTK3339(UARTBBB.UARTBus4));
+            try
+            {
+                //Sensors.Add(new BNO055(I2CBBB.I2CBus2));
+                //Sensors.Add(new MTK3339(UARTBBB.UARTBus4));
+            }
+            catch (Exception e)
+            {
+                Log.Output(Log.Severity.ERROR, Log.Source.SENSORS, "Failed to initalize sensors (gps and/or mag)");
+                Log.Exception(Log.Source.SENSORS, e);
+            }
+            /*
+            // Add back in when limit switch is complete
             LimitSwitch Switch = new LimitSwitch(new DigitalInBBB(Pins.SteeringLimitSwitch));
             Switch.SwitchToggle += (object sender, LimitSwitchToggle e) => Console.WriteLine("PRESSED!");
             Sensors.Add(Switch);
+            */
             //Add encoders
         }
 
@@ -66,16 +78,19 @@ namespace MainRover
                     case PacketID.RPMFrontLeft:
                     case PacketID.RPMBackRight:
                     case PacketID.RPMBackLeft:
-                        int MotorID = p.Data.ID - (byte)PacketID.RPMFrontRight + 1;
+                        int MotorID = p.Data.ID - (byte)PacketID.RPMFrontRight;
+                        //TODO - Remove after Debugging
+                        Console.WriteLine("Wheel " + (p.Data.ID - (byte)PacketID.RPMFrontRight) + "  Speed = " + (sbyte)p.Data.Payload[0]);
+                        Console.WriteLine("Speed = " + UtilData.ToULong(p.Data.Payload));
                         MotorControl.SetRPM(MotorID, (sbyte)p.Data.Payload[0]);
                         break;
                     case PacketID.RPMSteeringMotor:
                         float SteerSpeed = UtilData.ToFloat(p.Data.Payload);
-                        MotorControl.SetSteerSpeed(SteerSpeed);
+                        //MotorControl.SetSteerSpeed(SteerSpeed);
                         break;
                     case PacketID.SteerPosition:
                         float Position = UtilData.ToFloat(p.Data.Payload);
-                        MotorControl.SetRackAndPinionPosition(Position);
+                        //MotorControl.SetRackAndPinionPosition(Position);
                         break;
                     case PacketID.SpeedAllDriveMotors:
                         float Speed = UtilData.ToFloat(p.Data.Payload);
@@ -119,7 +134,7 @@ namespace MainRover
             Quit = false;
             InitBeagleBone();
             SetupClient();
-            SetupArmServer();
+            //SetupArmServer();
             MotorControl.Initialize();
             do
             {

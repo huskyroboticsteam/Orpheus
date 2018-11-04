@@ -32,7 +32,7 @@ namespace HuskyRobotics.UI {
         public MainWindow()
         {
             Environment.SetEnvironmentVariable("GST_PLUGIN_SYSTEM_PATH", Directory.GetCurrentDirectory() + "\\lib");
-            Gst.Application.Init();
+            //Gst.Application.Init();
             Properties = new MockObservableMap();
             InitializeComponent();
 			((ConsoleView)FindName("console")).Writer.WriteLine("ConsoleView disabled due to performance issues, use Command Prompt view instead.");

@@ -28,12 +28,15 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BBBCSIO">
-      <HintPath>..\..\..\Scarlet\bin\Debug\BBBCSIO.dll</HintPath>
+    <Reference Include="BBBCSIO, Version=1.6.0.0, Culture=neutral, processorArchitecture=x86">
+      <HintPath>packages\HuskyRobotics.Scarlet.0.5.1\lib\BBBCSIO.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib" />
-    <Reference Include="Scarlet">
-      <HintPath>..\..\..\Scarlet\bin\Debug\Scarlet.dll</HintPath>
+    <Reference Include="Scarlet, Version=0.5.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\HuskyRobotics.Scarlet.0.5.1\lib\Scarlet.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Half, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\HuskyRobotics.Scarlet.0.5.1\lib\System.Half.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -44,9 +47,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>echo y | "C:\Program Files\PuTTY\pscp.exe" -l debian -pw temppwd "$(TargetDir)*.exe" "$(TargetDir)*.dll" 192.168.0.20:/home/debian</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>
