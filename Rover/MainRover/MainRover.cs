@@ -12,7 +12,7 @@ namespace MainRover
 {
     public class MainRover
     {
-        public const string SERVER_IP = "192.168.0.5";
+        public static string SERVER_IP = "192.168.0.5";
 
         public static bool Quit;
         public static List<ISensor> Sensors;
@@ -80,8 +80,8 @@ namespace MainRover
                     case PacketID.RPMBackLeft:
                         int MotorID = p.Data.ID - (byte)PacketID.RPMFrontRight;
                         //TODO - Remove after Debugging
-                        Console.WriteLine("Wheel " + (p.Data.ID - (byte)PacketID.RPMFrontRight) + "  Speed = " + (sbyte)p.Data.Payload[0]);
-                        Console.WriteLine("Speed = " + UtilData.ToULong(p.Data.Payload));
+                        //Console.WriteLine("Wheel " + (p.Data.ID - (byte)PacketID.RPMFrontRight) + "  Speed = " + (sbyte)p.Data.Payload[0]);
+                        //Console.WriteLine("Speed = " + UtilData.ToULong(p.Data.Payload));
                         MotorControl.SetRPM(MotorID, (sbyte)p.Data.Payload[0]);
                         break;
                     case PacketID.RPMSteeringMotor:
@@ -129,8 +129,17 @@ namespace MainRover
             }
         }
 
-        public static void Main()
+        public static void Main(string[] args)
         {
+            if (args != null && args.Length > 0)
+            {
+                SERVER_IP = args[0];
+                Console.WriteLine("Using argument Specified IP of: " + SERVER_IP);
+            }
+            else
+            {
+                Console.WriteLine("Using default IP of: " + SERVER_IP);
+            }
             Quit = false;
             InitBeagleBone();
             SetupClient();

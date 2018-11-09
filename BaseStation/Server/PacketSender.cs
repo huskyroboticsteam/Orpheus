@@ -87,14 +87,19 @@ namespace HuskyRobotics.BaseStation.Server
                     // Rover skid steering (uses x axis on right joystick)
                     short skidSteer = driveState.Gamepad.RightThumbX;
                     if (skidSteer > -JoystickTreshold && skidSteer < JoystickTreshold) { skidSteer = 0; }
-                    float skidSteerSpeed = (float)UtilMain.LinearMap((float)skidSteer, -32768, 32767, -0.5, 0.5);
+                    float skidSteerSpeed = (float)UtilMain.LinearMap(skidSteer, -32768, 32767, -0.5, 0.5);
                     if (Math.Abs(skidSteerSpeed) < 0.0001f) { skidSteerSpeed = 0; }
 
                     // Rover skid driving (uses y axis on right joystick)
                     short skidDriving = driveState.Gamepad.RightThumbY;
                     if (skidDriving > -JoystickTreshold && skidDriving < JoystickTreshold) { skidDriving = 0; }
-                    float skidDriveSpeed = (float)UtilMain.LinearMap((float)skidDriving, -32768, 32767, -0.5, 0.5);
-                    if (Math.Abs(skidDriveSpeed) < 0.0001f) { skidDriveSpeed = 0; }
+                    float skidDriveSpeed = (float)UtilMain.LinearMap(skidDriving, -32768, 32767, -0.5, 0.5);
+                    //Console.WriteLine(skidDriving + " => " + skidDriveSpeed);
+
+                    if (skidDriving == 0) { skidDriveSpeed = 0; }
+                    if (skidSteer == 0) { skidSteerSpeed = 0; }
+                    Console.WriteLine(skidSteerSpeed + " and " + skidDriveSpeed);
+                    //if (Math.Abs(skidDriveSpeed) < 0.0001f) { skidDriveSpeed = 0; }
 
                     float steerSpeed = 0.0f;
                     if (bPressedDrive)
@@ -129,27 +134,28 @@ namespace HuskyRobotics.BaseStation.Server
                     // Not being used due to rack and pinion steering not setup
                     Packet SteerPack = new Packet(0x8F, true, "MainRover");
                     SteerPack.AppendData(UtilData.ToBytes(steerSpeed));
-                    Scarlet.Communications.Server.Send(SteerPack);
-
+                    Scarlet.Communications.Server.Send(SteerPack);*/
+                    /*
                     Packet SpeedPack = new Packet(0x95, true, "MainRover");
                     SpeedPack.AppendData(UtilData.ToBytes(speed));
-                    Scarlet.Communications.Server.Send(SpeedPack);
-                    */
-
+                    Scarlet.Communications.Server.Send(SpeedPack);*/
+                    
+                    
                     Packet SkidFrontRight = new Packet(0x90, true, "MainRover");
-                    SkidFrontRight.AppendData(UtilData.ToBytes(Math.Round((skidDriveSpeed - skidSteerSpeed) * 80)));
+                    SkidFrontRight.AppendData(UtilData.ToBytes(((skidDriveSpeed - skidSteerSpeed) * 1)));
                     Scarlet.Communications.Server.Send(SkidFrontRight);
 
                     Packet SkidRearRight = new Packet(0x92, true, "MainRover");
-                    SkidRearRight.AppendData(UtilData.ToBytes(Math.Round((skidDriveSpeed - skidSteerSpeed) * 80)));
+                    SkidRearRight.AppendData(UtilData.ToBytes(((skidDriveSpeed - skidSteerSpeed) * 1)));
                     Scarlet.Communications.Server.Send(SkidRearRight);
 
                     Packet SkidFrontLeft = new Packet(0x91, true, "MainRover");
-                    SkidFrontLeft.AppendData(UtilData.ToBytes(Math.Round((skidDriveSpeed + skidSteerSpeed) * 80)));
+                    SkidFrontLeft.AppendData(UtilData.ToBytes(((skidDriveSpeed + skidSteerSpeed) * 1)));
                     Scarlet.Communications.Server.Send(SkidFrontLeft);
 
                     Packet SkidRearLeft = new Packet(0x93, true, "MainRover");
-                    SkidRearLeft.AppendData(UtilData.ToBytes(Math.Round((skidDriveSpeed - skidSteerSpeed) * 80)));
+                    SkidRearLeft.AppendData(UtilData.ToBytes((-skidDriveSpeed - skidSteerSpeed) * 1));
+                    Console.WriteLine("Test " + (-skidDriveSpeed - skidSteerSpeed));
                     Scarlet.Communications.Server.Send(SkidRearLeft);
 
                     Packet WristPack = new Packet(0x9D, true, "ArmMaster");
