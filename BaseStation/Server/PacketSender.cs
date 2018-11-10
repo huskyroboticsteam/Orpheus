@@ -142,19 +142,19 @@ namespace HuskyRobotics.BaseStation.Server
                     
                     
                     Packet SkidFrontRight = new Packet(0x90, true, "MainRover");
-                    SkidFrontRight.AppendData(UtilData.ToBytes(((skidDriveSpeed - skidSteerSpeed) * 1)));
+                    SkidFrontRight.AppendData(UtilData.ToBytes(((skidDriveSpeed - skidSteerSpeed) * 2)));
                     Scarlet.Communications.Server.Send(SkidFrontRight);
 
                     Packet SkidRearRight = new Packet(0x92, true, "MainRover");
-                    SkidRearRight.AppendData(UtilData.ToBytes(((skidDriveSpeed - skidSteerSpeed) * 1)));
+                    SkidRearRight.AppendData(UtilData.ToBytes(((skidDriveSpeed - skidSteerSpeed) * 2)));
                     Scarlet.Communications.Server.Send(SkidRearRight);
 
                     Packet SkidFrontLeft = new Packet(0x91, true, "MainRover");
-                    SkidFrontLeft.AppendData(UtilData.ToBytes(((skidDriveSpeed + skidSteerSpeed) * 1)));
+                    SkidFrontLeft.AppendData(UtilData.ToBytes(((skidDriveSpeed + skidSteerSpeed) * 2)));
                     Scarlet.Communications.Server.Send(SkidFrontLeft);
 
                     Packet SkidRearLeft = new Packet(0x93, true, "MainRover");
-                    SkidRearLeft.AppendData(UtilData.ToBytes((-skidDriveSpeed - skidSteerSpeed) * 1));
+                    SkidRearLeft.AppendData(UtilData.ToBytes((0-skidDriveSpeed - skidSteerSpeed) * 2));
                     Console.WriteLine("Test " + (-skidDriveSpeed - skidSteerSpeed));
                     Scarlet.Communications.Server.Send(SkidRearLeft);
 
