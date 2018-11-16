@@ -82,7 +82,8 @@ namespace MainRover
                         //TODO - Remove after Debugging
                         //Console.WriteLine("Wheel " + (p.Data.ID - (byte)PacketID.RPMFrontRight) + "  Speed = " + (sbyte)p.Data.Payload[0]);
                         //Console.WriteLine("Speed = " + UtilData.ToULong(p.Data.Payload));
-                        MotorControl.SetRPM(MotorID, (sbyte)p.Data.Payload[0]);
+                        Console.WriteLine("Bytes recived: " + string.Join(",", p.Data.Payload) + "   " + ((sbyte)p.Data.Payload[1]));
+                        MotorControl.SetRPM(MotorID, (sbyte)p.Data.Payload[1]);
                         break;
                     case PacketID.RPMSteeringMotor:
                         float SteerSpeed = UtilData.ToFloat(p.Data.Payload);

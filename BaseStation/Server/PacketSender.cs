@@ -138,23 +138,23 @@ namespace HuskyRobotics.BaseStation.Server
                     /*
                     Packet SpeedPack = new Packet(0x95, true, "MainRover");
                     SpeedPack.AppendData(UtilData.ToBytes(speed));
-                    Scarlet.Communications.Server.Send(SpeedPack);*/
-                    
+                    Scarlet.Communications.Server.Send(SpeedPack);
+                    Console.WriteLine("Speed: " + speed + " Joystick " + skidDriveSpeed);*/
                     
                     Packet SkidFrontRight = new Packet(0x90, true, "MainRover");
-                    SkidFrontRight.AppendData(UtilData.ToBytes(((skidDriveSpeed - skidSteerSpeed) * 2)));
+                    SkidFrontRight.AppendData(UtilData.ToBytes((sbyte)Math.Round((skidDriveSpeed - skidSteerSpeed) *120)));
                     Scarlet.Communications.Server.Send(SkidFrontRight);
 
                     Packet SkidRearRight = new Packet(0x92, true, "MainRover");
-                    SkidRearRight.AppendData(UtilData.ToBytes(((skidDriveSpeed - skidSteerSpeed) * 2)));
+                    SkidRearRight.AppendData(UtilData.ToBytes((sbyte)Math.Round((skidDriveSpeed - skidSteerSpeed) *120)));
                     Scarlet.Communications.Server.Send(SkidRearRight);
 
                     Packet SkidFrontLeft = new Packet(0x91, true, "MainRover");
-                    SkidFrontLeft.AppendData(UtilData.ToBytes(((skidDriveSpeed + skidSteerSpeed) * 2)));
+                    SkidFrontLeft.AppendData(UtilData.ToBytes((sbyte)Math.Round((skidDriveSpeed + skidSteerSpeed) * 120)));
                     Scarlet.Communications.Server.Send(SkidFrontLeft);
 
                     Packet SkidRearLeft = new Packet(0x93, true, "MainRover");
-                    SkidRearLeft.AppendData(UtilData.ToBytes((0-skidDriveSpeed - skidSteerSpeed) * 2));
+                    SkidRearLeft.AppendData(UtilData.ToBytes((sbyte)Math.Round((0-skidDriveSpeed - skidSteerSpeed) * 120)));
                     Console.WriteLine("Test " + (-skidDriveSpeed - skidSteerSpeed));
                     Scarlet.Communications.Server.Send(SkidRearLeft);
 

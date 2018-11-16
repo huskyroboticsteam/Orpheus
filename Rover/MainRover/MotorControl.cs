@@ -44,6 +44,7 @@ namespace MainRover
             float Theta = GetRackAndPinionAngle();
             if (Math.Abs(Theta) < 1e-6)
             {
+                Console.WriteLine("Set all speed RPM:" + RPM);
                 foreach (VESC M in DriveMotor)
                     M.SetRPM(RPM);
             }
@@ -73,6 +74,7 @@ namespace MainRover
 
         public static void SetRPM(int Motor, int RPM)
         {
+            Console.WriteLine("Set all single RPM:" + RPM);
             if (Motor == BL)
                 RPM = -RPM;
             if (Motor < DriveMotor.Length)
