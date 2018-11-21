@@ -144,7 +144,6 @@ namespace MainRover
             Quit = false;
             InitBeagleBone();
             SetupClient();
-            //SetupArmServer();
             MotorControl.Initialize();
             do
             {

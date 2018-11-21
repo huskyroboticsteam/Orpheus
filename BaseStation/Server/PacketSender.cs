@@ -84,22 +84,20 @@ namespace HuskyRobotics.BaseStation.Server
                     bool leftPressedArm = (armState.Gamepad.Buttons & GamepadButtonFlags.DPadLeft) != 0;
                     bool rightPressedArm = (armState.Gamepad.Buttons & GamepadButtonFlags.DPadRight) != 0;
 
-                    // Rover skid steering (uses x axis on right joystick)
+                    // Rover skid steering turn (uses x axis on right joystick)
                     short skidSteer = driveState.Gamepad.RightThumbX;
                     if (skidSteer > -JoystickTreshold && skidSteer < JoystickTreshold) { skidSteer = 0; }
                     float skidSteerSpeed = (float)UtilMain.LinearMap(skidSteer, -32768, 32767, -0.5, 0.5);
                     if (Math.Abs(skidSteerSpeed) < 0.0001f) { skidSteerSpeed = 0; }
 
-                    // Rover skid driving (uses y axis on right joystick)
+                    // Rover skid steering speed (uses y axis on right joystick)
                     short skidDriving = driveState.Gamepad.RightThumbY;
                     if (skidDriving > -JoystickTreshold && skidDriving < JoystickTreshold) { skidDriving = 0; }
                     float skidDriveSpeed = (float)UtilMain.LinearMap(skidDriving, -32768, 32767, -0.5, 0.5);
-                    //Console.WriteLine(skidDriving + " => " + skidDriveSpeed);
 
                     if (skidDriving == 0) { skidDriveSpeed = 0; }
                     if (skidSteer == 0) { skidSteerSpeed = 0; }
                     Console.WriteLine(skidSteerSpeed + " and " + skidDriveSpeed);
-                    //if (Math.Abs(skidDriveSpeed) < 0.0001f) { skidDriveSpeed = 0; }
 
                     float steerSpeed = 0.0f;
                     if (bPressedDrive)
