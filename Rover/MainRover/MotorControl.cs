@@ -81,6 +81,23 @@ namespace MainRover
                 DriveMotor[Motor].SetRPM(RPM);
         }
 
+        public static void SkidSteerDriveSpeed(float Speed, float Turn)
+        {
+            Speed = Math.Min(Speed, 1.0f);
+            Speed = Math.Max(Speed, -1.0f);
+            Turn = Math.Min(Turn, 1.0f);
+            Turn = Math.Max(Turn, -1.0f);
+            SkidSteerDriveRPM((int)(Speed * 60), (int)(Turn * 60));
+        }
+
+        public static void SkidSteerDriveRPM(int speed, int turn)
+        {
+            DriveMotor[FR].SetRPM(speed+turn);
+            DriveMotor[FL].SetRPM(speed-turn);
+            DriveMotor[BR].SetRPM(speed+turn);
+            DriveMotor[BL].SetRPM(speed-turn);
+        }
+
         public static void SetSteerSpeed(float Speed)
         {
             SteerMotor.SetSpeed(Speed);

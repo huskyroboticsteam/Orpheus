@@ -20,9 +20,12 @@ namespace MainRover
         public static QueueBuffer StopPackets;
         public static QueueBuffer ModePackets;
         public static QueueBuffer DrivePackets;
+        public static QueueBuffer PathPackets;
 
         public enum DriveMode {BaseDrive, toGPS, findTennisBall, toTennisBall, destination};
         public static DriveMode CurDriveMode;
+
+        public static float PathSpeed, PathAngle;
 
         public static void PinConfig()
         {
@@ -70,8 +73,10 @@ namespace MainRover
             StopPackets = new QueueBuffer();
             Parse.SetParseHandler(0x80, (Packet) => StopPackets.Enqueue(Packet, 0));
             Parse.SetParseHandler(0x99, (Packet) => ModePackets.Enqueue(Packet, 0));
-            for (byte i = 0x8E; i <= 0x99; i++)
+            for (byte i = 0x8E; i <= 0x94; i++)
                 Parse.SetParseHandler(i, (Packet) => DrivePackets.Enqueue(Packet, 0));
+            for (byte i = 0x95; i <= 0x97; i++)
+                Parse.SetParseHandler(i, (Packet) => PathPackets.Enqueue(Packet, 0));
         }
 
         public static void ProcessInstructions()
@@ -92,19 +97,23 @@ namespace MainRover
                 {   // TODO For each case statement, clear undeeded queue buffers
                     case DriveMode.BaseDrive:
                         ProcessBasePackets();
-                        DrivePackets = new QueueBuffer();
+                        PathPackets = new QueueBuffer();
                         break;
                     case DriveMode.toGPS:
+                        ProcessPathPackets();
                         DrivePackets = new QueueBuffer();
                         break;
                     case DriveMode.findTennisBall:
                         DrivePackets = new QueueBuffer();
+                        PathPackets = new QueueBuffer();
                         break;
                     case DriveMode.toTennisBall:
                         DrivePackets = new QueueBuffer();
+                        PathPackets = new QueueBuffer();
                         break;
                     case DriveMode.destination:
                         DrivePackets = new QueueBuffer();
+                        PathPackets = new QueueBuffer();
                         break;
                 }
             }
@@ -147,6 +156,26 @@ namespace MainRover
                     case PacketID.SpeedAllDriveMotors:
                         float Speed = UtilData.ToFloat(p.Data.Payload);
                         MotorControl.SetAllSpeed(Speed);
+                        break;
+                }
+            }
+        }
+
+        public static void ProcessPathPackets()
+        {
+            for (int i = 0; !PathPackets.IsEmpty() && i < NUM_PACKETS_TO_PROCESS; i++)
+            {
+                Packet p = PathPackets.Dequeue();
+                switch ((PacketID)p.Data.ID)
+                {
+                    // TODO Maybe: Combine pathing speed and turn in same packet???
+                    case PacketID.PathingSpeed:
+                        PathSpeed = UtilData.ToFloat(p.Data.Payload);
+                        MotorControl.SkidSteerDriveSpeed(PathSpeed, PathAngle);
+                        break;
+                    case PacketID.PathingTurnAngle:
+                        PathAngle = UtilData.ToFloat(p.Data.Payload);
+                        MotorControl.SkidSteerDriveSpeed(PathSpeed, PathAngle);
                         break;
                 }
             }

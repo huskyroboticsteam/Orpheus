@@ -12,6 +12,10 @@ namespace MainRover
         SteerPosition = 0x94,
         SpeedAllDriveMotors = 0x95,
 
+        PathingSpeed = 0x96,
+        PathingTurnAngle = 0x97,
+
+
         DataGPS = 0xC0,
         DataMagnetometer = 0xC1,
 
