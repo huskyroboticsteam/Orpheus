@@ -13,10 +13,16 @@ namespace MainRover
     public class MainRover
     {
         public static string SERVER_IP = "192.168.0.5";
+        public const int NUM_PACKETS_TO_PROCESS = 20;
 
         public static bool Quit;
         public static List<ISensor> Sensors;
-        public static QueueBuffer Packets;
+        public static QueueBuffer StopPackets;
+        public static QueueBuffer ModePackets;
+        public static QueueBuffer DrivePackets;
+
+        public enum DriveMode {BaseDrive, toGPS, findTennisBall, toTennisBall, destination};
+        public static DriveMode CurDriveMode;
 
         public static void PinConfig()
         {
@@ -52,23 +58,72 @@ namespace MainRover
             Switch.SwitchToggle += (object sender, LimitSwitchToggle e) => Console.WriteLine("PRESSED!");
             Sensors.Add(Switch);
             */
+
+            CurDriveMode = DriveMode.BaseDrive;
             //Add encoders
         }
 
         public static void SetupClient()
         {
             Client.Start(SERVER_IP, 1025, 1026, "MainRover");
-            Packets = new QueueBuffer();
+            DrivePackets = new QueueBuffer();
+            StopPackets = new QueueBuffer();
+            Parse.SetParseHandler(0x80, (Packet) => StopPackets.Enqueue(Packet, 0));
+            Parse.SetParseHandler(0x99, (Packet) => ModePackets.Enqueue(Packet, 0));
             for (byte i = 0x8E; i <= 0x99; i++)
-                Parse.SetParseHandler(i, (Packet) => Packets.Enqueue(Packet, 0));
+                Parse.SetParseHandler(i, (Packet) => DrivePackets.Enqueue(Packet, 0));
         }
 
         public static void ProcessInstructions()
         {
-            const int NUM_PACKETS_TO_PROCESS = 20;
-            for (int i = 0; !Packets.IsEmpty() && i < NUM_PACKETS_TO_PROCESS; i++)
+            if (!StopPackets.IsEmpty())
             {
-                Packet p = Packets.Dequeue();
+                StopPackets = new QueueBuffer();
+                // Stop the Rover
+
+            }
+            else if (!ModePackets.IsEmpty())
+            {
+                ProcessModePackets();
+            }
+            else
+            {
+                switch (CurDriveMode)
+                {   // TODO For each case statement, clear undeeded queue buffers
+                    case DriveMode.BaseDrive:
+                        ProcessBasePackets();
+                        DrivePackets = new QueueBuffer();
+                        break;
+                    case DriveMode.toGPS:
+                        DrivePackets = new QueueBuffer();
+                        break;
+                    case DriveMode.findTennisBall:
+                        DrivePackets = new QueueBuffer();
+                        break;
+                    case DriveMode.toTennisBall:
+                        DrivePackets = new QueueBuffer();
+                        break;
+                    case DriveMode.destination:
+                        DrivePackets = new QueueBuffer();
+                        break;
+                }
+            }
+        }
+
+        public static void ProcessModePackets()
+        {
+            for (int i = 0; !DrivePackets.IsEmpty() && i < NUM_PACKETS_TO_PROCESS; i++)
+            {
+                Packet p = DrivePackets.Dequeue();
+                CurDriveMode = (DriveMode)p.Data.Payload[0];
+            }
+        }
+
+        public static void ProcessBasePackets()
+        {
+            for (int i = 0; !DrivePackets.IsEmpty() && i < NUM_PACKETS_TO_PROCESS; i++)
+            {
+                Packet p = DrivePackets.Dequeue();
                 switch ((PacketID)p.Data.ID)
                 {
                     case PacketID.RPMAllDriveMotors:
@@ -79,10 +134,6 @@ namespace MainRover
                     case PacketID.RPMBackRight:
                     case PacketID.RPMBackLeft:
                         int MotorID = p.Data.ID - (byte)PacketID.RPMFrontRight;
-                        //TODO - Remove after Debugging
-                        //Console.WriteLine("Wheel " + (p.Data.ID - (byte)PacketID.RPMFrontRight) + "  Speed = " + (sbyte)p.Data.Payload[0]);
-                        //Console.WriteLine("Speed = " + UtilData.ToULong(p.Data.Payload));
-                        Console.WriteLine("Bytes recived: " + string.Join(",", p.Data.Payload) + "   " + ((sbyte)p.Data.Payload[1]));
                         MotorControl.SetRPM(MotorID, (sbyte)p.Data.Payload[1]);
                         break;
                     case PacketID.RPMSteeringMotor:
