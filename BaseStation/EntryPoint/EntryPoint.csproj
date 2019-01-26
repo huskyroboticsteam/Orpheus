@@ -8,7 +8,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>HuskyRobotics.BaseStation</RootNamespace>
     <AssemblyName>BaseStation</AssemblyName>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
@@ -117,12 +117,15 @@
     <Content Include="huskyrobotics.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="AfterBuild"> <!-- Custom build tasks -->
+  <Target Name="AfterBuild">
+    <!-- Custom build tasks -->
     <ItemGroup>
-		<IconFiles Include="$(SolutionDir)\UserInterface\Icons\*.*"/>
-		<LibraryBinaries Include="$(SolutionDir)\libraries\**\*.*"/>
-	</ItemGroup>
-	<Copy SkipUnchangedFiles="true" SourceFiles="@(IconFiles)" DestinationFolder="$(OutputPath)\Icons" /> <!-- Copy the map icons -->
-	<Copy SkipUnchangedFiles="true" SourceFiles="@(LibraryBinaries)" DestinationFolder="$(OutputPath)" /> <!-- Copy library binaries -->
+      <IconFiles Include="$(SolutionDir)\UserInterface\Icons\*.*" />
+      <LibraryBinaries Include="$(SolutionDir)\libraries\**\*.*" />
+    </ItemGroup>
+    <Copy SkipUnchangedFiles="true" SourceFiles="@(IconFiles)" DestinationFolder="$(OutputPath)\Icons" />
+    <!-- Copy the map icons -->
+    <Copy SkipUnchangedFiles="true" SourceFiles="@(LibraryBinaries)" DestinationFolder="$(OutputPath)" />
+    <!-- Copy library binaries -->
   </Target>
 </Project>

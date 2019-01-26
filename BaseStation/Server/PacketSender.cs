@@ -62,6 +62,7 @@ namespace HuskyRobotics.BaseStation.Server
                     State armState = armController.GetState();
                     byte rightTrigger = driveState.Gamepad.RightTrigger;
                     byte leftTrigger = driveState.Gamepad.LeftTrigger;
+                    
                     short leftThumbX = PreventOverflow(driveState.Gamepad.LeftThumbX);
 
                     if (rightTrigger < TriggerThreshold) { rightTrigger = 0; }
@@ -71,8 +72,8 @@ namespace HuskyRobotics.BaseStation.Server
                     float speed = (float)UtilMain.LinearMap(rightTrigger - leftTrigger, -255, 255, -1, 1);
                     float steerPos = (float)UtilMain.LinearMap(leftThumbX, -32768, 32767, -1, 1);
 
-                    bool aPressedDrive = (driveState.Gamepad.Buttons & GamepadButtonFlags.A) != 0;
-                    bool bPressedDrive = (driveState.Gamepad.Buttons & GamepadButtonFlags.B) != 0;
+                    bool manualDrive = (driveState.Gamepad.Buttons & GamepadButtonFlags.LeftShoulder) != 0;
+                    bool autoDrive = (driveState.Gamepad.Buttons & GamepadButtonFlags.RightShoulder) != 0;
 
                     bool aPressedArm = (armState.Gamepad.Buttons & GamepadButtonFlags.A) != 0;
                     bool bPressedArm = (armState.Gamepad.Buttons & GamepadButtonFlags.B) != 0;
@@ -99,11 +100,11 @@ namespace HuskyRobotics.BaseStation.Server
                     if (skidSteer == 0) { skidSteerSpeed = 0; }
                     Console.WriteLine(skidSteerSpeed + " and " + skidDriveSpeed);
 
-                    float steerSpeed = 0.0f;
-                    if (bPressedDrive)
-                        steerSpeed = -0.3f;
-                    else if (aPressedDrive)
-                        steerSpeed = 0.3f;
+                    float modeSet = 0.0f;
+                    if (manualDrive)
+                        wristArmSpeed = 1f;
+                    else if (autoDrive)
+                        wristArmSpeed = 2f;
 
                     float wristArmSpeed = 0.0f;
                     if (yPressedArm)
@@ -138,6 +139,13 @@ namespace HuskyRobotics.BaseStation.Server
                     SpeedPack.AppendData(UtilData.ToBytes(speed));
                     Scarlet.Communications.Server.Send(SpeedPack);
                     Console.WriteLine("Speed: " + speed + " Joystick " + skidDriveSpeed);*/
+
+                    if(modeSet != 0)
+                    {
+                        Packet ModePack = new Packet(0x99, true, "MainRover");
+                        BasePack.AppendData(UtilData.ToBytes(modeSet));
+                        Scarlet.Communications.Server.Send(ModePack);
+                    }
                     
                     Packet SkidFrontRight = new Packet(0x90, true, "MainRover");
                     SkidFrontRight.AppendData(UtilData.ToBytes((sbyte)Math.Round((skidDriveSpeed - skidSteerSpeed) *120)));
@@ -171,6 +179,7 @@ namespace HuskyRobotics.BaseStation.Server
                     Packet BasePack = new Packet(0x9A, true, "ArmMaster");
                     BasePack.AppendData(UtilData.ToBytes(baseArmSpeed));
                     Scarlet.Communications.Server.Send(BasePack);
+                    
                 } else {
                     HaltRoverMotion();
                 }
