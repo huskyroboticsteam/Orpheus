@@ -100,11 +100,11 @@ namespace HuskyRobotics.BaseStation.Server
                     if (skidSteer == 0) { skidSteerSpeed = 0; }
                     Console.WriteLine(skidSteerSpeed + " and " + skidDriveSpeed);
 
-                    float modeSet = 0.0f;
+                    float modeSet = -1f;
                     if (manualDrive)
-                        wristArmSpeed = 1f;
+                        modeSet = 0f;
                     else if (autoDrive)
-                        wristArmSpeed = 2f;
+                        modeSet = 1f;
 
                     float wristArmSpeed = 0.0f;
                     if (yPressedArm)
@@ -140,11 +140,12 @@ namespace HuskyRobotics.BaseStation.Server
                     Scarlet.Communications.Server.Send(SpeedPack);
                     Console.WriteLine("Speed: " + speed + " Joystick " + skidDriveSpeed);*/
 
-                    if(modeSet != 0)
+                    if(modeSet != -1f)
                     {
                         Packet ModePack = new Packet(0x99, true, "MainRover");
-                        BasePack.AppendData(UtilData.ToBytes(modeSet));
+                        ModePack.AppendData(UtilData.ToBytes(modeSet));
                         Scarlet.Communications.Server.Send(ModePack);
+                        Console.WriteLine("sending switching drive mode: " + modeSet);
                     }
                     
                     Packet SkidFrontRight = new Packet(0x90, true, "MainRover");
