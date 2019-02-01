@@ -225,6 +225,7 @@ namespace MainRover
             InitBeagleBone();
             SetupClient();
             MotorControl.Initialize();
+            MotorBoards.Initialize(CANBBB.CANBus0);
             do
             {
                 SendSensorData();
