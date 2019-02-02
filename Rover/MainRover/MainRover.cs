@@ -157,6 +157,21 @@ namespace MainRover
                         float Speed = UtilData.ToFloat(p.Data.Payload);
                         MotorControl.SetAllSpeed(Speed);
                         break;
+                    case PacketID.BaseSpeed:
+                    case PacketID.ShoulderSpeed:
+                    case PacketID.ElbowSpeed:
+                    case PacketID.WristSpeed:
+                    case PacketID.DifferentialVert:
+                    case PacketID.DifferentialRotate:
+                    case PacketID.HandGrip:
+                        byte address = (byte)(p.Data.ID - 0x8A);
+                        byte direction = 0x00;
+                        if (p.Data.Payload[0] > 0)
+                        {
+                            direction = 0x01;
+                        }
+                        UtilCan.SpeedDir(CANBBB.CANBus0, false, 0x02, address, p.Data.Payload[1], direction);
+                        break;
                 }
             }
         }
