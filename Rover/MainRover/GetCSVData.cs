@@ -39,10 +39,10 @@ namespace MainRover
                     {
                         MotorBoardData add = new MotorBoardData();
                         add.Model = int.Parse(values[1]);
-                        add.P = float.Parse(values[2]);
-                        add.I = float.Parse(values[3]);
-                        add.D = float.Parse(values[4]);
-                        add.TicksPerRev = int.Parse(values[5]);
+                        add.P = UInt16.Parse(values[2]);
+                        add.I = UInt16.Parse(values[3]);
+                        add.D = UInt16.Parse(values[4]);
+                        add.TicksPerRev = UInt16.Parse(values[5]);
                         switch (values[0])
                         {
                             case "MB1":

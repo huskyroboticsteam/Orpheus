@@ -9,10 +9,10 @@ namespace MainRover
     class MotorBoardData
     {
         public int Model;
-        public float P;
-        public float I;
-        public float D;
-        public int TicksPerRev;
+        public UInt16 P;
+        public UInt16 I;
+        public UInt16 D;
+        public UInt16 TicksPerRev;
 
         public override string ToString()
         {
