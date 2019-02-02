@@ -41,12 +41,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GetCSVData.cs" />
-    <Compile Include="InitializeMotorBoards.cs" />
+    <Compile Include="MotorBoards.cs" />
     <Compile Include="MainRover.cs" />
     <Compile Include="MotorBoardData.cs" />
     <Compile Include="Pins.cs" />
     <Compile Include="PacketID.cs" />
     <Compile Include="MotorControl.cs" />
+    <Compile Include="UtilCan.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
