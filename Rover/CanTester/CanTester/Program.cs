@@ -19,7 +19,26 @@ namespace CanTester
             BBBPinManager.AddBusCAN(0);
             BBBPinManager.ApplyPinSettings(BBBPinManager.ApplicationMode.APPLY_IF_NONE);
 
-            TwoData(CANBBB.CANBus0, true, 2, 12, 2, 12, 12);
+            bool Priority = false;
+            byte Sender = 0;
+            byte Receiver = 0;
+            byte DataID = 0;
+            bool continuez = true;
+
+            while (continuez)
+            {
+                Console.Write("Enter Priority (true/false): ");
+                Priority = Convert.ToBoolean(Console.ReadLine());
+                Console.Write("Enter Sender (byte): ");
+                Sender = Convert.ToByte(Console.ReadLine());
+                Console.Write("Enter Reciever (byte): ");
+                Receiver = Convert.ToByte(Console.ReadLine());
+                Console.Write("Enter DataID (byte): ");
+                DataID = Convert.ToByte(Console.ReadLine());
+                TwoData(CANBBB.CANBus0, Priority, Sender, Receiver, DataID, 12, 12);
+                Console.Write("Test Run Completed. Continue? (true/false): ");
+                continuez = Convert.ToBoolean(Console.ReadLine());
+            }       
 
         }
 

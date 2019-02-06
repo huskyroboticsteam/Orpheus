@@ -27,7 +27,7 @@ namespace HuskyRobotics.BaseStation.Server
 
         public static void Setup()
         {
-			Log.SetGlobalOutputLevel(Log.Severity.ERROR);
+			Log.SetGlobalOutputLevel(Log.Severity.DEBUG);
             Scarlet.Communications.Server.Start(1025, 1026, OperationPeriod:1);
             Scarlet.Communications.Server.ClientConnectionChange += ClientConnected;
             Parse.SetParseHandler(0xC0, GpsHandler);
@@ -98,7 +98,7 @@ namespace HuskyRobotics.BaseStation.Server
 
                     if (skidDriving == 0) { skidDriveSpeed = 0; }
                     if (skidSteer == 0) { skidSteerSpeed = 0; }
-                    Console.WriteLine(skidSteerSpeed + " and " + skidDriveSpeed);
+                    //Console.WriteLine(skidSteerSpeed + " and " + skidDriveSpeed);
 
                     float modeSet = -1f;
                     if (manualDrive)
