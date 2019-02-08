@@ -14,37 +14,111 @@ namespace CanTester
     {
         static void Main(string[] args)
         {
-            StateStore.Start("MainRover");
+            StateStore.Start("CanTester");
             BeagleBone.Initialize(SystemMode.NO_HDMI, true);
             BBBPinManager.AddBusCAN(0);
             BBBPinManager.ApplyPinSettings(BBBPinManager.ApplicationMode.APPLY_IF_NONE);
-
+            
             bool Priority = false;
             byte Sender = 0;
             byte Receiver = 0;
             byte DataID = 0;
             bool continuez = true;
+            UInt16 Val1 = 0;
+            UInt16 Val2 = 0;
+            byte Speed = 0;
+            byte Direction = 0;
+
+            Console.WriteLine("CAN TESTER TOOL");
 
             while (continuez)
             {
-                Console.Write("Enter Priority (true/false): ");
-                Priority = Convert.ToBoolean(Console.ReadLine());
-                Console.Write("Enter Sender (byte): ");
-                Sender = Convert.ToByte(Console.ReadLine());
-                Console.Write("Enter Reciever (byte): ");
-                Receiver = Convert.ToByte(Console.ReadLine());
-                Console.Write("Enter DataID (byte): ");
-                DataID = Convert.ToByte(Console.ReadLine());
-                TwoData(CANBBB.CANBus0, Priority, Sender, Receiver, DataID, 12, 12);
-                Console.Write("Test Run Completed. Continue? (true/false): ");
-                continuez = Convert.ToBoolean(Console.ReadLine());
+                Console.Write("Enter Priority (true/false) [Previous " + Priority + " ]: ");
+                Priority = oldNew(Console.ReadLine(), Priority);
+                Console.Write("Enter Sender (byte) [Previous " + Sender + "]: ");
+                Sender = oldNew(Console.ReadLine(), Sender);
+                Console.Write("Enter Reciever (byte) [Previous " + Receiver + "]: ");
+                Receiver = oldNew(Console.ReadLine(), Receiver);
+                Console.Write("Enter DataID (byte) [Previous " + DataID + "]: ");
+                DataID = oldNew(Console.ReadLine(), DataID);
+                switch (DataID)
+                {
+                    case 0x2:
+                        Console.Write("Enter in speed [Previous " + Speed + "]: ");
+                        Speed = oldNew(Console.ReadLine(), Speed);
+                        Console.Write("Enter in direction (1 or 0) [Previous " + Direction + "]: ");
+                        Direction = oldNew(Console.ReadLine(), Direction);
+                        break;
+                    case 0x4:
+                    case 0xA:
+                    case 0xC:
+                    case 0xE:
+                    case 0x14:
+                    case 0x18:
+                        Console.Write("Enter in first value [Previous " + Val1 + "]: ");
+                        Val1 = oldNew(Console.ReadLine(), Val1);
+                        Console.Write("Enter in second value [Previous " + Val2 + "]: ");
+                        Val2 = oldNew(Console.ReadLine(), Val2);
+                        break;
+                    default:
+                        Console.WriteLine("Unknown or unsupported data value");
+                        break;
+                }
+
+                bool keepSending = true;
+                while (keepSending)
+                {
+                    switch (DataID)
+                    {
+                        case 0x2:
+                            SpeedDir(CANBBB.CANBus0, Priority, Sender, Receiver, Speed, Direction);
+                            break;
+                        case 0x4:
+                        case 0xA:
+                        case 0xC:
+                        case 0xE:
+                        case 0x14:
+                        case 0x18:
+                            TwoData(CANBBB.CANBus0, Priority, Sender, Receiver, DataID, Val1, Val2);
+                            break;
+                        case 0x10:
+                            ModelReq(CANBBB.CANBus0, Priority, Sender, Receiver);
+                            break;
+                        default:
+                            Console.WriteLine("Unknown or unsupported data value");
+                            break;
+                    }
+                    Console.Write("Data Sent. Hold enter to continue sending (true/false): ");
+                    keepSending = oldNew(Console.ReadLine(), true);
+                }
+
+                Console.Write("Change CAN packet (true) or exit (false): ");
+                continuez = oldNew(Console.ReadLine(), true);
             }       
 
         }
 
+        private static UInt16 oldNew(String newVal, UInt16 oldVal)
+        {
+            if (newVal == "") return oldVal;
+            else return Convert.ToUInt16(newVal);
+        }
+
+        private static byte oldNew(String newVal, byte oldVal)
+        {
+            if (newVal == "") return oldVal;
+            else return Convert.ToByte(newVal);
+        }
+
+        private static bool oldNew(String newVal, bool oldVal)
+        {
+            if (newVal == "") return oldVal;
+            else return Convert.ToBoolean(newVal);
+        }
+
         private static uint ConstructCanID(bool Priority, byte Sender, byte Receiver)
         {
-            return Convert.ToUInt16(Convert.ToUInt16(Priority) * 2 ^ 10 + Sender * 2 ^ 5 + Receiver);
+            return Convert.ToUInt16(Convert.ToUInt16(Priority) * (1024) + Sender * (32)+ Receiver);
         }
 
         private static void TwoData(ICANBus CANBus, bool Priority, byte Sender, byte Receiver, byte DataID, UInt16 val1, UInt16 val2)
