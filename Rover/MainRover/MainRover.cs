@@ -71,6 +71,8 @@ namespace MainRover
             Client.Start(SERVER_IP, 1025, 1026, "MainRover");
             DrivePackets = new QueueBuffer();
             StopPackets = new QueueBuffer();
+            ModePackets = new QueueBuffer();
+            PathPackets = new QueueBuffer();
             Parse.SetParseHandler(0x80, (Packet) => StopPackets.Enqueue(Packet, 0));
             Parse.SetParseHandler(0x99, (Packet) => ModePackets.Enqueue(Packet, 0));
             for (byte i = 0x8E; i <= 0x94; i++)
