@@ -123,9 +123,9 @@ namespace MainRover
 
         public static void ProcessModePackets()
         {
-            for (int i = 0; !DrivePackets.IsEmpty() && i < NUM_PACKETS_TO_PROCESS; i++)
+            for (int i = 0; !ModePackets.IsEmpty() && i < NUM_PACKETS_TO_PROCESS; i++)
             {
-                Packet p = DrivePackets.Dequeue();
+                Packet p = ModePackets.Dequeue();
                 CurDriveMode = (DriveMode)p.Data.Payload[0];
             }
         }
