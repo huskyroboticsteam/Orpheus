@@ -79,6 +79,8 @@ namespace MainRover
                 Parse.SetParseHandler(i, (Packet) => DrivePackets.Enqueue(Packet, 0));
             for (byte i = 0x95; i <= 0x97; i++)
                 Parse.SetParseHandler(i, (Packet) => PathPackets.Enqueue(Packet, 0));
+            PathSpeed = 0;
+            PathAngle = 0;
         }
 
         public static void ProcessInstructions()
@@ -125,8 +127,11 @@ namespace MainRover
         {
             for (int i = 0; !ModePackets.IsEmpty() && i < NUM_PACKETS_TO_PROCESS; i++)
             {
-                Packet p = ModePackets.Dequeue();
+                Packet p = ModePackets.Dequeue();                
                 CurDriveMode = (DriveMode)p.Data.Payload[0];
+                //temporary fix to test, actually fix it later to get corect values form payload
+                if(p.Data.Payload[0] > 0) { CurDriveMode = DriveMode.toGPS; }         
+                
             }
         }
 
