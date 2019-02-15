@@ -208,11 +208,11 @@ namespace HuskyRobotics.BaseStation.Server
                     else
                     {
                         Packet SpeedPathPack = new Packet(0x96, true, "MainRover");
-                        SpeedPathPack.AppendData(UtilData.ToBytes(autoDriveSpeed));
+                        SpeedPathPack.AppendData(UtilData.ToBytes(skidDriveSpeed));
                         Scarlet.Communications.Server.Send(SpeedPathPack);
 
                         Packet TurnPathPack = new Packet(0x97, true, "MainRover");
-                        TurnPathPack.AppendData(UtilData.ToBytes(autoTurnSpeed));
+                        TurnPathPack.AppendData(UtilData.ToBytes(speed));
                         Scarlet.Communications.Server.Send(TurnPathPack);
                     }                    
                     
