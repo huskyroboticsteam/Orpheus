@@ -213,7 +213,7 @@ namespace HuskyRobotics.BaseStation.Server
                         Scarlet.Communications.Server.Send(SpeedPathPack);
 
                         Packet TurnPathPack = new Packet(0x97, true, "MainRover");
-                        TurnPathPack.AppendData(UtilData.ToBytes(speed));
+                        TurnPathPack.AppendData(UtilData.ToBytes(skidSteerSpeed));
                         Scarlet.Communications.Server.Send(TurnPathPack);
                     }                    
                     
