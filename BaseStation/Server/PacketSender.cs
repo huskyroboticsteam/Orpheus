@@ -164,6 +164,7 @@ namespace HuskyRobotics.BaseStation.Server
 
                     if(modeSet != -1f)
                     {
+                        Console.WriteLine("calling mode changeer");
                         Packet ModePack = new Packet(0x99, true, "MainRover");
                         ModePack.AppendData(UtilData.ToBytes(modeSet));
                         Scarlet.Communications.Server.Send(ModePack);
