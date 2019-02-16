@@ -16,7 +16,7 @@ namespace CanTester
         {
             StateStore.Start("CanTester");
             BeagleBone.Initialize(SystemMode.NO_HDMI, true);
-            BBBPinManager.AddBusCAN(0);
+            BBBPinManager.AddBusCAN(0, false);
             BBBPinManager.ApplyPinSettings(BBBPinManager.ApplicationMode.APPLY_IF_NONE);
             
             bool Priority = false;
@@ -28,6 +28,7 @@ namespace CanTester
             UInt16 Val2 = 0;
             byte Speed = 0;
             byte Direction = 0;
+            byte Mode = 0;
 
             Console.WriteLine("CAN TESTER TOOL");
 
@@ -43,6 +44,10 @@ namespace CanTester
                 DataID = oldNew(Console.ReadLine(), DataID);
                 switch (DataID)
                 {
+                    case 0x0:
+                        Console.Write("Enter in mode [Previous " + Mode + "]: ");
+                        Mode = oldNew(Console.ReadLine(), Mode);
+                        break;
                     case 0x2:
                         Console.Write("Enter in speed [Previous " + Speed + "]: ");
                         Speed = oldNew(Console.ReadLine(), Speed);
@@ -60,6 +65,8 @@ namespace CanTester
                         Console.Write("Enter in second value [Previous " + Val2 + "]: ");
                         Val2 = oldNew(Console.ReadLine(), Val2);
                         break;
+                    case 0x16:
+                        break;
                     default:
                         Console.WriteLine("Unknown or unsupported data value");
                         break;
@@ -70,6 +77,9 @@ namespace CanTester
                 {
                     switch (DataID)
                     {
+                        case 0x0:
+                            ModeSelect(CANBBB.CANBus0, Priority, Sender, Receiver, Mode);
+                            break;
                         case 0x2:
                             SpeedDir(CANBBB.CANBus0, Priority, Sender, Receiver, Speed, Direction);
                             break;
@@ -118,7 +128,7 @@ namespace CanTester
 
         private static uint ConstructCanID(bool Priority, byte Sender, byte Receiver)
         {
-            return Convert.ToUInt16(Convert.ToUInt16(Priority) * (1024) + Sender * (32)+ Receiver);
+            return Convert.ToUInt16(Convert.ToUInt16(!Priority) * (1024) + Sender * (32)+ Receiver);
         }
 
         private static void TwoData(ICANBus CANBus, bool Priority, byte Sender, byte Receiver, byte DataID, UInt16 val1, UInt16 val2)
@@ -129,6 +139,14 @@ namespace CanTester
             Payload[2] = (byte)((val1 >> 8) & 0xFF);
             Payload[3] = (byte)(val2 & 0xFF);
             Payload[4] = (byte)((val2 >> 8) & 0xFF);
+            CANBus.Write(ConstructCanID(Priority, Sender, Receiver), Payload);
+        }
+
+        public static void ModeSelect(ICANBus CANBus, bool Priority, byte Sender, byte Receiver, byte Mode)
+        {
+            byte[] Payload = new byte[2];
+            Payload[0] = 0;
+            Payload[1] = Mode;
             CANBus.Write(ConstructCanID(Priority, Sender, Receiver), Payload);
         }
 
@@ -144,13 +162,6 @@ namespace CanTester
         public static void AngleSpeed(ICANBus CANBus, bool Priority, byte Sender, byte Receiver, UInt16 Angle, UInt16 Velocity)
         {
             TwoData(CANBus, Priority, Sender, Receiver, 4, Angle, Velocity);
-        }
-
-        public static void ModelReq(ICANBus CANBus, bool Priority, byte Sender, byte Receiver)
-        {
-            byte[] Payload = new byte[1];
-            Payload[0] = 16;
-            CANBus.Write(ConstructCanID(Priority, Sender, Receiver), Payload);
         }
 
         public static void SetP(ICANBus CANBus, bool Priority, byte Sender, byte Receiver, UInt16 val1, UInt16 val2)
@@ -171,10 +182,18 @@ namespace CanTester
         public static void SetTicksPerRev(ICANBus CANBus, bool Priority, byte Sender, byte Receiver, UInt16 TPR)
         {
             byte[] Payload = new byte[3];
-            Payload[0] = 2;
+            Payload[0] = 15;
             Payload[1] = (byte)(TPR & 0xFF);
             Payload[2] = (byte)((TPR >> 8) & 0xFF);
             CANBus.Write(ConstructCanID(Priority, Sender, Receiver), Payload);
         }
+
+        public static void ModelReq(ICANBus CANBus, bool Priority, byte Sender, byte Receiver)
+        {
+            byte[] Payload = new byte[1];
+            Payload[0] = 16;
+            CANBus.Write(ConstructCanID(Priority, Sender, Receiver), Payload);
+        }
+
     }
 }
