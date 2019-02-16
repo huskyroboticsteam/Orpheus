@@ -25,6 +25,7 @@ namespace MainRover
             
         DataGPS = 0xC0,
         DataMagnetometer = 0xC1,
+        HeadingFromGPS = 0xC2,
 
         EmergencyStop = 0x80,
 

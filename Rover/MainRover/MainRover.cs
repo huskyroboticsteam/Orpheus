@@ -24,7 +24,7 @@ namespace MainRover
 
         public enum DriveMode {BaseDrive, toGPS, findTennisBall, toTennisBall, destination};
         public static DriveMode CurDriveMode;
-
+        public static Tuple<float, float> previousCoords;
         public static float PathSpeed, PathAngle;
 
         public static void PinConfig()
@@ -61,9 +61,13 @@ namespace MainRover
             Switch.SwitchToggle += (object sender, LimitSwitchToggle e) => Console.WriteLine("PRESSED!");
             Sensors.Add(Switch);
             */
-
-            CurDriveMode = DriveMode.BaseDrive;
-            //Add encoders
+            foreach (ISensor Sensor in Sensors)
+            {
+                if (Sensor is MTK3339)
+                {
+                    previousCoords = ((MTK3339)Sensor).GetCoords();
+                }
+            }
         }
 
         public static void SetupClient()
@@ -203,7 +207,7 @@ namespace MainRover
             }
         }
 
-        public static void SendSensorData()
+        public static void SendSensorData(int count)
         {
             foreach (ISensor Sensor in Sensors)
             {
@@ -216,6 +220,25 @@ namespace MainRover
                     Pack.AppendData(UtilData.ToBytes(Lat));
                     Pack.AppendData(UtilData.ToBytes(Long));
                     Client.SendNow(Pack);
+                    if(count == 100)
+                    {
+                        Packet HeadingFromGPSPack = new Packet((byte)PacketID.HeadingFromGPS, true);
+                        //Math between two coords given from Tup and previousCoords
+                        float latDiff = Lat - previousCoords.Item1;
+                        float longDiff = Long - previousCoords.Item1;
+                        float theta = (float)Math.Atan2(latDiff, longDiff);
+                        if (longDiff > 0)
+                        {
+                            theta = 90 - theta;
+                        }
+                        else if(longDiff < 0)
+                        {
+                            theta = 270 -theta;
+                        }
+                        HeadingFromGPSPack.AppendData(UtilData.ToBytes(theta));
+                        Client.SendNow(HeadingFromGPSPack);
+                        previousCoords = Tup;
+                    }
                 }
                 if (Sensor is BNO055)
                 {
@@ -248,11 +271,17 @@ namespace MainRover
             SetupClient();
             MotorControl.Initialize();
             MotorBoards.Initialize(CANBBB.CANBus0);
+            int count = 0;
             do
             {
-                SendSensorData();
+                SendSensorData(count);
                 ProcessInstructions();
                 Thread.Sleep(50);
+                count++;
+                if(count == 101)
+                {
+                    count = 0;
+                }
             } while (!Quit);
         }
     }
