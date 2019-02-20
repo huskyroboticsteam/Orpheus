@@ -2,15 +2,16 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <gst/gst.h>
+#include <unistd.h>
 
 void structure_fields(const GstStructure *device) 
 {
   gint n_fields = gst_structure_n_fields(device);
   for (int i = 0; i < n_fields; i++) 
   {
-    const gchar *name;
-    name = gst_structure_nth_field_name(device, i);
-    g_print("%s:\n%s\n", name, gst_structure_get_string(device, name));
+    //const gchar *name;
+    //name = gst_structure_nth_field_name(device, i);
+    //g_print("%s:\n%s\n", name, gst_structure_get_string(device, name));
   }
 }
 
@@ -73,25 +74,34 @@ GstDeviceMonitor *device_monitor(void)
 
 int main(int argc, char *argv[]) 
 {
-  g_print("Start\n");
   GstDeviceMonitor *monitor;
   GList *dev;
-  char *ip;
   gst_init(&argc, &argv);
 
   // set the monitor
-  g_print("Device Monitor\n");
   monitor = device_monitor();
   dev = gst_device_monitor_get_devices(monitor);
   
   // loop for the lists
   GList *cur = g_list_first(dev);
+  int port = 8554;
   while(cur != NULL) 
   {
     GstDevice * devi = (GstDevice *) cur->data;
-    g_print("%s\n", gst_device_get_display_name(devi));
     GstStructure * type = gst_device_get_properties(devi);
     structure_fields(type);
+    int mypid = fork();	
+    if(mypid == 0)
+    {
+      const char * name = gst_device_get_display_name(devi);
+      const char * path = gst_structure_get_string(type, "device.path");
+      char buffer[5];
+      sprintf(buffer, "%d", port);
+      g_print("Starting process for %s camera at %s\n", name, path);
+      int ret = execl("./server", argv[0], name, path, buffer, NULL);
+      return ret; // Shouldn't reach this line
+    }
+    port += 1;
     cur = g_list_next(cur);
   }
 
