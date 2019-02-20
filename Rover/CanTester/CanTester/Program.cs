@@ -34,54 +34,29 @@ namespace CanTester
 
             while (continuez)
             {
-                Console.Write("Enter Priority (true/false) [Previous " + Priority + " ]: ");
-                Priority = oldNew(Console.ReadLine(), Priority);
-                Console.Write("Enter Sender (byte) [Previous " + Sender + "]: ");
-                Sender = oldNew(Console.ReadLine(), Sender);
-                Console.Write("Enter Reciever (byte) [Previous " + Receiver + "]: ");
-                Receiver = oldNew(Console.ReadLine(), Receiver);
-                Console.Write("Enter DataID (byte) [Previous " + DataID + "]: ");
-                DataID = oldNew(Console.ReadLine(), DataID);
-                switch (DataID)
+                Console.Write("Write Mode(true) or Read Mode(false)? (true/false): ");
+                bool Write = oldNew(Console.ReadLine(), true);
+                if (Write) // Write Mode
                 {
-                    case 0x0:
-                        Console.Write("Enter in mode [Previous " + Mode + "]: ");
-                        Mode = oldNew(Console.ReadLine(), Mode);
-                        break;
-                    case 0x2:
-                        Console.Write("Enter in speed [Previous " + Speed + "]: ");
-                        Speed = oldNew(Console.ReadLine(), Speed);
-                        Console.Write("Enter in direction (1 or 0) [Previous " + Direction + "]: ");
-                        Direction = oldNew(Console.ReadLine(), Direction);
-                        break;
-                    case 0x4:
-                    case 0xA:
-                    case 0xC:
-                    case 0xE:
-                    case 0x14:
-                    case 0x18:
-                        Console.Write("Enter in first value [Previous " + Val1 + "]: ");
-                        Val1 = oldNew(Console.ReadLine(), Val1);
-                        Console.Write("Enter in second value [Previous " + Val2 + "]: ");
-                        Val2 = oldNew(Console.ReadLine(), Val2);
-                        break;
-                    case 0x16:
-                        break;
-                    default:
-                        Console.WriteLine("Unknown or unsupported data value");
-                        break;
-                }
-
-                bool keepSending = true;
-                while (keepSending)
-                {
+                    Console.Write("Enter Priority (true/false) [Previous " + Priority + " ]: ");
+                    Priority = oldNew(Console.ReadLine(), Priority);
+                    Console.Write("Enter Sender (byte) [Previous " + Sender + "]: ");
+                    Sender = oldNew(Console.ReadLine(), Sender);
+                    Console.Write("Enter Reciever (byte) [Previous " + Receiver + "]: ");
+                    Receiver = oldNew(Console.ReadLine(), Receiver);
+                    Console.Write("Enter DataID (byte) [Previous " + DataID + "]: ");
+                    DataID = oldNew(Console.ReadLine(), DataID);
                     switch (DataID)
                     {
                         case 0x0:
-                            ModeSelect(CANBBB.CANBus0, Priority, Sender, Receiver, Mode);
+                            Console.Write("Enter in mode [Previous " + Mode + "]: ");
+                            Mode = oldNew(Console.ReadLine(), Mode);
                             break;
                         case 0x2:
-                            SpeedDir(CANBBB.CANBus0, Priority, Sender, Receiver, Speed, Direction);
+                            Console.Write("Enter in speed [Previous " + Speed + "]: ");
+                            Speed = oldNew(Console.ReadLine(), Speed);
+                            Console.Write("Enter in direction (1 or 0) [Previous " + Direction + "]: ");
+                            Direction = oldNew(Console.ReadLine(), Direction);
                             break;
                         case 0x4:
                         case 0xA:
@@ -89,22 +64,87 @@ namespace CanTester
                         case 0xE:
                         case 0x14:
                         case 0x18:
-                            TwoData(CANBBB.CANBus0, Priority, Sender, Receiver, DataID, Val1, Val2);
+                            Console.Write("Enter in first value [Previous " + Val1 + "]: ");
+                            Val1 = oldNew(Console.ReadLine(), Val1);
+                            Console.Write("Enter in second value [Previous " + Val2 + "]: ");
+                            Val2 = oldNew(Console.ReadLine(), Val2);
                             break;
-                        case 0x10:
-                            ModelReq(CANBBB.CANBus0, Priority, Sender, Receiver);
+                        case 0x16:
                             break;
                         default:
                             Console.WriteLine("Unknown or unsupported data value");
                             break;
                     }
-                    Console.Write("Data Sent. Hold enter to continue sending (true/false): ");
-                    keepSending = oldNew(Console.ReadLine(), true);
+
+                    bool keepSending = true;
+                    while (keepSending)
+                    {
+                        switch (DataID)
+                        {
+                            case 0x0:
+                                ModeSelect(CANBBB.CANBus0, Priority, Sender, Receiver, Mode);
+                                break;
+                            case 0x2:
+                                SpeedDir(CANBBB.CANBus0, Priority, Sender, Receiver, Speed, Direction);
+                                break;
+                            case 0x4:
+                            case 0xA:
+                            case 0xC:
+                            case 0xE:
+                            case 0x14:
+                            case 0x18:
+                                TwoData(CANBBB.CANBus0, Priority, Sender, Receiver, DataID, Val1, Val2);
+                                break;
+                            case 0x10:
+                                ModelReq(CANBBB.CANBus0, Priority, Sender, Receiver);
+                                break;
+                            default:
+                                Console.WriteLine("Unknown or unsupported data value");
+                                break;
+                        }
+                        Console.Write("Data Sent. Hold enter to continue sending (true/false): ");
+                        keepSending = oldNew(Console.ReadLine(), true);
+                    }
+                }
+                else // Read Mode
+                {
+                    bool reading = true;
+                    while (reading)
+                    {
+                        int count = 0; 
+                        Task<Tuple<uint, byte[]>> CanRead = CANBBB.CANBus0.ReadAsync();
+                        while (!CanRead.IsCompleted || (count > 10))
+                        {
+                            CanRead.Wait(1000);
+                            count++;
+                        }
+
+                        if (CanRead.IsCompleted)
+                        {
+                            Tuple<uint, byte[]> temp = CanRead.Result;
+                            byte priority = Convert.ToByte(((temp.Item1) >> 0b1111111111) & 0x1F);
+                            byte sender = Convert.ToByte(((temp.Item1) >> 0x1F) & 0x1F);
+                            byte receiver = Convert.ToByte((temp.Item1) & 0x1F);
+                            Console.WriteLine("ID: " + Convert.ToString(temp.Item1, 2));
+                            //Console.WriteLine("ID: " + priority + " " + sender + " " + receiver);
+
+                            Console.WriteLine("Data: {0}",
+                                string.Join(", ", temp.Item2.Select(v => v.ToString()))
+                            );
+                        }
+                        else
+                        {
+                            Console.WriteLine("TIMEOUT, No CANID found");
+                        }
+                        Console.Write("Continue read?");
+                        reading = oldNew(Console.ReadLine(), true);
+                    }
                 }
 
-                Console.Write("Change CAN packet (true) or exit (false): ");
+                Console.Write("Continue Program (true) or exit (false): ");
                 continuez = oldNew(Console.ReadLine(), true);
-            }       
+
+            }    
 
         }
 
