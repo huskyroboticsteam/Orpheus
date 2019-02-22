@@ -190,19 +190,19 @@ namespace HuskyRobotics.BaseStation.Server
                         Console.WriteLine("Test " + (-skidDriveSpeed - skidSteerSpeed));
                         Scarlet.Communications.Server.Send(SkidRearLeft);
 
-                        Packet WristPack = new Packet(0x9D, true, "ArmMaster");
+                        Packet WristPack = new Packet(0x9D, true, "MainRover");
                         WristPack.AppendData(UtilData.ToBytes(wristArmSpeed));
                         Scarlet.Communications.Server.Send(WristPack);
 
-                        Packet ElbowPack = new Packet(0x9C, true, "ArmMaster");
+                        Packet ElbowPack = new Packet(0x9C, true, "MainRover");
                         ElbowPack.AppendData(UtilData.ToBytes(elbowArmSpeed));
                         Scarlet.Communications.Server.Send(ElbowPack);
 
-                        Packet ShoulderPack = new Packet(0x9B, true, "ArmMaster");
+                        Packet ShoulderPack = new Packet(0x9B, true, "MainRover");
                         ShoulderPack.AppendData(UtilData.ToBytes(shoulderArmSpeed));
                         Scarlet.Communications.Server.Send(ShoulderPack);
 
-                        Packet BasePack = new Packet(0x9A, true, "ArmMaster");
+                        Packet BasePack = new Packet(0x9A, true, "MainRover");
                         BasePack.AppendData(UtilData.ToBytes(baseArmSpeed));
                         Scarlet.Communications.Server.Send(BasePack);
                     }

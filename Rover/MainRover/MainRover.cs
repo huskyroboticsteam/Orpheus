@@ -29,7 +29,7 @@ namespace MainRover
 
         public static void PinConfig()
         {
-            BBBPinManager.AddBusCAN(0);
+            BBBPinManager.AddBusCAN(0, false);
             //BBBPinManager.AddMappingUART(Pins.MTK3339_RX);
             //BBBPinManager.AddMappingUART(Pins.MTK3339_TX);
             //BBBPinManager.AddMappingsI2C(Pins.BNO055_SCL, Pins.BNO055_SDA);
@@ -80,6 +80,8 @@ namespace MainRover
             Parse.SetParseHandler(0x80, (Packet) => StopPackets.Enqueue(Packet, 0));
             Parse.SetParseHandler(0x99, (Packet) => ModePackets.Enqueue(Packet, 0));
             for (byte i = 0x8E; i <= 0x94; i++)
+                Parse.SetParseHandler(i, (Packet) => DrivePackets.Enqueue(Packet, 0));
+            for (byte i = 0x9A; i <= 0x9D; i++)
                 Parse.SetParseHandler(i, (Packet) => DrivePackets.Enqueue(Packet, 0));
             for (byte i = 0x95; i <= 0x97; i++)
                 Parse.SetParseHandler(i, (Packet) => PathPackets.Enqueue(Packet, 0));
