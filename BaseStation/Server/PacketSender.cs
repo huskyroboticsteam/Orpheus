@@ -128,29 +128,29 @@ namespace HuskyRobotics.BaseStation.Server
                         autoTurnSpeed = 0.5f;
                     //----------------------------------------------------
 
-                    float wristArmSpeed = 0.0f;
+                    short wristArmSpeed = 0;
                     if (yPressedArm)
-                        wristArmSpeed = -0.5f;
+                        wristArmSpeed = -64;
                     else if (xPressedArm)
-                        wristArmSpeed = 0.5f;
+                        wristArmSpeed = 64;
 
-                    float elbowArmSpeed = 0.0f;
+                    short elbowArmSpeed = 0;
                     if (bPressedArm)
-                        elbowArmSpeed = -0.5f;
+                        elbowArmSpeed = -64;
                     else if (aPressedArm)
-                        elbowArmSpeed = 0.5f;
+                        elbowArmSpeed = 64;
 
-                    float shoulderArmSpeed = 0.0f;
+                    short shoulderArmSpeed = 0;
                     if (downPressedArm)
-                        shoulderArmSpeed = -1.0f;
+                        shoulderArmSpeed = -64;
                     else if (upPressedArm)
-                        shoulderArmSpeed = 1.0f;
+                        shoulderArmSpeed = 64;
 
-                    float baseArmSpeed = 0.0f;
+                    short baseArmSpeed = 0;
                     if (rightPressedArm)
-                        baseArmSpeed = -0.5f;
+                        baseArmSpeed = -64;
                     else if (leftPressedArm)
-                        baseArmSpeed = 0.5f;
+                        baseArmSpeed = 64;
                     /*
                     // Not being used due to rack and pinion steering not setup
                     Packet SteerPack = new Packet(0x8F, true, "MainRover");
@@ -172,7 +172,7 @@ namespace HuskyRobotics.BaseStation.Server
                     }
                     
                     if (manualMode)
-                    {
+                    {   /*
                         Packet SkidFrontRight = new Packet(0x90, true, "MainRover");
                         SkidFrontRight.AppendData(UtilData.ToBytes((sbyte)Math.Round((skidDriveSpeed - skidSteerSpeed) * 120)));
                         Scarlet.Communications.Server.Send(SkidFrontRight);
@@ -188,7 +188,7 @@ namespace HuskyRobotics.BaseStation.Server
                         Packet SkidRearLeft = new Packet(0x93, true, "MainRover");
                         SkidRearLeft.AppendData(UtilData.ToBytes((sbyte)Math.Round((0 - skidDriveSpeed - skidSteerSpeed) * 120)));
                         Console.WriteLine("Test " + (-skidDriveSpeed - skidSteerSpeed));
-                        Scarlet.Communications.Server.Send(SkidRearLeft);
+                        Scarlet.Communications.Server.Send(SkidRearLeft);*/
 
                         Packet WristPack = new Packet(0x9D, true, "MainRover");
                         WristPack.AppendData(UtilData.ToBytes(wristArmSpeed));

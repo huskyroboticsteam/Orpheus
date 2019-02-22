@@ -147,7 +147,7 @@ namespace MainRover
             {
                 Packet p = DrivePackets.Dequeue();
                 switch ((PacketID)p.Data.ID)
-                {
+                {   /*
                     case PacketID.RPMAllDriveMotors:
                         MotorControl.SetAllRPM((sbyte)p.Data.Payload[0]);
                         break;
@@ -169,7 +169,7 @@ namespace MainRover
                     case PacketID.SpeedAllDriveMotors:
                         float Speed = UtilData.ToFloat(p.Data.Payload);
                         MotorControl.SetAllSpeed(Speed);
-                        break;
+                        break;*/
                     case PacketID.BaseSpeed:
                     case PacketID.ShoulderSpeed:
                     case PacketID.ElbowSpeed:
@@ -183,7 +183,8 @@ namespace MainRover
                         {
                             direction = 0x01;
                         }
-                        UtilCan.SpeedDir(CANBBB.CANBus0, false, 0x02, address, p.Data.Payload[1], direction);
+                        Console.WriteLine("ADDRESS :" + address + "DIR :" + direction + "PAY :" + p.Data.Payload[1]);
+                        UtilCan.SpeedDir(CANBBB.CANBus0, false, 2, address, p.Data.Payload[1], direction);
                         break;
                 }
             }
@@ -271,9 +272,10 @@ namespace MainRover
             Quit = false;
             InitBeagleBone();
             SetupClient();
-            MotorControl.Initialize();
+            //MotorControl.Initialize();
             MotorBoards.Initialize(CANBBB.CANBus0);
             int count = 0;
+            Console.WriteLine("Finished the initalize");
             do
             {
                 SendSensorData(count);
