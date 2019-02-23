@@ -225,7 +225,7 @@ namespace MainRover
                         Packet HeadingFromGPSPack = new Packet((byte)PacketID.HeadingFromGPS, true);
                         //Math between two coords given from Tup and previousCoords
                         float latDiff = Lat - previousCoords.Item1;
-                        float longDiff = Long - previousCoords.Item1;
+                        float longDiff = Long - previousCoords.Item2;
                         float theta = (float)Math.Atan2(latDiff, longDiff);
                         if (longDiff > 0)
                         {
@@ -233,7 +233,7 @@ namespace MainRover
                         }
                         else if(longDiff < 0)
                         {
-                            theta = 270 -theta;
+                            theta = 270 - theta;
                         }
                         HeadingFromGPSPack.AppendData(UtilData.ToBytes(theta));
                         Client.SendNow(HeadingFromGPSPack);
