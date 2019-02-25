@@ -81,7 +81,7 @@ namespace MainRover
             Parse.SetParseHandler(0x99, (Packet) => ModePackets.Enqueue(Packet, 0));
             for (byte i = 0x8E; i <= 0x94; i++)
                 Parse.SetParseHandler(i, (Packet) => DrivePackets.Enqueue(Packet, 0));
-            for (byte i = 0x9A; i <= 0x9D; i++)
+            for (byte i = 0x9A; i <= 0xA1; i++)
                 Parse.SetParseHandler(i, (Packet) => DrivePackets.Enqueue(Packet, 0));
             for (byte i = 0x95; i <= 0x97; i++)
                 Parse.SetParseHandler(i, (Packet) => PathPackets.Enqueue(Packet, 0));
@@ -143,33 +143,42 @@ namespace MainRover
 
         public static void ProcessBasePackets()
         {
+            
             for (int i = 0; !DrivePackets.IsEmpty() && i < NUM_PACKETS_TO_PROCESS; i++)
             {
                 Packet p = DrivePackets.Dequeue();
                 switch ((PacketID)p.Data.ID)
-                {   /*
-                    case PacketID.RPMAllDriveMotors:
-                        MotorControl.SetAllRPM((sbyte)p.Data.Payload[0]);
-                        break;
+                {   
+                    //case PacketID.RPMAllDriveMotors:
+                    //    MotorControl.SetAllRPM((sbyte)p.Data.Payload[0]);
+                    //    break;
                     case PacketID.RPMFrontRight:
                     case PacketID.RPMFrontLeft:
                     case PacketID.RPMBackRight:
                     case PacketID.RPMBackLeft:
-                        int MotorID = p.Data.ID - (byte)PacketID.RPMFrontRight;
-                        MotorControl.SetRPM(MotorID, (sbyte)p.Data.Payload[1]);
+                        uint MotorID = p.Data.ID - (uint)PacketID.RPMFrontRight + 1;
+                        byte[] SpeedArray = UtilData.ToBytes((sbyte)p.Data.Payload[1]);
+                        //Console.WriteLine("CANID = " + MotorID + " Speed: " + (sbyte)p.Data.Payload[1]);
+
+                        //CANBBB.CANBus0.Write(((byte)3 << 8) | MotorID, SpeedArray);
+                        //CANBBB.CANBus0.Write(MotorID, SpeedArray);
+                        
                         break;
-                    case PacketID.RPMSteeringMotor:
-                        float SteerSpeed = UtilData.ToFloat(p.Data.Payload);
-                        //MotorControl.SetSteerSpeed(SteerSpeed);
-                        break;
-                    case PacketID.SteerPosition:
-                        float Position = UtilData.ToFloat(p.Data.Payload);
-                        //MotorControl.SetRackAndPinionPosition(Position);
-                        break;
-                    case PacketID.SpeedAllDriveMotors:
-                        float Speed = UtilData.ToFloat(p.Data.Payload);
-                        MotorControl.SetAllSpeed(Speed);
-                        break;*/
+                    //    int MotorID = p.Data.ID - (byte)PacketID.RPMFrontRight;
+                    //    MotorControl.SetRPM(MotorID, (sbyte)p.Data.Payload[1]);
+                    //    break;
+                    //case PacketID.RPMSteeringMotor:
+                    //    float SteerSpeed = UtilData.ToFloat(p.Data.Payload);
+                    //    //MotorControl.SetSteerSpeed(SteerSpeed);
+                    //    break;
+                    //case PacketID.SteerPosition:
+                    //    float Position = UtilData.ToFloat(p.Data.Payload);
+                    //    //MotorControl.SetRackAndPinionPosition(Position);
+                    //    break;
+                    //case PacketID.SpeedAllDriveMotors:
+                    //    float Speed = UtilData.ToFloat(p.Data.Payload);
+                    //    MotorControl.SetAllSpeed(Speed);
+                    //    break;
                     case PacketID.BaseSpeed:
                     case PacketID.ShoulderSpeed:
                     case PacketID.ElbowSpeed:
@@ -182,9 +191,17 @@ namespace MainRover
                         if (p.Data.Payload[0] > 0)
                         {
                             direction = 0x01;
+                            UtilCan.SpeedDir(CANBBB.CANBus0, false, 2, address, (byte)(-p.Data.Payload[1]), direction);
+                            Console.WriteLine("ADDRESS :" + address + "DIR :" + direction + "PAY :" + (byte)(-p.Data.Payload[1]));
                         }
-                        Console.WriteLine("ADDRESS :" + address + "DIR :" + direction + "PAY :" + p.Data.Payload[1]);
-                        UtilCan.SpeedDir(CANBBB.CANBus0, false, 2, address, p.Data.Payload[1], direction);
+                        else
+                        {
+                            direction = 0x00;
+                            UtilCan.SpeedDir(CANBBB.CANBus0, false, 2, address, p.Data.Payload[1], direction);
+                            Console.WriteLine("ADDRESS :" + address + "DIR :" + direction + "PAY :" + p.Data.Payload[1]);
+                        }
+                        
+                     
                         break;
                 }
             }
@@ -278,6 +295,7 @@ namespace MainRover
             Console.WriteLine("Finished the initalize");
             do
             {
+                Console.WriteLine("Looping");
                 SendSensorData(count);
                 ProcessInstructions();
                 Thread.Sleep(50);
