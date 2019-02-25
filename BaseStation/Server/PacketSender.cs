@@ -18,7 +18,7 @@ namespace HuskyRobotics.BaseStation.Server
         //private static readonly int RightThumbDeadzone = 8689;
         private static readonly int JoystickTreshold = 8000;
         private static readonly int TriggerThreshold = 30;
-        private const long CONTROL_SEND_INTERVAL_NANOSECONDS = 100_000_000; //100,000,000 ns == 100 ms
+        private const long CONTROL_SEND_INTERVAL_NANOSECONDS = 200_000_000; //100,000,000 ns == 100 ms
         private static long lastControlSend = 0;
         private static bool manualMode = true;
 
@@ -73,6 +73,8 @@ namespace HuskyRobotics.BaseStation.Server
                     float speed = (float)UtilMain.LinearMap(rightTrigger - leftTrigger, -255, 255, -1, 1);
                     float steerPos = (float)UtilMain.LinearMap(leftThumbX, -32768, 32767, -1, 1);
 
+                   
+
                     bool manualDrive = (driveState.Gamepad.Buttons & GamepadButtonFlags.LeftShoulder) != 0;
                     bool autoDrive = (driveState.Gamepad.Buttons & GamepadButtonFlags.RightShoulder) != 0;
 
@@ -90,6 +92,19 @@ namespace HuskyRobotics.BaseStation.Server
                     bool downPressedArm = (armState.Gamepad.Buttons & GamepadButtonFlags.DPadDown) != 0;
                     bool leftPressedArm = (armState.Gamepad.Buttons & GamepadButtonFlags.DPadLeft) != 0;
                     bool rightPressedArm = (armState.Gamepad.Buttons & GamepadButtonFlags.DPadRight) != 0;
+
+                    //------------------------------------------------------------------------------------------===
+                    // Rover skid steering turn (uses x axis on right joystick)
+                    short diffHorz = driveState.Gamepad.RightThumbX;
+                    if (diffHorz > -JoystickTreshold && diffHorz < JoystickTreshold) { diffHorz = 0; }
+                    short diffHorzShort = (short)UtilMain.LinearMap(diffHorz, -32768, 32767, -128, 128);
+                    //if (Math.Abs(diffHorzShort) < 1) { diffHorzShort = 0; }
+
+                    // Rover skid steering speed (uses y axis on right joystick)
+                    short diffVert = driveState.Gamepad.RightThumbY;
+                    if (diffVert > -JoystickTreshold && diffVert < JoystickTreshold) { diffVert = 0; }
+                    short diffVertShort = (short)UtilMain.LinearMap(diffVert, -32768, 32767, -128, 128);
+                    //------------------------------------------------------------------------------------------===
 
                     // Rover skid steering turn (uses x axis on right joystick)
                     short skidSteer = driveState.Gamepad.RightThumbX;
@@ -172,7 +187,8 @@ namespace HuskyRobotics.BaseStation.Server
                     }
                     
                     if (manualMode)
-                    {   /*
+                    {
+                        /*
                         Packet SkidFrontRight = new Packet(0x90, true, "MainRover");
                         SkidFrontRight.AppendData(UtilData.ToBytes((sbyte)Math.Round((skidDriveSpeed - skidSteerSpeed) * 120)));
                         Scarlet.Communications.Server.Send(SkidFrontRight);
@@ -188,7 +204,16 @@ namespace HuskyRobotics.BaseStation.Server
                         Packet SkidRearLeft = new Packet(0x93, true, "MainRover");
                         SkidRearLeft.AppendData(UtilData.ToBytes((sbyte)Math.Round((0 - skidDriveSpeed - skidSteerSpeed) * 120)));
                         Console.WriteLine("Test " + (-skidDriveSpeed - skidSteerSpeed));
-                        Scarlet.Communications.Server.Send(SkidRearLeft);*/
+                        Scarlet.Communications.Server.Send(SkidRearLeft);
+                        */
+
+                        Packet DiffHorzPack = new Packet(0x9F, true, "MainRover");
+                        DiffHorzPack.AppendData(UtilData.ToBytes((short)(diffVertShort + diffHorzShort)));
+                        Scarlet.Communications.Server.Send(DiffHorzPack);
+
+                        Packet DiffVertPack = new Packet(0x9E, true, "MainRover");
+                        DiffVertPack.AppendData(UtilData.ToBytes((short)(-diffVertShort + diffHorzShort)));
+                        Scarlet.Communications.Server.Send(DiffVertPack);
 
                         Packet WristPack = new Packet(0x9D, true, "MainRover");
                         WristPack.AppendData(UtilData.ToBytes(wristArmSpeed));
