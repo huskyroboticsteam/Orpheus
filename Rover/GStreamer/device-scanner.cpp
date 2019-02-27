@@ -4,50 +4,18 @@
 #include <gst/gst.h>
 #include <unistd.h>
 
+#ifdef DEBUG
 void structure_fields(const GstStructure *device) 
 {
   gint n_fields = gst_structure_n_fields(device);
   for (int i = 0; i < n_fields; i++) 
   {
-    //const gchar *name;
-    //name = gst_structure_nth_field_name(device, i);
-    //g_print("%s:\n%s\n", name, gst_structure_get_string(device, name));
+    const gchar *name;
+    name = gst_structure_nth_field_name(device, i);
+    g_print("%s:\n%s\n", name, gst_structure_get_string(device, name));
   }
 }
-
-gboolean bus_func (GstBus *bus, GstMessage *message, gpointer user_data)
-{
-   GstDevice *devi;
-   gchar *name;
-
-   switch (GST_MESSAGE_TYPE (message)) 
-   {
-     case GST_MESSAGE_DEVICE_ADDED:
-       GstStructure *type;
-
-       gst_message_parse_device_added (message, &devi);
-       name = gst_device_get_display_name (devi);
-       type = gst_device_get_properties(devi);
-       g_print("Device added: %s\n", name);
-       g_free (name);
-       g_print("Device path: %s\n", gst_structure_get_string(type, "device.path"));
-       structure_fields(type);
-       gst_structure_free(type);
-       gst_object_unref (devi);
-       break;
-     case GST_MESSAGE_DEVICE_REMOVED:
-       gst_message_parse_device_removed (message, &devi);
-       name = gst_device_get_display_name (devi);
-       g_print("Device removed: %s\n", name);
-       g_free (name);
-       gst_object_unref (devi);
-       break;
-     default:
-       break;
-   }
-
-   return G_SOURCE_CONTINUE;
-}
+#endif
 
 GstDeviceMonitor *device_monitor(void) 
 {
@@ -62,7 +30,7 @@ GstDeviceMonitor *device_monitor(void)
   bus = gst_device_monitor_get_bus (monitor);
   gst_object_unref (bus);
 
-  // adds a filter for the devices seen
+  // adds a filter to scan for only video devices
   caps = gst_caps_new_empty_simple ("video/x-raw");
   gst_device_monitor_add_filter (monitor, "Video/Source", caps);
   gst_caps_unref (caps);
@@ -76,34 +44,39 @@ int main(int argc, char *argv[])
 {
   GstDeviceMonitor *monitor;
   GList *dev;
+  GMainLoop *loop;
   gst_init(&argc, &argv);
 
-  // set the monitor
+  // create the monitor
   monitor = device_monitor();
   dev = gst_device_monitor_get_devices(monitor);
   
   // loop for the lists
   GList *cur = g_list_first(dev);
-  int port = 8554;
   while(cur != NULL) 
   {
     GstDevice * devi = (GstDevice *) cur->data;
     GstStructure * type = gst_device_get_properties(devi);
+
+#ifdef DEBUG
     structure_fields(type);
+#endif
+
     int mypid = fork();	
     if(mypid == 0)
     {
       const char * name = gst_device_get_display_name(devi);
       const char * path = gst_structure_get_string(type, "device.path");
-      char buffer[5];
-      sprintf(buffer, "%d", port);
       g_print("Starting process for %s camera at %s\n", name, path);
-      int ret = execl("./server", argv[0], name, path, buffer, NULL);
+      int ret = execl("./server", argv[0], name, path, NULL);
       return ret; // Shouldn't reach this line
     }
-    port += 1;
     cur = g_list_next(cur);
   }
+
+  loop = g_main_loop_new(NULL, FALSE);
+  g_main_loop_run(loop);
+  g_main_loop_unref(loop);
 
   return 0;
 }

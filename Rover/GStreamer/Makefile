@@ -8,12 +8,19 @@ SERVER= server
 
 all: $(DEV) $(SERVER)
 
+debug: $(DEV)_debug $(SERVER)_debug
+
 server: $(HEADERS) $(SERVER).cpp
 	$(CPP) $(SERVER).cpp -o $(SERVER) $(GSFLAGS) $(CFLAGS)
 	
-
 device-scanner: $(HEADERS) $(DEV).cpp
 	$(CPP) $(DEV).cpp -o $(DEV) $(GSFLAGS) $(CFLAGS)
+
+server_debug: $(HEADERS) $(SERVER).cpp
+	$(CPP) -D DEBUG $(SERVER).cpp -o $(SERVER) $(GSFLAGS) $(CFLAGS)
+	
+device-scanner_debug: $(HEADERS) $(DEV).cpp
+	$(CPP) -D DEBUG $(DEV).cpp -o $(DEV) $(GSFLAGS) $(CFLAGS)
 
 clean:
 	rm $(DEV) $(SERVER)

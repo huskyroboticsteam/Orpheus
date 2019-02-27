@@ -3,13 +3,14 @@
 #include <unordered_map>
 #include <string>
 #include <vector>
+#include <cstring>
 
 using namespace std;
 
-unordered_map<string, tuple<const char*, int, int, float>> table;
+unordered_map<string, tuple<const char*, int, int, float, const char*>> table;
 
 char *
-construct_pipeline(char * devpath, int width, int height, float scale)
+construct_pipeline(char * devpath, const char * input_type, int width, int height, float scale)
 {
   char * output = (char *) malloc(1024);
   char width_str[5];
@@ -25,7 +26,15 @@ construct_pipeline(char * devpath, int width, int height, float scale)
   sprintf(scaled_width_str, "%d", scaled_width);
   sprintf(scaled_height_str, "%d", scaled_height);
 
-  sprintf(output, "( v4l2src device='%s' ! 'video/x-raw, format=I420, width=%s, height=%s' ! videoconvert ! 'video/x-raw, format=I420, width=%s, height=%s' ! rtpvrawpay name=pay0 pt=96 )", devpath, width_str, height_str, scaled_width_str, scaled_height_str);
+  if (strcmp(input_type, "I420") != 0)
+  {
+    sprintf(output, "v4l2src device=%s ! video/x-raw, format=%s, width=%s, height=%s ! videoconvert ! video/x-raw, format=I420, width=%s, height=%s ! videoscale ! video/x-raw, format=I420, width=%s, height=%s ! rtpvrawpay name=pay0 pt=96", devpath, input_type, width_str, height_str, width_str, height_str, scaled_width_str, scaled_height_str);
+  }
+  else
+  {
+    sprintf(output, "v4l2src device=%s ! video/x-raw, format=I420, width=%s, height=%s ! videoscale ! video/x-raw, format=I420, width=%s, height=%s ! rtpvrawpay name=pay0 pt=96", devpath, width_str, height_str, scaled_width_str, scaled_height_str);
+  }
+
 
   return output;
 }
@@ -33,7 +42,7 @@ construct_pipeline(char * devpath, int width, int height, float scale)
 void
 setup_map()
 {
-  table["ZED"] = make_tuple("5556", 3840, 1080, 0.25f);
+  table["ZED"] = make_tuple("5556", 4416, 1242, 0.25f, "YUY2");
 }
 
 int
@@ -48,12 +57,12 @@ main (int argc, char *argv[])
   const char * port;
   char * pipeline;
   setup_map();
+  gst_init(&argc, &argv);
   
-  if (argc == 4) 
+  if (argc == 3) 
   {
     devname = argv[1];
     devpath = argv[2];
-    port = argv[3];
     if (table.count(devname) == 0)
     {
       g_print("%s@%s No pipeline found; provide pipeline argument\n", devname, devpath);
@@ -61,7 +70,7 @@ main (int argc, char *argv[])
     }
     else
     {
-      pipeline = construct_pipeline(devpath, get<1>(table.at(devname)), get<2>(table.at(devname)), get<3>(table.at(devname)));
+      pipeline = construct_pipeline(devpath, get<4>(table.at(devname)), get<1>(table.at(devname)), get<2>(table.at(devname)), get<3>(table.at(devname)));
       port = get<0>(table.at(devname));
     }
   } 
@@ -77,6 +86,8 @@ main (int argc, char *argv[])
     g_print("Usage ./serve <device name> <device path> <rtsp port> <pipeline>\n");
     return -1;
   }
+
+  g_print("%s\n", pipeline);
 
   loop = g_main_loop_new (NULL, FALSE);
 
@@ -108,6 +119,7 @@ main (int argc, char *argv[])
   /* start serving */
   g_print ("%s@%s: stream ready at rtsp://127.0.0.1:%s/test\n", devname, devpath, port);
   g_main_loop_run (loop);
+  g_main_loop_unref(loop);
 
   return 0;
 }
