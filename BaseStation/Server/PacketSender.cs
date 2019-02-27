@@ -142,6 +142,13 @@ namespace HuskyRobotics.BaseStation.Server
                     if (aPressedAuto)
                         autoTurnSpeed = 0.5f;
                     //----------------------------------------------------
+                    short fingerSpeed = 0;
+                    if (rightTrigger > 0)
+                        fingerSpeed = 128;
+                    else if (leftTrigger > 0)
+                        fingerSpeed = -128;
+                    
+
 
                     short wristArmSpeed = 0;
                     if (yPressedArm)
@@ -151,21 +158,21 @@ namespace HuskyRobotics.BaseStation.Server
 
                     short elbowArmSpeed = 0;
                     if (bPressedArm)
-                        elbowArmSpeed = -64;
-                    else if (aPressedArm)
                         elbowArmSpeed = 64;
+                    else if (aPressedArm)
+                        elbowArmSpeed = -64;
 
                     short shoulderArmSpeed = 0;
                     if (downPressedArm)
-                        shoulderArmSpeed = -64;
+                        shoulderArmSpeed = -94;
                     else if (upPressedArm)
-                        shoulderArmSpeed = 64;
+                        shoulderArmSpeed = 94;
 
                     short baseArmSpeed = 0;
                     if (rightPressedArm)
-                        baseArmSpeed = -64;
-                    else if (leftPressedArm)
                         baseArmSpeed = 64;
+                    else if (leftPressedArm)
+                        baseArmSpeed = -64;
                     /*
                     // Not being used due to rack and pinion steering not setup
                     Packet SteerPack = new Packet(0x8F, true, "MainRover");
@@ -206,6 +213,10 @@ namespace HuskyRobotics.BaseStation.Server
                         Console.WriteLine("Test " + (-skidDriveSpeed - skidSteerSpeed));
                         Scarlet.Communications.Server.Send(SkidRearLeft);
                         */
+
+                        Packet FingerPack = new Packet(0xA0, true, "MainRover");
+                        FingerPack.AppendData(UtilData.ToBytes((short)fingerSpeed));
+                        Scarlet.Communications.Server.Send(FingerPack);
 
                         Packet DiffHorzPack = new Packet(0x9F, true, "MainRover");
                         DiffHorzPack.AppendData(UtilData.ToBytes((short)(diffVertShort + diffHorzShort)));
