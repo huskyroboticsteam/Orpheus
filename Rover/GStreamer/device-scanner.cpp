@@ -61,13 +61,12 @@ int main(int argc, char *argv[])
 #ifdef DEBUG
     structure_fields(type);
 #endif
-
-    int mypid = fork();	
+    const char * name = gst_device_get_display_name(devi);
+    const char * path = gst_structure_get_string(type, "device.path");
+    g_print("Device-Scanner > Starting process for %s camera at %s\n", name, path);
+    int mypid = fork();
     if(mypid == 0)
     {
-      const char * name = gst_device_get_display_name(devi);
-      const char * path = gst_structure_get_string(type, "device.path");
-      g_print("Starting process for %s camera at %s\n", name, path);
       int ret = execl("./server", argv[0], name, path, NULL);
       return ret; // Shouldn't reach this line
     }

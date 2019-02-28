@@ -59,13 +59,13 @@ main (int argc, char *argv[])
   setup_map();
   gst_init(&argc, &argv);
   
-  if (argc == 3) 
+  if (argc == 3)  // Want to run a predefined camera which is at defined path
   {
     devname = argv[1];
     devpath = argv[2];
     if (table.count(devname) == 0)
     {
-      g_print("%s@%s No pipeline found; provide pipeline argument\n", devname, devpath);
+      g_print("%s@%s > No pipeline found; provide pipeline argument\n", devname, devpath);
       return -1;
     }
     else
@@ -74,7 +74,7 @@ main (int argc, char *argv[])
       port = get<0>(table.at(devname));
     }
   } 
-  else if (argc == 5)
+  else if (argc == 5) // Likely from command line where everything is defined as an argument
   { 
     devname = argv[1];
     devpath = argv[2];
@@ -108,7 +108,7 @@ main (int argc, char *argv[])
   gst_rtsp_media_factory_set_shared (factory, TRUE);
 
   /* attach the test factory to the /test url */
-  gst_rtsp_mount_points_add_factory (mounts, "/test", factory);
+  gst_rtsp_mount_points_add_factory (mounts, "/feed", factory);
 
   /* don't need the ref to the mapper anymore */
   g_object_unref (mounts);
@@ -117,7 +117,7 @@ main (int argc, char *argv[])
   gst_rtsp_server_attach (server, NULL);
 
   /* start serving */
-  g_print ("%s@%s: stream ready at rtsp://127.0.0.1:%s/test\n", devname, devpath, port);
+  g_print ("%s@%s > stream ready at rtsp://127.0.0.1:%s/test\n", devname, devpath, port);
   g_main_loop_run (loop);
   g_main_loop_unref(loop);
 
