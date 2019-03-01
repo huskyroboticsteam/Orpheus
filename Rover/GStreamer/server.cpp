@@ -10,16 +10,14 @@ using namespace std;
 unordered_map<string, tuple<const char*, int, int, vector<float>*, const char*>> table;
 
 void
-set_launch(GstRTSPServer * server, char * pipeline, const char * index)
+set_launch(GstRTSPServer * server, GstRTSPMediaFactory *factory, char * pipeline, const char * index)
 {
   GstRTSPMountPoints *mounts;
-  GstRTSPMediaFactory *factory;
  
   /* get the mount points for this server, every server has a default object
    * that be used to map uri mount points to media factories */
   mounts = gst_rtsp_server_get_mount_points (server);
 
-  factory = gst_rtsp_media_factory_new ();
   gst_rtsp_media_factory_set_launch (factory, pipeline);
   gst_rtsp_media_factory_set_shared (factory, TRUE);
 
@@ -36,26 +34,17 @@ char *
 construct_pipeline(char * devpath, const char * input_type, int width, int height, float scale)
 {
   char * output = (char *) malloc(1024);
-  char width_str[5];
-  char height_str[5];
-  char scaled_width_str[5];
-  char scaled_height_str[5];
 
   int scaled_width = width * scale;
   int scaled_height = height * scale;
 
-  sprintf(width_str, "%d", width);
-  sprintf(height_str, "%d", height);
-  sprintf(scaled_width_str, "%d", scaled_width);
-  sprintf(scaled_height_str, "%d", scaled_height);
-
   if (strcmp(input_type, "I420") != 0)
   {
-    sprintf(output, "intervideosrc ! video/x-raw, format=%s, width=%s, height=%s ! videoconvert ! video/x-raw, format=I420, width=%s, height=%s ! videoscale ! video/x-raw, format=I420, width=%s, height=%s ! rtpvrawpay name=pay0 pt=96", input_type, width_str, height_str, width_str, height_str, scaled_width_str, scaled_height_str);
+    snprintf(output, 1024, "intervideosrc ! video/x-raw, format=%s, width=%d, height=%d ! videoconvert ! video/x-raw, format=I420, width=%d, height=%d ! videoscale ! video/x-raw, format=I420, width=%d, height=%d ! rtpvrawpay name=pay0 pt=96", input_type, width, height, width, height, scaled_width, scaled_height);
   }
   else
   {
-    sprintf(output, "intervideosrc ! video/x-raw, format=I420, width=%s, height=%s ! videoscale ! video/x-raw, format=I420, width=%s, height=%s ! rtpvrawpay name=pay0 pt=96", width_str, height_str, scaled_width_str, scaled_height_str);
+    sprintf(output, 1024, "intervideosrc ! video/x-raw, format=I420, width=%d, height=%d ! videoscale ! video/x-raw, format=I420, width=%d, height=%d ! rtpvrawpay name=pay0 pt=96", width height, scaled_width, scaled_height);
   }
 
 
@@ -78,8 +67,8 @@ main (int argc, char *argv[])
   GMainLoop *loop;
   GstElement *inputpipe;
   GstRTSPServer *server;
-  char * devname;
-  char * devpath;
+  const char * devname;
+  const char * devpath;
   const char * port;
   vector<char *> pipelines;
   setup_map();
@@ -97,8 +86,7 @@ main (int argc, char *argv[])
     else
     {
       string input = "v4l2src device=";
-      input += devpath;
-      input += " ! intervideosink";
+      input += devpath + " ! intervideosink";
       GstElement * inputpipe = gst_parse_launch(input.c_str(), NULL);
       int ret = gst_element_set_state(inputpipe, GST_STATE_PLAYING);
 
@@ -106,9 +94,12 @@ main (int argc, char *argv[])
       {
         exit(-1);
       }
+      else
+      {
+        g_print("%s@%s > Opened camera successfully\n", devname, devpath)
+      }
 
       tuple<const char*, int, int, vector<float>*, const char*> item = table.at(devname);
-      g_print("Hello");
       for (int i = 0; i < (int) get<3>(item)->size(); i++)
       {
         pipelines.push_back(construct_pipeline(devpath, get<4>(item), get<1>(item), get<2>(item), (*(get<3>(item)))[i]));
@@ -143,9 +134,11 @@ main (int argc, char *argv[])
    * gst-launch syntax to create pipelines.
    * any launch line works as long as it contains elements named pay%d. Each
    * element with pay%d names will be a stream */
+  vector<GstRTSPMediaFactory *> factories;
   for (int i = 0; i < (int) pipelines.size(); i++)
   {
-    set_launch(server, pipelines[i], to_string(i).c_str());  
+    factories.push_back(gst_rtsp_media_factory_new());
+    set_launch(server, factories.back(), pipelines[i], to_string(i).c_str());  
     g_print ("%s@%s > stream ready at rtsp://127.0.0.1:%s/feed%d\n", devname, devpath, port, i);
   }
 
