@@ -21,6 +21,7 @@ namespace HuskyRobotics.BaseStation.Server
         private const long CONTROL_SEND_INTERVAL_NANOSECONDS = 200_000_000; //100,000,000 ns == 100 ms
         private static long lastControlSend = 0;
         private static bool manualMode = true;
+        private static double scaler = 1.0;
 
         public static event EventHandler<(float, float)> GPSUpdate;
         public static event EventHandler<(double, double)> RFUpdate;
@@ -82,7 +83,7 @@ namespace HuskyRobotics.BaseStation.Server
                     bool aPressedAuto = (driveState.Gamepad.Buttons & GamepadButtonFlags.A) != 0;
                     bool bPressedAuto = (driveState.Gamepad.Buttons & GamepadButtonFlags.B) != 0;
                     //-----------------------------------------------------
-
+                    bool startPressedArm = (armState.Gamepad.Buttons & GamepadButtonFlags.Start) != 0;
                     bool aPressedArm = (armState.Gamepad.Buttons & GamepadButtonFlags.A) != 0;
                     bool bPressedArm = (armState.Gamepad.Buttons & GamepadButtonFlags.B) != 0;
                     bool xPressedArm = (armState.Gamepad.Buttons & GamepadButtonFlags.X) != 0;
@@ -148,31 +149,41 @@ namespace HuskyRobotics.BaseStation.Server
                     else if (leftTrigger > 0)
                         fingerSpeed = -128;
                     
-
+                    if (startPressedArm)
+                    {
+                        if (scaler == 1.0)
+                        {
+                            scaler = 0.25; // precise arm movement
+                        }
+                        else
+                        {
+                            scaler = 1.0; // normal arm movement
+                        }
+                    }
 
                     short wristArmSpeed = 0;
                     if (yPressedArm)
-                        wristArmSpeed = -64;
+                        wristArmSpeed = (short) (-64 * scaler);
                     else if (xPressedArm)
-                        wristArmSpeed = 64;
+                        wristArmSpeed = (short) (64 * scaler);
 
                     short elbowArmSpeed = 0;
                     if (bPressedArm)
-                        elbowArmSpeed = 64;
+                        elbowArmSpeed = (short) (64 * scaler);
                     else if (aPressedArm)
-                        elbowArmSpeed = -64;
+                        elbowArmSpeed = (short)(-64 * scaler);
 
                     short shoulderArmSpeed = 0;
                     if (downPressedArm)
-                        shoulderArmSpeed = -94;
+                        shoulderArmSpeed = (short)(-94 * scaler);
                     else if (upPressedArm)
-                        shoulderArmSpeed = 94;
+                        shoulderArmSpeed = (short)(94 * scaler);
 
                     short baseArmSpeed = 0;
                     if (rightPressedArm)
-                        baseArmSpeed = 64;
+                        baseArmSpeed = (short)(64 * scaler);
                     else if (leftPressedArm)
-                        baseArmSpeed = -64;
+                        baseArmSpeed = (short)(-64 * scaler);
                     /*
                     // Not being used due to rack and pinion steering not setup
                     Packet SteerPack = new Packet(0x8F, true, "MainRover");
