@@ -9,29 +9,8 @@ using namespace std;
 
 unordered_map<string, tuple<const char*, int, int, vector<float>*, const char*>> table;
 
-void
-set_launch(GstRTSPServer * server, GstRTSPMediaFactory *factory, char * pipeline, const char * index)
-{
-  GstRTSPMountPoints *mounts;
- 
-  /* get the mount points for this server, every server has a default object
-   * that be used to map uri mount points to media factories */
-  mounts = gst_rtsp_server_get_mount_points (server);
-
-  gst_rtsp_media_factory_set_launch (factory, pipeline);
-  gst_rtsp_media_factory_set_shared (factory, TRUE);
-
-  /* attach the test factory to the /feed + i url */
-  string attach = "feed";
-  attach += index;
-  gst_rtsp_mount_points_add_factory (mounts, attach.c_str(), factory);
- 
-  /* don't need the ref to the mapper anymore */
-  g_object_unref (mounts); 
-}
-
 char *
-construct_pipeline(char * devpath, const char * input_type, int width, int height, float scale)
+construct_pipeline(const char * devpath, const char * input_type, int width, int height, float scale)
 {
   char * output = (char *) malloc(1024);
 
@@ -44,7 +23,7 @@ construct_pipeline(char * devpath, const char * input_type, int width, int heigh
   }
   else
   {
-    sprintf(output, 1024, "intervideosrc ! video/x-raw, format=I420, width=%d, height=%d ! videoscale ! video/x-raw, format=I420, width=%d, height=%d ! rtpvrawpay name=pay0 pt=96", width height, scaled_width, scaled_height);
+    snprintf(output, 1024, "intervideosrc ! video/x-raw, format=I420, width=%d, height=%d ! videoscale ! video/x-raw, format=I420, width=%d, height=%d ! rtpvrawpay name=pay0 pt=96", width, height, scaled_width, scaled_height);
   }
 
 
@@ -57,15 +36,17 @@ setup_map()
   vector<float> * zedlist = new vector<float>;
   zedlist->push_back(0.25f);
   zedlist->push_back(0.1f);
+  vector<float> * usb2list = new vector<float>;
+  usb2list->push_back(0.25f);
+  usb2list->push_back(0.1f);
   table["ZED"] = make_tuple("5556", 4416, 1242, zedlist, "YUY2");
-  
+  table["USB 2.0 Camera"] = make_tuple("5557", 1920, 1080, usb2list, "YUY2");  
 }
 
 int
 main (int argc, char *argv[])
 {
   GMainLoop *loop;
-  GstElement *inputpipe;
   GstRTSPServer *server;
   const char * devname;
   const char * devpath;
@@ -86,7 +67,8 @@ main (int argc, char *argv[])
     else
     {
       string input = "v4l2src device=";
-      input += devpath + " ! intervideosink";
+      input += devpath;
+      input += " ! intervideosink";
       GstElement * inputpipe = gst_parse_launch(input.c_str(), NULL);
       int ret = gst_element_set_state(inputpipe, GST_STATE_PLAYING);
 
@@ -96,7 +78,7 @@ main (int argc, char *argv[])
       }
       else
       {
-        g_print("%s@%s > Opened camera successfully\n", devname, devpath)
+        g_print("%s@%s > Opened camera successfully\n", devname, devpath);
       }
 
       tuple<const char*, int, int, vector<float>*, const char*> item = table.at(devname);
@@ -130,17 +112,24 @@ main (int argc, char *argv[])
   server = gst_rtsp_server_new ();
   g_object_set (server, "service", port, NULL);
 
-  /* make a media factory for a test stream. The default media factory can use
-   * gst-launch syntax to create pipelines.
-   * any launch line works as long as it contains elements named pay%d. Each
-   * element with pay%d names will be a stream */
-  vector<GstRTSPMediaFactory *> factories;
+  /* get the mount points for this server, every server has a default object
+   * that be used to map uri mount points to media factories */
+  GstRTSPMountPoints * mounts = gst_rtsp_server_get_mount_points (server);
+  char attachment[8];
+
   for (int i = 0; i < (int) pipelines.size(); i++)
-  {
-    factories.push_back(gst_rtsp_media_factory_new());
-    set_launch(server, factories.back(), pipelines[i], to_string(i).c_str());  
-    g_print ("%s@%s > stream ready at rtsp://127.0.0.1:%s/feed%d\n", devname, devpath, port, i);
+  {  
+    GstRTSPMediaFactory * factory = gst_rtsp_media_factory_new ();
+    gst_rtsp_media_factory_set_launch (factory, pipelines[i]);
+    gst_rtsp_media_factory_set_shared (factory, TRUE);
+
+    snprintf(attachment, 8, "/feed%d", i); 
+    gst_rtsp_mount_points_add_factory (mounts, attachment, factory);
+    g_print ("%s@%s: stream ready at rtsp://127.0.0.1:%s/feed%d\n", devname, devpath, port, i);
   }
+  
+  /* don't need the ref to the mapper anymore */
+  g_object_unref (mounts);
 
   /* attach the server to the default maincontext */
   gst_rtsp_server_attach (server, NULL);
@@ -148,6 +137,5 @@ main (int argc, char *argv[])
   /* start serving */
   g_main_loop_run (loop);
   g_main_loop_unref(loop);
-
   return 0;
 }
