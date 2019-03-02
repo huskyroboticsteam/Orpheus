@@ -12,18 +12,18 @@ unordered_map<string, tuple<const char*, int, int, vector<float>*, const char*>>
 char *
 construct_pipeline(const char * devpath, const char * input_type, int width, int height, float scale)
 {
-  char * output = (char *) malloc(1024);
+  char * output = (char *) malloc(512);
 
   int scaled_width = width * scale;
   int scaled_height = height * scale;
 
   if (strcmp(input_type, "I420") != 0)
   {
-    snprintf(output, 1024, "intervideosrc ! video/x-raw, format=%s, width=%d, height=%d ! videoconvert ! video/x-raw, format=I420, width=%d, height=%d ! videoscale ! video/x-raw, format=I420, width=%d, height=%d ! rtpvrawpay name=pay0 pt=96", input_type, width, height, width, height, scaled_width, scaled_height);
+    snprintf(output, 512, "intervideosrc ! video/x-raw, format=%s, width=%d, height=%d ! videoscale ! videoconvert ! video/x-raw, format=I420, width=%d, height=%d ! rtpvrawpay name=pay0 pt=96", input_type, width, height, scaled_width, scaled_height);
   }
   else
   {
-    snprintf(output, 1024, "intervideosrc ! video/x-raw, format=I420, width=%d, height=%d ! videoscale ! video/x-raw, format=I420, width=%d, height=%d ! rtpvrawpay name=pay0 pt=96", width, height, scaled_width, scaled_height);
+    snprintf(output, 512, "intervideosrc ! video/x-raw, format=I420, width=%d, height=%d ! videoscale ! video/x-raw, format=I420, width=%d, height=%d ! rtpvrawpay name=pay0 pt=96", width, height, scaled_width, scaled_height);
   }
 
 
@@ -68,7 +68,7 @@ main (int argc, char *argv[])
     {
       string input = "v4l2src device=";
       input += devpath;
-      input += " ! intervideosink";
+      input += " ! videorate ! video/x-raw, framerate=10/1 ! intervideosink";
       GstElement * inputpipe = gst_parse_launch(input.c_str(), NULL);
       int ret = gst_element_set_state(inputpipe, GST_STATE_PLAYING);
 
