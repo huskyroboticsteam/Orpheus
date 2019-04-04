@@ -6,6 +6,7 @@
 #include <chrono>
 #include <opencv2/opencv.hpp>
 #include <opencv2/features2d.hpp>
+#include <opencv2/highgui.hpp>
 #include <sl/Camera.hpp>
 #include "server.h"
 
@@ -61,7 +62,10 @@ int main(void)
     sl::Mat sl_depth_f32;
 
     cv::VideoWriter writer;
-    writer.open("appsrc ! intervideosink", CAP_GSTREAMER, 0, 10, Size(1144, 592), true);
+    writer.open("appsrc ! autovideoconvert ! intervideosink", cv::CAP_GSTREAMER, 0, 10, cv::Size(1144, 592), true);
+
+    if(!writer.isOpened())
+	printf("\033[7;31mFailed to Open Writer\n\033[0m");
 
     char key = ' ';
     for(char key = ' '; key != 'q'; key = cv::waitKey(10))
