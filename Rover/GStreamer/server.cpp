@@ -44,7 +44,7 @@ setup_map()
 }
 
 int
-main (int argc, char *argv[])
+start_server (int argc, char *argv[])
 {
   GMainLoop *loop;
   GstRTSPServer *server;
@@ -138,4 +138,10 @@ main (int argc, char *argv[])
   g_main_loop_run (loop);
   g_main_loop_unref(loop);
   return 0;
+}
+
+int
+main (int argc, char *argv[]) 
+{
+  return start_server(argc, argv);
 }
