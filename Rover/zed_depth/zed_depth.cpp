@@ -60,6 +60,9 @@ int main(void)
 
     sl::Mat sl_depth_f32;
 
+    cv::VideoWriter writer;
+    writer.open("appsrc ! intervideosink", CAP_GSTREAMER, 0, 10, Size(1144, 592), true);
+
     char key = ' ';
     for(char key = ' '; key != 'q'; key = cv::waitKey(10))
     {
@@ -75,7 +78,7 @@ int main(void)
             std::vector<std::vector<cv::Point> > contours;
 
             cv::Mat img_cv = slMat2cvMat(img_zed);
-
+	    writer.write(img_cv);
 #define TIME std::chrono::duration<float, std::milli>(end - start).count()
 #define NOW std::chrono::high_resolution_clock::now();
             auto start = NOW;
