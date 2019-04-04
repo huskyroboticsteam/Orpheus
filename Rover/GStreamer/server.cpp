@@ -1,3 +1,5 @@
+#include "server.h"
+
 using namespace std;
 
 unordered_map<string, tuple<const char*, int, int, vector<float>*, const char*>> table;

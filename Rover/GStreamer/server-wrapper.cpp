@@ -1,4 +1,3 @@
-#include "server.h"
 #include "server.cpp"
 
 int
