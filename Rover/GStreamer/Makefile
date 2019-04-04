@@ -4,19 +4,19 @@ GSFLAGS= `pkg-config --cflags --libs gstreamer-1.0` -lgstrtspserver-1.0
 HEADERS= 
 OBJS= ricoh.o
 DEV= device-scanner
-SERVER= server
+SERVER= server-wrapper
 
 all: $(DEV) $(SERVER)
 
 debug: $(DEV)_debug $(SERVER)_debug
 
-server: $(HEADERS) $(SERVER).cpp
+server-wrapper: $(HEADERS) $(SERVER).cpp
 	$(CPP) $(SERVER).cpp -o $(SERVER) $(GSFLAGS) $(CFLAGS)
 	
 device-scanner: $(HEADERS) $(DEV).cpp
 	$(CPP) $(DEV).cpp -o $(DEV) $(GSFLAGS) $(CFLAGS)
 
-server_debug: $(HEADERS) $(SERVER).cpp
+server-wrapper_debug: $(HEADERS) $(SERVER).cpp
 	$(CPP) -D DEBUG $(SERVER).cpp -o $(SERVER) $(GSFLAGS) $(CFLAGS)
 	
 device-scanner_debug: $(HEADERS) $(DEV).cpp

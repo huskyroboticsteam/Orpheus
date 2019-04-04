@@ -1,10 +1,3 @@
-#include <gst/gst.h>
-#include <gst/rtsp-server/rtsp-server.h>
-#include <unordered_map>
-#include <string>
-#include <vector>
-#include <cstring>
-
 using namespace std;
 
 unordered_map<string, tuple<const char*, int, int, vector<float>*, const char*>> table;
@@ -138,10 +131,4 @@ start_server (int argc, char *argv[])
   g_main_loop_run (loop);
   g_main_loop_unref(loop);
   return 0;
-}
-
-int
-main (int argc, char *argv[]) 
-{
-  return start_server(argc, argv);
 }
