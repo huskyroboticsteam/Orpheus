@@ -1,0 +1,5 @@
+
+
+#g++ -ggdb -std=c++14 zed_depth.cpp -o zed_depth `pkg-config --cflags --libs opencv` -I/usr/local/zed/include -I/usr/local/cuda/include /usr/local/zed/lib/*.so
+g++ -O3 -std=c++14 zed_depth.cpp -o zed_depth `pkg-config --cflags --libs opencv gstreamer-1.0` -lgstrtspserver-1.0 -I../GStreamer -I/usr/local/zed/include -I/usr/local/cuda/include /usr/local/zed/lib/*.so -march=armv8-a+simd
+#g++ -std=c++14 save_depth.cpp -o save_depth `pkg-config --cflags --libs opencv` -I/usr/local/zed/include -I/usr/local/cuda/include /usr/local/zed/lib/*.so
