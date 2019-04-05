@@ -8,6 +8,7 @@
 #include <opencv2/features2d.hpp>
 #include <opencv2/highgui.hpp>
 #include <sl/Camera.hpp>
+#include <thread>
 #include "server.h"
 
 cv::Mat slMat2cvMat(const sl::Mat &input)
@@ -32,7 +33,7 @@ cv::Mat slMat2cvMat(const sl::Mat &input)
     return cv::Mat(input.getHeight(), input.getWidth(), cv_type, input.getPtr<sl::uchar1>(sl::MEM_CPU));
 }
 
-int main(void)
+int main(int argc, char * argv[])
 {
     sl::InitParameters init_params;
     init_params.camera_resolution = sl::RESOLUTION_HD1080;
@@ -62,8 +63,17 @@ int main(void)
     sl::Mat sl_depth_f32;
 
     cv::VideoWriter writer;
-    writer.open("appsrc ! autovideoconvert ! intervideosink", cv::CAP_GSTREAMER, 0, 10, cv::Size(1144, 592), true);
+    writer.open("appsrc ! autovideoconvert ! video/x-raw,format=I420 ! intervideosink", 0, 10, cv::Size(1144, 592), true);
 
+    const char * args[5];
+    args[0] = argv[0];
+    args[1] = "intervideosrc";
+    args[2] = "zed_depth";
+    args[3] = "8888";
+    args[4] = "intervideosrc ! autovideoconvert ! rtpvrawpay name=pay0 pt=96";
+    std::thread t1(start_server, 5, (char **) args);
+
+    
     if(!writer.isOpened())
 	printf("\033[7;31mFailed to Open Writer\n\033[0m");
 
@@ -82,7 +92,7 @@ int main(void)
             std::vector<std::vector<cv::Point> > contours;
 
             cv::Mat img_cv = slMat2cvMat(img_zed);
-	    writer.write(img_cv);
+            writer << img_cv;
 #define TIME std::chrono::duration<float, std::milli>(end - start).count()
 #define NOW std::chrono::high_resolution_clock::now();
             auto start = NOW;

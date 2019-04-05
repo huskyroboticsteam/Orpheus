@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
     int mypid = fork();
     if(mypid == 0)
     {
-      int ret = execl("./server", argv[0], name, path, NULL);
+      int ret = execl("./server-wrapper", argv[0], name, path, NULL);
       return ret; // Shouldn't reach this line
     }
     cur = g_list_next(cur);

@@ -1,3 +1,10 @@
+#include <gst/gst.h>
+#include <gst/rtsp-server/rtsp-server.h>
+#include <unordered_map>
+#include <string>
+#include <vector>
+#include <cstring>
+
 #include "server.h"
 
 using namespace std;
@@ -110,15 +117,15 @@ start_server (int argc, char *argv[])
   /* get the mount points for this server, every server has a default object
    * that be used to map uri mount points to media factories */
   GstRTSPMountPoints * mounts = gst_rtsp_server_get_mount_points (server);
-  char attachment[8];
+  char attachment[32];
 
-  for (int i = 0; i < (int) pipelines.size(); i++)
+  for (unsigned short i = 0; i < (int) pipelines.size(); i++)
   {  
     GstRTSPMediaFactory * factory = gst_rtsp_media_factory_new ();
     gst_rtsp_media_factory_set_launch (factory, pipelines[i]);
     gst_rtsp_media_factory_set_shared (factory, TRUE);
-
-    snprintf(attachment, 8, "/feed%d", i); 
+    
+    snprintf(attachment, 10, "/feed%hu", i); 
     gst_rtsp_mount_points_add_factory (mounts, attachment, factory);
     g_print ("%s@%s: stream ready at rtsp://127.0.0.1:%s/feed%d\n", devname, devpath, port, i);
   }
