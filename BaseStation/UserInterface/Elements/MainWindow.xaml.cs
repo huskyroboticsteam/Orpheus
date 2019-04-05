@@ -11,6 +11,7 @@ using System.Threading;
 using System.Collections.Generic;
 using System.ComponentModel;
 using HuskyRobotics.UI.VideoStreamer;
+using System.Windows.Media;
 
 namespace HuskyRobotics.UI {
 	/// <summary>
@@ -28,6 +29,7 @@ namespace HuskyRobotics.UI {
             get => WaypointsFile?.Waypoints != null ? WaypointsFile.Waypoints : new ObservableCollection<Waypoint>();
         }
         public ObservableCollection<VideoStream> Streams { get; private set; } = new ObservableCollection<VideoStream>();
+        public bool manualMode = true;
 
         public MainWindow()
         {
@@ -185,7 +187,19 @@ namespace HuskyRobotics.UI {
 
         private void SwitchModes(object sender, EventArgs e)
         {
-
+            if (manualMode)
+            {
+                manualMode = false;
+                ModeLabel.Content = "Autonomous";
+                ModeLabel.Foreground = Brushes.Green;
+            }
+            else
+            {
+                manualMode = true;
+                ModeLabel.Content = "Manual";
+                ModeLabel.Foreground = Brushes.Red;
+            }
+            HuskyRobotics.BaseStation.Server.PacketSender.SwitchMode(manualMode);
         }
 
         private void UpdateSliderValue(object sender, EventArgs e)

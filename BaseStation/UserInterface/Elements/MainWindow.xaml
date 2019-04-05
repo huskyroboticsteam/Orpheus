@@ -66,16 +66,18 @@
                                     <RowDefinition />
                                     <RowDefinition />
                                     <RowDefinition />
+                                    <RowDefinition />
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <Label Grid.Column="0" Grid.Row="0" Content="Mode:"/>
-                                <Label Grid.Column="0" Grid.Row="1" Content="Arm Sensitivity:"/>
-                                <Label Name ="Sensitivty_percentages" Grid.Column="1" Grid.Row="2" Content=""/>
+                                <Label Grid.Column="0" Grid.Row="1" Content="Current Mode:"/>
+                                <Label Grid.Column="0" Grid.Row="2" Content="Arm Sensitivity:"/>
+                                <Label Name ="Sensitivty_percentages" Grid.Column="1" Grid.Row="3" Content=""/>
                                 <Button Name="Swtich_Modes" Grid.Column="1" Grid.Row="0" Content ="Switch Modes" Click="SwitchModes"/>
-                                <Slider Name="Arm_Sensitivity" Grid.Column="1" Grid.Row="1" Value="10" ValueChanged="UpdateSliderValue"/>
+                                <Label Name="ModeLabel" Grid.Column="1" Grid.Row="1" Foreground="Red" Content="Manual"/>
+                                <Slider Name="Arm_Sensitivity" Grid.Column="1" Grid.Row="2" Value="10" ValueChanged="UpdateSliderValue"/>
 
                             </Grid>
                             <Label Content="Waypoints" />

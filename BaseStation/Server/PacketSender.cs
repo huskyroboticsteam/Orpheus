@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace HuskyRobotics.BaseStation.Server
 {
@@ -20,7 +21,8 @@ namespace HuskyRobotics.BaseStation.Server
         private static readonly int TriggerThreshold = 30;
         private const long CONTROL_SEND_INTERVAL_NANOSECONDS = 200_000_000; //100,000,000 ns == 100 ms
         private static long lastControlSend = 0;
-        private static bool manualMode = true;
+        private static bool ManualMode = true;
+        private static bool SendModeChange = false;
         private static double scaler = 1.0;
 
         public static event EventHandler<(float, float)> GPSUpdate;
@@ -54,6 +56,12 @@ namespace HuskyRobotics.BaseStation.Server
             scaler = num;
         }
 
+        public static void SwitchMode (bool manual)
+        {
+            ManualMode = manual;
+            SendModeChange = true;
+        }
+
 		/// <summary>
 		/// Send rover movement control packets.
 		/// </summary>
@@ -62,8 +70,7 @@ namespace HuskyRobotics.BaseStation.Server
         {
 			Controller driveController = GamepadFactory.DriveGamepad;
 			Controller armController = GamepadFactory.ArmGamepad;
-
-			if (SendIntervalElapsed()) {
+            if (SendIntervalElapsed()) {
                 if(driveController.IsConnected && armController.IsConnected) {
                     State driveState = driveController.GetState();
                     State armState = armController.GetState();
@@ -78,12 +85,8 @@ namespace HuskyRobotics.BaseStation.Server
                     
                     float speed = (float)UtilMain.LinearMap(rightTrigger - leftTrigger, -255, 255, -1, 1);
                     float steerPos = (float)UtilMain.LinearMap(leftThumbX, -32768, 32767, -1, 1);
-
-                   
-
-                    bool manualDrive = (driveState.Gamepad.Buttons & GamepadButtonFlags.LeftShoulder) != 0;
-                    bool autoDrive = (driveState.Gamepad.Buttons & GamepadButtonFlags.RightShoulder) != 0;
-
+                                      
+                    
                     //testing values to send for autonomous, remove later
                     bool aPressedAuto = (driveState.Gamepad.Buttons & GamepadButtonFlags.A) != 0;
                     bool bPressedAuto = (driveState.Gamepad.Buttons & GamepadButtonFlags.B) != 0;
@@ -127,6 +130,7 @@ namespace HuskyRobotics.BaseStation.Server
                     if (skidSteer == 0) { skidSteerSpeed = 0; }
                     //Console.WriteLine(skidSteerSpeed + " and " + skidDriveSpeed);
 
+                    /*
                     float modeSet = -1f;
                     if (manualDrive)
                     {
@@ -138,6 +142,12 @@ namespace HuskyRobotics.BaseStation.Server
                         manualMode = false;
                         modeSet = 1f;
                     }
+                    */
+                    float modeSet = 1f;
+                    if (ManualMode)
+                    {
+                        modeSet = 0f;
+                    }                    
 
                     //testing values to send for autonomous, remove later
                     float autoDriveSpeed = 0.0f;
@@ -201,16 +211,17 @@ namespace HuskyRobotics.BaseStation.Server
                     Scarlet.Communications.Server.Send(SpeedPack);
                     Console.WriteLine("Speed: " + speed + " Joystick " + skidDriveSpeed);*/
 
-                    if(modeSet != -1f)
+                    if(SendModeChange)
                     {
                         Console.WriteLine("calling mode changeer");
                         Packet ModePack = new Packet(0x99, true, "MainRover");
                         ModePack.AppendData(UtilData.ToBytes(modeSet));
                         Scarlet.Communications.Server.Send(ModePack);
                         Console.WriteLine("sending switching drive mode: " + modeSet);
+                        SendModeChange = false;
                     }
                     
-                    if (manualMode)
+                    if (ManualMode)
                     {
                         /*
                         Packet SkidFrontRight = new Packet(0x90, true, "MainRover");
