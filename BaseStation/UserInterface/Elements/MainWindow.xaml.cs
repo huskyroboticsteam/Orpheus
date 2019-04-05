@@ -182,5 +182,17 @@ namespace HuskyRobotics.UI {
                 VideoWindows.RemoveAt(i);
             }
         }
+
+        private void SwitchModes(object sender, EventArgs e)
+        {
+
+        }
+
+        private void UpdateSliderValue(object sender, EventArgs e)
+        {
+            double scale = Math.Round(Arm_Sensitivity.Value / 10, 2);
+            HuskyRobotics.BaseStation.Server.PacketSender.SwitchScaler(scale);
+            Sensitivty_percentages.Content = System.Convert.ToString(scale);
+        }
     }
 }

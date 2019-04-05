@@ -49,6 +49,11 @@ namespace HuskyRobotics.BaseStation.Server
             Console.WriteLine(Scarlet.Communications.Server.GetClients());
         }
 
+        public static void SwitchScaler (double num)
+        {
+            scaler = num;
+        }
+
 		/// <summary>
 		/// Send rover movement control packets.
 		/// </summary>
@@ -149,6 +154,7 @@ namespace HuskyRobotics.BaseStation.Server
                     else if (leftTrigger > 0)
                         fingerSpeed = -128;
                     
+                    /*
                     if (startPressedArm)
                     {
                         if (scaler == 1.0)
@@ -159,7 +165,7 @@ namespace HuskyRobotics.BaseStation.Server
                         {
                             scaler = 1.0; // normal arm movement
                         }
-                    }
+                    } */
 
                     short wristArmSpeed = 0;
                     if (yPressedArm)
