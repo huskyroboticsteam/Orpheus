@@ -10,6 +10,28 @@
 #include <sl/Camera.hpp>
 #include <thread>
 #include "server.h"
+#include <glib.h>
+
+cv::Mat slMat2cvMat(const sl::Mat &input);
+sl::Camera zed;
+cv::VideoWriter writer;
+
+void getSomeImages()
+{
+    sl::Resolution image_size = zed.getResolution();
+    int32_t new_width = image_size.width / 2;
+    int32_t new_height = image_size.height / 2;
+    sl::Mat img_zed(new_width, new_height, sl::MAT_TYPE_8U_C4);
+    for(;;)
+    {
+        zed.retrieveImage(img_zed, sl::VIEW_LEFT, sl::MEM_CPU, new_width, new_height);
+        cv::Mat three_channel_bgr;
+        cv::Mat img_cv = slMat2cvMat(img_zed);
+        cv::cvtColor(img_cv, three_channel_bgr, cv::COLOR_BGRA2BGR);
+        writer.write(three_channel_bgr);
+        std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    }
+}
 
 cv::Mat slMat2cvMat(const sl::Mat &input)
 {
@@ -33,14 +55,13 @@ cv::Mat slMat2cvMat(const sl::Mat &input)
     return cv::Mat(input.getHeight(), input.getWidth(), cv_type, input.getPtr<sl::uchar1>(sl::MEM_CPU));
 }
 
-int main(int argc, char * argv[])
+int main(int argc, char *argv[])
 {
     sl::InitParameters init_params;
     init_params.camera_resolution = sl::RESOLUTION_HD1080;
     init_params.depth_mode = sl::DEPTH_MODE_QUALITY;
     init_params.coordinate_units = sl::UNIT_METER;
 
-    sl::Camera zed;
     if(zed.open(init_params) != sl::SUCCESS)
     {
         std::cout << "Failed to open camera.\n";
@@ -62,22 +83,21 @@ int main(int argc, char * argv[])
 
     sl::Mat sl_depth_f32;
 
-    cv::VideoWriter writer;
-    writer.open("appsrc ! autovideoconvert ! video/x-raw,format=I420 ! intervideosink", 0, 10, cv::Size(1144, 592), true);
+    writer.open("appsrc ! video/x-raw,format=BGR ! autovideoconvert ! video/x-raw,format=I420 ! intervideosink", 0, 10, cv::Size(img_zed.getWidth(), img_zed.getHeight()), true);
 
-    const char * args[5];
-    args[0] = argv[0];
-    args[1] = "intervideosrc";
-    args[2] = "zed_depth";
-    args[3] = "8888";
-    args[4] = "intervideosrc ! autovideoconvert ! rtpvrawpay name=pay0 pt=96";
-    std::thread t1(start_server, 5, (char **) args);
-
+    g_server_data data;
+    data.argv[0] = argv[0];
+    data.argv[1] = "intervideosrc";
+    data.argv[2] = "zed_depth";
+    data.argv[3] = "8888";
+    data.argv[4] = "intervideosrc ! autovideoconvert ! rtpvrawpay name=pay0 pt=96";
     
     if(!writer.isOpened())
 	printf("\033[7;31mFailed to Open Writer\n\033[0m");
+    
+    GThread *t1 = g_thread_new("memes", g_start_server, &data);
+    std::thread t2(getSomeImages);
 
-    char key = ' ';
     for(char key = ' '; key != 'q'; key = cv::waitKey(10))
     {
         if(zed.grab(runtime_params) == sl::SUCCESS)
@@ -91,8 +111,10 @@ int main(int argc, char * argv[])
             cv::Mat edges, blur_kern;
             std::vector<std::vector<cv::Point> > contours;
 
+	    //cv::Mat three_channel_bgr;
             cv::Mat img_cv = slMat2cvMat(img_zed);
-            writer << img_cv;
+            //cv::cvtColor(img_cv, three_channel_bgr, cv::COLOR_BGRA2BGR);
+            //writer.write(three_channel_bgr);
 #define TIME std::chrono::duration<float, std::milli>(end - start).count()
 #define NOW std::chrono::high_resolution_clock::now();
             auto start = NOW;
@@ -106,7 +128,7 @@ int main(int argc, char * argv[])
             cv::Canny(img_cv_blur, edges, 100, 200);
             
             auto end = NOW;
-            auto ms = TIME;            
+            auto ms = TIME;
             std::cout << "Preprocessing Time: " << ms << " ms\n";
 
             start = NOW;
@@ -114,7 +136,6 @@ int main(int argc, char * argv[])
             cv::findContours(edges, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
             if(hierarchy.empty())
                 continue;
-  
             // make contours to cv mat
             cv::Mat contour_img(edges.size(), CV_32S);
             cv::Mat contour_img_visible(edges.size(), CV_32S);
@@ -124,7 +145,6 @@ int main(int argc, char * argv[])
             contour_img_visible = 0;
             int idx = 0;
             int comp_count = 0;
-
             for(; idx >= 0; idx = hierarchy[idx][0], comp_count++)
             {
                 cv::drawContours(contour_img, 
@@ -152,7 +172,10 @@ int main(int argc, char * argv[])
             cv::resize(cv_depth_f32, depth_f32, cv::Size(960, 540));
             cv::Mat three_channel_img;
             cv::cvtColor(img_cv_blur, three_channel_img, cv::COLOR_BGRA2BGR);
-            cv::imshow("contours", contour_img_visible);
+
+            cv::Mat bork;
+            contour_img_visible.convertTo(bork, CV_8U, 255);
+            //cv::imshow("contours", bork);
 
             end = NOW;
             ms = TIME;
@@ -235,7 +258,7 @@ int main(int argc, char * argv[])
             std::cout << "Coloring Time: " << ms << " ms\n";
             std::cout << std::endl;
             
-            cv::imshow("watershed", wshed);
+            //cv::imshow("watershed", wshed);
 #if 0
             cv::Mat three_channel;
             cv::cvtColor(depth_img_cv, three_channel, cv::COLOR_BGRA2BGR);
