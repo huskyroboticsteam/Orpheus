@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using HuskyRobotics.UI.VideoStreamer;
 using System.Windows.Media;
+using HuskyRobotics.UI.Elements;
 
 namespace HuskyRobotics.UI {
 	/// <summary>
@@ -113,6 +114,11 @@ namespace HuskyRobotics.UI {
 
                 WaypointNameInput.Text = "";
                 FocusManager.SetFocusedElement(this, WaypointLatInput);
+
+                
+                Tuple<double, double> temp = Tuple.Create( lat, long_ );
+                //HuskyRobotics.BaseStation.Server.PacketSender.coords.Add(temp);
+                //HuskyRobotics.BaseStation.Server.PacketSender.target = temp;
             }
         }
 
@@ -200,6 +206,8 @@ namespace HuskyRobotics.UI {
                 ModeLabel.Foreground = Brushes.Red;
             }
             HuskyRobotics.BaseStation.Server.PacketSender.SwitchMode(manualMode);
+            
+
         }
 
         private void UpdateSliderValue(object sender, EventArgs e)
@@ -207,6 +215,20 @@ namespace HuskyRobotics.UI {
             double scale = Math.Round(Arm_Sensitivity.Value / 10, 2);
             HuskyRobotics.BaseStation.Server.PacketSender.SwitchScaler(scale);
             Sensitivty_percentages.Content = System.Convert.ToString(scale);
+        }
+
+        private void Start_Navigation(object sender, EventArgs e)
+        {
+            double lat = Waypoints.ElementAt(0).Lat;
+            double lon = Waypoints.ElementAt(0).Long;
+            HuskyRobotics.BaseStation.Server.PacketSender.target =Tuple.Create(lat, lon);
+        }
+
+        private void Stop_Navigation(object sender, EventArgs e)
+        {
+            //for testing purposes
+            Notification popup = new Notification();
+            popup.ShowDialog();
         }
     }
 }

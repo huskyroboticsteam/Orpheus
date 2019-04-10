@@ -101,6 +101,9 @@
     <Compile Include="Elements\GamePadView.xaml.cs">
       <DependentUpon>GamePadView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Elements\Notification.xaml.cs">
+      <DependentUpon>Notification.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Map\MapConfiguration.cs" />
     <Compile Include="Elements\MapDisplay.xaml.cs">
       <DependentUpon>MapDisplay.xaml</DependentUpon>
@@ -158,6 +161,10 @@
     <Page Include="Elements\MapDisplay.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Elements\Notification.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Elements\RoverView.xaml">
       <SubType>Designer</SubType>

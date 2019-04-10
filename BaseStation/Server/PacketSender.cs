@@ -28,9 +28,13 @@ namespace HuskyRobotics.BaseStation.Server
         public static event EventHandler<(float, float)> GPSUpdate;
         public static event EventHandler<(double, double)> RFUpdate;
         public static event EventHandler<(float, float, float)> MagnetometerUpdate;
+        public static List<Tuple<double, double>> coords;
+        public static Tuple<double, double> target;
 
         public static void Setup()
         {
+            coords = new List<Tuple<double, double>>();
+            target = Tuple.Create(0.0, 0.0);
 			Log.SetGlobalOutputLevel(Log.Severity.DEBUG);
             Scarlet.Communications.Server.Start(1025, 1026, OperationPeriod:1);
             Scarlet.Communications.Server.ClientConnectionChange += ClientConnected;
@@ -272,6 +276,7 @@ namespace HuskyRobotics.BaseStation.Server
                     }
                     else
                     {
+                        /*
                         Packet SpeedPathPack = new Packet(0x96, true, "MainRover");
                         SpeedPathPack.AppendData(UtilData.ToBytes(skidDriveSpeed));
                         Scarlet.Communications.Server.Send(SpeedPathPack);
@@ -279,10 +284,15 @@ namespace HuskyRobotics.BaseStation.Server
                         Packet TurnPathPack = new Packet(0x97, true, "MainRover");
                         TurnPathPack.AppendData(UtilData.ToBytes(skidSteerSpeed));
                         Scarlet.Communications.Server.Send(TurnPathPack);
+                        */
+
+                        Console.WriteLine("desired location: " + target.Item1 + "   ,   " + target.Item2);
+                       
                     }                    
                     
                 } else {
                     HaltRoverMotion();
+                    Console.WriteLine("desired location: " + target.Item1 + "   ,   " + target.Item2);
                 }
 
                 lastControlSend = TimeNanoseconds();
