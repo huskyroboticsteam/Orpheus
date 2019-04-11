@@ -286,6 +286,10 @@ namespace HuskyRobotics.BaseStation.Server
                         Scarlet.Communications.Server.Send(TurnPathPack);
                         */
 
+                        // TODO 
+                        // Sending desired location to jetson autonomous code should be done in mainwindow.xmal.cs
+                        // in main rover should be in listening mode to read which way to go
+                        // here, it should recieve any updates of its position from the main rover and print out
                         Console.WriteLine("desired location: " + target.Item1 + "   ,   " + target.Item2);
                        
                     }                    

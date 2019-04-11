@@ -48,8 +48,9 @@ namespace HuskyRobotics.UI
         {
             InitializeComponent();
             PacketSender.GPSUpdate += UpdateRoverPosition;
-            _roverIconBitmap = LoadImageFromRelativeFile("Icons/RealRoverIcon.png");
-            _waypointBitmap = LoadImageFromRelativeFile("Icons/waypoint.png");
+            _roverIconBitmap = LoadImageFromRelativeFile("Icons/NewRoverIcon.png");
+            _waypointBitmap = LoadImageFromRelativeFile("Icons/waypoint.png");      
+            
             RoverIcon = new Image { Source = _roverIconBitmap };
         }
 
@@ -137,6 +138,19 @@ namespace HuskyRobotics.UI
             {
                 MapCanvas.Children.Remove(RoverIcon);
                 Tuple<int, int> pixelCoords = MapConversion.LatLongToPixelXY(data.Item1, data.Item2, Zoom);
+
+
+                TransformedBitmap TempImage = new TransformedBitmap();
+
+                TempImage.BeginInit();
+                double degree = 180;
+                int mult = setRotation(degree);
+                RotateTransform transform2 = new RotateTransform(90 * mult);
+                TempImage.Source = _roverIconBitmap; 
+                TempImage.Transform = transform2;
+                TempImage.EndInit();
+                RoverIcon.Source = TempImage;
+
                 var transform = new MatrixTransform(_waypointTransformMatrix);
                 RoverIcon.RenderTransform = transform;
                 Canvas.SetLeft(RoverIcon, pixelCoords.Item1 - CenterPixelX - (_roverIconBitmap.Width / 2));
@@ -144,6 +158,33 @@ namespace HuskyRobotics.UI
                 RoverIcon.ToolTip = data.Item1 + ", " + data.Item2; 
                 MapCanvas.Children.Add(RoverIcon);
             });
+        }
+
+        private int setRotation(double degree)
+        {
+            int ret = 0;
+            int deg = (int)degree;
+
+            while(deg > 90)
+            {
+                deg -= 90;
+                ret += 1;
+            }
+
+            int rem = deg % 10;
+            int degrez = 0;
+            if (rem >= 5) {
+                degrez = deg - rem + 10;
+            }else
+            {
+                degrez = deg - rem;
+            }
+
+
+            string loc = "Icons/pointers/NewRoverIcon" + degrez + ".png";
+            _roverIconBitmap = LoadImageFromRelativeFile(loc);
+
+            return ret;
         }
 
         private void WaypointsChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -157,10 +198,11 @@ namespace HuskyRobotics.UI
             foreach (var waypoint in Waypoints)
             {
                 Tuple<int, int> pixelCoords = MapConversion.LatLongToPixelXY(waypoint.Lat, waypoint.Long, Zoom);
-                var waypointIcon = new Image { Source = _waypointBitmap };
+                var waypointIcon = new Image { Source = _waypointBitmap};
                 waypointIcon.RenderTransform = transform;
                 Canvas.SetLeft(waypointIcon, pixelCoords.Item1 - CenterPixelX - (_waypointBitmap.Width / 2));
                 Canvas.SetTop(waypointIcon, pixelCoords.Item2 - CenterPixelY - (_waypointBitmap.Height / 2));
+               
                 MapCanvas.Children.Add(waypointIcon);
                 waypointIcons.Add(waypointIcon);
             }
