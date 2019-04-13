@@ -1,9 +1,1 @@
-
-
-#g++ -O3 -c ../GStreamer/server.cpp `pkg-config --cflags gstreamer-1.0` -I../GStreamer 
-
-#g++ -O3 -std=c++14 zed_depth.cpp server.o -o zed_depth `pkg-config --cflags --libs opencv4 gstreamer-1.0` -lgstrtspserver-1.0 -I../GStreamer -I/usr/local/zed/include -I/usr/local/cuda/include /usr/local/zed/lib/*.so -march=armv8-a+simd
-
-g++ -ggdb -c ../GStreamer/server.cpp `pkg-config --cflags gstreamer-1.0` -I../GStreamer 
-g++ -ggdb -std=c++14 zed_depth.cpp server.o -o zed_depth `pkg-config --cflags --libs opencv4 gstreamer-1.0` -lgstrtspserver-1.0 -I../GStreamer -I/usr/local/zed/include -I/usr/local/cuda/include /usr/local/zed/lib/*.so -march=armv8-a+simd
-rm server.o
+make

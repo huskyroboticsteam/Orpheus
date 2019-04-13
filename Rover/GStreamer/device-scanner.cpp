@@ -3,6 +3,7 @@
 #include <signal.h>
 #include <gst/gst.h>
 #include <unistd.h>
+#include <cstring>
 
 #ifdef DEBUG
 void structure_fields(const GstStructure *device) 
@@ -67,7 +68,15 @@ int main(int argc, char *argv[])
     int mypid = fork();
     if(mypid == 0)
     {
-      int ret = execl("./server-wrapper", argv[0], name, path, NULL);
+      int ret;
+      if (strcmp(name, "ZED") == 0) 
+      {
+        ret = execl("../zed_depth/zed_depth", argv[0]);
+      }
+      else
+      {
+        ret = execl("./server-wrapper", argv[0], name, path, NULL);
+      }
       return ret; // Shouldn't reach this line
     }
     cur = g_list_next(cur);

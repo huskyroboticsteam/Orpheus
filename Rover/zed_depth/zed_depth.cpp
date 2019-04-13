@@ -14,29 +14,49 @@
 
 cv::Mat slMat2cvMat(const sl::Mat &input);
 sl::Camera zed;
-//cv::VideoWriter writer;
+cv::VideoWriter writer;
+cv::VideoWriter writer_debug;
+int32_t new_width;
+int32_t new_height;
 
 void 
 need_data_callback(GstElement * appsrc, guint unused, MyContext * ctx)
 {
-  printf("Hello\n");  
+  GstBuffer *buffer;
+  guint size;
+  GstFlowReturn ret;
+
+  sl::Mat img_zed(new_width, new_height, sl::MAT_TYPE_8U_C4);
+  zed.retrieveImage(img_zed, sl::VIEW_LEFT, sl::MEM_CPU, new_width, new_height);
+  cv::Mat img_cv = slMat2cvMat(img_zed);
+
+  size = new_width * new_height * 4;
+  buffer = gst_buffer_new_wrapped_full((GstMemoryFlags) 0, img_cv.data, size, 0, size, NULL, NULL);
+
+  GST_BUFFER_PTS(buffer) = ctx->timestamp;
+  GST_BUFFER_DURATION(buffer) = gst_util_uint64_scale_int (1, GST_SECOND, 2);
+
+  ctx->timestamp += GST_BUFFER_DURATION (buffer);
+
+  g_signal_emit_by_name (appsrc, "push-buffer", buffer, &ret);
+
+  gst_buffer_unref(buffer);
 }
 
-void getSomeImages()
+void
+getSomeImages()
 {
-    sl::Resolution image_size = zed.getResolution();
-    int32_t new_width = image_size.width / 2;
-    int32_t new_height = image_size.height / 2;
-    sl::Mat img_zed(new_width, new_height, sl::MAT_TYPE_8U_C4);
-    for(;;)
-    {
-        zed.retrieveImage(img_zed, sl::VIEW_LEFT, sl::MEM_CPU, new_width, new_height);
-        cv::Mat three_channel_bgr;
-        cv::Mat img_cv = slMat2cvMat(img_zed);
-        cv::cvtColor(img_cv, three_channel_bgr, cv::COLOR_BGRA2BGR);
-        //writer.write(three_channel_bgr);
-        std::this_thread::sleep_for(std::chrono::milliseconds(20));
-    }
+  sl::Mat img_zed(new_width, new_height, sl::MAT_TYPE_8U_C4);
+
+  for(;;)
+  {
+    zed.retrieveImage(img_zed, sl::VIEW_LEFT, sl::MEM_CPU, new_width, new_height);
+    cv::Mat three_channel_bgr;
+    cv::Mat img_cv = slMat2cvMat(img_zed);
+    cv::cvtColor(img_cv, three_channel_bgr, cv::COLOR_BGRA2BGR);
+    writer.write(three_channel_bgr);
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
+  }
 }
 
 cv::Mat slMat2cvMat(const sl::Mat &input)
@@ -64,7 +84,7 @@ cv::Mat slMat2cvMat(const sl::Mat &input)
 int main(int argc, char *argv[])
 {
     sl::InitParameters init_params;
-    init_params.camera_resolution = sl::RESOLUTION_HD1080;
+    init_params.camera_resolution = sl::RESOLUTION_VGA;
     init_params.depth_mode = sl::DEPTH_MODE_QUALITY;
     init_params.coordinate_units = sl::UNIT_METER;
 
@@ -78,8 +98,10 @@ int main(int argc, char *argv[])
     runtime_params.sensing_mode = sl::SENSING_MODE_STANDARD;
     runtime_params.enable_point_cloud = false;
     sl::Resolution image_size = zed.getResolution();
-    int32_t new_width = image_size.width / 2;
-    int32_t new_height = image_size.height / 2;
+
+    // scale image ?
+    new_width = image_size.width / 2;
+    new_height = image_size.height / 2;
 
     sl::Mat img_zed(new_width, new_height, sl::MAT_TYPE_8U_C4);
 
@@ -89,21 +111,34 @@ int main(int argc, char *argv[])
 
     sl::Mat sl_depth_f32;
 
-    //writer.open("appsrc name=mysrc ! video/x-raw,format=BGR ! autovideoconvert ! video/x-raw,format=I420 ! intervideosink", 0, 10, cv::Size(img_zed.getWidth(), img_zed.getHeight()), true);
-
     g_server_data data;
     data.argc = 5;
     data.argv[0] = argv[0];
     data.argv[1] = "intervideosrc";
     data.argv[2] = "zed_depth";
     data.argv[3] = "8888";
-    data.argv[4] = "appsrc name=mysrc ! video/x-raw,format=BGR ! autovideoconvert ! video/x-raw,format=I420 ! rtpvrawpay name=pay0 pt=96";
+    //data.argv[4] = "appsrc name=mysrc ! video/x-raw,format=BGRA,width=new_width,height=new_height,framerate=0/1 ! videoconvert ! video/x-raw,format=I420 ! rtpvrawpay name=pay0 pt=96";
+    data.argv[4] = "intervideosrc channel=rgb ! rtpvrawpay name=pay0 pt=96";
     
-    //if(!writer.isOpened())
-//	printf("\033[7;31mFailed to Open Writer\n\033[0m");
-    
-    std::thread t1(start_server, data.argc, (char **) data.argv, need_data_callback);
-    printf("Thread started\n"); 
+    writer.open("appsrc ! video/x-raw,format=BGR ! videoconvert ! video/x-raw,format=I420 ! intervideosink channel=rgb", 0, 10, cv::Size(img_zed.getWidth(), img_zed.getHeight()), true);
+
+    //std::thread t1(start_server, data.argc, (char **) data.argv, need_data_callback);
+    std::thread t1(start_server, data.argc, (char **) data.argv, nullptr);
+
+#ifdef DEBUG
+    g_server_data data2;
+    data2.argc = 5;
+    data2.argv[0] = argv[0];
+    data2.argv[1] = "intervideosrc";
+    data2.argv[2] = "zed_depth_debug";
+    data2.argv[3] = "8889";
+    data2.argv[4] = "intervideosrc channel=wshed ! rtpvrawpay name=pay0 pt=96";
+ 
+    writer_debug.open("appsrc ! video/x-raw,format=BGR ! videoconvert ! video/x-raw,format=I420 ! intervideosink channel=wshed", 0, 10, cv::Size(img_zed.getWidth(), img_zed.getHeight()), true);
+
+    std::thread t3(start_server, data2.argc, (char **) data2.argv, nullptr);
+#endif
+
     std::thread t2(getSomeImages);
 
     for(char key = ' '; key != 'q'; key = cv::waitKey(10))
@@ -119,10 +154,7 @@ int main(int argc, char *argv[])
             cv::Mat edges, blur_kern;
             std::vector<std::vector<cv::Point> > contours;
 
-	    //cv::Mat three_channel_bgr;
             cv::Mat img_cv = slMat2cvMat(img_zed);
-            //cv::cvtColor(img_cv, three_channel_bgr, cv::COLOR_BGRA2BGR);
-            //writer.write(three_channel_bgr);
 #define TIME std::chrono::duration<float, std::milli>(end - start).count()
 #define NOW std::chrono::high_resolution_clock::now();
             auto start = NOW;
@@ -132,7 +164,7 @@ int main(int argc, char *argv[])
             cv::bilateralFilter(img_cv, img_cv_blur, 9, 150.0, 150.0,  cv::BORDER_DEFAULT);
 
             // setup for contours for regular image
-            cv::resize(img_cv_blur, img_cv_blur, cv::Size(960, 540));
+            cv::resize(img_cv_blur, img_cv_blur, cv::Size(new_width, new_height));
             cv::Canny(img_cv_blur, edges, 100, 200);
             
             auto end = NOW;
@@ -177,7 +209,7 @@ int main(int argc, char *argv[])
             // convert to cv mat
             cv::Mat cv_depth_f32 = slMat2cvMat(sl_depth_f32);
             cv::Mat depth_f32;
-            cv::resize(cv_depth_f32, depth_f32, cv::Size(960, 540));
+            cv::resize(cv_depth_f32, depth_f32, cv::Size(new_width, new_height));
             cv::Mat three_channel_img;
             cv::cvtColor(img_cv_blur, three_channel_img, cv::COLOR_BGRA2BGR);
 
@@ -187,7 +219,7 @@ int main(int argc, char *argv[])
 
             end = NOW;
             ms = TIME;
-            std::cout << "Contours Time: " << ms << " ms\n";
+            //std::cout << "Contours Time: " << ms << " ms\n";
 
             start = NOW;
             // watershed the image
@@ -196,7 +228,7 @@ int main(int argc, char *argv[])
 
             end = NOW;
             ms = TIME;
-            std::cout << "Watershed Time: " << ms << " ms\n";
+            //std::cout << "Watershed Time: " << ms << " ms\n";
 
             start = NOW;
             // for each segment in watershed image make color
@@ -228,7 +260,7 @@ int main(int argc, char *argv[])
             }
             end = NOW;
             ms = TIME;
-            std::cout << "Obstacles Time: " << ms << " ms\n";
+            //std::cout << "Obstacles Time: " << ms << " ms\n";
 
             start = NOW;
             // put color in segment
@@ -263,10 +295,13 @@ int main(int argc, char *argv[])
             }
             end = NOW;
             ms = TIME;
-            std::cout << "Coloring Time: " << ms << " ms\n";
-            std::cout << std::endl;
+            //std::cout << "Coloring Time: " << ms << " ms\n";
+            //std::cout << std::endl;
             
             //cv::imshow("watershed", wshed);
+#ifdef DEBUG
+            writer_debug.write(wshed);
+#endif
 #if 0
             cv::Mat three_channel;
             cv::cvtColor(depth_img_cv, three_channel, cv::COLOR_BGRA2BGR);

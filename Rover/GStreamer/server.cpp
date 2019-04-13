@@ -14,7 +14,6 @@ unordered_map<string, tuple<const char*, int, int, vector<float>*, const char*>>
 void
 media_configure (GstRTSPMediaFactory * factory, GstRTSPMedia * media, gpointer user_data)
 {
-  printf("MEDIA_CONFIGURE\n");
   GstElement *element, *appsrc;
   MyContext *ctx;
 
@@ -29,12 +28,10 @@ media_configure (GstRTSPMediaFactory * factory, GstRTSPMedia * media, gpointer u
 
   g_object_set_data_full (G_OBJECT (media), "my-extra-data", ctx, (GDestroyNotify) g_free);
   
-  printf("Connecting need-data\n");
   g_signal_connect (appsrc, "need-data", (GCallback) *(void (**) (GstElement *, guint, MyContext *)) user_data, ctx);
 
   gst_object_unref(appsrc);
   gst_object_unref(element);
-  printf("Configured pipeline\n");
 }
 
 char *
@@ -152,10 +149,8 @@ start_server (int argc, char *argv[], void (*fnc) (GstElement *, guint, MyContex
         gst_rtsp_media_factory_set_shared (factory, TRUE);
         if (fnc != NULL) 
         {
-            g_signal_connect (factory, "media-configure", (GCallback) media_configure, NULL); 
-            printf("Connected configure\n");
+            g_signal_connect (factory, "media-configure", (GCallback) media_configure, &fnc); 
         }
-        printf("%s\n", pipelines[i]);
         snprintf(attachment, 10, "/feed%hu", i); 
         gst_rtsp_mount_points_add_factory (mounts, attachment, factory);
         g_print ("%s@%s: stream ready at rtsp://127.0.0.1:%s/feed%d\n", devname, devpath, port, i);
