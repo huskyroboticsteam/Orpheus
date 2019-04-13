@@ -19,7 +19,7 @@ server: $(HEADERS) ../GStreamer/server.cpp
 zed_depth: $(HEADERS) $(DEPTH).cpp server
 	$(CPP) -O3 $(DEPTH).cpp -o $(DEPTH) server.o $(GSFLAGS) $(CVFLAGS) $(CFLAGS) $(INCLUDES) $(LIBS)
 	
-zed_depth_debug: $(HEADERS) $(SERVER).cpp server
+zed_depth_debug: $(HEADERS) $(DEPTH).cpp server
 	$(CPP) -ggdb -D DEBUG $(DEPTH).cpp -o $(DEPTH) server.o $(GSFLAGS) $(CVFLAGS) $(CFLAGS) $(INCLUDES) $(LIBS)
 	
 clean:
