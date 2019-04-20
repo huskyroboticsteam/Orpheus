@@ -11,6 +11,8 @@ using System.Threading;
 using System.Collections.Generic;
 using System.ComponentModel;
 using HuskyRobotics.UI.VideoStreamer;
+using System.Windows.Media;
+using HuskyRobotics.UI.Elements;
 
 namespace HuskyRobotics.UI {
 	/// <summary>
@@ -28,6 +30,9 @@ namespace HuskyRobotics.UI {
             get => WaypointsFile?.Waypoints != null ? WaypointsFile.Waypoints : new ObservableCollection<Waypoint>();
         }
         public ObservableCollection<VideoStream> Streams { get; private set; } = new ObservableCollection<VideoStream>();
+        public bool manualMode = true;
+        public double gLat = 0.0;
+        public double gLon = 0.0;
 
         public MainWindow()
         {
@@ -111,6 +116,11 @@ namespace HuskyRobotics.UI {
 
                 WaypointNameInput.Text = "";
                 FocusManager.SetFocusedElement(this, WaypointLatInput);
+
+                
+                Tuple<double, double> temp = Tuple.Create( lat, long_ );
+                //HuskyRobotics.BaseStation.Server.PacketSender.coords.Add(temp);
+                //HuskyRobotics.BaseStation.Server.PacketSender.target = temp;
             }
         }
 
@@ -181,6 +191,48 @@ namespace HuskyRobotics.UI {
                 }
                 VideoWindows.RemoveAt(i);
             }
+        }
+
+        private void SwitchModes(object sender, EventArgs e)
+        {
+            if (manualMode)
+            {
+                manualMode = false;
+                ModeLabel.Content = "Autonomous";
+                ModeLabel.Foreground = Brushes.Green;
+            }
+            else
+            {
+                manualMode = true;
+                ModeLabel.Content = "Manual";
+                ModeLabel.Foreground = Brushes.Red;
+            }
+            HuskyRobotics.BaseStation.Server.PacketSender.SwitchMode(manualMode);
+            
+
+        }
+
+        private void UpdateSliderValue(object sender, EventArgs e)
+        {
+            double scale = Math.Round(Arm_Sensitivity.Value / 10, 2);
+            HuskyRobotics.BaseStation.Server.PacketSender.SwitchScaler(scale);
+            Sensitivty_percentages.Content = System.Convert.ToString(scale);
+        }
+
+        private void Start_Navigation(object sender, EventArgs e)
+        {
+            double lat = Waypoints.ElementAt(0).Lat;
+            double lon = Waypoints.ElementAt(0).Long;
+            gLat = lat;
+            gLon = lon;
+            HuskyRobotics.BaseStation.Server.PacketSender.target =Tuple.Create(lat, lon);
+        }
+
+        private void Stop_Navigation(object sender, EventArgs e)
+        {
+            //for testing purposes
+            Notification popup = new Notification(gLat, gLon);
+            popup.ShowDialog();
         }
     }
 }

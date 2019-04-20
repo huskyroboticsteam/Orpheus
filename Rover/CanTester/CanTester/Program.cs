@@ -103,7 +103,20 @@ namespace CanTester
                                 break;
                         }
                         Console.Write("Data Sent. Hold enter to continue sending (true/false): ");
-                        keepSending = oldNew(Console.ReadLine(), true);
+                        try
+                        {
+                            keepSending = oldNew(Console.ReadLine(), true);
+                        }
+                        catch (Exception e)
+                        {
+                            if (DataID == 2)
+                            {
+                                Console.WriteLine("Speed set to zero");
+                                SpeedDir(CANBBB.CANBus0, Priority, Sender, Receiver, 0, Direction);
+                                keepSending = false;
+                            }
+                        }
+                        
                     }
                 }
                 else // Read Mode

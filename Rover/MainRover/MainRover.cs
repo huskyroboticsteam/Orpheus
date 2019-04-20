@@ -76,7 +76,7 @@ namespace MainRover
             Parse.SetParseHandler(0x99, (Packet) => ModePackets.Enqueue(Packet, 0));
             for (byte i = 0x8E; i <= 0x94; i++)
                 Parse.SetParseHandler(i, (Packet) => DrivePackets.Enqueue(Packet, 0));
-            for (byte i = 0x9A; i <= 0x9D; i++)
+            for (byte i = 0x9A; i <= 0xA1; i++)
                 Parse.SetParseHandler(i, (Packet) => DrivePackets.Enqueue(Packet, 0));
             for (byte i = 0x95; i <= 0x97; i++)
                 Parse.SetParseHandler(i, (Packet) => PathPackets.Enqueue(Packet, 0));
@@ -135,14 +135,15 @@ namespace MainRover
 
         public static void ProcessBasePackets()
         {
+            
             for (int i = 0; !DrivePackets.IsEmpty() && i < NUM_PACKETS_TO_PROCESS; i++)
             {
                 Packet p = DrivePackets.Dequeue();
                 switch ((PacketID)p.Data.ID)
-                {
-                    case PacketID.RPMAllDriveMotors:
-                        MotorControl.SetAllRPM((sbyte)p.Data.Payload[0]);
-                        break;
+                {   
+                    //case PacketID.RPMAllDriveMotors:
+                    //    MotorControl.SetAllRPM((sbyte)p.Data.Payload[0]);
+                    //    break;
                     case PacketID.RPMFrontRight:
                     case PacketID.RPMFrontLeft:
                     case PacketID.RPMBackRight:
@@ -166,8 +167,17 @@ namespace MainRover
                         if (p.Data.Payload[0] > 0)
                         {
                             direction = 0x01;
+                            UtilCan.SpeedDir(CANBBB.CANBus0, false, 2, address, (byte)(-p.Data.Payload[1]), direction);
+                            Console.WriteLine("ADDRESS :" + address + "DIR :" + direction + "PAY :" + (byte)(-p.Data.Payload[1]));
                         }
-                        UtilCan.SpeedDir(CANBBB.CANBus0, false, 0x02, address, p.Data.Payload[1], direction);
+                        else
+                        {
+                            direction = 0x00;
+                            UtilCan.SpeedDir(CANBBB.CANBus0, false, 2, address, p.Data.Payload[1], direction);
+                            Console.WriteLine("ADDRESS :" + address + "DIR :" + direction + "PAY :" + p.Data.Payload[1]);
+                        }
+                        
+                     
                         break;
                 }
             }
@@ -255,11 +265,13 @@ namespace MainRover
             Quit = false;
             InitBeagleBone();
             SetupClient();
-            MotorControl.Initialize();
+            //MotorControl.Initialize();
             MotorBoards.Initialize(CANBBB.CANBus0);
             int count = 0;
+            Console.WriteLine("Finished the initalize");
             do
             {
+                Console.WriteLine("Looping");
                 SendSensorData(count);
                 ProcessInstructions();
                 Thread.Sleep(50);
