@@ -31,6 +31,8 @@ namespace HuskyRobotics.UI {
         }
         public ObservableCollection<VideoStream> Streams { get; private set; } = new ObservableCollection<VideoStream>();
         public bool manualMode = true;
+        public double gLat = 0.0;
+        public double gLon = 0.0;
 
         public MainWindow()
         {
@@ -221,13 +223,15 @@ namespace HuskyRobotics.UI {
         {
             double lat = Waypoints.ElementAt(0).Lat;
             double lon = Waypoints.ElementAt(0).Long;
+            gLat = lat;
+            gLon = lon;
             HuskyRobotics.BaseStation.Server.PacketSender.target =Tuple.Create(lat, lon);
         }
 
         private void Stop_Navigation(object sender, EventArgs e)
         {
             //for testing purposes
-            Notification popup = new Notification();
+            Notification popup = new Notification(gLat, gLon);
             popup.ShowDialog();
         }
     }

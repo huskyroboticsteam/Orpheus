@@ -23,5 +23,13 @@ namespace HuskyRobotics.UI.Elements
         {
             InitializeComponent();
         }
+
+        public Notification(double lats, double lons)
+        {
+            InitializeComponent();
+            string dest = lats + " , " + lons;
+            destLabel.Content = dest;
+            
+        }
     }
 }

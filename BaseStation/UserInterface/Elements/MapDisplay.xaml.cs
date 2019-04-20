@@ -143,7 +143,7 @@ namespace HuskyRobotics.UI
                 TransformedBitmap TempImage = new TransformedBitmap();
 
                 TempImage.BeginInit();
-                double degree = 180;
+                double degree = 270;
                 int mult = setRotation(degree);
                 RotateTransform transform2 = new RotateTransform(90 * mult);
                 TempImage.Source = _roverIconBitmap; 
@@ -173,9 +173,11 @@ namespace HuskyRobotics.UI
 
             int rem = deg % 10;
             int degrez = 0;
-            if (rem >= 5) {
+            if (rem >= 5)
+            {
                 degrez = deg - rem + 10;
-            }else
+            }
+            else
             {
                 degrez = deg - rem;
             }
@@ -235,7 +237,7 @@ namespace HuskyRobotics.UI
 
         private void CanvasMouseWheel(object sender, MouseWheelEventArgs e)
         {
-            double scale = Math.Pow(1.1, -e.Delta / 20.0);
+            double scale = Math.Pow(1.1, e.Delta / 20.0);
             var position = e.GetPosition(MapCanvas);
             var matrix = MapCanvas.RenderTransform.Value;
             matrix.ScaleAtPrepend(scale, scale, position.X, position.Y);

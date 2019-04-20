@@ -7,6 +7,10 @@
         mc:Ignorable="d"
         Title="Notification" Height="450" Width="800">
     <Grid>
-        <Label Grid.Column="0" Grid.Row="0" Content="You have Arrived" FontSize="72"/>
+        <Label Name ="Title" Grid.Column="0" Grid.Row="0" Content="You have Arrived" FontSize="72" Margin="0,-27,0.333,26.667"/>
+        <Label Name ="destLabel" Grid.Column="0" Content="blank" Margin="10,63,-9.667,-63.333" />
+
+        <MediaElement Grid.Column="0" Grid.Row="0" LoadedBehavior="Play" Height="200" Width="200" 
+                          Source="file://C:/Users/Kwong/Documents/github/Orpheus/BaseStation/EntryPoint/bin/Debug/Icons/malamute.gif" Margin="278,122,315.333,98.667"/>
     </Grid>
 </Window>
