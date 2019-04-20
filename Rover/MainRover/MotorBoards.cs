@@ -76,7 +76,7 @@ namespace MainRover
                 else
                 {
                     CanRead.Dispose();
-                    count = 100;
+                    count = 0;
                 }
             }
             

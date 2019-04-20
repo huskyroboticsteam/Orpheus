@@ -55,12 +55,7 @@ namespace MainRover
                 Log.Output(Log.Severity.ERROR, Log.Source.SENSORS, "Failed to initalize sensors (gps and/or mag)");
                 Log.Exception(Log.Source.SENSORS, e);
             }
-            /*
-            // Add back in when limit switch is complete
-            LimitSwitch Switch = new LimitSwitch(new DigitalInBBB(Pins.SteeringLimitSwitch));
-            Switch.SwitchToggle += (object sender, LimitSwitchToggle e) => Console.WriteLine("PRESSED!");
-            Sensors.Add(Switch);
-            */
+
             foreach (ISensor Sensor in Sensors)
             {
                 if (Sensor is MTK3339)
@@ -134,10 +129,7 @@ namespace MainRover
             for (int i = 0; !ModePackets.IsEmpty() && i < NUM_PACKETS_TO_PROCESS; i++)
             {
                 Packet p = ModePackets.Dequeue();                
-                CurDriveMode = (DriveMode)p.Data.Payload[0];
-                //temporary fix to test, actually fix it later to get corect values form payload
-                if(p.Data.Payload[0] > 0) { CurDriveMode = DriveMode.toGPS; }         
-                
+                CurDriveMode = (DriveMode)p.Data.Payload[1];             
             }
         }
 
@@ -157,14 +149,6 @@ namespace MainRover
                     case PacketID.RPMBackLeft:
                         int MotorID = p.Data.ID - (byte)PacketID.RPMFrontRight;
                         MotorControl.SetRPM(MotorID, (sbyte)p.Data.Payload[1]);
-                        break;
-                    case PacketID.RPMSteeringMotor:
-                        float SteerSpeed = UtilData.ToFloat(p.Data.Payload);
-                        //MotorControl.SetSteerSpeed(SteerSpeed);
-                        break;
-                    case PacketID.SteerPosition:
-                        float Position = UtilData.ToFloat(p.Data.Payload);
-                        //MotorControl.SetRackAndPinionPosition(Position);
                         break;
                     case PacketID.SpeedAllDriveMotors:
                         float Speed = UtilData.ToFloat(p.Data.Payload);

@@ -44,6 +44,20 @@ namespace MainRover
             TwoData(CANBus, Priority, Sender, Receiver, 4, Angle, Velocity);
         }
 
+        public static void Index(ICANBus CANBus, bool Priority, byte Sender, byte Receiver)
+        {
+            byte[] Payload = new byte[1];
+            Payload[0] = 6;
+            CANBus.Write(ConstructCanID(Priority, Sender, Receiver), Payload);
+        }
+
+        public static void Reset(ICANBus CANBus, bool Priority, byte Sender, byte Receiver)
+        {
+            byte[] Payload = new byte[1];
+            Payload[0] = 8;
+            CANBus.Write(ConstructCanID(Priority, Sender, Receiver), Payload);
+        }
+
         public static void SetP(ICANBus CANBus, bool Priority, byte Sender, byte Receiver, UInt16 val1, UInt16 val2)
         {
             TwoData(CANBus, Priority, Sender, Receiver, 10, val1, val2);

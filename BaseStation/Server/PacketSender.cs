@@ -105,17 +105,17 @@ namespace HuskyRobotics.BaseStation.Server
                     if (skidDriving == 0) { skidDriveSpeed = 0; }
                     if (skidSteer == 0) { skidSteerSpeed = 0; }
                     //Console.WriteLine(skidSteerSpeed + " and " + skidDriveSpeed);
-
-                    float modeSet = -1f;
+                    Console.WriteLine("Button Press" + manualDrive + " " + autoDrive);
+                    short modeSet = -1;
                     if (manualDrive)
                     {
                         manualMode = true;
-                        modeSet = 0f;
+                        modeSet = 0;
                     }                        
                     else if (autoDrive)
                     {
                         manualMode = false;
-                        modeSet = 1f;
+                        modeSet = 1;
                     }
 
                     //testing values to send for autonomous, remove later
