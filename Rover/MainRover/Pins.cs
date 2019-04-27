@@ -12,5 +12,8 @@ namespace MainRover
 
         public const BBBPin SteeringLimitSwitch = BBBPin.P9_29;
         public const BBBPin SteeringMotor = BBBPin.P9_31;
+
+        public const BBBPin ServoMotor = BBBPin.P9_14;
+
     }
 }

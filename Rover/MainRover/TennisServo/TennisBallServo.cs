@@ -25,21 +25,15 @@ namespace MainRover
             OutA.SetEnabled(true);
 
             float t = 0.1f;
-            int count = 0;
-
-            while (count < 500)
+            while (t < .9f)
             {
-                while (t < .9f)
-                {
-                    OutA.SetOutput(t);
-                    t += 0.0001f;
-                }
-                while (t > .1f)
-                {
-                    OutA.SetOutput(t);
-                    t -= 0.0001f;
-                }
-                count++;
+                OutA.SetOutput(t);
+                t += 0.0001f;
+            }
+            while (t > .1f)
+            {
+                OutA.SetOutput(t);
+                t -= 0.0001f;
             }
             OutA.Dispose();
         }
