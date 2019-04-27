@@ -14,6 +14,8 @@ namespace Minibot
     {
         private IPWMOutput Output;
 
+        bool IMotor.TraceLogging { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
         public AdafruitMotor(IPWMOutput Output)
         {
             Output.SetEnabled(true);
@@ -114,7 +116,7 @@ namespace Minibot
 
         public void SetEnabled(bool Enable) { Enabled = Enable; }
 
-        public void SetFrequency(int Frequency)
+        public void SetFrequency(float Frequency)
         {
             float Prescale = 25000000;
             Prescale /= 4096;
@@ -131,7 +133,7 @@ namespace Minibot
 
             this.Bus.WriteRegister(Address, PCA9685_MODE1, new byte[] { (byte)(OldMode | 0x80) });
 
-            this.Frequency = Frequency;
+            this.Frequency = (int) Frequency;
         }
 
         private void SetPWM(int Channel, short On, short Off)
@@ -182,6 +184,9 @@ namespace Minibot
             SetOutputExactly(MappedValue);
         }
 
-
+        public void SetDelay(float ClockDelay)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -105,7 +105,7 @@ namespace Minibot
                 }
                 else 
                 {
-                    if(gps.HasFix()) 
+                    if(gps.Latitude == 0.0f || gps.Longitude == 0.0f) 
                     {
                         var tuple = gps.GetCoords();
                         //Console.WriteLine($"({tuple.Item1}, {tuple.Item2})");
