@@ -1,6 +1,7 @@
 ﻿using System;
 using Scarlet;
 using Scarlet.IO.BeagleBone;
+using Scarlet.IO;
 using System.Collections.Generic;
 using Scarlet.Components;
 using Scarlet.Components.Sensors;
@@ -35,6 +36,7 @@ namespace MainRover
             //BBBPinManager.AddMappingsI2C(Pins.BNO055_SCL, Pins.BNO055_SDA);
             //BBBPinManager.AddMappingGPIO(Pins.SteeringLimitSwitch, false, Scarlet.IO.ResistorState.PULL_UP, true);
             //BBBPinManager.AddMappingPWM(Pins.SteeringMotor);
+            //BBBPinManager.AddMappingPWM(Pins.ServoMotor);
             //BBBPinManager.ApplyPinSettings(BBBPinManager.ApplicationMode.NO_CHANGES);
             BBBPinManager.ApplyPinSettings(BBBPinManager.ApplicationMode.APPLY_IF_NONE);
         }
@@ -44,6 +46,7 @@ namespace MainRover
             StateStore.Start("MainRover");
             BeagleBone.Initialize(SystemMode.NO_HDMI, true);
             PinConfig();
+
             Sensors = new List<ISensor>();
             try
             {
@@ -119,6 +122,24 @@ namespace MainRover
                     case DriveMode.destination:
                         DrivePackets = new QueueBuffer();
                         PathPackets = new QueueBuffer();
+                        //Initialize IPWMOutput
+                        IPWMOutput OutA = PWMBBB.PWMDevice1.OutputA;
+                        OutA.SetFrequency(50);
+                        OutA.SetOutput(0.0f);
+                        OutA.SetEnabled(true);
+                        //Spinning Motor
+                        float t = 0.1f;
+                        while (t < .9f)
+                        {
+                            OutA.SetOutput(t);
+                            t += 0.0001f;
+                        }
+                        while (t > .1f)
+                        {
+                            OutA.SetOutput(t);
+                            t -= 0.0001f;
+                        }
+                        OutA.Dispose();
                         break;
                 }
             }
