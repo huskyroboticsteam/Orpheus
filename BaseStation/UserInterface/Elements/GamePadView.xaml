@@ -1,0 +1,54 @@
+﻿<UserControl x:Class="HuskyRobotics.UI.GamePadView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HuskyRobotics.UI"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Viewbox Margin="4,0,-4,0">
+        <Canvas Height="100" Width="150">
+            <!--Body-->
+            <Ellipse Height="90" Width="40" Fill="LightGray"/>
+            <Ellipse Height="90" Width="40" Fill="LightGray" Canvas.Left="110"/>
+            <Rectangle Height="50" Width="120" Canvas.Top="15" Canvas.Left="15" Fill="LightGray"/>
+            <!--Skittle buttons-->
+            <Ellipse Height="10" Width="10"  Canvas.Left="135" Canvas.Top="25" Fill="Red" Stroke="IndianRed" StrokeThickness="1"/>
+            <Ellipse Height="10" Width="10"  Canvas.Left="115" Canvas.Top="25" Fill="DodgerBlue" Stroke="LightBlue" StrokeThickness="1"/>
+            <Ellipse Height="10" Width="10"  Canvas.Left="125" Canvas.Top="35" Fill="Green" Stroke="MediumSeaGreen"/>
+            <Ellipse Height="10" Width="10"  Canvas.Left="125" Canvas.Top="15" Fill="Yellow" Stroke="LightYellow" StrokeThickness="1"/>
+            <TextBlock Text="A" FontSize="5" Canvas.Left="128" Canvas.Top="36" Name="A"/>
+            <TextBlock Text="B" FontSize="5" Canvas.Left="139" Canvas.Top="26" Name="B"/>
+            <TextBlock Text="X" FontSize="5" Canvas.Left="119" Canvas.Top="26" Name="X"/>
+            <TextBlock Text="Y" FontSize="5" Canvas.Left="129" Canvas.Top="16" Name="Y"/>
+            <!--D-Pad-->
+            <Rectangle Height="6" Width="21" Canvas.Top="25" Canvas.Left="10" Fill="Black"/>
+            <Rectangle Height="21" Width="6" Canvas.Top="18" Canvas.Left="17"  Fill="Black"/>
+            <Polygon Points="11,28 13,26 13,30" Fill="LightGray" Name="Left"/>
+            <Polygon Points="29,28 27,26 27,30" Fill="LightGray" Name="Right"/>
+            <Polygon Points="20,19 18,21 22,21" Fill="LightGray" Name="Up"/>
+            <Polygon Points="20,37 18,35 22,35" Fill="LightGray" Name="Down"/>
+            <!--Thumbsticks-->
+            <Ellipse Height="20" Width="20" Canvas.Top="44" Canvas.Left="95" Stroke="DarkGray" StrokeThickness="1"/>
+            <Ellipse Height="20" Width="20" Canvas.Top="44" Canvas.Left="36" Stroke="DarkGray" StrokeThickness="1" Name="LOutline"/>
+            <Ellipse Height="15" Width="15" Fill="Black" Name="RightThumb"/>
+            <Ellipse Height="15" Width="15" Fill="Black" Name="LeftThumb"/>
+            <!--Center Buttons-->
+            <Rectangle Height="5" Width="10" Canvas.Top="20" Canvas.Left="95" Fill="Black" Name="Start"/>
+            <Rectangle Height="5" Width="10" Canvas.Top="33" Canvas.Left="90" Fill="Black"/>
+            <Rectangle Height="5" Width="10" Canvas.Top="20" Canvas.Left="46" Fill="Black" Name="Back"/>
+            <Rectangle Height="5" Width="10" Canvas.Top="33" Canvas.Left="51" Fill="Black"/>
+            <Rectangle Height="10" Width="15" Canvas.Top="25" Canvas.Left="68" Fill="DarkGray" Name="BatteryIndicator"/>
+            <!--bumpers-->
+            <Rectangle Height="5" Width="12" Canvas.Left="14" Fill="Black" Name="LBump"/>
+            <Rectangle Height="5" Width="12" Canvas.Left="125" Fill="Black" Name="RBump"/>
+            <!--triggers-->
+            <Rectangle Height="10" Width="7" Canvas.Left="40" Fill="LightGray"/>
+            <Rectangle Height="10" Width="7" Canvas.Left="103" Fill="LightGray"/>
+            <Rectangle Height="10" Width="5" Canvas.Left="47" Fill="Black" Name="LTrig"/>
+            <Rectangle Height="10" Width="5" Canvas.Right="47" Fill="Black" Name="RTrig"/>
+            <TextBlock Text="LT" FontSize="5" Canvas.Left="42" Canvas.Top="2"/>
+            <TextBlock Text="RT" FontSize="5" Canvas.Left="104" Canvas.Top="2"/>
+        </Canvas>
+    </Viewbox>
+</UserControl>

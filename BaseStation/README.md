@@ -4,17 +4,22 @@ along with the server code that will communicate with rover to control it and re
 information from it.
 
 ## Project Layout
-The BaseStation project contains the entry point of the base station in the
-HuskyRobotics.BaseStation.StartBaseStation class. The user interface
-components are contained in the UserInterface project. The VideoStreamer
-project is for video streaming UI elements. Utilities contains methods
-for use by all base station projects. The BaseServer project is for
-server logic, but may be merged with the BaseStation project.
+ - EntryPoint: the "main method" of the base station, in the HuskyRobotics.BaseStation.StartBaseStation class. 
+ - UserInterface: user interface, displaying map and other info. 
+ - Utilities: methods for use by all base station projects.
+ - Server: networking code for communicating with the rover.
+ - PTZCamera: networking code for communicating with rover camera.
 
 ## UI Functions
  - Navigation
  - Diagnostics
  - Video Feed
+ 
+## Status Info UI
+ - Wheel spinning/stuck status
+ - Direction of wheels
+ - See the encoders, BE the encoders
+ - Same with arm
 
 ## Orientation/Informational Map
  - Show current position and direction of rover
@@ -27,15 +32,9 @@ server logic, but may be merged with the BaseStation project.
  - Named waypoints
  - Goal waypoint
  
-## Status Info UI
- - Wheel spinning/stuck status
- - Direction of wheels
- - See the encoders, BE the encoders
- - Same with arm
- 
 ## Video Feeds
- - separate windows
+ - Separate windows
  - Always on top option
  
 ## Required Libraries
- - GStreamer must be installed for VideoStreamer to work
+ - GStreamer must be installed for video feeds to work (see UserInterface readme for required .dll files)
