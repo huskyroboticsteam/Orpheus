@@ -119,13 +119,20 @@ namespace Minibot
                     //Console.WriteLine(zTesla);
                     var arcTan = Math.Atan(xTesla / yTesla);
 
-                    if(yTesla > 0) {
+                    if(yTesla > 0) 
+										{
                         orientation = (float)(90  - (arcTan * (180 / Math.PI)));
-                    } else if (yTesla < 0) {
+                    }
+										else if (yTesla < 0) 
+										{
                         orientation = (float)(270 - (arcTan * (180 / Math.PI)));
-                    } else if(Math.Abs(yTesla) < 1e-6  && xTesla < 0) {
+                    }
+										else if(Math.Abs(yTesla) < 1e-6  && xTesla < 0) 
+										{
                         orientation = 180.0f;
-                    } else if(Math.Abs(yTesla) < 1e-6 && xTesla > 0) {
+                    } 
+										else if(Math.Abs(yTesla) < 1e-6 && xTesla > 0) 
+										{
                         orientation = 0.0f;
                     }
                     Console.WriteLine(orientation);
