@@ -5,7 +5,7 @@ CVFLAGS= `pkg-config --cflags --libs opencv4`
 INCLUDES= -I/usr/local/zed/include -I/usr/local/cuda/include -I../GStreamer
 LIBS= /usr/local/zed/lib/*.so -march=armv8-a+simd
 HEADERS= 
-DEPTH= zed_depth
+DEPTH= zed-depth
 
 all: $(DEPTH)
 	rm *.o
@@ -16,10 +16,10 @@ debug: $(DEPTH)_debug
 server: $(HEADERS) ../GStreamer/server.cpp
 	$(CPP) -O3 -c ../GStreamer/server.cpp $(GSFLAGS) $(CFLAGS)
 
-zed_depth: $(HEADERS) $(DEPTH).cpp server
+zed-depth: $(HEADERS) $(DEPTH).cpp server
 	$(CPP) -O3 $(DEPTH).cpp -o $(DEPTH) server.o $(GSFLAGS) $(CVFLAGS) $(CFLAGS) $(INCLUDES) $(LIBS)
 	
-zed_depth_debug: $(HEADERS) $(DEPTH).cpp server
+zed-depth_debug: $(HEADERS) $(DEPTH).cpp server
 	$(CPP) -ggdb -D DEBUG $(DEPTH).cpp -o $(DEPTH) server.o $(GSFLAGS) $(CVFLAGS) $(CFLAGS) $(INCLUDES) $(LIBS)
 	
 clean:

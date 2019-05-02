@@ -9,12 +9,6 @@ struct g_server_data
     const char *argv[8];
 };
 
-typedef struct
-{
-  gboolean white;
-  GstClockTime timestamp;
-} MyContext;
-
-int start_server (int argc, char *argv[], void (*fnc)(GstElement *, guint, MyContext *));
+int start_server (int argc, char *argv[]);
 
 #endif // SERVER_H_

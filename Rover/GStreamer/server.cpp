@@ -11,29 +11,6 @@ using namespace std;
 
 unordered_map<string, tuple<const char*, int, int, vector<float>*, const char*>> table;
 
-void
-media_configure (GstRTSPMediaFactory * factory, GstRTSPMedia * media, gpointer user_data)
-{
-  GstElement *element, *appsrc;
-  MyContext *ctx;
-
-  element = gst_rtsp_media_get_element(media);
-  appsrc = gst_bin_get_by_name_recurse_up (GST_BIN (element), "mysrc");
-
-  gst_util_set_object_arg (G_OBJECT (appsrc), "format", "time");
-
-  ctx = g_new0(MyContext, 1);
-  ctx->white = FALSE;
-  ctx->timestamp = 0;
-
-  g_object_set_data_full (G_OBJECT (media), "my-extra-data", ctx, (GDestroyNotify) g_free);
-  
-  g_signal_connect (appsrc, "need-data", (GCallback) *(void (**) (GstElement *, guint, MyContext *)) user_data, ctx);
-
-  gst_object_unref(appsrc);
-  gst_object_unref(element);
-}
-
 char *
 construct_pipeline(const char * devpath, const char * input_type, int width, int height, float scale)
 {
@@ -69,7 +46,7 @@ setup_map()
 }
 
 int 
-start_server (int argc, char *argv[], void (*fnc) (GstElement *, guint, MyContext *))
+start_server (int argc, char *argv[])
 {
     GMainLoop *loop;
     GstRTSPServer *server;
@@ -147,10 +124,6 @@ start_server (int argc, char *argv[], void (*fnc) (GstElement *, guint, MyContex
         GstRTSPMediaFactory * factory = gst_rtsp_media_factory_new ();
         gst_rtsp_media_factory_set_launch (factory, pipelines[i]);
         gst_rtsp_media_factory_set_shared (factory, TRUE);
-        if (fnc != NULL) 
-        {
-            g_signal_connect (factory, "media-configure", (GCallback) media_configure, &fnc); 
-        }
         snprintf(attachment, 10, "/feed%hu", i); 
         gst_rtsp_mount_points_add_factory (mounts, attachment, factory);
         g_print ("%s@%s: stream ready at rtsp://127.0.0.1:%s/feed%d\n", devname, devpath, port, i);

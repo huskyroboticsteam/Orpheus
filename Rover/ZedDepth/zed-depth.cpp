@@ -94,12 +94,12 @@ int main(int argc, char *argv[])
     data.argv[0] = argv[0];
     data.argv[1] = "intervideosrc";
     data.argv[2] = "zed_depth";
-    data.argv[3] = "8888";
+    data.argv[3] = "5556";
     data.argv[4] = "intervideosrc channel=rgb ! rtpvrawpay name=pay0 pt=96";
     
     writer.open("appsrc ! video/x-raw,format=BGR ! videoconvert ! video/x-raw,format=I420 ! intervideosink channel=rgb", 0, 10, cv::Size(img_zed.getWidth(), img_zed.getHeight()), true);
 
-    std::thread t1(start_server, data.argc, (char **) data.argv, nullptr);
+    std::thread t1(start_server, data.argc, (char **) data.argv);
     std::thread t2(getSomeImages);
 
 #ifdef DEBUG
@@ -108,12 +108,12 @@ int main(int argc, char *argv[])
     data2.argv[0] = argv[0];
     data2.argv[1] = "intervideosrc";
     data2.argv[2] = "zed_depth_debug";
-    data2.argv[3] = "8889";
+    data2.argv[3] = "8888";
     data2.argv[4] = "intervideosrc channel=wshed ! rtpvrawpay name=pay0 pt=96";
  
     writer_debug.open("appsrc ! video/x-raw,format=BGR ! videoconvert ! video/x-raw,format=I420 ! intervideosink channel=wshed", 0, 10, cv::Size(img_zed.getWidth(), img_zed.getHeight()), true);
 
-    std::thread t3(start_server, data2.argc, (char **) data2.argv, nullptr);
+    std::thread t3(start_server, data2.argc, (char **) data2.argv);
 #endif
 
     for(char key = ' '; key != 'q'; key = cv::waitKey(10))
