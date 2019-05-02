@@ -1,3 +1,6 @@
+# Only works for OpenCV version 4+
+# Expects all dependencies to be preinstalled
+
 OPENCV_VERSION=4.0.1
 ARCH_BIN=6.2
 GCC_VERSION=6 # Version 6 required for CUDA 9
