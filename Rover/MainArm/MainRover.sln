@@ -1,0 +1,23 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MainRover", "MainRover.csproj", "{368F7EB2-0665-4C5E-8406-AF860002574B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TennisServo", "TennisServo\TennisServo.csproj", "{0F07A29B-E279-417A-84BB-AD1746A0A31C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{368F7EB2-0665-4C5E-8406-AF860002574B}.Debug|x86.ActiveCfg = Debug|x86
+		{368F7EB2-0665-4C5E-8406-AF860002574B}.Debug|x86.Build.0 = Debug|x86
+		{368F7EB2-0665-4C5E-8406-AF860002574B}.Release|x86.ActiveCfg = Release|x86
+		{368F7EB2-0665-4C5E-8406-AF860002574B}.Release|x86.Build.0 = Release|x86
+		{0F07A29B-E279-417A-84BB-AD1746A0A31C}.Debug|x86.ActiveCfg = Debug|x86
+		{0F07A29B-E279-417A-84BB-AD1746A0A31C}.Debug|x86.Build.0 = Debug|x86
+		{0F07A29B-E279-417A-84BB-AD1746A0A31C}.Release|x86.ActiveCfg = Release|x86
+		{0F07A29B-E279-417A-84BB-AD1746A0A31C}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+EndGlobal
