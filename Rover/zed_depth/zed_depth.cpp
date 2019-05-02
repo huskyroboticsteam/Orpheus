@@ -19,30 +19,6 @@ cv::VideoWriter writer_debug;
 int32_t new_width;
 int32_t new_height;
 
-void 
-need_data_callback(GstElement * appsrc, guint unused, MyContext * ctx)
-{
-  GstBuffer *buffer;
-  guint size;
-  GstFlowReturn ret;
-
-  sl::Mat img_zed(new_width, new_height, sl::MAT_TYPE_8U_C4);
-  zed.retrieveImage(img_zed, sl::VIEW_LEFT, sl::MEM_CPU, new_width, new_height);
-  cv::Mat img_cv = slMat2cvMat(img_zed);
-
-  size = new_width * new_height * 4;
-  buffer = gst_buffer_new_wrapped_full((GstMemoryFlags) 0, img_cv.data, size, 0, size, NULL, NULL);
-
-  GST_BUFFER_PTS(buffer) = ctx->timestamp;
-  GST_BUFFER_DURATION(buffer) = gst_util_uint64_scale_int (1, GST_SECOND, 2);
-
-  ctx->timestamp += GST_BUFFER_DURATION (buffer);
-
-  g_signal_emit_by_name (appsrc, "push-buffer", buffer, &ret);
-
-  gst_buffer_unref(buffer);
-}
-
 void
 getSomeImages()
 {
@@ -100,8 +76,10 @@ int main(int argc, char *argv[])
     sl::Resolution image_size = zed.getResolution();
 
     // scale image ?
-    new_width = image_size.width / 2;
-    new_height = image_size.height / 2;
+    //new_width = image_size.width / 2;
+    //new_height = image_size.height / 2;
+    new_width = image_size.width;
+    new_height = image_size.height;
 
     sl::Mat img_zed(new_width, new_height, sl::MAT_TYPE_8U_C4);
 
@@ -117,13 +95,12 @@ int main(int argc, char *argv[])
     data.argv[1] = "intervideosrc";
     data.argv[2] = "zed_depth";
     data.argv[3] = "8888";
-    //data.argv[4] = "appsrc name=mysrc ! video/x-raw,format=BGRA,width=new_width,height=new_height,framerate=0/1 ! videoconvert ! video/x-raw,format=I420 ! rtpvrawpay name=pay0 pt=96";
     data.argv[4] = "intervideosrc channel=rgb ! rtpvrawpay name=pay0 pt=96";
     
     writer.open("appsrc ! video/x-raw,format=BGR ! videoconvert ! video/x-raw,format=I420 ! intervideosink channel=rgb", 0, 10, cv::Size(img_zed.getWidth(), img_zed.getHeight()), true);
 
-    //std::thread t1(start_server, data.argc, (char **) data.argv, need_data_callback);
     std::thread t1(start_server, data.argc, (char **) data.argv, nullptr);
+    std::thread t2(getSomeImages);
 
 #ifdef DEBUG
     g_server_data data2;
@@ -138,8 +115,6 @@ int main(int argc, char *argv[])
 
     std::thread t3(start_server, data2.argc, (char **) data2.argv, nullptr);
 #endif
-
-    std::thread t2(getSomeImages);
 
     for(char key = ' '; key != 'q'; key = cv::waitKey(10))
     {
@@ -219,7 +194,7 @@ int main(int argc, char *argv[])
 
             end = NOW;
             ms = TIME;
-            //std::cout << "Contours Time: " << ms << " ms\n";
+            std::cout << "Contours Time: " << ms << " ms\n";
 
             start = NOW;
             // watershed the image
@@ -228,7 +203,7 @@ int main(int argc, char *argv[])
 
             end = NOW;
             ms = TIME;
-            //std::cout << "Watershed Time: " << ms << " ms\n";
+            std::cout << "Watershed Time: " << ms << " ms\n";
 
             start = NOW;
             // for each segment in watershed image make color
@@ -260,7 +235,7 @@ int main(int argc, char *argv[])
             }
             end = NOW;
             ms = TIME;
-            //std::cout << "Obstacles Time: " << ms << " ms\n";
+            std::cout << "Obstacles Time: " << ms << " ms\n";
 
             start = NOW;
             // put color in segment
@@ -295,8 +270,8 @@ int main(int argc, char *argv[])
             }
             end = NOW;
             ms = TIME;
-            //std::cout << "Coloring Time: " << ms << " ms\n";
-            //std::cout << std::endl;
+            std::cout << "Coloring Time: " << ms << " ms\n";
+            std::cout << std::endl;
             
             //cv::imshow("watershed", wshed);
 #ifdef DEBUG
