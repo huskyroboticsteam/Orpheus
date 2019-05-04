@@ -107,7 +107,7 @@ namespace CanTester
                         {
                             keepSending = oldNew(Console.ReadLine(), true);
                         }
-                        catch (Exception e)
+                        catch
                         {
                             if (DataID == 2)
                             {
@@ -187,7 +187,7 @@ namespace CanTester
 
         private static uint ConstructCanID(bool Priority, byte Sender, byte Receiver)
         {
-            return Convert.ToUInt16((Convert.ToUInt16(!Priority) << 11) + (Sender << 6) + Receiver);
+            return Convert.ToUInt16((Convert.ToUInt16(!Priority) << 10) + (Sender << 5) + Receiver);
         }
 
         /// <summary>
