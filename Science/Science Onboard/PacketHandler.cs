@@ -23,7 +23,7 @@ namespace Science
             {
                 bool Enable = (Packet.Data.Payload[0] & 0b1) == 0b1;
                 bool Reverse = (Packet.Data.Payload[0] & 0b10) == 0b10;
-                RoverMain.IOHandler.DrillController.SetSpeed(Packet.Data.Payload[1] / 100.0F * (Reverse ? -1 : 1), Enable);
+                //RoverMain.IOHandler.DrillController.SetSpeed(Packet.Data.Payload[1] / 100.0F * (Reverse ? -1 : 1), Enable);
             }
         }
 
@@ -33,7 +33,7 @@ namespace Science
             {
                 if(Packet.Data.Payload[0] == 0x00) // Sample Door
                 {
-                    RoverMain.IOHandler.DrillController.DoorOpen = (UtilData.ToInt(UtilMain.SubArray(Packet.Data.Payload, 1, 4)) == 1);
+                    //RoverMain.IOHandler.DrillController.DoorOpen = (UtilData.ToInt(UtilMain.SubArray(Packet.Data.Payload, 1, 4)) == 1);
                 }
             }
         }
@@ -42,7 +42,7 @@ namespace Science
         {
             if (CheckPacket(Packet, 1, "Rail Speed"))
             {
-                RoverMain.IOHandler.RailController.RailSpeed = Packet.Data.Payload[0] / 100F;
+                //RoverMain.IOHandler.RailController.RailSpeed = Packet.Data.Payload[0] / 100F;
             }
         }
 
@@ -53,7 +53,7 @@ namespace Science
                 float TargetDist = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 1, 4));
                 switch (Packet.Data.Payload[0])
                 {
-                    case 0x00:
+                    /*case 0x00:
                         RoverMain.IOHandler.RailController.GotoTop();
                         break;
                     case 0x01:
@@ -66,7 +66,7 @@ namespace Science
                     case 0x03:
                         RoverMain.IOHandler.RailController.TargetLocation = TargetDist;
                         RoverMain.IOHandler.RailController.TargetLocationRefIsTop = false;
-                        break;
+                        break;*/
                 }
             }
         }

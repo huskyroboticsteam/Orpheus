@@ -19,16 +19,19 @@ namespace Science.Systems
     {
         public bool TraceLogging { get; set; }
         private bool TakeReadings = false;
-        private Timer Timer;
+        private readonly Timer Timer;
 
         // Comms buses
-        private II2CBus I2C1;
+        private readonly II2CBus I2C1;
+        private readonly ISPIBus SPI;
 
         // Sensor endpoints
-        private INA226 SystemSensor, DrillSensor, RailSensor;
+        private INA226 SysCurrent, DrillCurrent, RailCurrent, TurntableCurrent, SpareMotorCurrent;
 
-        public SysSensors()
+        public SysSensors(II2CBus I2C, ISPIBus SPI)
         {
+            this.SPI = SPI;
+            this.I2C1 = I2C;
             this.Timer = new Timer(this.UpdateState, null, 0, 100);
         }
 
@@ -36,11 +39,11 @@ namespace Science.Systems
 
         public void Initialize()
         {
-            this.I2C1 = new I2CBusPi();
-
-            this.SystemSensor = new INA226(this.I2C1, 0x48, 10, 0.150);
-            this.DrillSensor = new INA226(this.I2C1, 0x49, 15, 0.010);
-            this.RailSensor = new INA226(this.I2C1, 0x4A, 60, 0.002);
+            this.DrillCurrent = new INA226(this.I2C1, 0x48, 15, 0.005);
+            this.RailCurrent = new INA226(this.I2C1, 0x49, 30, 0.005);
+            this.TurntableCurrent = new INA226(this.I2C1, 0x4A, 15, 0.005);
+            this.SpareMotorCurrent = new INA226(this.I2C1, 0x4B, 15, 0.005);
+            this.SysCurrent = new INA226(this.I2C1, 0x4C, 5, 0.100);
 
             this.TakeReadings = true;
         }
@@ -52,22 +55,30 @@ namespace Science.Systems
             if (this.TakeReadings)
             {
                 DateTime Sample = DateTime.Now;
-                this.SystemSensor.UpdateState();
-                this.DrillSensor.UpdateState();
-                this.RailSensor.UpdateState();
+                this.SysCurrent.UpdateState();
+                this.DrillCurrent.UpdateState();
+                this.RailCurrent.UpdateState();
+                this.TurntableCurrent.UpdateState();
+                this.SpareMotorCurrent.UpdateState();
 
-                double RailA = this.RailSensor.GetShuntVoltage();
-                double Drill = this.DrillSensor.GetCurrent();
-                double SysA = this.SystemSensor.GetCurrent();
-                double SysV = this.SystemSensor.GetBusVoltage();
-                double SysSV = this.SystemSensor.GetShuntVoltage();
-                double DrlSV = this.DrillSensor.GetShuntVoltage();
+                double SysA = this.SysCurrent.GetCurrent();
+                double SysV = this.SysCurrent.GetBusVoltage();
+                double SysSV = this.SysCurrent.GetShuntVoltage();
 
-                if (this.TraceLogging) { Log.Trace(this, string.Format("Sys: {0:N5}A, {1:N5}V (Shunt {2:N5}V). Drill: {3:N5}A. Rail: {4:N5}A. Test: {5}", SysA, SysV, SysSV, Drill, RailA, this.SystemSensor.Test()));  }
+                double DrillA = this.DrillCurrent.GetCurrent();
+                double DrillSV = this.DrillCurrent.GetShuntVoltage();
 
-                byte[] Data = UtilData.ToBytes(SysSV / 0.150).Concat(UtilData.ToBytes(DrlSV / 0.010)).Concat(UtilData.ToBytes(RailA / 0.002)).Concat(UtilData.ToBytes(SysV)).Concat(UtilData.ToBytes(Sample.Ticks)).ToArray(); // TODO: Decide if we want to calculate or use device
-                Packet Packet = new Packet(new Message(ScienceConstants.Packets.SYS_SENSOR, Data), false);
-                Client.Send(Packet);
+                double RailA = this.RailCurrent.GetShuntVoltage();
+
+                double TurntableA = this.DrillCurrent.GetCurrent();
+
+                double SpareMotorA = this.SpareMotorCurrent.GetCurrent();
+
+                if (this.TraceLogging) { Log.Trace(this, string.Format("Sys: {0:N5}A, {1:N5}V (Shunt {2:N5}V).\nDrill: {3:N5}A. Rail: {4:N5}A. TTB: {5:N5}A. Spare: {6:N5}A.", SysA, SysV, SysSV, DrillA, RailA, TurntableA, SpareMotorA));  }
+
+                //byte[] Data = UtilData.ToBytes(SysSV / 0.150).Concat(UtilData.ToBytes(DrillSV / 0.010)).Concat(UtilData.ToBytes(RailA / 0.002)).Concat(UtilData.ToBytes(SysV)).Concat(UtilData.ToBytes(Sample.Ticks)).ToArray(); // TODO: Decide if we want to calculate or use device
+                //Packet Packet = new Packet(new Message(ScienceConstants.Packets.SYS_SENSOR, Data), false);
+                //Client.Send(Packet);
 
                 uint SysVoltColour;
                 if (SysV <= 25) { SysVoltColour = RGBLED.RedGreenGradient(SysV, 22, 26); }
@@ -83,9 +94,6 @@ namespace Science.Systems
             }
         }
 
-        public void Exit()
-        {
-            this.TakeReadings = false;
-        }
+        public void Exit() { this.TakeReadings = false; }
     }
 }

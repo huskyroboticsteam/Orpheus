@@ -51,13 +51,13 @@ namespace Science.Systems
 
                     if (NoteToPercent(Note.NoteNumber + (OctaveShift * 12)) > 1 && AutoOctaveDown) { Note.NoteNumber = (SevenBitNumber)(Note.NoteNumber - 12); }
                     if (NoteToPercent(Note.NoteNumber + ((OctaveShift + 1) * 12)) <= 1 && AutoOctaveUp) { Note.NoteNumber = (SevenBitNumber)(Note.NoteNumber + 12); }
-                    RoverMain.IOHandler.DrillController.SetSpeed(NoteToPercent(Note.NoteNumber + (OctaveShift * 12)), true);
+                    //RoverMain.IOHandler.DrillController.SetSpeed(NoteToPercent(Note.NoteNumber + (OctaveShift * 12)), true);
                     if (this.TraceLogging) { Log.Trace(this, "Outputting note " + Note.NoteNumber + " at speed " + NoteToPercent(Note.NoteNumber + (OctaveShift * 12)) + " for " + (LengthUS / 1000) + "ms."); }
                     Thread.Sleep((int)(LengthUS / 1000));
-                    RoverMain.IOHandler.DrillController.SetSpeed(0, true);
+                    //RoverMain.IOHandler.DrillController.SetSpeed(0, true);
                     PlayerPositionUS = StartUS + LengthUS; // The player is now at the end of the note we just played.
                 }
-                RoverMain.IOHandler.DrillController.SetSpeed(0, false);
+                //RoverMain.IOHandler.DrillController.SetSpeed(0, false);
                 Log.Output(Log.Severity.INFO, Log.Source.MOTORS, "MIDI playback complete.");
             }
             catch(Exception Exc)
@@ -85,7 +85,7 @@ namespace Science.Systems
         public void Exit()
         {
             this.PlayerThread.Abort();
-            RoverMain.IOHandler.DrillController.SetSpeed(0, true);
+            //RoverMain.IOHandler.DrillController.SetSpeed(0, true);
         }
 
     }
