@@ -17,7 +17,50 @@ namespace PacketTester
 
         static void Main(string[] args)
         {
+            bool SendOnly = false;
+            if (args != null && args.Length > 0)
+            {
+                SendOnly = true;
+                Console.WriteLine("Only sending data");
+            }
+            UdpClient udpServer = new UdpClient(2001); // UDP Port from RaspberryPi
+            IPEndPoint remoteEP = new IPEndPoint(IPAddress.Any, 2001);
+
+            var client = new UdpClient();
+            // IP and port for Rover Beaglebone
+            IPEndPoint ep = new IPEndPoint(IPAddress.Parse("192.168.0.20"), 2002);
+            client.Connect(ep);
+
+            Byte[] sendBytes;
+
+            int count = 0;
+            Console.WriteLine("Loop Started");
+            while (true)
+            {
+                if (!SendOnly)
+                {
+                    var data = udpServer.Receive(ref remoteEP);
+                    var stringData = Encoding.ASCII.GetString(data);
+                    Console.Write("Recieved Data: ");
+                    for (int i =0; i < data.Length; i++)
+                    {
+                        Console.Write(data[i] + " ");
+                    }
+                    Console.WriteLine(data.Length);
+                }
+
+                Console.WriteLine("Sending Data: " + count);
+                sendBytes = Encoding.ASCII.GetBytes(count.ToString());
+                client.Send(sendBytes, sendBytes.Length);
+                Thread.Sleep(50);
+                count++;
+                if (count == 256)
+                {
+                    count = 0;
+                }
+            }
             //enter ip for client
+            /*
             if (args != null && args.Length > 0)
             {
                 IP = args[0];
@@ -27,13 +70,13 @@ namespace PacketTester
             else
             {
                 testRecieve();                
-            }
+            } */
         }
 
         static void testRecieve()
         {
-            UdpClient udpServer = new UdpClient(8000); 
-            IPEndPoint remoteEP = new IPEndPoint(IPAddress.Any, 8000);
+            UdpClient udpServer = new UdpClient(2001); 
+            IPEndPoint remoteEP = new IPEndPoint(IPAddress.Any, 2001);
             
 
             Console.WriteLine("Sever Recieving Loop Started");
@@ -50,7 +93,7 @@ namespace PacketTester
         {
             var client = new UdpClient();
             // IP and port for Rover Beaglebone
-            IPEndPoint ep = new IPEndPoint(IPAddress.Parse(IP), 8000);
+            IPEndPoint ep = new IPEndPoint(IPAddress.Parse(IP), 2002);
             client.Connect(ep);
 
             int count = 0;
@@ -62,7 +105,7 @@ namespace PacketTester
                 string stringData = count.ToString();
                 Console.WriteLine("Sending data: " + stringData);
 
-                sendBytes = Encoding.ASCII.GetBytes(stringData);
+                sendBytes = Encoding.ASCII.GetBytes(count.ToString());
                 client.Send(sendBytes, sendBytes.Length);
                 Thread.Sleep(50);
                 count++;                
