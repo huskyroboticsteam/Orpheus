@@ -261,31 +261,31 @@ namespace HuskyRobotics.BaseStation.Server
                         Scarlet.Communications.Server.Send(SkidRearLeft);
                         
 
-                        Packet FingerPack = new Packet(0xA0, true, "MainRover");
+                        Packet FingerPack = new Packet(0xA0, true, "MainArm");
                         FingerPack.AppendData(UtilData.ToBytes((short)fingerSpeed));
                         Scarlet.Communications.Server.Send(FingerPack);
-                        /*
-                        Packet DiffHorzPack = new Packet(0x9F, true, "MainRover");
+                        
+                        Packet DiffHorzPack = new Packet(0x9F, true, "MainArm");
                         DiffHorzPack.AppendData(UtilData.ToBytes((short)(diffVertShort + diffHorzShort)));
                         Scarlet.Communications.Server.Send(DiffHorzPack);
 
-                        Packet DiffVertPack = new Packet(0x9E, true, "MainRover");
+                        Packet DiffVertPack = new Packet(0x9E, true, "MainArm");
                         DiffVertPack.AppendData(UtilData.ToBytes((short)(-diffVertShort + diffHorzShort)));
                         Scarlet.Communications.Server.Send(DiffVertPack);
-                        */
-                        Packet WristPack = new Packet(0x9D, true, "MainRover");
+                        
+                        Packet WristPack = new Packet(0x9D, true, "MainArm");
                         WristPack.AppendData(UtilData.ToBytes(wristArmSpeed));
                         Scarlet.Communications.Server.Send(WristPack);
 
-                        Packet ElbowPack = new Packet(0x9C, true, "MainRover");
+                        Packet ElbowPack = new Packet(0x9C, true, "MainArm");
                         ElbowPack.AppendData(UtilData.ToBytes(elbowArmSpeed));
                         Scarlet.Communications.Server.Send(ElbowPack);
 
-                        Packet ShoulderPack = new Packet(0x9B, true, "MainRover");
+                        Packet ShoulderPack = new Packet(0x9B, true, "MainArm");
                         ShoulderPack.AppendData(UtilData.ToBytes(shoulderArmSpeed));
                         Scarlet.Communications.Server.Send(ShoulderPack);
 
-                        Packet BasePack = new Packet(0x9A, true, "MainRover");
+                        Packet BasePack = new Packet(0x9A, true, "MainArm");
                         BasePack.AppendData(UtilData.ToBytes(baseArmSpeed));
                         Scarlet.Communications.Server.Send(BasePack);
                     }
@@ -328,7 +328,7 @@ namespace HuskyRobotics.BaseStation.Server
             SpeedPack.AppendData(UtilData.ToBytes(0));
             Scarlet.Communications.Server.Send(SpeedPack);
 
-            Packet ArmEmergencyStop = new Packet(0x80, true, "ArmMaster");
+            Packet ArmEmergencyStop = new Packet(0x80, true, "MainArm");
             Scarlet.Communications.Server.Send(ArmEmergencyStop);
         }
 
