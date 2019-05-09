@@ -10,6 +10,7 @@ using Scarlet.Communications;
 using Scarlet.Utilities;
 using System.Threading;
 using System.Net.Sockets;
+using System.Text;
 
 namespace MainRover
 {
@@ -29,6 +30,11 @@ namespace MainRover
         public static DriveMode CurDriveMode;
         public static Tuple<float, float> previousCoords;
         public static float PathSpeed, PathAngle;
+
+        public static UdpClient udpServer;
+        public static IPEndPoint remoteEP;
+        public static UdpClient client;
+        public static IPEndPoint ep;
 
         public static void PinConfig()
         {
@@ -87,12 +93,11 @@ namespace MainRover
                 Parse.SetParseHandler(i, (Packet) => PathPackets.Enqueue(Packet, 0));
             PathSpeed = 0;
             PathAngle = 0;
-            UdpClient udpServer = new UdpClient(8000); // UDP Port from RaspberryPi
-            IPEndPoint remoteEP = new IPEndPoint(IPAddress.Any, 8000);
 
-            var client = new UdpClient();
-            // IP and port for Rover Beaglebone
-            IPEndPoint ep = new IPEndPoint(IPAddress.Parse("192.168.0.51"), 9000);
+            udpServer = new UdpClient(2001); 
+            remoteEP = new IPEndPoint(IPAddress.Any, 2001);
+            client = new UdpClient();
+            ep = new IPEndPoint(IPAddress.Parse("192.168.0.51"), 2002);
             client.Connect(ep);
         }
 
@@ -215,7 +220,24 @@ namespace MainRover
 
         public static void ProcessPathPackets()
         {
-           
+            Byte[] recieveByte = udpServer.Receive(ref remoteEP);
+            Console.Write("Recieved Data: ");
+            for (int i = 0; i < recieveByte.Length; i++)
+            {
+                Console.Write(recieveByte[i] + " ");
+            }
+            Console.WriteLine();
+            float speed = (float)UtilMain.LinearMap(recieveByte[0], -128, 127, -0.5, 0.5);
+            float turn = (float)UtilMain.LinearMap(recieveByte[1], -128, 127, -0.5, 0.5);
+
+            MotorControl.SetRPM(0, (sbyte)Math.Round((speed - turn) * 120));
+            MotorControl.SetRPM(2, (sbyte)Math.Round((speed - turn) * 120));
+            MotorControl.SetRPM(1, (sbyte)Math.Round((speed + turn) * 120));
+            MotorControl.SetRPM(3, (sbyte)Math.Round((0 - speed - speed) * 120));
+
+            ///TODO send GPS infomation
+            //byte[] sendBytes = Encoding.ASCII.GetBytes(stringData);
+            //client.Send(sendBytes, sendBytes.Length);
         }
 
         public static void SendSensorData(int count)
