@@ -46,7 +46,7 @@ namespace PacketTester
                     {
                         Console.Write(data[i] + " ");
                     }
-                    Console.WriteLine(data.Length);
+                    Console.WriteLine();
                 }
 
                 Console.WriteLine("Sending Data: " + count);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using Scarlet;
 using Scarlet.IO.BeagleBone;
 using Scarlet.IO;
@@ -8,6 +9,7 @@ using Scarlet.Components.Sensors;
 using Scarlet.Communications;
 using Scarlet.Utilities;
 using System.Threading;
+using System.Net.Sockets;
 
 namespace MainRover
 {
@@ -85,6 +87,13 @@ namespace MainRover
                 Parse.SetParseHandler(i, (Packet) => PathPackets.Enqueue(Packet, 0));
             PathSpeed = 0;
             PathAngle = 0;
+            UdpClient udpServer = new UdpClient(8000); // UDP Port from RaspberryPi
+            IPEndPoint remoteEP = new IPEndPoint(IPAddress.Any, 8000);
+
+            var client = new UdpClient();
+            // IP and port for Rover Beaglebone
+            IPEndPoint ep = new IPEndPoint(IPAddress.Parse("192.168.0.51"), 9000);
+            client.Connect(ep);
         }
 
         public static void ProcessInstructions()
@@ -206,22 +215,7 @@ namespace MainRover
 
         public static void ProcessPathPackets()
         {
-            for (int i = 0; !PathPackets.IsEmpty() && i < NUM_PACKETS_TO_PROCESS; i++)
-            {
-                Packet p = PathPackets.Dequeue();
-                switch ((PacketID)p.Data.ID)
-                {
-                    // TODO Maybe: Combine pathing speed and turn in same packet???
-                    case PacketID.PathingSpeed:
-                        PathSpeed = UtilData.ToFloat(p.Data.Payload);
-                        MotorControl.SkidSteerDriveSpeed(PathSpeed, PathAngle);
-                        break;
-                    case PacketID.PathingTurnAngle:
-                        PathAngle = UtilData.ToFloat(p.Data.Payload);
-                        MotorControl.SkidSteerDriveSpeed(PathSpeed, PathAngle);
-                        break;
-                }
-            }
+           
         }
 
         public static void SendSensorData(int count)
