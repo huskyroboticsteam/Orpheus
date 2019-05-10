@@ -93,7 +93,8 @@ namespace MainRover
                 Parse.SetParseHandler(i, (Packet) => PathPackets.Enqueue(Packet, 0));
             PathSpeed = 0;
             PathAngle = 0;
-
+            //CurDriveMode = DriveMode.BaseDrive;
+            
             udpServer = new UdpClient(2001); 
             remoteEP = new IPEndPoint(IPAddress.Any, 2001);
             client = new UdpClient();
@@ -164,7 +165,8 @@ namespace MainRover
             for (int i = 0; !ModePackets.IsEmpty() && i < NUM_PACKETS_TO_PROCESS; i++)
             {
                 Packet p = ModePackets.Dequeue();                
-                CurDriveMode = (DriveMode)p.Data.Payload[1];             
+                CurDriveMode = (DriveMode)p.Data.Payload[1];
+                Console.WriteLine("Switching to mode: " + CurDriveMode.ToString());
             }
         }
 
@@ -184,7 +186,7 @@ namespace MainRover
                     case PacketID.RPMBackRight:
                     case PacketID.RPMBackLeft:
                         int MotorID = p.Data.ID - (byte)PacketID.RPMFrontRight;
-                        MotorControl.SetRPM(MotorID, (sbyte)p.Data.Payload[1]);
+                        MotorControl.SetRPM(MotorID, (sbyte)p.Data.Payload[1]);                        
                         break;
                     case PacketID.SpeedAllDriveMotors:
                         float Speed = UtilData.ToFloat(p.Data.Payload);
@@ -229,12 +231,12 @@ namespace MainRover
             Console.WriteLine();
             float speed = (float)UtilMain.LinearMap(recieveByte[0], -128, 127, -0.5, 0.5);
             float turn = (float)UtilMain.LinearMap(recieveByte[1], -128, 127, -0.5, 0.5);
-
+            
             MotorControl.SetRPM(0, (sbyte)Math.Round((speed - turn) * 120));
             MotorControl.SetRPM(2, (sbyte)Math.Round((speed - turn) * 120));
             MotorControl.SetRPM(1, (sbyte)Math.Round((speed + turn) * 120));
             MotorControl.SetRPM(3, (sbyte)Math.Round((0 - speed - speed) * 120));
-
+            
             ///TODO send GPS infomation
             //byte[] sendBytes = Encoding.ASCII.GetBytes(stringData);
             //client.Send(sendBytes, sendBytes.Length);
@@ -308,7 +310,7 @@ namespace MainRover
             Console.WriteLine("Finished the initalize");
             do
             {
-                Console.WriteLine("Looping");
+                //Console.WriteLine("Looping");
                 SendSensorData(count);
                 ProcessInstructions();
                 Thread.Sleep(50);

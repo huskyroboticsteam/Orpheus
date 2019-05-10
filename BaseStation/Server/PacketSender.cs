@@ -162,10 +162,10 @@ namespace HuskyRobotics.BaseStation.Server
                         modeSet = 1;
                     }
                     */
-                    float modeSet = 1f;
+                    byte modeSet = 1;
                     if (ManualMode)
                     {
-                        modeSet = 0f;
+                        modeSet = 0;
                     }                    
 
                     //testing values to send for autonomous, remove later
