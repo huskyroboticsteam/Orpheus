@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Scarlet.Controllers;
 using Scarlet.IO;
 using Scarlet.IO.BeagleBone;
-using Scarlet.Utilities;
 
 namespace MainRover
 {
@@ -17,20 +16,14 @@ namespace MainRover
         {
             GetCSVData CSVobj = new GetCSVData();
             CSVobj.Initialize();
-            
+
             // Send Model Request to each Motor Board
             for (int i = 0; i < 7; i++)
             {
                 UtilCan.ModelReq(CANBus, true, 2, Convert.ToByte(16 + i));
             }
 
-            // Send Model Request to each Motor Board
-            for (int i = 0; i < 7; i++)
-            {
-                UtilCan.ModeSelect(CANBus, true, 2, Convert.ToByte(16 + i), 0);
-            }
-            /*
-            int count = 10; // How many reads to do before giving up
+            int count = 100; // How many reads to do before giving up
             for (int j = 0; j < count; j++)
             {
                 Task<Tuple<uint, byte[]>> CanRead = CANBus.ReadAsync();
@@ -41,15 +34,15 @@ namespace MainRover
                 if (CanRead.IsCompleted)
                 {
                     Tuple<uint, byte[]> temp = CanRead.Result;
-                    byte sender = Convert.ToByte(((temp.Item1) >> 0x1F) & 0x1F);
+                    uint sender = ((temp.Item1) >> 0x1F) & 0x1F;
                     byte receiver = Convert.ToByte((temp.Item1) & 0x1F);
                     byte[] data = temp.Item2;
 
-                    
+
                     if (data[0] == 0x12 && receiver == 0x2)
                     {
                         MotorBoardData MBD;
-                        switch (sender)
+                        switch (receiver)
                         {
                             case 0x10:
                                 MBD = CSVobj.getMB1(data[1]);
@@ -74,10 +67,10 @@ namespace MainRover
                                 break;
                             default:
                                 MBD = null;
-                                Log.Output(Log.Severity.WARNING, Log.Source.HARDWAREIO, "CAN ID " + sender + " is not a known Motorboard ID");
+                                Console.WriteLine("CAN response receiver not known");
                                 break;
                         }
-                        sendPIDT(CANBus, sender, MBD);
+                        sendPIDT(CANBus, receiver, MBD);
                     }
                 }
                 else
@@ -85,20 +78,22 @@ namespace MainRover
                     CanRead.Dispose();
                     count = 0;
                 }
-            }*/
-            
+            }
+
         }
 
         private static void sendPIDT(ICANBus CANBus, byte receiver, MotorBoardData MBD)
         {
-            if (MBD != null)
+            if (MBD == null)
+            {
+                Console.WriteLine("MotorBoard ID not found in CSV");
+            }
+            else
             {
                 UtilCan.SetP(CANBus, true, 0x2, receiver, MBD.P, 0);
                 UtilCan.SetI(CANBus, true, 0x2, receiver, MBD.I, 0);
                 UtilCan.SetD(CANBus, true, 0x2, receiver, MBD.D, 0);
                 UtilCan.SetTicksPerRev(CANBus, true, 0x2, receiver, MBD.TicksPerRev);
-                Log.Output(Log.Severity.INFO, Log.Source.HARDWAREIO, 
-                    "MotorBoard with CAN ID " + receiver + " set: Model=" + MBD.Model + " P=" + MBD.P + " I=" + MBD.I + " D=" + MBD.D);
             }
         }
     }
