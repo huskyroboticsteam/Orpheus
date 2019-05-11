@@ -25,21 +25,38 @@ namespace PacketTester
             IPEndPoint ep = new IPEndPoint(IPAddress.Parse("192.168.0.22"), 2001);
             client.Connect(ep);
 
-            Byte[] sendBytes;
+            Byte[] sendBytes = new Byte[5];
 
-            int count = 0;
             Console.WriteLine("Loop Started");
             while (true)
             {
-                Console.WriteLine("Sending Data: " + count);
-                sendBytes = Encoding.ASCII.GetBytes(count.ToString());
+                Console.Write("Enter desired speed (-127 to 128) ");
+                string speed = Console.ReadLine();
+                short sspeed = Convert.ToInt16(speed);
+                Byte[] speedarray = BitConverter.GetBytes(sspeed);
+
+                Console.Write("Enter desired heading (0 to 360) ");
+                string head = Console.ReadLine();
+                short shead = Convert.ToInt16(head);
+                Byte[] headarray = BitConverter.GetBytes(shead);
+
+                sendBytes[0] = 0;
+                sendBytes[1] = speedarray[1];
+                sendBytes[2] = speedarray[0];
+                sendBytes[3] = headarray[1];
+                sendBytes[4] = headarray[0];
+
                 client.Send(sendBytes, sendBytes.Length);
-                Thread.Sleep(50);
-                count++;
-                if (count == 127)
+
+                Console.Write("Data Sent:  ");
+                for (int i = 0; i < sendBytes.Length; i++)
                 {
-                    count = -127;
+                    Console.Write(sendBytes[i] + " ");
                 }
+
+                Console.WriteLine();
+                Console.WriteLine();
+                Thread.Sleep(50);
             }
         }
 

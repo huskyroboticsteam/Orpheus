@@ -74,6 +74,10 @@ namespace MainRover
                 {
                     previousCoords = ((MTK3339)Sensor).GetCoordinates();
                 }
+                if (Sensor is BNO055)
+                {
+                    ((BNO055)Sensor).SetMode(BNO055.OperationMode.OPERATION_MODE_MAGONLY);
+                }
             }
         }
 
@@ -225,29 +229,98 @@ namespace MainRover
 
         public static void ProcessPathPackets()
         {
+            double readHeading = -1;
+            float Lat = -1;
+            float Long = -1;
+
+            foreach (ISensor Sensor in Sensors)
+            {
+                if (Sensor is MTK3339)
+                {
+                    var Tup = ((MTK3339)Sensor).GetCoordinates();
+                    Lat = Tup.Item1;
+                    Long = Tup.Item2;
+                }
+
+                if (Sensor is BNO055)
+                {
+                    readHeading = ((BNO055)Sensor).GetTrueHeading();
+                }
+            }
+
+            if (readHeading == -1 || Lat == -1)
+            {
+                // Sensor not read
+                // TODO: Give a console error
+            }
+            else
+            {
+                ///TODO send GPS infomation  
+
+                //byte[] sendBytes = Encoding.ASCII.GetBytes(stringData);
+                //client.Send(sendBytes, sendBytes.Length);
+            }
+
+
+
             Byte[] recieveByte = udpServer.Receive(ref remoteEP);
             Console.Write("Recieved Data: ");
             for (int i = 0; i < recieveByte.Length; i++)
             {
                 Console.Write(recieveByte[i] + " ");
             }
+
+
+
+            // TODO: Remove this block and replace with block below
+            /*
             string stringData = Encoding.ASCII.GetString(recieveByte);
             Console.WriteLine("String data: " + stringData);
             int intData = Convert.ToInt32(stringData);
             Console.WriteLine("int data: " + intData);
             Console.WriteLine();
             float speed = (float)UtilMain.LinearMap(intData, -128, 127, -0.5, 0.5);
-            float turn = 0;//(float)UtilMain.LinearMap(recieveByte[1], -128, 127, -0.5, 0.5);
             Console.WriteLine("speed : " + speed);
+            */
+            // TODO: Remove Above
 
-            MotorControl.SetRPM(0, (sbyte)Math.Round((speed - turn) * 120));
-            MotorControl.SetRPM(2, (sbyte)Math.Round((speed - turn) * 120));
-            MotorControl.SetRPM(1, (sbyte)Math.Round((speed + turn) * 120));
-            MotorControl.SetRPM(3, (sbyte)Math.Round((0 - speed - speed) * 120));
             
-            ///TODO send GPS infomation
-            //byte[] sendBytes = Encoding.ASCII.GetBytes(stringData);
-            //client.Send(sendBytes, sendBytes.Length);
+
+            //TODO Uncomment
+            int desiredHeading = 0;
+            int speed = 0;
+            int turn = 0;
+            if (recieveByte[0] == 0)
+            {
+                Byte[] speedarray = new Byte[2];
+                speedarray[1] = recieveByte[1];
+                speedarray[0] = recieveByte[2];
+                speed = BitConverter.ToInt16(speedarray ,0);
+
+                Byte[] headingarray = new Byte[2];
+                headingarray[1] = recieveByte[3];
+                headingarray[0] = recieveByte[4];
+                desiredHeading = BitConverter.ToInt16(headingarray ,0);
+
+            }
+
+            if (readHeading != -1)
+            {
+                turn = desiredHeading - Convert.ToInt32(Math.Round(readHeading));
+                if (Math.Abs(turn) > 180)
+                {
+                    if (turn < 0) turn += 360;
+                    else turn -= 360;
+                }
+                turn = turn / 4;
+            }
+
+            //TODO: Note sure if cast is really needed
+            MotorControl.SetRPM(0, (speed - turn));
+            MotorControl.SetRPM(2, (speed - turn));
+            MotorControl.SetRPM(1, (speed + turn));
+            MotorControl.SetRPM(3, (0 - speed - turn));
+
         }
 
         public static void SendSensorData(int count)
