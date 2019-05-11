@@ -47,7 +47,13 @@ namespace MainRover
         public static void IPWMOutputConfig()
         {
             OutA = PWMBBB.PWMDevice1.OutputA;
+            OutA.SetFrequency(50);
+            OutA.SetOutput(0.0f);
+            OutA.SetEnabled(true);
             OutB = PWMBBB.PWMDevice1.OutputB;
+            OutB.SetFrequency(50);
+            OutB.SetOutput(0.0f);
+            OutB.SetEnabled(true);
         }
 
         public static void InitBeagleBone()
@@ -131,11 +137,6 @@ namespace MainRover
                     case DriveMode.destination:
                         DrivePackets = new QueueBuffer();
                         PathPackets = new QueueBuffer();
-                        //Initialize IPWMOutput
-                        IPWMOutput OutA = PWMBBB.PWMDevice1.OutputA;
-                        OutA.SetFrequency(50);
-                        OutA.SetOutput(0.0f);
-                        OutA.SetEnabled(true);
                         //Spinning Motor
                         float t = 0.1f;
                         while (t < .9f)
@@ -208,10 +209,6 @@ namespace MainRover
                         }
                         break;
                     case PacketID.CameraRotation:
-                        IPWMOutput OutB = PWMBBB.PWMDevice1.OutputB;
-                        OutB.SetFrequency(50);
-                        OutB.SetOutput(0.0f);
-                        OutB.SetEnabled(true);
                         float t = .5f;
                         if(p.Data.Payload[0] > 0)
                         {
