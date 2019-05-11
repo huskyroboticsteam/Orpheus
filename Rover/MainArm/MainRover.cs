@@ -134,7 +134,6 @@ namespace MainRover
             Console.WriteLine("Finished the initalize");
             do
             {
-                Console.WriteLine("Looping");
                 ProcessInstructions();
                 Thread.Sleep(50);
             } while (!Quit);

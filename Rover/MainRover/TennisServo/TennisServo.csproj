@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -29,15 +29,15 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BBBCSIO, Version=1.6.0.0, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\HuskyRobotics.Scarlet.0.5.2\lib\BBBCSIO.dll</HintPath>
+    </Reference>
+    <Reference Include="Scarlet, Version=0.5.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HuskyRobotics.Scarlet.0.5.2\lib\Scarlet.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
-    <Reference Include="BBBCSIO">
-      <HintPath>..\packages\HuskyRobotics.Scarlet.0.5.1\lib\BBBCSIO.dll</HintPath>
-    </Reference>
-    <Reference Include="Scarlet">
-      <HintPath>..\packages\HuskyRobotics.Scarlet.0.5.1\lib\Scarlet.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Half">
-      <HintPath>..\packages\HuskyRobotics.Scarlet.0.5.1\lib\System.Half.dll</HintPath>
+    <Reference Include="System.Half, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HuskyRobotics.Scarlet.0.5.2\lib\System.Half.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

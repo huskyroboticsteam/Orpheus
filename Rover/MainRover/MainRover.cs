@@ -58,8 +58,9 @@ namespace MainRover
             Sensors = new List<ISensor>();
             try
             {
-                //Sensors.Add(new BNO055(I2CBBB.I2CBus2));
-                //Sensors.Add(new MTK3339(UARTBBB.UARTBus4));
+                //MTK3339 location = new MTK3339(UARTBBB.UARTBus4);
+                //Sensors.Add(new BNO055(I2CBBB.I2CBus2, -1, 0x28,  location));
+                //Sensors.Add(location);
             }
             catch (Exception e)
             {
@@ -71,7 +72,7 @@ namespace MainRover
             {
                 if (Sensor is MTK3339)
                 {
-                    previousCoords = ((MTK3339)Sensor).GetCoords();
+                    previousCoords = ((MTK3339)Sensor).GetCoordinates();
                 }
             }
         }
@@ -112,6 +113,7 @@ namespace MainRover
             }
             else if (!ModePackets.IsEmpty())
             {
+
                 ProcessModePackets();
             }
             else
@@ -160,11 +162,12 @@ namespace MainRover
             }
         }
 
+
         public static void ProcessModePackets()
         {
             for (int i = 0; !ModePackets.IsEmpty() && i < NUM_PACKETS_TO_PROCESS; i++)
             {
-                Packet p = ModePackets.Dequeue();                
+                Packet p = ModePackets.Dequeue();
                 CurDriveMode = (DriveMode)p.Data.Payload[1];
                 Console.WriteLine("Switching to mode: " + CurDriveMode.ToString());
             }
@@ -228,10 +231,15 @@ namespace MainRover
             {
                 Console.Write(recieveByte[i] + " ");
             }
+            string stringData = Encoding.ASCII.GetString(recieveByte);
+            Console.WriteLine("String data: " + stringData);
+            int intData = Convert.ToInt32(stringData);
+            Console.WriteLine("int data: " + intData);
             Console.WriteLine();
-            float speed = (float)UtilMain.LinearMap(recieveByte[0], -128, 127, -0.5, 0.5);
-            float turn = (float)UtilMain.LinearMap(recieveByte[1], -128, 127, -0.5, 0.5);
-            
+            float speed = (float)UtilMain.LinearMap(intData, -128, 127, -0.5, 0.5);
+            float turn = 0;//(float)UtilMain.LinearMap(recieveByte[1], -128, 127, -0.5, 0.5);
+            Console.WriteLine("speed : " + speed);
+
             MotorControl.SetRPM(0, (sbyte)Math.Round((speed - turn) * 120));
             MotorControl.SetRPM(2, (sbyte)Math.Round((speed - turn) * 120));
             MotorControl.SetRPM(1, (sbyte)Math.Round((speed + turn) * 120));
@@ -248,7 +256,7 @@ namespace MainRover
             {
                 if (Sensor is MTK3339)
                 {
-                    var Tup = ((MTK3339)Sensor).GetCoords();
+                    var Tup = ((MTK3339)Sensor).GetCoordinates();
                     float Lat = Tup.Item1;
                     float Long = Tup.Item2;
                     Packet Pack = new Packet((byte)PacketID.DataGPS, true);
@@ -277,14 +285,9 @@ namespace MainRover
                 }
                 if (Sensor is BNO055)
                 {
-                    var Tup = ((BNO055)Sensor).GetVector(BNO055.VectorType.VECTOR_MAGNETOMETER);
-                    float X = Tup.Item1;
-                    float Y = Tup.Item2;
-                    float Z = Tup.Item3;
+                    double direction = ((BNO055)Sensor).GetTrueHeading();
                     Packet Pack = new Packet((byte)PacketID.DataMagnetometer, true);
-                    Pack.AppendData(UtilData.ToBytes(X));
-                    Pack.AppendData(UtilData.ToBytes(Y));
-                    Pack.AppendData(UtilData.ToBytes(Z));
+                    Pack.AppendData(UtilData.ToBytes(direction));
                     Client.SendNow(Pack);
                 }
             }
@@ -304,13 +307,14 @@ namespace MainRover
             Quit = false;
             InitBeagleBone();
             SetupClient();
-            //MotorControl.Initialize();
-            MotorBoards.Initialize(CANBBB.CANBus0);
+            MotorControl.Initialize();
+            //MotorBoards.Initialize(CANBBB.CANBus0);
             int count = 0;
             Console.WriteLine("Finished the initalize");
             do
             {
                 //Console.WriteLine("Looping");
+                //Console.WriteLine("Current mode: " + CurDriveMode);
                 SendSensorData(count);
                 ProcessInstructions();
                 Thread.Sleep(50);

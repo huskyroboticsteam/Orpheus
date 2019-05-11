@@ -53,7 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="HuskyRobotics.Scarlet">
-      <Version>0.5.1</Version>
+      <Version>0.5.2</Version>
     </PackageReference>
     <PackageReference Include="SharpDX.XInput">
       <Version>4.2.0</Version>

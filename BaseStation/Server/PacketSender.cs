@@ -30,6 +30,7 @@ namespace HuskyRobotics.BaseStation.Server
         public static event EventHandler<(float, float, float)> MagnetometerUpdate;
         public static List<Tuple<double, double>> coords;
         public static Tuple<double, double> target;
+        public static double direction;
 
         public static void Setup()
         {
@@ -41,6 +42,7 @@ namespace HuskyRobotics.BaseStation.Server
             Parse.SetParseHandler(0xC0, GpsHandler);
             Parse.SetParseHandler(0xC1, MagnetomerHandler);
             Parse.SetParseHandler(0xD4, RFSignalHandler);
+            direction = 0;
         }
 
         public static void Shutdown()
@@ -387,14 +389,7 @@ namespace HuskyRobotics.BaseStation.Server
 
         private static void MagnetomerHandler(Packet magData)
         {
-            List<float> vals = ConvertToFloatArray(magData);
-
-            float x = vals[0];
-            float y = vals[1];
-            float z = vals[2];
-
-            Console.WriteLine(x + ", " + y + ", " + z);
-            MagnetometerUpdate(null, (x, y, z));
+            direction = magData.Data.Payload[1];
         }
 
         private static void RFSignalHandler(Packet data)

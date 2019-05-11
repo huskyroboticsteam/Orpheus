@@ -29,15 +29,15 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BBBCSIO, Version=1.6.0.0, Culture=neutral, processorArchitecture=x86">
-      <HintPath>packages\HuskyRobotics.Scarlet.0.5.1\lib\BBBCSIO.dll</HintPath>
+      <HintPath>packages\HuskyRobotics.Scarlet.0.5.2\lib\BBBCSIO.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib" />
-    <Reference Include="Scarlet, Version=0.5.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\HuskyRobotics.Scarlet.0.5.1\lib\Scarlet.dll</HintPath>
+    <Reference Include="Scarlet, Version=0.5.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\HuskyRobotics.Scarlet.0.5.2\lib\Scarlet.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Half, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\HuskyRobotics.Scarlet.0.5.1\lib\System.Half.dll</HintPath>
+      <HintPath>packages\HuskyRobotics.Scarlet.0.5.2\lib\System.Half.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
