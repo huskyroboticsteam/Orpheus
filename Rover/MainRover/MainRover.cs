@@ -22,6 +22,8 @@ namespace MainRover
         public static QueueBuffer ModePackets;
         public static QueueBuffer DrivePackets;
         public static QueueBuffer PathPackets;
+        public static IPWMOutput OutA;
+        public static IPWMOutput OutB;
 
         public enum DriveMode {BaseDrive, toGPS, findTennisBall, toTennisBall, destination};
         public static DriveMode CurDriveMode;
@@ -42,12 +44,18 @@ namespace MainRover
             BBBPinManager.ApplyPinSettings(BBBPinManager.ApplicationMode.APPLY_IF_NONE);
         }
 
+        public static void IPWMOutputConfig()
+        {
+            OutA = PWMBBB.PWMDevice1.OutputA;
+            OutB = PWMBBB.PWMDevice1.OutputB;
+        }
+
         public static void InitBeagleBone()
         {
             StateStore.Start("MainRover");
             BeagleBone.Initialize(SystemMode.NO_HDMI, true);
             PinConfig();
-
+            IPWMOutputConfig();
             Sensors = new List<ISensor>();
             try
             {
