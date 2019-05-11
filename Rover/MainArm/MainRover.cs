@@ -8,6 +8,7 @@ using Scarlet.Components.Sensors;
 using Scarlet.Communications;
 using Scarlet.Utilities;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace MainRover
 {
@@ -38,7 +39,7 @@ namespace MainRover
             StateStore.Start("MainArm");
             BeagleBone.Initialize(SystemMode.NO_HDMI, true);
             PinConfig();
-           
+
         }
 
         public static void SetupClient()
@@ -61,32 +62,18 @@ namespace MainRover
             else
             {
                 ProcessBasePackets();
-                
+
             }
         }
-        
+
         public static void ProcessBasePackets()
         {
-            
+
             for (int i = 0; !DrivePackets.IsEmpty() && i < NUM_PACKETS_TO_PROCESS; i++)
             {
                 Packet p = DrivePackets.Dequeue();
                 switch ((PacketID)p.Data.ID)
-                {   
-                    //case PacketID.RPMAllDriveMotors:
-                    //    MotorControl.SetAllRPM((sbyte)p.Data.Payload[0]);
-                    //    break;
-                    case PacketID.RPMFrontRight:
-                    case PacketID.RPMFrontLeft:
-                    case PacketID.RPMBackRight:
-                    case PacketID.RPMBackLeft:
-                        int MotorID = p.Data.ID - (byte)PacketID.RPMFrontRight;
-                        MotorControl.SetRPM(MotorID, (sbyte)p.Data.Payload[1]);
-                        break;
-                    case PacketID.SpeedAllDriveMotors:
-                        float Speed = UtilData.ToFloat(p.Data.Payload);
-                        MotorControl.SetAllSpeed(Speed);
-                        break;
+                {
                     case PacketID.BaseSpeed:
                     case PacketID.ShoulderSpeed:
                     case PacketID.ElbowSpeed:
@@ -108,12 +95,46 @@ namespace MainRover
                             UtilCan.SpeedDir(CANBBB.CANBus0, false, 2, address, p.Data.Payload[1], direction);
                             Console.WriteLine("ADDRESS :" + address + "DIR :" + direction + "PAY :" + p.Data.Payload[1]);
                         }
-                        
-                     
+
+
                         break;
                 }
             }
-        }       
+        }
+
+        public static void readCan()
+        {
+            Task<Tuple<uint, byte[]>> CanRead = CANBBB.CANBus0.ReadAsync();
+            int msec = 0;
+            while (!CanRead.IsCompleted || (msec > 10))
+                CanRead.Wait(100);
+
+            if (CanRead.IsCompleted)
+            {
+                Tuple<uint, byte[]> temp = CanRead.Result;
+                byte sender = Convert.ToByte(((temp.Item1) >> 0x1F) & 0x1F);
+                byte receiver = Convert.ToByte((temp.Item1) & 0x1F);
+                
+                if (receiver == 2)
+                {
+                    if (temp.Item2[0] == 0x18)
+                    {
+                        Tuple<short, short> voltCur= UtilCan.GetTele(temp.Item2);
+                        
+                        Packet Pack = new Packet((byte)PacketID.CanVoltage, true);
+                        Pack.AppendData(UtilData.ToBytes(voltCur.Item1));
+                        Client.SendNow(Pack);
+
+                        Packet Pack2 = new Packet((byte)PacketID.CanCurrent, true);
+                        Pack.AppendData(UtilData.ToBytes(voltCur.Item2));
+                        Client.SendNow(Pack);
+                    }
+                }
+
+
+            }
+        }
+
 
         public static void Main(string[] args)
         {
@@ -129,7 +150,7 @@ namespace MainRover
             Quit = false;
             InitBeagleBone();
             SetupClient();
-            //MotorControl.Initialize();
+            //readCan();
             MotorBoards.Initialize(CANBBB.CANBus0);
             Console.WriteLine("Finished the initalize");
             do
