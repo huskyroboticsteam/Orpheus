@@ -37,6 +37,7 @@ namespace MainRover
             //BBBPinManager.AddMappingGPIO(Pins.SteeringLimitSwitch, false, Scarlet.IO.ResistorState.PULL_UP, true);
             //BBBPinManager.AddMappingPWM(Pins.SteeringMotor);
             //BBBPinManager.AddMappingPWM(Pins.ServoMotor);
+            //BBBPinManager.AddMappingPWM(Pins.CameraServoMotor);
             //BBBPinManager.ApplyPinSettings(BBBPinManager.ApplicationMode.NO_CHANGES);
             BBBPinManager.ApplyPinSettings(BBBPinManager.ApplicationMode.APPLY_IF_NONE);
         }
@@ -199,7 +200,27 @@ namespace MainRover
                         }
                         break;
                     case PacketID.CameraRotation:
-
+                        IPWMOutput OutB = PWMBBB.PWMDevice1.OutputB;
+                        OutB.SetFrequency(50);
+                        OutB.SetOutput(0.0f);
+                        OutB.SetEnabled(true);
+                        float t = .5f;
+                        if(p.Data.Payload[0] > 0)
+                        {
+                            while(t < .9f)
+                            {
+                                OutB.SetOutput(t);
+                                t += 0.0001f;
+                            }
+                        } else if(p.Data.Payload[0] < 0)
+                        {
+                            while(t > .1f)
+                            {
+                                t -= .0001f;
+                            }
+                        }
+                        OutB.Dispose();
+                        break;
                 }
             }
         }
