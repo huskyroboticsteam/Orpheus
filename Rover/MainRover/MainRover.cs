@@ -197,9 +197,9 @@ namespace MainRover
                             UtilCan.SpeedDir(CANBBB.CANBus0, false, 2, address, p.Data.Payload[1], direction);
                             Console.WriteLine("ADDRESS :" + address + "DIR :" + direction + "PAY :" + p.Data.Payload[1]);
                         }
-                        
-                     
                         break;
+                    case PacketID.CameraRotation:
+
                 }
             }
         }

@@ -14,6 +14,7 @@ namespace MainRover
         public const BBBPin SteeringMotor = BBBPin.P9_31;
 
         public const BBBPin ServoMotor = BBBPin.P9_14;
+        public const BBBPin CameraServoMotor = BBBPin.P9_16;
 
     }
 }
