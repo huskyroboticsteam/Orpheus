@@ -229,7 +229,7 @@ namespace MainRover
 
         public static void ProcessPathPackets()
         {
-            double readHeading = -1;
+            float readHeading = -1;
             float Lat = -1;
             float Long = -1;
 
@@ -244,7 +244,7 @@ namespace MainRover
 
                 if (Sensor is BNO055)
                 {
-                    readHeading = ((BNO055)Sensor).GetTrueHeading();
+                    readHeading = (float)((BNO055)Sensor).GetTrueHeading();
                 }
             }
 
@@ -255,13 +255,22 @@ namespace MainRover
             }
             else
             {
-                ///TODO send GPS infomation  
+                
+                byte[] blat = BitConverter.GetBytes(Lat);
+                byte[] blong = BitConverter.GetBytes(Long);
+                byte[] bhead = BitConverter.GetBytes(readHeading);
 
-                //byte[] sendBytes = Encoding.ASCII.GetBytes(stringData);
+                byte[] sendbytes = new byte[12];
+
+                for (int i = 0; i < 4; i++)
+                {
+                    sendbytes[i] = blat[i];
+                    sendbytes[i + 4] = blong[i];
+                    sendbytes[i + 8] = bhead[i];
+                }
+                // TODO send GPS infomation  
                 //client.Send(sendBytes, sendBytes.Length);
             }
-
-
 
             Byte[] recieveByte = udpServer.Receive(ref remoteEP);
             Console.Write("Recieved Data: ");
@@ -270,9 +279,7 @@ namespace MainRover
                 Console.Write(recieveByte[i] + " ");
             }
 
-
-
-            // TODO: Remove this block and replace with block below
+            // Old code for refrence
             /*
             string stringData = Encoding.ASCII.GetString(recieveByte);
             Console.WriteLine("String data: " + stringData);
@@ -282,11 +289,7 @@ namespace MainRover
             float speed = (float)UtilMain.LinearMap(intData, -128, 127, -0.5, 0.5);
             Console.WriteLine("speed : " + speed);
             */
-            // TODO: Remove Above
 
-            
-
-            //TODO Uncomment
             int desiredHeading = 0;
             int speed = 0;
             int turn = 0;
@@ -315,12 +318,10 @@ namespace MainRover
                 turn = turn / 4;
             }
 
-            //TODO: Note sure if cast is really needed
             MotorControl.SetRPM(0, (speed - turn));
             MotorControl.SetRPM(2, (speed - turn));
             MotorControl.SetRPM(1, (speed + turn));
             MotorControl.SetRPM(3, (0 - speed - turn));
-
         }
 
         public static void SendSensorData(int count)
