@@ -89,6 +89,28 @@ namespace MainRover
             CANBus.Write(ConstructCanID(Priority, Sender, Receiver), Payload);
         }
 
+        public static Tuple<short, short> GetTele(byte[] data)
+        {
+            short voltage = -1;
+            short current = -1;
+
+            if(data[0] == 0x18)
+            {
+                byte[] va = new byte[2];
+                byte[] ca = new byte[2];
+
+                va[0] = data[1];
+                va[1] = data[2];
+                ca[0] = data[3];
+                ca[1] = data[4];
+
+                voltage = BitConverter.ToInt16(va, 0);
+                current = BitConverter.ToInt16(va, 0);
+            }
+
+           return new Tuple<short, short>(voltage, current);
+        }
+
     }
 
 }
