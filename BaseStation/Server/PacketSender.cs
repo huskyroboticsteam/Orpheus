@@ -31,6 +31,7 @@ namespace HuskyRobotics.BaseStation.Server
         public static List<Tuple<double, double>> coords;
         public static Tuple<double, double> target;
         public static double direction;
+        public static bool zero;
 
         public static void Setup()
         {
@@ -43,6 +44,7 @@ namespace HuskyRobotics.BaseStation.Server
             Parse.SetParseHandler(0xC1, MagnetomerHandler);
             Parse.SetParseHandler(0xD4, RFSignalHandler);
             direction = 0;
+            zero = false;
         }
 
         public static void Shutdown()
@@ -244,23 +246,52 @@ namespace HuskyRobotics.BaseStation.Server
                     
                     if (ManualMode)
                     {
-                        
-                        Packet SkidFrontRight = new Packet(0x90, true, "MainRover");
-                        SkidFrontRight.AppendData(UtilData.ToBytes((sbyte)Math.Round((forward_back - left_right) * 120)));
-                        Scarlet.Communications.Server.Send(SkidFrontRight);
+                      
+                        if (forward_back == 0 && left_right == 0)
+                        {
+                            //forward_back = 0.01f ;
+                        }
+                        if (true  || forward_back != 0 || left_right != 0)
+                        {
+                            Packet SkidFrontRight = new Packet(0x90, true, "MainRover");
+                            SkidFrontRight.AppendData(UtilData.ToBytes((sbyte)Math.Round((forward_back - left_right) * 120)));
+                            Scarlet.Communications.Server.Send(SkidFrontRight);
 
-                        Packet SkidRearRight = new Packet(0x92, true, "MainRover");
-                        SkidRearRight.AppendData(UtilData.ToBytes((sbyte)Math.Round((forward_back - left_right) * 120)));
-                        Scarlet.Communications.Server.Send(SkidRearRight);
+                            Packet SkidRearRight = new Packet(0x92, true, "MainRover");
+                            SkidRearRight.AppendData(UtilData.ToBytes((sbyte)Math.Round((forward_back - left_right) * 120)));
+                            Scarlet.Communications.Server.Send(SkidRearRight);
 
-                        Packet SkidFrontLeft = new Packet(0x91, true, "MainRover");
-                        SkidFrontLeft.AppendData(UtilData.ToBytes((sbyte)Math.Round((forward_back + left_right) * 120)));
-                        Scarlet.Communications.Server.Send(SkidFrontLeft);
+                            Packet SkidFrontLeft = new Packet(0x91, true, "MainRover");
+                            SkidFrontLeft.AppendData(UtilData.ToBytes((sbyte)Math.Round((forward_back + left_right) * 120)));
+                            Scarlet.Communications.Server.Send(SkidFrontLeft);
 
-                        Packet SkidRearLeft = new Packet(0x93, true, "MainRover");
-                        SkidRearLeft.AppendData(UtilData.ToBytes((sbyte)Math.Round((0 - forward_back - left_right) * 120)));
-                        Console.WriteLine("Test " + (-skidDriveSpeed - skidSteerSpeed));
-                        Scarlet.Communications.Server.Send(SkidRearLeft);
+                            Packet SkidRearLeft = new Packet(0x93, true, "MainRover");
+                            SkidRearLeft.AppendData(UtilData.ToBytes((sbyte)Math.Round((0 - forward_back - left_right) * 120)));
+                            Console.WriteLine("Test " + (-skidDriveSpeed - skidSteerSpeed));
+                            Scarlet.Communications.Server.Send(SkidRearLeft);
+                            zero = false;
+                        }
+                        else if (false)
+                        {
+                            Packet SkidFrontRight = new Packet(0x90, true, "MainRover");
+                            SkidFrontRight.AppendData(UtilData.ToBytes((sbyte)Math.Round((forward_back - left_right) * 120)));
+                            Scarlet.Communications.Server.Send(SkidFrontRight);
+
+                            Packet SkidRearRight = new Packet(0x92, true, "MainRover");
+                            SkidRearRight.AppendData(UtilData.ToBytes((sbyte)Math.Round((forward_back - left_right) * 120)));
+                            Scarlet.Communications.Server.Send(SkidRearRight);
+
+                            Packet SkidFrontLeft = new Packet(0x91, true, "MainRover");
+                            SkidFrontLeft.AppendData(UtilData.ToBytes((sbyte)Math.Round((forward_back + left_right) * 120)));
+                            Scarlet.Communications.Server.Send(SkidFrontLeft);
+
+                            Packet SkidRearLeft = new Packet(0x93, true, "MainRover");
+                            SkidRearLeft.AppendData(UtilData.ToBytes((sbyte)Math.Round((0 - forward_back - left_right) * 120)));
+                            Console.WriteLine("Test " + (-skidDriveSpeed - skidSteerSpeed));
+                            Scarlet.Communications.Server.Send(SkidRearLeft);
+                            zero = true;
+                        }
+                                      
                         
 
                         Packet FingerPack = new Packet(0xA0, true, "MainArm");

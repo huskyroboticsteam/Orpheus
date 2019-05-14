@@ -24,7 +24,7 @@ namespace MainRover
             }
 
             int count = 100; // How many reads to do before giving up
-            for (int j = 0; j < count; j++)
+            for (int j = 0; j < count && false; j++)
             {
                 Task<Tuple<uint, byte[]>> CanRead = CANBus.ReadAsync();
                 int msec = 0;

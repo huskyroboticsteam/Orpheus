@@ -38,7 +38,7 @@ namespace MainRover
 
         public static void PinConfig()
         {
-            BBBPinManager.AddBusCAN(0, false);
+            BBBPinManager.AddBusCAN(0);
             //BBBPinManager.AddMappingUART(Pins.MTK3339_RX);
             //BBBPinManager.AddMappingUART(Pins.MTK3339_TX);
             //BBBPinManager.AddMappingsI2C(Pins.BNO055_SCL, Pins.BNO055_SDA);
@@ -382,7 +382,7 @@ namespace MainRover
             InitBeagleBone();
             SetupClient();
             MotorControl.Initialize();
-            //MotorBoards.Initialize(CANBBB.CANBus0);
+            MotorBoards.Initialize(CANBBB.CANBus0);
             int count = 0;
             Console.WriteLine("Finished the initalize");
             do
