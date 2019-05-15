@@ -35,6 +35,8 @@ namespace MainRover
         public static IPEndPoint remoteEP;
         public static UdpClient client;
         public static IPEndPoint ep;
+        public static Queue<byte[]> recieveList;
+        private static Thread ParseThread;
 
         public static void PinConfig()
         {
@@ -105,6 +107,21 @@ namespace MainRover
             client = new UdpClient();
             ep = new IPEndPoint(IPAddress.Parse("192.168.0.51"), 2002);
             client.Connect(ep);
+            recieveList = new Queue<byte[]>();
+            ParseThread = new Thread(new ThreadStart(parser));
+            ParseThread.Start();
+        }
+
+        public static void parser()
+        {
+            Console.WriteLine("UDP Parsing thread started");
+
+            //listen for pathing commands only when in autonomous mode
+            while (CurDriveMode == DriveMode.toGPS)
+            {
+                Byte[] recieveByte = udpServer.Receive(ref remoteEP);
+                recieveList.Enqueue(recieveByte);
+            }
         }
 
         public static void ProcessInstructions()
@@ -126,7 +143,7 @@ namespace MainRover
                 {   // TODO For each case statement, clear undeeded queue buffers
                     case DriveMode.BaseDrive:
                         ProcessBasePackets();
-                        PathPackets = new QueueBuffer();
+                        recieveList.Clear();
                         break;
                     case DriveMode.toGPS:
                         ProcessPathPackets();
@@ -134,15 +151,15 @@ namespace MainRover
                         break;
                     case DriveMode.findTennisBall:
                         DrivePackets = new QueueBuffer();
-                        PathPackets = new QueueBuffer();
+                        recieveList.Clear();
                         break;
                     case DriveMode.toTennisBall:
                         DrivePackets = new QueueBuffer();
-                        PathPackets = new QueueBuffer();
+                        recieveList.Clear();
                         break;
                     case DriveMode.destination:
                         DrivePackets = new QueueBuffer();
-                        PathPackets = new QueueBuffer();
+                        recieveList.Clear();
                         //Initialize IPWMOutput
                         IPWMOutput OutA = PWMBBB.PWMDevice1.OutputA;
                         OutA.SetFrequency(50);
@@ -272,52 +289,56 @@ namespace MainRover
                 //client.Send(sendBytes, sendBytes.Length);
             }
 
-            Byte[] recieveByte = udpServer.Receive(ref remoteEP);
-            Console.Write("Recieved Data: ");
-            for (int i = 0; i < recieveByte.Length; i++)
-            {
-                Console.Write(recieveByte[i] + " ");
-            }
-
-            // Old code for refrence
-            /*
-            string stringData = Encoding.ASCII.GetString(recieveByte);
-            Console.WriteLine("String data: " + stringData);
-            int intData = Convert.ToInt32(stringData);
-            Console.WriteLine("int data: " + intData);
-            Console.WriteLine();
-            float speed = (float)UtilMain.LinearMap(intData, -128, 127, -0.5, 0.5);
-            Console.WriteLine("speed : " + speed);
-            */
-
-            int desiredHeading = 0;
             int speed = 0;
             int turn = 0;
-            if (recieveByte[0] == 0)
+            if (recieveList.Count != 0)
             {
-                Byte[] speedarray = new Byte[2];
-                speedarray[1] = recieveByte[1];
-                speedarray[0] = recieveByte[2];
-                speed = BitConverter.ToInt16(speedarray ,0);
+                Byte[] recieveByte = recieveList.Dequeue();
+                recieveList.Clear(); //may not be needed if communicatoin is slow enough
 
-                Byte[] headingarray = new Byte[2];
-                headingarray[1] = recieveByte[3];
-                headingarray[0] = recieveByte[4];
-                desiredHeading = BitConverter.ToInt16(headingarray ,0);
-
-            }
-
-            if (readHeading != -1)
-            {
-                turn = desiredHeading - Convert.ToInt32(Math.Round(readHeading));
-                if (Math.Abs(turn) > 180)
+                Console.Write("Recieved Data: ");
+                for (int i = 0; i < recieveByte.Length; i++)
                 {
-                    if (turn < 0) turn += 360;
-                    else turn -= 360;
+                    Console.Write(recieveByte[i] + " ");
                 }
-                turn = turn / 4;
-            }
 
+                // Old code for refrence
+                /*
+                string stringData = Encoding.ASCII.GetString(recieveByte);
+                Console.WriteLine("String data: " + stringData);
+                int intData = Convert.ToInt32(stringData);
+                Console.WriteLine("int data: " + intData);
+                Console.WriteLine();
+                float speed = (float)UtilMain.LinearMap(intData, -128, 127, -0.5, 0.5);
+                Console.WriteLine("speed : " + speed);
+                */
+
+                int desiredHeading = 0;                
+                if (recieveByte[0] == 0)
+                {
+                    Byte[] speedarray = new Byte[2];
+                    speedarray[1] = recieveByte[1];
+                    speedarray[0] = recieveByte[2];
+                    speed = BitConverter.ToInt16(speedarray, 0);
+
+                    Byte[] headingarray = new Byte[2];
+                    headingarray[1] = recieveByte[3];
+                    headingarray[0] = recieveByte[4];
+                    desiredHeading = BitConverter.ToInt16(headingarray, 0);
+
+                }
+
+                if (readHeading != -1)
+                {
+                    turn = desiredHeading - Convert.ToInt32(Math.Round(readHeading));
+                    if (Math.Abs(turn) > 180)
+                    {
+                        if (turn < 0) turn += 360;
+                        else turn -= 360;
+                    }
+                    turn = turn / 4;
+                }               
+            }
             MotorControl.SetRPM(0, (speed - turn));
             MotorControl.SetRPM(2, (speed - turn));
             MotorControl.SetRPM(1, (speed + turn));
