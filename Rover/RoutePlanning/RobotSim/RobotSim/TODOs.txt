@@ -1,0 +1,1 @@
+* A* is probably wrong. revise it (might need to update heuristic instead of assign it when node is created)

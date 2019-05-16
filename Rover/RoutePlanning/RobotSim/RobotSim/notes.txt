@@ -1,0 +1,49 @@
+Path-splitting algorithm:
+
+1. place two nodes as "safeties" around each endpoint
+X                            X
+^   ----------------------   ^
+X                            X
+               R
+2. remove BOTH failed safeties
+3. unmark visited nodes if fail to add BOTH endpoints
+4. renamed visited nodes to processed nodes or something
+
+TODOs
+* remove fixed target, and then add path merging. Basically, go through best path and
+see if you can remove a point. connect the point before and after that point and check
+for intersection (larger tolerance) and then if possible discard that point. Also remove
+the similar logic in "add side points". Later, if necessary, add path pruning in the whole
+graph.
+* if there is no path at all (no node), gradually decrease bot width until one can be found.
+  this avoids from getting stuck but could potentially make bot run into things (not likely for 
+  conservatively-picked values)
+
+--- QuadTree optimizations ---
+* handle the TODO in get_graph(), where I don't recompute graph if not necessary
+* actually, split get_graph() into compute_graph() and get_graph(), where only in compute_graph()
+  do I recompute the graph (if necessary). get_graph() only returns the last computed graph
+* same for compute_path() probably
+
+Pseudocode
+----
+func new_obstacles()
+    ....
+    new_nodes := set()
+    removed_nodes := set()
+
+    main_loop for adding obstacles:
+    .... when node is split into four children
+
+        if node not in new_nodes:
+            removed_nodes.add(node) // only remove if already present
+        else:
+            new_nodes.remove(node)
+        end
+        
+        add children to new_nodes...
+    loop end
+
+    foreach node in new_nodes:
+        // TODO add neighbors
+end

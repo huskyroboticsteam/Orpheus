@@ -13,6 +13,19 @@
 #include <glib.h>
 #include "zed-depth.h"
 
+// parameters for zed
+sl::RuntimeParameters runtime_params;
+sl::InitParameters init_params;
+
+// threads used 
+std::thread t1;
+std::thread t2;
+std::thread t3;
+
+sl::Mat img_zed;
+sl::Mat depth_img_zed;
+cv::Mat depth_img_cv;
+
 cv::Mat slMat2cvMat(const sl::Mat &input);
 sl::Camera zed;
 cv::VideoWriter writer;
@@ -20,15 +33,19 @@ cv::VideoWriter writer_debug;
 int32_t new_width;
 int32_t new_height;
 
-void getSomeImages()
+void gstreamer_write_images()
 {
-  sl::Mat img_zed(new_width, new_height, sl::MAT_TYPE_8U_C4);
+  sl::Mat g_img(new_width, new_height, sl::MAT_TYPE_8U_C4);
 
   for(;;)
   {
-    zed.retrieveImage(img_zed, sl::VIEW_LEFT, sl::MEM_CPU, new_width, new_height);
+    zed.retrieveImage(g_img, 
+                      sl::VIEW_LEFT,
+                      sl::MEM_CPU, 
+                      new_width, 
+                      new_height);
     cv::Mat three_channel_bgr;
-    cv::Mat img_cv = slMat2cvMat(img_zed);
+    cv::Mat img_cv = slMat2cvMat(g_img);
     cv::cvtColor(img_cv, three_channel_bgr, cv::COLOR_BGRA2BGR);
     writer.write(three_channel_bgr);
     std::this_thread::sleep_for(std::chrono::milliseconds(20));
@@ -72,18 +89,13 @@ std::vector<std::pair<cv::Rect, float> > get_obstacle_data()
   new_width = image_size.width;
   new_height = image_size.height;
 
-  // construct img mats
-  sl::Mat img_zed(new_width, new_height, sl::MAT_TYPE_8U_C4);
-
-  // construct depth mats
-  sl::Mat depth_img_zed(new_width, new_height, sl::MAT_TYPE_8U_C4);
-  cv::Mat depth_img_cv = slMat2cvMat(depth_img_zed);
-
   // retrieve images from zed api
   sl::Mat sl_depth_f32;
   zed.retrieveImage(img_zed, sl::VIEW_LEFT, sl::MEM_CPU, new_width, new_height);
   zed.retrieveImage(depth_img_zed, sl::VIEW_DEPTH, sl::MEM_CPU, new_width, new_height);
   zed.retrieveMeasure(sl_depth_f32, sl::MEASURE_DEPTH);
+
+  img_used = img_zed;
 
   std::vector<cv::Vec4i> hierarchy;
   cv::Mat edges, blur_kern;
@@ -240,7 +252,54 @@ std::vector<std::pair<cv::Rect, float> > get_obstacle_data()
   return result;
 }
 
-int init(const char* camera_path)
+int gsInit(const char* camera_path)
+{
+  // gstreamer 
+  g_server_data data;
+  data.argc = 5;
+  data.argv[0] = camera_path;
+  data.argv[1] = "intervideosrc";
+  data.argv[2] = "zed_depth";
+  data.argv[3] = "5556";
+  data.argv[4] = "intervideosrc channel=rgb ! rtpvrawpay name=pay0 pt=96";
+    
+  writer.open("appsrc ! video/x-raw,format=BGR ! videoconvert ! video/x-raw,format=I420 ! intervideosink channel=rgb", 
+              0, 
+              10, 
+              cv::Size(img_zed.getWidth(), 
+              img_zed.getHeight()), 
+              true);
+
+  // thread to ...
+  t1 = std::thread(start_server, data.argc, (char **) data.argv);
+ 
+  // thread to ...
+  t2 = std::thread(gstreamer_write_images);
+
+#ifdef DEBUG
+  // gstreamer
+  g_server_data data2;
+  data2.argc = 5;
+  data2.argv[0] = camera_path;
+  data2.argv[1] = "intervideosrc";
+  data2.argv[2] = "zed_depth_debug";
+  data2.argv[3] = "8888";
+  data2.argv[4] = "intervideosrc channel=wshed ! rtpvrawpay name=pay0 pt=96";
+ 
+  writer_debug.open("appsrc ! video/x-raw,format=BGR ! videoconvert ! video/x-raw,format=I420 ! intervideosink channel=wshed", 
+                    0, 
+                    10, 
+                    cv::Size(img_zed.getWidth(), 
+                    img_zed.getHeight()), 
+                    true);
+  
+  // thread to ...
+  t3 = std::thread(start_server, data2.argc, (char **) data2.argv);
+#endif
+  return 0;
+}
+
+int zdInit()
 {
   // setup params for zed
   //sl::InitParameters init_params;
@@ -268,59 +327,17 @@ int init(const char* camera_path)
   img_zed = sl::Mat(new_width, new_height, sl::MAT_TYPE_8U_C4);
 
   // depth images
-  sl::Mat depth_img_zed(new_width, new_height, sl::MAT_TYPE_8U_C4);
-  cv::Mat depth_img_cv = slMat2cvMat(depth_img_zed);
+  depth_img_zed = sl::Mat(new_width, new_height, sl::MAT_TYPE_8U_C4);
+  depth_img_cv = slMat2cvMat(depth_img_zed);
 
   sl::Mat sl_depth_f32;
 
-  // gstreamer 
-  g_server_data data;
-  data.argc = 5;
-  data.argv[0] = camera_path;
-  data.argv[1] = "intervideosrc";
-  data.argv[2] = "zed_depth";
-  data.argv[3] = "5556";
-  data.argv[4] = "intervideosrc channel=rgb ! rtpvrawpay name=pay0 pt=96";
-    
-  writer.open("appsrc ! video/x-raw,format=BGR ! videoconvert ! video/x-raw,format=I420 ! intervideosink channel=rgb", 
-              0, 
-              10, 
-              cv::Size(img_zed.getWidth(), 
-              img_zed.getHeight()), 
-              true);
-
-  // thread to ...
-  t1 = std::thread(start_server, data.argc, (char **) data.argv);
- 
-  // thread to ...
-  t2 = std::thread(getSomeImages);
-
-#ifdef DEBUG
-  // gstreamer
-  g_server_data data2;
-  data2.argc = 5;
-  data2.argv[0] = camera_path;
-  data2.argv[1] = "intervideosrc";
-  data2.argv[2] = "zed_depth_debug";
-  data2.argv[3] = "8888";
-  data2.argv[4] = "intervideosrc channel=wshed ! rtpvrawpay name=pay0 pt=96";
- 
-  writer_debug.open("appsrc ! video/x-raw,format=BGR ! videoconvert ! video/x-raw,format=I420 ! intervideosink channel=wshed", 
-                    0, 
-                    10, 
-                    cv::Size(img_zed.getWidth(), 
-                    img_zed.getHeight()), 
-                    true);
-  
-  // thread to ...
-  t3 = std::thread(start_server, data2.argc, (char **) data2.argv);
-#endif
   return 0;
 }
 
 int main(int argc, char *argv[])
 {
-  if (init(argv[1]) != 0) printf("cock\n");
+  if (zdInit(argv[1]) != 0) printf("oh god oh fuck\n");
   for(char key = ' '; key != 'q'; key = cv::waitKey(10))
   {
     if(zed.grab(runtime_params) == sl::SUCCESS)

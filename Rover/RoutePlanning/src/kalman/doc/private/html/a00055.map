@@ -1,0 +1,5 @@
+base referer
+rect $a00022-source.html 179,31 256,54
+rect $a00024-source.html 305,7 385,31
+rect $a00018-source.html 309,54 381,78
+rect $a00020-source.html 434,54 498,78

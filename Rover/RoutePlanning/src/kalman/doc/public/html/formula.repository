@@ -1,0 +1,74 @@
+\form#0:$ \vec x $
+\form#1:$ \vec u $
+\form#2:$ f $
+\form#3:\[ \vec x_k = f \left( x_{k-1}, u_{k-1}, w_{k-1} \right) \]
+\form#4:$ w $
+\form#5:$ \vec z $
+\form#6:\[ \vec z_k = h \left( x_{k-1}, v_{k-1} \right) \]
+\form#7:$ v $
+\form#8:\[ \ddot x = \frac{u}{m} - \frac{b_x}{m} \dot x^{2} \]
+\form#9:\[ \ddot y = \frac{p}{m} \dot x^{2} - g \]
+\form#10:$ m $
+\form#11:$ b_{x} $
+\form#12:$ p $
+\form#13:$ g $
+\form#14:$ u $
+\form#15:\[\vec x_k = \left [ \begin{array}{c} x_k \\ \\ \dot x_k \\ \\ y_k \\ \\ \dot y_k \end{array} \right] = \left [ \begin{array}{c} x_{k-1} + T \dot x_{k-1} + \frac{T^{2}}{2} \left( \frac{u}{m} - \frac{b_x}{m} \dot x_{k-1}^{2} \right )\\ \\ \dot x_{k-1} + T \left ( \frac{u}{m} - \frac{b_x}{m} \dot x_{k-1}^{2} \right ) + w_{1} \\ \\ y_{k-1} + T \dot y_{k-1} + \frac{T^{2}}{2} \left( \frac{p}{m} \dot x_{k-1}^{2} - g \right )\\ \\ \dot y_{k-1} + T \left( \frac{p}{m} \dot x_{k-1}^{2} - g \right ) + w_{2} \end{array} \right ] \]
+\form#16:$ w_{1} $
+\form#17:$ w_{2} $
+\form#18:\[\vec z_k = \left [ \begin{array}{c} \theta \\ \\ r \end{array} \right ] = \left [ \begin{array}{c} atan(\frac{y}{x}) +v_{1} \\ \\ \sqrt{x^{2}+y^{2}} + v_{2} \end{array} \right ] \]
+\form#19:$ v_{1} $
+\form#20:$ v_{2} $
+\form#21:\[ A_{[i,j]} = \frac{\partial f_{[i]}}{\partial x_{[j]}} \]
+\form#22:\[ W_{[i,j]} = \frac{\partial f_{[i]}}{\partial w_{[j]}} \]
+\form#23:\[ H_{[i,j]} = \frac{\partial h_{[i]}}{\partial x_{[j]}} \]
+\form#24:\[ V_{[i,j]} = \frac{\partial h_{[i]}}{\partial v_{[j]}} \]
+\form#25:$ n $
+\form#26:$ nw $
+\form#27:$ nv $
+\form#28:\[ A = \left [ \begin{array}{cccc} 1 & T-T^{2} \frac{b}{m} \dot x_{k-1} & 0 & 0 \\ \\ 0 & 1-2T \frac{b}{m} \dot x_{k-1} & 0 & 0 \\ \\ 0 & T^{2} \frac{p}{m} \dot x_{k-1} & 1 & T \\ \\ 0 & 2T \frac{p}{m} \dot x_{k-1} & 0 & 1 \end{array} \right ] \]
+\form#29:\[ W = \left [ \begin{array}{cc} 0 & 0 \\ \\ 1 & 0 \\ \\ 0 & 0\\ \\ 0 & 1 \end{array} \right ] \]
+\form#30:\[ H = \left [ \begin{array}{cccc} \frac{- \dot y_{k-1}}{x_{k-1}^{2}+y_{k-1}^{2}} & 0 \frac{ \dot x_{k-1}}{x_{k-1}^{2}+y_{k-1}^{2}} & 0 \\ \\ \frac{ \dot x_{k-1}}{\sqrt{x_{k-1}^{2}+y_{k-1}^{2}}} & 0 \frac{ \dot y_{k-1}}{\sqrt{x_{k-1}^{2}+y_{k-1}^{2}}} & 0 \end{array} \right ] \]
+\form#31:\[ V = \left [ \begin{array}{cc} 1 & 0 \\ \\ 0 & 1 \end{array} \right ] \]
+\form#32:\[\vec x = \left [ \begin{array}{c} r\cos\theta \\ 60 \\ r\sin\theta \\ 0 \end{array} \right] \]
+\form#33:\[ P = \left [ \begin{array}{cccc} 100^2 & 0 & 0 & 0 \\ \\ 0 & 10^2 & 0 & 0 \\ \\ 0 & 0 & 25^2 & 0 \\ \\ 0 & 0 & 0 & 10^2 \\ \\ \end{array} \right ] \]
+\form#34:\[ Q = \left [ \begin{array}{cc} 0.01^{2} & 0.01^{2}/10 \\ \\ 0.01^{2}/10 & 0.01^{2} \end{array} \right ] \]
+\form#35:\[ R = \left [ \begin{array}{cc} 0.01^{2} & 0 \\ \\ 0 & 0.01^{2} \end{array} \right ] \]
+\form#36:$ h $
+\form#37:$ x $
+\form#38:\[ x_k = f \left( x_{k-1}, u_{k-1}, w_{k-1} \right) \]
+\form#39:\[ Q = E \left( w w^T \right) \]
+\form#40:$ z $
+\form#41:\[ z_k = h \left( x_k, v_k \right) \]
+\form#42:\[ R = E \left( v v^T \right) \]
+\form#43:$ \hat{x}_{k-1} $
+\form#44:\[ \tilde{x}_k = f \left( \hat{x}_{k-1}, u_{k-1}, 0 \right) \]
+\form#45:\[ \tilde{z}_k = h \left( \tilde{x}_k, 0 \right) \]
+\form#46:$ \tilde{x}_k $
+\form#47:\[ x_k \approx f \left( \hat{x}_{k-1}, u_{k-1}, 0 \right) + \frac{\partial f}{\partial x} \left( \hat{x}_{k-1}, u_{k-1}, 0 \right) \left( \Delta x \right) + \frac{\partial f}{\partial u} \left( \hat{x}_{k-1}, u_{k-1}, 0 \right) \left( \Delta u \right) + \frac{\partial f}{\partial w} \left( \hat{x}_{k-1}, u_{k-1}, 0 \right) \left( \Delta w \right) \]
+\form#48:\[ \phantom{x_k} = \tilde{x}_k + A \left( x_{k-1} - \hat{x}_{k-1} \right) + W w_{k-1} \]
+\form#49:\[ z_k \approx h \left( \tilde{x}_k, 0 \right) + \frac{\partial h}{\partial x} \left( \tilde{x}_k, 0 \right) \left( \Delta x \right) + \frac{\partial h}{\partial v} \left( \tilde{x}_k, 0 \right) \left( \Delta v \right) \]
+\form#50:\[ \phantom{z_k} = \tilde{z}_k + H \left( x_k - \tilde{x}_k \right) + V v_k \]
+\form#51:$ f(x, u, 0) $
+\form#52:$ h(x, 0) $
+\form#53:$ [-\pi, \pi] $
+\form#54:\[ Q = E\left( w w^T \right) \]
+\form#55:\[ R = E\left( v v^T \right) \]
+\form#56:$ U D U^T $
+\form#57:$ P = U D U^T $
+\form#58:$ Q = U_q D_q U_q^T $
+\form#59:$ = W U_q $
+\form#60:$ = D_q $
+\form#61:$ V R V^T $
+\form#62:$ V R V^T = U_r D_r U_r^T $
+\form#63:$ ( = D_r ) $
+\form#64:$ = U_r^{-1} H $
+\form#65:$ = U_r^{-1} dz $
+\form#66:$ D_q $
+\form#67:$ U_q $
+\form#68:$ \left( U_q^{-1} \right)^T $
+\form#69:$ nn = n + nw $
+\form#70:\[ x_k = f \left( x_{k-1}, u_{k-1}, w_{k-1} \right) = A x_{k-1} + B u_{k-1} + W w_{k-1} \]
+\form#71:\[ z_k = h \left( x_k, v_k \right) = H x_k + V v_k \]
+\form#72:\[ \tilde{x}_k = f \left( \hat{x}_{k-1}, u_{k-1}, 0 \right) = A \hat{x}_{k-1} + B u_{k-1} \]
+\form#73:\[ \tilde{z}_k = h \left( \tilde{x}_k, 0 \right) = H \tilde{x}_k \]
