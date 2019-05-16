@@ -11,6 +11,9 @@ sending/receiving and encoding/decoding data packets, etc.
 #include <ctime>
 #include <iostream>
 
+
+constexpr unsigned int buf_size = 16;
+
 namespace RP
 {
 class Server
@@ -26,11 +29,12 @@ public:
 	void data_receiver_loop();
 	void stop(); // Stops socket and cleans up
 	//RP::Controller controller;
-	void get_packet_data(char *output);
-
+	bool get_packet_data(char *output);
+	
 private:
 	std::vector<unsigned char> current_time(); // Stores unix timestamp in 4 bytes
 	char packet_buf[buf_size];
+	bool new_packet;
 	std::mutex buf_mutex;
 	// RP::Controller controller;
 };

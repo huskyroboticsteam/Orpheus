@@ -18,7 +18,6 @@
 #endif
 
 const unsigned char WATCHDOG_ID = 0xF0;
-constexpr unsigned int buf_size = 16;
 const std::string endpoint = "MainRover";
 sockaddr_in server;
 SOCKET out;
@@ -65,10 +64,16 @@ RP::Server::Server()
 	}
 }
 
-void RP::Server::get_packet_data(char* output) {
+bool RP::Server::get_packet_data(char* output) {
+	bool result = false;
 	buf_mutex.lock();
-	memcpy(output, packet_buf, buf_size);
+	if(new_packet) {
+		memcpy(output, packet_buf, buf_size);
+		new_packet = false;
+		result = true;
+	}
 	buf_mutex.unlock();
+	return result;	
 }
 
 void RP::Server::data_receiver_loop()
@@ -97,6 +102,7 @@ void RP::Server::data_receiver_loop()
 
 	buf_mutex.lock();
 	memcpy(packet_buf, local_buf, buf_size);
+	new_packet = true;
 	buf_mutex.unlock();
 }
 

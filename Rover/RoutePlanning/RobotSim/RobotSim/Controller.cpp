@@ -56,7 +56,6 @@ int main() {
     RP::Controller controller(p, targetSites);
     std::cout << "Finished constructing" << std::endl;
     while (true) {
-
         controller.update();
     }
 }
@@ -67,7 +66,7 @@ Controller::Controller(const point &cur_pos, std::deque<point> targetSites)
     : server(), watchdogThread(&RP::Server::send_watchdog, &server),
       detector("Tennisball/data/final_models/frozen_inference_graph.pb",
                "Tennisball/data/final_models/graph.pbtxt"),
-      receiverThread(&RP::Server::dataReceiverLoop, &server),
+      receiverThread(&RP::Server::data_receiver_loop, &server),
       pather(cur_pos, targetSites[0], RP::point{40, 40}) {
     this->targetSites = targetSites;
     state = FOLLOW_PATH;
@@ -128,30 +127,33 @@ void Controller::update() {
         // TODO: make this a vector or shared_ptr
         std::cout << "Listening" << std::endl;
 
-        unsigned char *secondPacket = server.go();
-        
-        float received_lat;
-        float received_lng;
-        float received_dir;
+        char packet_buf[buf_size];
 
-        memcpy(&received_lat, secondPacket, 4);
-        memcpy(&received_lng, secondPacket+4, 4);
-        memcpy(&received_dir, secondPacket+8, 4);
-
-        curr_dir = received_dir;
-        
-        std::cout << "Started stepping kalman filter" << std::endl;
-
-        Kalman::KVector<float, 1, true> z(4);
         Kalman::KVector<float, 1, true> u(2);
-        z(1) = received_lat;
-        z(2) = received_lng;
-        // std::cout << "Success: Initialized the things" << std::endl;
-        filter.step(u, z);
-        curr_lat = filter.getX()(1);
-        curr_lng = filter.getX()(2);
-        std::cout << "Kalman says: lat: " << curr_lat << " lng: " << curr_lng
-                  << std::endl;
+        if(server.get_packet_data(packet_buf)) { 
+            float received_lat;
+            float received_lng;
+            float received_dir;
+            memcpy(&received_lat, packet_buf, 4);
+            memcpy(&received_lng, packet_buf+4, 4);
+            memcpy(&received_dir, packet_buf+8, 4);
+
+            curr_dir = received_dir;
+            
+            std::cout << "Started stepping kalman filter with received data" << std::endl;
+
+            Kalman::KVector<float, 1, true> z(4);
+            z(1) = received_lat;
+            z(2) = received_lng;
+            // std::cout << "Success: Initialized the things" << std::endl;
+            filter.step(u, z);
+            curr_lat = filter.getX()(1);
+            curr_lng = filter.getX()(2);
+            std::cout << "Kalman says: lat: " << curr_lat << " lng: " << curr_lng
+                    << std::endl;
+        } else { //step the filter without new data
+            filter.timeUpdateStep(u);
+        }
         pather.set_pos(RP::point{curr_lat, curr_lng});
         // std::cout << "Controller got a packet" << std::endl;
         point nextPoint{0.0, 0.0};
