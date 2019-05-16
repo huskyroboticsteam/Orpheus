@@ -105,7 +105,7 @@ namespace MainRover
             udpServer = new UdpClient(2001); 
             remoteEP = new IPEndPoint(IPAddress.Any, 2001);
             client = new UdpClient();
-            ep = new IPEndPoint(IPAddress.Parse("192.168.0.51"), 2002);
+            ep = new IPEndPoint(IPAddress.Parse("192.168.0.5"), 2002);
             client.Connect(ep);
             recieveList = new Queue<byte[]>();
             ParseThread = new Thread(new ThreadStart(parser));
@@ -117,10 +117,14 @@ namespace MainRover
             Console.WriteLine("UDP Parsing thread started");
 
             //listen for pathing commands only when in autonomous mode
-            while (CurDriveMode == DriveMode.toGPS)
+            while (true)
             {
-                Byte[] recieveByte = udpServer.Receive(ref remoteEP);
-                recieveList.Enqueue(recieveByte);
+                if (CurDriveMode == DriveMode.toGPS)
+                {
+                    Byte[] recieveByte = udpServer.Receive(ref remoteEP);
+                    recieveList.Enqueue(recieveByte);
+                }
+                
             }
         }
 
@@ -246,9 +250,9 @@ namespace MainRover
 
         public static void ProcessPathPackets()
         {
-            float readHeading = -1;
-            float Lat = -1;
-            float Long = -1;
+            float readHeading = -1f;
+            float Lat = -1f;
+            float Long = -1f;
 
             foreach (ISensor Sensor in Sensors)
             {
@@ -285,8 +289,7 @@ namespace MainRover
                     sendbytes[i + 4] = blong[i];
                     sendbytes[i + 8] = bhead[i];
                 }
-                // TODO send GPS infomation  
-                //client.Send(sendBytes, sendBytes.Length);
+                client.Send(sendbytes, sendbytes.Length);
             }
 
             int speed = 0;
@@ -317,13 +320,13 @@ namespace MainRover
                 if (recieveByte[0] == 0)
                 {
                     Byte[] speedarray = new Byte[2];
-                    speedarray[1] = recieveByte[1];
-                    speedarray[0] = recieveByte[2];
+                    speedarray[0] = recieveByte[1];
+                    speedarray[1] = recieveByte[2];
                     speed = BitConverter.ToInt16(speedarray, 0);
 
                     Byte[] headingarray = new Byte[2];
-                    headingarray[1] = recieveByte[3];
-                    headingarray[0] = recieveByte[4];
+                    headingarray[0] = recieveByte[3];
+                    headingarray[1] = recieveByte[4];
                     desiredHeading = BitConverter.ToInt16(headingarray, 0);
 
                 }
@@ -338,6 +341,10 @@ namespace MainRover
                     }
                     turn = turn / 4;
                 }               
+            }
+            else
+            {
+                Console.WriteLine("No recieved data");
             }
             MotorControl.SetRPM(0, (speed - turn));
             MotorControl.SetRPM(2, (speed - turn));

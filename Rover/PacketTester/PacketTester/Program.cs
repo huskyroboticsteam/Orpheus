@@ -17,12 +17,23 @@ namespace PacketTester
 
         static void Main(string[] args)
         {
-           // UdpClient udpServer = new UdpClient(2001); // UDP Port from RaspberryPi
-            //IPEndPoint remoteEP = new IPEndPoint(IPAddress.Any, 2001);
+
+            float Lat = 47.655098f;
+            float Long = -122.308664f;
+
+            byte[] blat = BitConverter.GetBytes(Lat);
+            byte[] blong = BitConverter.GetBytes(Long);
+
+            Console.WriteLine(blat.Length);
+            Console.WriteLine(blong.Length);
+
+
+            Thread Rec = new Thread(new ThreadStart(RecieverThread));
+            Rec.Start();
 
             var client = new UdpClient();
             // IP and port for Rover Beaglebone
-            IPEndPoint ep = new IPEndPoint(IPAddress.Parse("192.168.0.22"), 2001);
+            IPEndPoint ep = new IPEndPoint(IPAddress.Parse("192.168.0.20"), 2001);
             client.Connect(ep);
 
             Byte[] sendBytes = new Byte[5];
@@ -40,23 +51,65 @@ namespace PacketTester
                 short shead = Convert.ToInt16(head);
                 Byte[] headarray = BitConverter.GetBytes(shead);
 
-                sendBytes[0] = 0;
-                sendBytes[1] = speedarray[1];
-                sendBytes[2] = speedarray[0];
-                sendBytes[3] = headarray[1];
-                sendBytes[4] = headarray[0];
-
-                client.Send(sendBytes, sendBytes.Length);
-
-                Console.Write("Data Sent:  ");
-                for (int i = 0; i < sendBytes.Length; i++)
+                for (int j =0; j < 50; j++)
                 {
-                    Console.Write(sendBytes[i] + " ");
-                }
+                    sendBytes[0] = 0;
+                    sendBytes[1] = speedarray[0];
+                    sendBytes[2] = speedarray[1];
+                    sendBytes[3] = headarray[0];
+                    sendBytes[4] = headarray[1];
+
+                    client.Send(sendBytes, sendBytes.Length);
+
+                    Console.Write("Data Sent:  ");
+                    for (int i = 0; i < sendBytes.Length; i++)
+                    {
+                        Console.Write(sendBytes[i] + " ");
+                    }
+                    Thread.Sleep(50);
+                }               
 
                 Console.WriteLine();
                 Console.WriteLine();
                 Thread.Sleep(50);
+            }
+        }
+
+        static void RecieverThread()
+        {
+            UdpClient udpServer = new UdpClient(2002); // UDP Port from RaspberryPi
+            IPEndPoint remoteEP = new IPEndPoint(IPAddress.Any, 2002);
+
+            while (true)
+            {
+                Console.WriteLine("waiting for packet");
+                var recieveByte = udpServer.Receive(ref remoteEP);
+                float lon = 0f;
+                float lat = 0f;
+                float dir = 0f;
+
+                Byte[] lonArray = new Byte[4];
+                lonArray[0] = recieveByte[0];
+                lonArray[1] = recieveByte[1];
+                lonArray[2] = recieveByte[2];
+                lonArray[3] = recieveByte[3];
+                lon = System.BitConverter.ToSingle(lonArray, 0);
+
+                Byte[] latArray = new Byte[4];
+                lonArray[0] = recieveByte[4];
+                lonArray[1] = recieveByte[5];
+                lonArray[2] = recieveByte[6];
+                lonArray[3] = recieveByte[7];
+                lat = System.BitConverter.ToSingle(latArray, 0);
+
+                Byte[] dirArray = new Byte[4];
+                dirArray[0] = recieveByte[8];
+                dirArray[1] = recieveByte[9];
+                dirArray[2] = recieveByte[10];
+                dirArray[3] = recieveByte[11];
+                dir = System.BitConverter.ToSingle(latArray, 0);
+
+                Console.WriteLine("Lon: " + lon + " Lat: " + lat + " Heading: " + dir);
             }
         }
 

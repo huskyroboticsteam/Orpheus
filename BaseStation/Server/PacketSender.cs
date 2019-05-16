@@ -15,7 +15,7 @@ namespace HuskyRobotics.BaseStation.Server
     /// </summary>
     public static class PacketSender
     {
-		private static readonly int LeftThumbDeadzone = 7849;
+        private static readonly int LeftThumbDeadzone = 7849;
         //private static readonly int RightThumbDeadzone = 8689;
         private static readonly int JoystickTreshold = 8000;
         private static readonly int TriggerThreshold = 30;
@@ -31,20 +31,18 @@ namespace HuskyRobotics.BaseStation.Server
         public static List<Tuple<double, double>> coords;
         public static Tuple<double, double> target;
         public static double direction;
-        public static bool zero;
 
         public static void Setup()
         {
             coords = new List<Tuple<double, double>>();
             target = Tuple.Create(0.0, 0.0);
-			Log.SetGlobalOutputLevel(Log.Severity.DEBUG);
-            Scarlet.Communications.Server.Start(1025, 1026, OperationPeriod:1);
+            Log.SetGlobalOutputLevel(Log.Severity.DEBUG);
+            Scarlet.Communications.Server.Start(1025, 1026, OperationPeriod: 1);
             Scarlet.Communications.Server.ClientConnectionChange += ClientConnected;
             Parse.SetParseHandler(0xC0, GpsHandler);
             Parse.SetParseHandler(0xC1, MagnetomerHandler);
             Parse.SetParseHandler(0xD4, RFSignalHandler);
             direction = 0;
-            zero = false;
         }
 
         public static void Shutdown()
@@ -59,44 +57,46 @@ namespace HuskyRobotics.BaseStation.Server
             Console.WriteLine(Scarlet.Communications.Server.GetClients());
         }
 
-        public static void SwitchScaler (double num)
+        public static void SwitchScaler(double num)
         {
             scaler = num;
         }
 
-        public static void SwitchMode (bool manual)
+        public static void SwitchMode(bool manual)
         {
             ManualMode = manual;
             SendModeChange = true;
         }
 
-		/// <summary>
-		/// Send rover movement control packets.
-		/// </summary>
-		/// <param name="driveController"></param>
+        /// <summary>
+        /// Send rover movement control packets.
+        /// </summary>
+        /// <param name="driveController"></param>
         public static void Update()
         {
-			Controller driveController = GamepadFactory.DriveGamepad;
-			Controller armController = GamepadFactory.ArmGamepad;
-            if (SendIntervalElapsed()) {
-                if(driveController.IsConnected && armController.IsConnected) {
+            Controller driveController = GamepadFactory.DriveGamepad;
+            Controller armController = GamepadFactory.ArmGamepad;
+            if (SendIntervalElapsed())
+            {
+                if (driveController.IsConnected && armController.IsConnected)
+                {
                     State driveState = driveController.GetState();
                     State armState = armController.GetState();
                     byte rightTrigger = driveState.Gamepad.RightTrigger;
                     byte leftTrigger = driveState.Gamepad.LeftTrigger;
-                    
+
                     short leftThumbX = PreventOverflow(driveState.Gamepad.LeftThumbX);
 
                     if (rightTrigger < TriggerThreshold) { rightTrigger = 0; }
                     if (leftTrigger < TriggerThreshold) { leftTrigger = 0; }
                     if (Math.Abs(leftThumbX) < LeftThumbDeadzone) { leftThumbX = 0; }
-                    
+
                     float speed = (float)UtilMain.LinearMap(rightTrigger - leftTrigger, -255, 255, -0.5, 0.5);
                     float steerPos = (float)UtilMain.LinearMap(leftThumbX, -32768, 32767, -0.5, 0.5);
                     if (Math.Abs(speed) < 0.0001f) { speed = 0; }
                     if (Math.Abs(steerPos) < 0.0001f) { steerPos = 0; }
-                                                          
-                    
+
+
                     //testing values to send for autonomous, remove later
                     bool aPressedAuto = (driveState.Gamepad.Buttons & GamepadButtonFlags.A) != 0;
                     bool bPressedAuto = (driveState.Gamepad.Buttons & GamepadButtonFlags.B) != 0;
@@ -170,7 +170,7 @@ namespace HuskyRobotics.BaseStation.Server
                     if (ManualMode)
                     {
                         modeSet = 0;
-                    }                    
+                    }
 
                     //testing values to send for autonomous, remove later
                     float autoDriveSpeed = 0.0f;
@@ -186,7 +186,7 @@ namespace HuskyRobotics.BaseStation.Server
                         fingerSpeed = 128;
                     else if (leftTrigger > 0)
                         fingerSpeed = -128;
-                    
+
                     /*
                     if (startPressedArm)
                     {
@@ -202,13 +202,13 @@ namespace HuskyRobotics.BaseStation.Server
 
                     short wristArmSpeed = 0;
                     if (yPressedArm)
-                        wristArmSpeed = (short) (-64 * scaler);
+                        wristArmSpeed = (short)(-64 * scaler);
                     else if (xPressedArm)
-                        wristArmSpeed = (short) (64 * scaler);
+                        wristArmSpeed = (short)(64 * scaler);
 
                     short elbowArmSpeed = 0;
                     if (bPressedArm)
-                        elbowArmSpeed = (short) (64 * scaler);
+                        elbowArmSpeed = (short)(64 * scaler);
                     else if (aPressedArm)
                         elbowArmSpeed = (short)(-64 * scaler);
 
@@ -234,7 +234,7 @@ namespace HuskyRobotics.BaseStation.Server
                     Scarlet.Communications.Server.Send(SpeedPack);
                     Console.WriteLine("Speed: " + speed + " Joystick " + skidDriveSpeed);*/
 
-                    if(SendModeChange)
+                    if (SendModeChange)
                     {
                         Console.WriteLine("calling mode changeer");
                         Packet ModePack = new Packet(0x99, true, "MainRover");
@@ -243,61 +243,31 @@ namespace HuskyRobotics.BaseStation.Server
                         Console.WriteLine("sending switching drive mode: " + modeSet);
                         SendModeChange = false;
                     }
-                    
+
                     if (ManualMode)
                     {
-                      
-                        if (forward_back == 0 && left_right == 0)
-                        {
-                            //forward_back = 0.01f ;
-                        }
-                        if (true  || forward_back != 0 || left_right != 0)
-                        {
-                            Packet SkidFrontRight = new Packet(0x90, true, "MainRover");
-                            SkidFrontRight.AppendData(UtilData.ToBytes((sbyte)Math.Round((forward_back - left_right) * 120)));
-                            Scarlet.Communications.Server.Send(SkidFrontRight);
 
-                            Packet SkidRearRight = new Packet(0x92, true, "MainRover");
-                            SkidRearRight.AppendData(UtilData.ToBytes((sbyte)Math.Round((forward_back - left_right) * 120)));
-                            Scarlet.Communications.Server.Send(SkidRearRight);
+                        Packet SkidFrontRight = new Packet(0x90, true, "MainRover");
+                        SkidFrontRight.AppendData(UtilData.ToBytes((sbyte)Math.Round((forward_back - left_right) * 120)));
+                        Scarlet.Communications.Server.Send(SkidFrontRight);
 
-                            Packet SkidFrontLeft = new Packet(0x91, true, "MainRover");
-                            SkidFrontLeft.AppendData(UtilData.ToBytes((sbyte)Math.Round((forward_back + left_right) * 120)));
-                            Scarlet.Communications.Server.Send(SkidFrontLeft);
+                        Packet SkidRearRight = new Packet(0x92, true, "MainRover");
+                        SkidRearRight.AppendData(UtilData.ToBytes((sbyte)Math.Round((forward_back - left_right) * 120)));
+                        Scarlet.Communications.Server.Send(SkidRearRight);
 
-                            Packet SkidRearLeft = new Packet(0x93, true, "MainRover");
-                            SkidRearLeft.AppendData(UtilData.ToBytes((sbyte)Math.Round((0 - forward_back - left_right) * 120)));
-                            Console.WriteLine("Test " + (-skidDriveSpeed - skidSteerSpeed));
-                            Scarlet.Communications.Server.Send(SkidRearLeft);
-                            zero = false;
-                        }
-                        else if (false)
-                        {
-                            Packet SkidFrontRight = new Packet(0x90, true, "MainRover");
-                            SkidFrontRight.AppendData(UtilData.ToBytes((sbyte)Math.Round((forward_back - left_right) * 120)));
-                            Scarlet.Communications.Server.Send(SkidFrontRight);
+                        Packet SkidFrontLeft = new Packet(0x91, true, "MainRover");
+                        SkidFrontLeft.AppendData(UtilData.ToBytes((sbyte)Math.Round((forward_back + left_right) * 120)));
+                        Scarlet.Communications.Server.Send(SkidFrontLeft);
 
-                            Packet SkidRearRight = new Packet(0x92, true, "MainRover");
-                            SkidRearRight.AppendData(UtilData.ToBytes((sbyte)Math.Round((forward_back - left_right) * 120)));
-                            Scarlet.Communications.Server.Send(SkidRearRight);
-
-                            Packet SkidFrontLeft = new Packet(0x91, true, "MainRover");
-                            SkidFrontLeft.AppendData(UtilData.ToBytes((sbyte)Math.Round((forward_back + left_right) * 120)));
-                            Scarlet.Communications.Server.Send(SkidFrontLeft);
-
-                            Packet SkidRearLeft = new Packet(0x93, true, "MainRover");
-                            SkidRearLeft.AppendData(UtilData.ToBytes((sbyte)Math.Round((0 - forward_back - left_right) * 120)));
-                            Console.WriteLine("Test " + (-skidDriveSpeed - skidSteerSpeed));
-                            Scarlet.Communications.Server.Send(SkidRearLeft);
-                            zero = true;
-                        }
-                                      
-                        
+                        Packet SkidRearLeft = new Packet(0x93, true, "MainRover");
+                        SkidRearLeft.AppendData(UtilData.ToBytes((sbyte)Math.Round((0 - forward_back - left_right) * 120)));
+                        Console.WriteLine("Test " + (-skidDriveSpeed - skidSteerSpeed));
+                        Scarlet.Communications.Server.Send(SkidRearLeft);
 
                         Packet FingerPack = new Packet(0xA0, true, "MainArm");
                         FingerPack.AppendData(UtilData.ToBytes((short)fingerSpeed));
                         Scarlet.Communications.Server.Send(FingerPack);
-                        
+
                         Packet DiffHorzPack = new Packet(0x9F, true, "MainArm");
                         DiffHorzPack.AppendData(UtilData.ToBytes((short)(diffVertShort + diffHorzShort)));
                         Scarlet.Communications.Server.Send(DiffHorzPack);
@@ -305,7 +275,7 @@ namespace HuskyRobotics.BaseStation.Server
                         Packet DiffVertPack = new Packet(0x9E, true, "MainArm");
                         DiffVertPack.AppendData(UtilData.ToBytes((short)(-diffVertShort + diffHorzShort)));
                         Scarlet.Communications.Server.Send(DiffVertPack);
-                        
+
                         Packet WristPack = new Packet(0x9D, true, "MainArm");
                         WristPack.AppendData(UtilData.ToBytes(wristArmSpeed));
                         Scarlet.Communications.Server.Send(WristPack);
@@ -339,10 +309,12 @@ namespace HuskyRobotics.BaseStation.Server
                         // in main rover should be in listening mode to read which way to go
                         // here, it should recieve any updates of its position from the main rover and print out
                         Console.WriteLine("desired location: " + target.Item1 + "   ,   " + target.Item2);
-                       
-                    }                    
-                    
-                } else {
+
+                    }
+
+                }
+                else
+                {
                     HaltRoverMotion();
                     Console.WriteLine("desired location: " + target.Item1 + "   ,   " + target.Item2);
                 }
