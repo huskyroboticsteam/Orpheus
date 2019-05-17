@@ -7,7 +7,7 @@
 
 int main()
 {
-    RP::Server server1 = RP::Server();
+    RP::Server server1;
 
     std::cout << "Usage: \"Command\" or \"Quit\" \n";
 
@@ -31,11 +31,11 @@ int main()
                 std::cout << "Enter Heading \n";
                 std::cin >> heading;
 
-                std::vector<short> data = std::vector<short>(5);
+                std::vector<unsigned char> data(5);
 
                 data[0] = 0;
                 memcpy(&data[1], &speed, sizeof speed);
-                memcpy(&data[3], &speed, sizeof speed);
+                memcpy(&data[3], &heading, sizeof heading);
 
                 server1.send_action(data);
             }
