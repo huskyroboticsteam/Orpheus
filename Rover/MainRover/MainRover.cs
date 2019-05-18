@@ -29,17 +29,18 @@ namespace MainRover
         public static DriveMode CurDriveMode;
         public static Tuple<float, float> previousCoords;
         public static float PathSpeed, PathAngle;
+        public static float ServoSpinner; 
 
         public static void PinConfig()
         {
-            BBBPinManager.AddBusCAN(0, false);
+            BBBPinManager.AddBusCAN(0);
             //BBBPinManager.AddMappingUART(Pins.MTK3339_RX);
             //BBBPinManager.AddMappingUART(Pins.MTK3339_TX);
             //BBBPinManager.AddMappingsI2C(Pins.BNO055_SCL, Pins.BNO055_SDA);
             //BBBPinManager.AddMappingGPIO(Pins.SteeringLimitSwitch, false, Scarlet.IO.ResistorState.PULL_UP, true);
             //BBBPinManager.AddMappingPWM(Pins.SteeringMotor);
             //BBBPinManager.AddMappingPWM(Pins.ServoMotor);
-            //BBBPinManager.AddMappingPWM(Pins.CameraServoMotor);
+            BBBPinManager.AddMappingPWM(Pins.CameraServoMotor);
             //BBBPinManager.ApplyPinSettings(BBBPinManager.ApplicationMode.NO_CHANGES);
             BBBPinManager.ApplyPinSettings(BBBPinManager.ApplicationMode.APPLY_IF_NONE);
         }
@@ -54,6 +55,7 @@ namespace MainRover
             OutB.SetFrequency(50);
             OutB.SetOutput(0.0f);
             OutB.SetEnabled(true);
+            ServoSpinner = 0.05f;
         }
 
         public static void InitBeagleBone()
@@ -94,6 +96,7 @@ namespace MainRover
             Parse.SetParseHandler(0x99, (Packet) => ModePackets.Enqueue(Packet, 0));
             for (byte i = 0x8E; i <= 0x94; i++)
                 Parse.SetParseHandler(i, (Packet) => DrivePackets.Enqueue(Packet, 0));
+            Parse.SetParseHandler(0x98, (Packet) => DrivePackets.Enqueue(Packet, 0));
             for (byte i = 0x9A; i <= 0xA1; i++)
                 Parse.SetParseHandler(i, (Packet) => DrivePackets.Enqueue(Packet, 0));
             for (byte i = 0x95; i <= 0x97; i++)
@@ -169,6 +172,7 @@ namespace MainRover
             
             for (int i = 0; !DrivePackets.IsEmpty() && i < NUM_PACKETS_TO_PROCESS; i++)
             {
+                Console.WriteLine("Processing Base Packets");
                 Packet p = DrivePackets.Dequeue();
                 switch ((PacketID)p.Data.ID)
                 {   
@@ -198,36 +202,35 @@ namespace MainRover
                         if (p.Data.Payload[0] > 0)
                         {
                             direction = 0x01;
-                            UtilCan.SpeedDir(CANBBB.CANBus0, false, 2, address, (byte)(-p.Data.Payload[1]), direction);
+                            //UtilCan.SpeedDir(CANBBB.CANBus0, false, 2, address, (byte)(-p.Data.Payload[1]), direction);
                             Console.WriteLine("ADDRESS :" + address + "DIR :" + direction + "PAY :" + (byte)(-p.Data.Payload[1]));
                         }
                         else
                         {
                             direction = 0x00;
-                            UtilCan.SpeedDir(CANBBB.CANBus0, false, 2, address, p.Data.Payload[1], direction);
+                            //UtilCan.SpeedDir(CANBBB.CANBus0, false, 2, address, p.Data.Payload[1], direction);
                             Console.WriteLine("ADDRESS :" + address + "DIR :" + direction + "PAY :" + p.Data.Payload[1]);
                         }
                         break;
                     case PacketID.CameraRotation:
-                        float t = .5f;
-                        if(p.Data.Payload[0] > 0)
+                        Console.WriteLine("---------------Rotating Camera---------------: " + (sbyte)p.Data.Payload[1]);
+                        if((sbyte)p.Data.Payload[1] > 0)
                         {
-                            while(t < .9f)
-                            {
-                                OutB.SetOutput(t);
-                                t += 0.0001f;
-                            }
-                        } else if(p.Data.Payload[0] < 0)
+                            ServoSpinner -= 0.005f;
+                            OutB.SetOutput(ServoSpinner);
+                            Console.WriteLine("moving to right " + ServoSpinner);
+                        }
+                        else if((sbyte)p.Data.Payload[1] < 0)
                         {
-                            while(t > .1f)
-                            {
-                                t -= .0001f;
-                            }
+                            ServoSpinner += 0.005f;
+                            OutB.SetOutput(ServoSpinner);
+                            Console.WriteLine("moving to left: " + ServoSpinner);
                         }
                         OutB.Dispose();
                         break;
                 }
             }
+            Console.WriteLine("Done Processing Base Packets for now");
         }
 
         public static void ProcessPathPackets()
@@ -312,15 +315,17 @@ namespace MainRover
             Quit = false;
             InitBeagleBone();
             SetupClient();
-            //MotorControl.Initialize();
-            MotorBoards.Initialize(CANBBB.CANBus0);
+            MotorControl.Initialize();
+            //MotorBoards.Initialize(CANBBB.CANBus0);
             int count = 0;
             Console.WriteLine("Finished the initalize");
             do
             {
                 Console.WriteLine("Looping");
                 SendSensorData(count);
+                Console.WriteLine("sent sensor data. now processing instructions");
                 ProcessInstructions();
+                Console.WriteLine("Finished processing instructions. repeat loop");
                 Thread.Sleep(50);
                 count++;
                 if(count == 101)
