@@ -213,24 +213,20 @@ namespace MainRover
                         }
                         break;
                     case PacketID.CameraRotation:
-                        Console.WriteLine("---------------Rotating Camera---------------: " + (sbyte)p.Data.Payload[1]);
                         if((sbyte)p.Data.Payload[1] > 0)
                         {
                             ServoSpinner -= 0.005f;
                             OutB.SetOutput(ServoSpinner);
-                            Console.WriteLine("moving to right " + ServoSpinner);
                         }
                         else if((sbyte)p.Data.Payload[1] < 0)
                         {
                             ServoSpinner += 0.005f;
                             OutB.SetOutput(ServoSpinner);
-                            Console.WriteLine("moving to left: " + ServoSpinner);
                         }
                         OutB.Dispose();
                         break;
                 }
             }
-            Console.WriteLine("Done Processing Base Packets for now");
         }
 
         public static void ProcessPathPackets()
@@ -323,9 +319,7 @@ namespace MainRover
             {
                 Console.WriteLine("Looping");
                 SendSensorData(count);
-                Console.WriteLine("sent sensor data. now processing instructions");
                 ProcessInstructions();
-                Console.WriteLine("Finished processing instructions. repeat loop");
                 Thread.Sleep(50);
                 count++;
                 if(count == 101)
