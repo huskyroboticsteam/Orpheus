@@ -37,6 +37,10 @@ namespace MainRover
         public static IPEndPoint ep;
         public static Queue<byte[]> recieveList;
         private static Thread ParseThread;
+        private static int timeout;
+        private static int GSpeed;
+        private static int Gturn;
+
 
         public static void PinConfig()
         {
@@ -110,6 +114,7 @@ namespace MainRover
             recieveList = new Queue<byte[]>();
             ParseThread = new Thread(new ThreadStart(parser));
             ParseThread.Start();
+            timeout = 500;
         }
 
         public static void parser()
@@ -304,7 +309,7 @@ namespace MainRover
                 {
                     Console.Write(recieveByte[i] + " ");
                 }
-
+                timeout = 500;
                 // Old code for refrence
                 /*
                 string stringData = Encoding.ASCII.GetString(recieveByte);
@@ -340,11 +345,16 @@ namespace MainRover
                         else turn -= 360;
                     }
                     turn = turn / 4;
-                }               
+                }
+                GSpeed = speed;
+                Gturn = turn;
             }
-            else
+            else if (timeout > 0) //keep sending packets if no data recieved until it times out
             {
-                Console.WriteLine("No recieved data");
+                Console.WriteLine("No recieved data. Remining counts: " + timeout);
+                speed = GSpeed;
+                turn = Gturn;
+                timeout--;
             }
             MotorControl.SetRPM(0, (speed - turn));
             MotorControl.SetRPM(2, (speed - turn));
