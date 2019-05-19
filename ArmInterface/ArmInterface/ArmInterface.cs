@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace ArmInterface
 {
 
-    public struct Packet
+    public struct ArmPacket
     {
         /// <summary> When sending, it's the receiver. When receiving, it's the sender. </summary>
         public Device TargetDeviceID;
@@ -19,7 +19,7 @@ namespace ArmInterface
         public byte[] Payload;
     }
 
-    public class ArmInterface
+    public class Arm
     {
         public static byte DEVICE_ADDR = 0x02;
 
@@ -41,18 +41,18 @@ namespace ArmInterface
         private readonly ICANBus CANBus;
         private readonly Thread ReadThread;
 
-        private Queue<Packet> ReceiveQueue;
+        private Queue<ArmPacket> ReceiveQueue;
 
-        public ArmInterface(ICANBus CANBus)
+        public Arm(ICANBus CANBus)
         {
-            ReceiveQueue = new Queue<Packet>();
+            ReceiveQueue = new Queue<ArmPacket>();
             this.CANBus = CANBus;
             // Start Read
             ReadThread = new Thread(new ThreadStart(ReadOnThread));
             ReadThread.Start();
         }
 
-        public void Send(Packet SendPacket)
+        public void Send(ArmPacket SendPacket)
         {
             byte[] id = ConstructCanID(SendPacket);
             uint constructedID = (uint)(id[2] << 8) | (uint)(id[1] << 4) | id[0];
@@ -70,21 +70,25 @@ namespace ArmInterface
                 byte sender = Convert.ToByte(((CanRead.Item1) >> 4) & 0x0F);
                 byte receiver = Convert.ToByte((CanRead.Item1) & 0x0F);
 
-                Packet newPack = new Packet
+                ArmPacket newPack = new ArmPacket
                 {
                     TargetDeviceID = (Device)sender,
                     Priority = priority == 0 ? false : true,
                     PacketType = (CANPacket)CanRead.Item2[0],
                     Payload = CanRead.Item2
                 };
-
-                lock (ReceiveQueue) { ReceiveQueue.Enqueue(newPack); }
+                
+                lock (ReceiveQueue)
+                {
+                    ReceiveQueue.Enqueue(newPack);
+                    ReceiveQueue.TrimExcess();
+                }
 
                 Thread.Sleep(Constants.DEFAULT_MIN_THREAD_SLEEP);
             }
         }
 
-        private static byte[] ConstructCanID(Packet packet)
+        private static byte[] ConstructCanID(ArmPacket packet)
         {
             byte[] canID = new byte[3];
             canID[2] = (byte)(packet.Priority ? 0x01 : 0x00);
@@ -93,9 +97,9 @@ namespace ArmInterface
             return canID;
         }
 
-        public Packet? ReadNext()
+        public ArmPacket? ReadNext()
         {
-            return ReceiveQueue.Count == 0 ? (Packet?)null : ReceiveQueue.Dequeue();
+            return ReceiveQueue.Count == 0 ? (ArmPacket?)null : ReceiveQueue.Dequeue();
         }
 
         public int ReceiveQueueSize() { return ReceiveQueue.Count; }
