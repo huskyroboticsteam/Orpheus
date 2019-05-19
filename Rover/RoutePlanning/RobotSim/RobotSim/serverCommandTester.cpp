@@ -41,7 +41,7 @@ int main()
             }
             else
             {
-                std::cout << "Invalid Input";
+                std::cout << "Invalid Input" << std::endl;
             }
         }
         else
