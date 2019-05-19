@@ -21,7 +21,7 @@ namespace Science.Systems
 
         private const float MOTOR_MAX_SPEED = 0.5F;
         private const int INIT_TIMEOUT = 5000;
-        private const float ENCODER_MM_PER_TICK = 0.935F;
+        private const float ENCODER_MM_PER_TICK = 0.935F; // TODO: Update this.
         private const bool ENABLE_VELOCITY_TRACKING = true;
 
         private bool P_Initializing = false;
@@ -34,7 +34,7 @@ namespace Science.Systems
                 this.LED?.InitStateChange(value);
             }
         }
-        private bool InitDone = false; // Whether the rail has initialized successfully (i.e. knows how far away from the top it is).
+        public bool InitDone { get; private set; } = false; // Whether the rail has initialized successfully (i.e. knows how far away from the top it is).
         private double TopDepth; // The distance that the top of the rail is away from the very top position (limit switch), in mm.
         private Average<double> GroundHeightFilter; // Filter used on measurements meaning distance that the bottom of the drill is away from the ground, in mm (below ground is negative).
         private int LastEncoderCount; // Where the encoder was during the most recent update.

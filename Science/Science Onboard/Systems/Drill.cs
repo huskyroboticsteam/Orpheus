@@ -28,32 +28,28 @@ namespace Science.Systems
         private readonly PololuHPMDG2 MotorCtrl;
         private readonly Servo DoorServo;
         private readonly IPWMOutput Out;
-        private bool Enabled = false;
-        private IDigitalIn Fault;
+        private bool MotorEnabled = false;
 
-        public Drill(IPWMOutput MotorPWM, IDigitalOut MotorDir, IDigitalIn MotorFault, IPWMOutput ServoPWM)
+        public Drill(IPWMOutput MotorPWM, IDigitalOut MotorDir, IPWMOutput ServoPWM)
         {
             this.Out = MotorPWM;
-            //((Scarlet.Components.Outputs.PCA9685.PWMOutputPCA9685)MotorPWM).Reset();
-            //((Scarlet.Components.Outputs.PCA9685.PWMOutputPCA9685)MotorPWM).SetPolarity(true);
             this.MotorCtrl = new PololuHPMDG2(MotorPWM, MotorDir, MOTOR_MAX_SPEED);
             this.DoorServo = new Servo(ServoPWM) { TraceLogging = true };
             this.DoorServo.SetEnabled(true);
-            this.Fault = MotorFault;
         }
 
         public void EmergencyStop()
         {
-            this.Enabled = false;
+            this.MotorEnabled = false;
             this.MotorCtrl.SetEnabled(false);
             this.DoorServo.SetEnabled(false);
         }
 
         public void SetSpeed(float Speed, bool Enable)
         {
-            Log.Output(Log.Severity.INFO, Log.Source.MOTORS, "Setting drill speed: " + Speed + " (" + Enable + "). Fault? " + !this.Fault.GetInput());
-            if (this.Enabled != Enable) { this.MotorCtrl.SetEnabled(Enable); }
-            this.Enabled = Enable;
+            if (this.TraceLogging) { Log.Trace(this, "Setting drill speed: " + Speed + " (" + Enable + ")."); }
+            if (this.MotorEnabled != Enable) { this.MotorCtrl.SetEnabled(Enable); }
+            this.MotorEnabled = Enable;
             if (Enable) { this.MotorCtrl.SetSpeed(Speed); }
             else { this.MotorCtrl.SetSpeed(0); }
         }
