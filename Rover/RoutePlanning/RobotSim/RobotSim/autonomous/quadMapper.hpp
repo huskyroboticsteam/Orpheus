@@ -84,7 +84,7 @@ struct QTreeNode
 class QuadMapper : public Mapper
 {
 public:
-  QuadMapper(const point &cur_pos, const point &target, const std::vector<line> &all_obstacles,
+  QuadMapper(point origin, point target, point cur, const std::vector<line> &all_obstacles,
              float field_width, float field_height, int max_depth = 6, float tolerance = 0.f);
 
   virtual void set_pos(point pos) override;
@@ -101,19 +101,20 @@ public:
   void set_max_depth(float md);
   pqtree get_qtree_root() const;
     
-    void reset() {
-        qtnodes.clear();
-        removed_nodes.clear();
-        new_nodes.clear();
-        init_graph();
-        root = create_qtnode(0, 0, field_width, field_height, 1);
-        qt2graph(root);
-    }
+  void reset() {
+      qtnodes.clear();
+      removed_nodes.clear();
+      new_nodes.clear();
+      init_graph();
+      root = create_qtnode(origin.x, origin.y, field_width, field_height, 1);
+      qt2graph(root);
+  }
 
 private:
   int max_depth;
   pqtree root;
   std::vector<pqtree> qtnodes;
+  point origin;
   float field_width;
   float field_height;
   bool cur_changed;

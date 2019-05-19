@@ -7,9 +7,9 @@ OBJECTS := $(patsubst %,$(ODIR)/%,$(_OBJECTS))
 DEBUG := 1
 
 ifeq ($(DEBUG), 1)
-CFLAGS := -std=c++11 -Wall -g
+CFLAGS := -std=c++14 -Wall -g
 else
-CFLAGS := -std=c++11 -O3
+CFLAGS := -std=c++14 -O3
 endif
 
 all: $(OBJECTS)

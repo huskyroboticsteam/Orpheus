@@ -8,8 +8,8 @@
 #include "timer.hpp"
 
 // change level here (this is a landmark for search)
-RP::Pather::Pather(point origin, point target, point max_point) : fineMapper(origin, target, memorizer.obstacles_ref, max_point.x, max_point.y, 6),
-                                                                  cur(origin), tar(target), max_pt(max_point)
+RP::Pather::Pather(point origin, point max_point, point cur, point target) : fineMapper(origin, target, cur, memorizer.obstacles_ref, max_point.x, max_point.y, 6),
+                                                                  cur(cur), tar(target), max_pt(max_point)
 {
 }
 

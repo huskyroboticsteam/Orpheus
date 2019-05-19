@@ -34,7 +34,7 @@ public:
 private:
 	std::vector<unsigned char> current_time(); // Stores unix timestamp in 4 bytes
 	char packet_buf[buf_size];
-	bool new_packet;
+	bool new_packet = false;
 	std::mutex buf_mutex;
 	// RP::Controller controller;
 };
