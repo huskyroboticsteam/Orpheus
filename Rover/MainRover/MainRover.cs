@@ -65,7 +65,7 @@ namespace MainRover
             try
             {
                 MTK3339 location = new MTK3339(UARTBBB.UARTBus4);
-                Sensors.Add(new BNO055(I2CBBB.I2CBus1, -1, 0x28,  location));
+                Sensors.Add(new BNO055(I2CBBB.I2CBus1, -1, 0x28, location) { TraceLogging =  false});
                 Sensors.Add(location);
             }
             catch (Exception e)
@@ -270,7 +270,16 @@ namespace MainRover
 
                 if (Sensor is BNO055)
                 {
-                    readHeading = (float)((BNO055)Sensor).GetTrueHeading();
+                    //readHeading = (float)((BNO055)Sensor).GetTrueHeading();
+                    var Readings = ((BNO055)Sensor).GetVector(BNO055.VectorType.VECTOR_MAGNETOMETER);
+
+                    double HeadingDirection = 0;
+
+                    if (Readings.Item2 > 0) { HeadingDirection = 90 - (Math.Atan2(Readings.Item1, Readings.Item2) * 180 / Math.PI); }
+                    else if (Readings.Item2 < 0) { HeadingDirection = 270 - (Math.Atan(Readings.Item1 / Readings.Item2) * 180 / Math.PI); }
+                    else if (Math.Abs(Readings.Item2) <= 1e-6 && Readings.Item1 < 0) { HeadingDirection = 180; }
+                    else if (Math.Abs(Readings.Item2) <= 1e-6 && Readings.Item1 > 0) { HeadingDirection = 0; }
+                    readHeading = (float)HeadingDirection % 360;
                 }
             }
 
