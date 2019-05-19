@@ -280,11 +280,13 @@ namespace MainRover
                     else if (Math.Abs(Readings.Item2) <= 1e-6 && Readings.Item1 < 0) { HeadingDirection = 180; }
                     else if (Math.Abs(Readings.Item2) <= 1e-6 && Readings.Item1 > 0) { HeadingDirection = 0; }
                     readHeading = (float)HeadingDirection % 360;
+
                     readHeading -= 90.0f;
                     if (readHeading < 0f)
                     {
                         readHeading += 360.0f;
                     }
+
                 }
             }
 
