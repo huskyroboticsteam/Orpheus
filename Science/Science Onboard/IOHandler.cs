@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Threading;
 using Scarlet.Components;
+using Scarlet.Components.Interfaces;
 using Scarlet.Components.Outputs;
 using Scarlet.IO;
 using Scarlet.IO.RaspberryPi;
+using Scarlet.IO.Transforms;
 using Scarlet.Utilities;
 using Science.Systems;
 
@@ -15,7 +18,7 @@ namespace Science
         private readonly ISubsystem[] UpdateProcedure;
 
         //public readonly Rail RailController;
-        //public readonly Drill DrillController;
+        public readonly Drill DrillController;
         //public readonly Sample SampleController;
         public readonly LEDs LEDController;
         //public readonly AuxSensors AuxSensors;
@@ -25,27 +28,52 @@ namespace Science
         private readonly II2CBus I2C;
         private readonly ISPIBus SPI;
         private readonly PCA9685 PWMGenServo;
+        private readonly PCA9535E IOExpander;
+        private readonly MAX571x DAC;
 
         public IOHandler()
         {
             RaspberryPi.Initialize();
             this.I2C = new I2CBusPi();
             this.SPI = new SPIBusPi(0);
-            this.PWMGenServo = new PCA9685(this.I2C, 0x74, -1, PCA9685.OutputInvert.Inverted, PCA9685.OutputDriverMode.OpenDrain);
+            this.PWMGenServo = new PCA9685(this.I2C, 0x74, -1, PCA9685.OutputInvert.Inverted, PCA9685.OutputDriverMode.OpenDrain, PCA9685.OutputDisableBehaviour.HighImpedance);
+            //this.PWMGenServo.TraceLogging = true;
             this.PWMGenServo.SetFrequency(50);
 
+            IDigitalOut EnableMotors = new DigitalOutPi(33);
+            IDigitalIn MotorFault = new DigitalInPi(7);
+
+            this.IOExpander = new PCA9535E(this.I2C, 0x27);
+            for (byte i = 0; i < 16; i++) { this.IOExpander.SetChannelMode(i, true); } // Set all channels to output mode.
+            IDigitalOut EnablePWM = this.IOExpander.Outputs[12];
+            IDigitalOut DirectionDrill = this.IOExpander.Outputs[8];
+            EnablePWM.SetOutput(false); // Inverted
+            IDigitalOut CS_DAC = this.IOExpander.Outputs[4];
+            CS_DAC.SetOutput(true);
+
+            this.DAC = new MAX571x(this.SPI, CS_DAC, MAX571x.Resolution.BitCount12, MAX571x.VoltageReferenceMode.Reference2V500);
+            this.DAC.TraceLogging = true;
+            IAnalogueOut DrillMotorDAC = this.DAC.Outputs[0];
+
+            AnalogueOutTransform DrillTransform = new AnalogueOutTransform(DrillMotorDAC, (range => (range / 2.5)), (val => (val * 2.5)));
+
+            LTC6992 DrillMotorPWM = new LTC6992(DrillTransform);
+
+            EnableMotors.SetOutput(true);
+
             //this.RailController = new Rail(this.PWMGenHighFreq.Outputs[0], new DigitalInPi(11), this.SPI, new DigitalOutPi(29), this.I2C, null) { TraceLogging = true };
-            //this.DrillController = new Drill(this.PWMGenHighFreq.Outputs[1], this.PWMGenLowFreq.Outputs[0]);
+            this.DrillController = new Drill(DrillMotorPWM, DirectionDrill, MotorFault, this.PWMGenServo.Outputs[4]);
             //this.SampleController = new Sample(this.PWMGenLowFreq.Outputs[1]);
-            this.LEDController = new LEDs(this.PWMGenServo.Outputs);
+            this.LEDController = new LEDs(this.PWMGenServo.Outputs, null);//EnablePWM);
+            //this.LEDController.TraceLogging = true;
             //this.AuxSensors = new AuxSensors(this.SPI, this.I2C) { TraceLogging = false };
             this.SysSensors = new SysSensors(this.I2C, this.SPI);
-            this.SysSensors.TraceLogging = true; // TODO: Turn this off.
+            //this.SysSensors.TraceLogging = true; // TODO: Turn this off.
             this.Music = new MusicPlayer();
 
-            this.InitProcedure = new ISubsystem[] { /*this.RailController, this.DrillController,*/ this.LEDController, /*this.AuxSensors,*/ this.SysSensors, this.Music };
-            this.EStopProcedure = new ISubsystem[] { this.Music, /*this.RailController, this.DrillController,*/ this.LEDController, /*this.AuxSensors,*/ this.SysSensors };
-            this.UpdateProcedure = new ISubsystem[] { /*this.RailController, this.DrillController,*/ this.LEDController/*, this.AuxSensors, this.SysSensors*/ };
+            this.InitProcedure = new ISubsystem[] { /*this.RailController, */this.DrillController, this.LEDController, /*this.AuxSensors,*/ this.SysSensors, this.Music };
+            this.EStopProcedure = new ISubsystem[] { this.Music, /*this.RailController,*/ this.DrillController, this.LEDController, /*this.AuxSensors,*/ this.SysSensors };
+            this.UpdateProcedure = new ISubsystem[] { /*this.RailController,*/ this.DrillController, this.LEDController/*, this.AuxSensors, this.SysSensors*/ };
             if (this.EStopProcedure.Length < this.InitProcedure.Length || this.EStopProcedure.Length < this.UpdateProcedure.Length) { throw new Exception("A system is registered for init or updates, but not for emergency stop. For safety reasons, this is not permitted."); }
         }
 

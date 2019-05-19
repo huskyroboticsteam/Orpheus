@@ -4,6 +4,7 @@ using Scarlet.Communications;
 using Scarlet.Components;
 using Scarlet.Components.Outputs;
 using Scarlet.IO;
+using Scarlet.Utilities;
 using static Scarlet.Components.Outputs.PCA9685;
 
 namespace Science.Systems
@@ -19,9 +20,11 @@ namespace Science.Systems
 
         private readonly RGBLED[] Lights = new RGBLED[4];
         private bool DoUpdates = true;
+        private readonly IDigitalOut OutEnable;
 
-        public LEDs(IPWMOutput[] PWMCh)
+        public LEDs(IPWMOutput[] PWMCh, IDigitalOut OutEnable)
         {
+            this.OutEnable = OutEnable;
             this.Lights[0] = new RGBLED(PWMCh[4], PWMCh[5], PWMCh[6]);
             this.Lights[1] = new RGBLED(PWMCh[7], PWMCh[8], PWMCh[9]);
             this.Lights[2] = new RGBLED(PWMCh[10], PWMCh[11], PWMCh[12]);
@@ -53,6 +56,7 @@ namespace Science.Systems
             this.RunningColour.SetEnabled(true);
             while (this.DoUpdates)
             {
+                Log.Trace(this, "Outputting new colour.", this.TraceLogging);
                 byte Red = (byte)((Math.Max(Math.Sin(i * 0.2F), -0.5) + 0.5) / 1.5 * 0xFF);
                 byte Green = (byte)((Math.Max(Math.Sin((i + (10.0 / 3.0 * Math.PI)) * 0.2F), -0.5) + 0.5) / 1.5 * 0xFF);
                 byte Blue = (byte)((Math.Max(Math.Sin((i + (20.0 / 3.0 * Math.PI)) * 0.2F), -0.5) + 0.5) / 1.5 * 0xFF);

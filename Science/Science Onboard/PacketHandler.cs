@@ -23,7 +23,7 @@ namespace Science
             {
                 bool Enable = (Packet.Data.Payload[0] & 0b1) == 0b1;
                 bool Reverse = (Packet.Data.Payload[0] & 0b10) == 0b10;
-                //RoverMain.IOHandler.DrillController.SetSpeed(Packet.Data.Payload[1] / 100.0F * (Reverse ? -1 : 1), Enable);
+                RoverMain.IOHandler.DrillController.SetSpeed(Packet.Data.Payload[1] / 100.0F * (Reverse ? -1 : 1), Enable);
             }
         }
 
