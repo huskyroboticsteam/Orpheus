@@ -24,7 +24,7 @@
 #define SPIRAL 1
 #define FOUND_BALL 2
 
-constexpr float TARGET_TOL = 4.f; // tolerance distance for testing if we've reached target
+constexpr float TARGET_TOL = 1e-6f; // tolerance distance for testing if we've reached target
 constexpr float TARGET_TOL_SQ = TARGET_TOL * TARGET_TOL;
 constexpr float AUTO_TURN_RANGE = 90;
 
@@ -371,8 +371,8 @@ float RP::Controller::get_target_angle() {
     return atan2(next->y - curr_lng, next->x - curr_lat) * 180 / M_PI;
 }
 
-bool Controller::in_spiral_radius() { return dist_sq(point{curr_lat, curr_lng}
-    , targetSites.front()) < TARGET_TOL;  }
+bool Controller::in_spiral_radius() { return sqrt(dist_sq(point{curr_lat, curr_lng}
+    , targetSites.front())) < TARGET_TOL;  }
 
 bool Controller::found_ball() {
   //cv::imshow("MAH BALL", image);
