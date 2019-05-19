@@ -328,7 +328,7 @@ void Controller::update() {
         // actually works
         //sendPacket(0x7FFF / 2, heading);
         tar_angle = normalize_angle_deg(get_target_angle());
-                            std::cout << "tar_angle: " << get_target_angle() << std::endl;
+        std::cout << "tar_angle: " << tar_angle << std::endl;
         }
     
 }
