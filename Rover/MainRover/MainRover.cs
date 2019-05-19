@@ -65,7 +65,7 @@ namespace MainRover
             try
             {
                 MTK3339 location = new MTK3339(UARTBBB.UARTBus4);
-                Sensors.Add(new BNO055(I2CBBB.I2CBus1, -1, 0x28,  location));
+                Sensors.Add(new BNO055(I2CBBB.I2CBus1, -1, 0x28, location) { TraceLogging =  true});
                 Sensors.Add(location);
             }
             catch (Exception e)
@@ -270,7 +270,21 @@ namespace MainRover
 
                 if (Sensor is BNO055)
                 {
-                    readHeading = (float)((BNO055)Sensor).GetTrueHeading();
+                    //readHeading = (float)((BNO055)Sensor).GetTrueHeading();
+                    var Readings = ((BNO055)Sensor).GetVector(BNO055.VectorType.VECTOR_MAGNETOMETER);
+
+                    double HeadingDirection = 0;
+
+                    if (Readings.Item2 > 0) { HeadingDirection = 90 - (Math.Atan2(Readings.Item1, Readings.Item2) * 180 / Math.PI); }
+                    else if (Readings.Item2 < 0) { HeadingDirection = 270 - (Math.Atan(Readings.Item1 / Readings.Item2) * 180 / Math.PI); }
+                    else if (Math.Abs(Readings.Item2) <= 1e-6 && Readings.Item1 < 0) { HeadingDirection = 180; }
+                    else if (Math.Abs(Readings.Item2) <= 1e-6 && Readings.Item1 > 0) { HeadingDirection = 0; }
+                    readHeading = (float)HeadingDirection % 360;
+                    readHeading -= 90.0f;
+                    if (readHeading < 0f)
+                    {
+                        readHeading += 360.0f;
+                    }
                 }
             }
 
@@ -407,7 +421,21 @@ namespace MainRover
                 }
                 if (Sensor is BNO055)
                 {
-                    double direction = ((BNO055)Sensor).GetTrueHeading();
+                    //double direction = ((BNO055)Sensor).GetTrueHeading();
+                    var Readings = ((BNO055)Sensor).GetVector(BNO055.VectorType.VECTOR_MAGNETOMETER);
+                    double HeadingDirection = 0;
+
+                    if (Readings.Item2 > 0) { HeadingDirection = 90 - (Math.Atan2(Readings.Item1, Readings.Item2) * 180 / Math.PI); }
+                    else if (Readings.Item2 < 0) { HeadingDirection = 270 - (Math.Atan(Readings.Item1 / Readings.Item2) * 180 / Math.PI); }
+                    else if (Math.Abs(Readings.Item2) <= 1e-6 && Readings.Item1 < 0) { HeadingDirection = 180; }
+                    else if (Math.Abs(Readings.Item2) <= 1e-6 && Readings.Item1 > 0) { HeadingDirection = 0; }
+                    double direction = HeadingDirection % 360;
+                    direction -= 90.0;
+                    if (direction < 0)
+                    {
+                        direction += 360.0;
+                    }
+
                     Packet Pack = new Packet((byte)PacketID.DataMagnetometer, true);
                     Pack.AppendData(UtilData.ToBytes(direction));
                     Client.SendNow(Pack);
@@ -432,7 +460,7 @@ namespace MainRover
             MotorControl.Initialize();
             //MotorBoards.Initialize(CANBBB.CANBus0);
             int count = 0;
-            Console.WriteLine("Finished the initalize");
+            Console.WriteLine("Finished the initalize ");
             do
             {
                 //Console.WriteLine("Looping");
