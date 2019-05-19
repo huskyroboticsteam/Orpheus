@@ -294,7 +294,16 @@ namespace MainRover
                     sendbytes[i + 4] = blong[i];
                     sendbytes[i + 8] = bhead[i];
                 }
-                client.Send(sendbytes, sendbytes.Length);
+
+                try
+                {
+                    client.Send(sendbytes, sendbytes.Length);
+                }
+                catch
+                {
+                    Console.WriteLine("Error: Connection Refuled");
+                }
+                
             }
 
             int speed = 0;
