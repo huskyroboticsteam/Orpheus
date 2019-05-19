@@ -36,7 +36,7 @@ struct graph
 class Mapper
 {
 public:
-  Mapper(point origin, point target, float tolerance, const std::vector<line>& all_obstacles);
+  Mapper(point cur, point target, float tolerance, const std::vector<line>& all_obstacles);
   const point& cur_point = cur;
   const point& tar_point = tar;
   const graph& d_graph = mygraph;

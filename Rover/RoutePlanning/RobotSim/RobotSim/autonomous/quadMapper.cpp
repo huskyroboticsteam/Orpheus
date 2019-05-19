@@ -84,8 +84,8 @@ RP::pqtree RP::QuadMapper::create_qtnode(float minx, float miny, float maxx, flo
     return created;
 }
 
-RP::QuadMapper::QuadMapper(const point &cur_pos, const point &target, const std::vector<line> &allobst,
-                           float fwidth, float fheight, int max_d, float tolerance) : Mapper(cur_pos, target, tolerance, allobst),
+RP::QuadMapper::QuadMapper(point origin, point tar, point cur, const std::vector<line> &allobst,
+                           float fwidth, float fheight, int max_d, float tolerance) : Mapper(cur, tar, tolerance, allobst), origin(origin),
                                                                                       max_depth(max_d), field_width(fwidth), field_height(fheight),
                                                                                       cur_changed(true), tar_changed(true)
 {

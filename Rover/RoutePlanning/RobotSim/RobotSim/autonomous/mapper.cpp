@@ -2,8 +2,8 @@
 #include <cassert>
 #include <cmath>
 
-RP::Mapper::Mapper(point origin, point target, float tolerance, const std::vector<line>& allobst) : 
-cur(origin), tar(target), tol(tolerance), all_obstacles(allobst)
+RP::Mapper::Mapper(point current, point target, float tolerance, const std::vector<line>& allobst) : 
+cur(current), tar(target), tol(tolerance), all_obstacles(allobst)
 {
 
 }

@@ -6,8 +6,7 @@
 #include <sl/Camera.hpp>
 #include <thread>
 
-std::vector<std::pair<cv::Rect, float> > get_obstacle_data(cv::Mat&);
-
-//int init(const char*);
+//std::vector<std::pair<cv::Rect, float> > get_obstacle_data(cv::Mat&);
+std::vector<std::pair<cv::Rect, float> > get_obstacle_data();
 int zdInit();
-int gsInit(const char*); 
+

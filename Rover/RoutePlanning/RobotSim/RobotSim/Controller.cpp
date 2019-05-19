@@ -7,6 +7,7 @@
 #include <iostream>
 #include <math.h>
 #include <thread>
+#include "../../../ZedDepth/zed-depth.h"
 
 #define MOVE_SPEED 0x7FFF / 2
 
@@ -54,6 +55,7 @@ int main() {
     std::cin >> p.x;
     std::cin >> p.y;
     RP::Controller controller(p, targetSites);
+    zdInit();
     std::cout << "Finished constructing" << std::endl;
     while (true) {
         controller.update();
@@ -63,11 +65,12 @@ int main() {
 namespace RP {
 
 Controller::Controller(const point &cur_pos, std::deque<point> targetSites)
-    : server(), watchdogThread(&RP::Server::send_watchdog, &server),
+    : server(),
       detector("Tennisball/data/final_models/frozen_inference_graph.pb",
                "Tennisball/data/final_models/graph.pbtxt"),
       receiverThread(&RP::Server::data_receiver_loop, &server),
-      pather(cur_pos, targetSites[0], RP::point{40, 40}) {
+      pather(RP::point{-40, -40}, RP::point{1000, 1000},RP::point{curr_lat, curr_lng}, targetSites[0])
+{
     this->targetSites = targetSites;
     state = FOLLOW_PATH;
     curr_lat = cur_pos.x;
@@ -88,8 +91,6 @@ Controller::Controller(const point &cur_pos, std::deque<point> targetSites)
     filter.init(x, P0);
 
     std::cout << "Initialized kalman filter" << std::endl;
-
-    std::cout << "Initialized watchdog thread" << std::endl;
 }
 
 // using given packet data and server send a packet containing either a
@@ -111,21 +112,22 @@ void Controller::update() {
     std::cout << "Update loop started" << std::endl;
     // step 1: get obstacle data from camera
     while (!targetSites.empty()) {
-        std::cout << "target sites is non-empty " << targetSites.size()
-                  << std::endl;
+    //    std::cout << "target sites is non-empty " << targetSites.size()
+                  //<< std::endl;
         // TODO: actually get obstacle data from camera
         // std:vector<obstacleVector> obstacles = METHOD_GOES_HERE
         // Bogus obstacle data for testing
 
-        std::vector<obstacleVector> obstacles{
-            obstacleVector{1, 2}, obstacleVector{3, 4}, obstacleVector{5, 6}};
+//        std::vector<obstacleVector> obstacles{
+//            obstacleVector{1, 2}, obstacleVector{3, 4}, obstacleVector{5, 6}};
 
+        std::vector<std::pair<cv::Rect, float>> raw_obstacles = get_obstacle_data(image);
         // step 2: wait for server to give current location
         // Note: If Scarlet changes size of Timestamp, be sure to update the
         // parsePacket paramaters below
 
         // TODO: make this a vector or shared_ptr
-        std::cout << "Listening" << std::endl;
+        //std::cout << "Listening" << std::endl;
 
         char packet_buf[buf_size];
 
@@ -141,7 +143,7 @@ void Controller::update() {
             curr_dir = received_dir;
             
             std::cout << "Started stepping kalman filter with received data" << std::endl;
-
+            std::cout << "Received heading: " << curr_dir;
             Kalman::KVector<float, 1, true> z(4);
             z(1) = received_lat;
             z(2) = received_lng;
@@ -157,7 +159,7 @@ void Controller::update() {
         pather.set_pos(RP::point{curr_lat, curr_lng});
         // std::cout << "Controller got a packet" << std::endl;
         point nextPoint{0.0, 0.0};
-
+        //std::cout << state << std::endl;
         if (state == FOLLOW_PATH) {
             if (in_spiral_radius()) {
                 state = SPIRAL;
@@ -166,10 +168,12 @@ void Controller::update() {
             } else if (found_ball()) {
                 state = FOUND_BALL;
             } else {
-                if (turning) {
+                if (turning) 
+                {
                     switch (turnstate) {
                     case TOWARD_TARGET:
-                        if (angleCloseEnough(curr_dir, tar_angle, 1.)) {
+                        //if (angleCloseEnough(curr_dir, tar_angle, 1.)) {
+                        if(fabs(curr_dir - tar_angle) < 1) {
                             pather.compute_path();
                             auto path = pather.get_cur_path();
                             if (path.size() == 0)
@@ -185,7 +189,7 @@ void Controller::update() {
                                 turnstate = FIND_BALL;
                                 break;
                             }
-                            tar_angle = get_target_angle();
+                            tar_angle = normalize_angle_deg(get_target_angle());
                             if (angleCloseEnough(curr_dir, tar_angle, 5.)) {
                                 // printf("reached turning target of %f\n",
                                 // tar_angle);
@@ -204,7 +208,7 @@ void Controller::update() {
                         break;
                     case SURVEY_COUNTERCW:
                         if (angleCloseEnough(curr_dir, tar_angle, 0.5)) {
-                            tar_angle = orig_angle - AUTO_TURN_RANGE / 2.f;
+                            tar_angle = normalize_angle_deg(orig_angle - AUTO_TURN_RANGE / 2.f);
                             turnstate = SURVEY_CW;
                             // printf("turning cw toward %f\n", tar_angle);
                             break;
@@ -218,9 +222,9 @@ void Controller::update() {
                                 break;
                             // printf("target point: %f, %f\n", tar_point.x,
                             // tar_point.y);
-                            tar_angle = atan2(tar_point.y - curr_lng,
+                            tar_angle = normalize_angle_deg(atan2(tar_point.y - curr_lng,
                                               tar_point.x - curr_lat) *
-                                        180 / M_PI;
+                                        180 / M_PI);
                             // printf("turning toward target %f\n", tar_angle);
                             turnstate = BACK_TO_TARGET;
                             break;
@@ -232,7 +236,7 @@ void Controller::update() {
                             // printf("reached turning target of %f\n",
                             // tar_angle);
                             pather.compute_path();
-                            tar_angle = get_target_angle();
+                            tar_angle = normalize_angle_deg(get_target_angle());
                             if (angleCloseEnough(curr_dir, tar_angle, 0.5)) {
                                 printf("close enough to %f\n", tar_angle);
                                 turn_and_go();
@@ -253,7 +257,7 @@ void Controller::update() {
                     if (path.empty())
                         return;
                     if (timer.elapsed() > last_move_time) {
-                        tar_angle = get_target_angle();
+                        tar_angle = normalize_angle_deg(get_target_angle());
                         if (path.size() == 1) {
                             // if no obstacle, go straight to point
                             turning = true;
@@ -261,7 +265,7 @@ void Controller::update() {
                         } else {
                             timer.reset();
                             pather.compute_path();
-                            tar_angle = get_target_angle();
+                            tar_angle = normalize_angle_deg(get_target_angle());
                             turnstate = TOWARD_TARGET;
                             turning = true;
                         }
@@ -290,18 +294,29 @@ void Controller::update() {
         }
 
         // step 3: use current location and obstacle data to update map
-        for (int i = 1; i < obstacles.size(); i++) {
-            obstacleVector left = obstacles.at(i - 1);
-            point a{(curr_lng + cos(left.angle) * left.distance),
-                    (curr_lat + sin(left.angle) * left.distance)};
-            obstacleVector right = obstacles.at(i);
-            point b{(curr_lng + cos(right.angle) * right.distance),
-                    (curr_lat + sin(right.angle) * right.distance)};
-            RP::line obstacleLine{a, b};
-            std::vector<line> obstacles;
+        //TODO: Use FOV of Camera to determine where the obstacles actually are
+        std::vector<RP::line> obstacles;
+        for (auto raw_obstacle : raw_obstacles) {
+            double obstacle_width = raw_obstacle.first.width;
+            float obstacle_dist = raw_obstacle.second;
+            /*
+             * heading := current heading vector normalized
+             * ortho = orthogonal heading normalized
+             * pt1 cur_pos + (heading * obstacle_distance + ortho * half_width)
+             * pt2 cur_pos + (heading * obstacle_distance - ortho * half_width)
+             * */
+            std::vector<RP::line> obstacles;
+            point norm_heading = point{cos(curr_dir), sin(curr_dir)};
+            point ortho_norm = get_ortho(line{norm_heading, norm_heading*2}, false);
+            point a = point{curr_lat, curr_lng} + norm_heading*obstacle_dist
+                      + ortho_norm*(obstacle_width/2);
+            point b = point{curr_lat, curr_lng} + norm_heading*obstacle_dist
+                      - ortho_norm*(obstacle_width/2);
+            RP::line obstacleLine{a, b}; 
+            
             obstacles.push_back(obstacleLine);
-            pather.add_obstacles(obstacles);
         }
+        pather.add_obstacles(obstacles);
 
         // step 5: use next point to send packets specifying new direction and
         // speed to proceed
@@ -311,8 +326,11 @@ void Controller::update() {
         // setDirection(delta_heading);
         //  setSpeed(1.0); // TODO: figure out how setting speed and heading
         // actually works
-        sendPacket(0x7FFF / 2, heading);
-    }
+        //sendPacket(0x7FFF / 2, heading);
+        tar_angle = normalize_angle_deg(get_target_angle());
+                            std::cout << "tar_angle: " << get_target_angle() << std::endl;
+        }
+    
 }
 
 void RP::Controller::turn_and_go() {
@@ -341,22 +359,27 @@ float RP::Controller::get_target_angle() {
     for (next = path.begin();
          next != path.end() &&
          same_point(*next, point{curr_lat, curr_lng}, 1.f);
-         next++)
-        ;
-    return atan2(next->y - curr_lng, next->x - curr_lat * 180 / M_PI);
+         next++);
+    return atan2(next->y - curr_lng, next->x - curr_lat) * 180 / M_PI;
 }
 
-bool Controller::in_spiral_radius() { return true; }
+bool Controller::in_spiral_radius() { return dist_sq(point{curr_lat, curr_lng}
+    , targetSites.front()) < TARGET_TOL;  }
 
 bool Controller::found_ball() {
-    return detector.performDetection(image).size() == 1;
+  //cv::imshow("MAH BALL", image);
+  //cv::waitKey(0);
+  return false;
+  return detector.performDetection(image).size() == 1;
 }
 
-bool Controller::sendPacket(signed short speed, unsigned short heading) {
-    std::vector<unsigned char> data(9);
+bool Controller::sendPacket(signed short speed, float fheading) {
+    unsigned short heading = static_cast<unsigned short>(RP::normalize_angle_deg(fheading)); 
+    std::vector<unsigned char> data(5);
     data[0] = 0;
     memcpy(&data.data()[1], &speed, 2);
     memcpy(&data.data()[3], &heading, 2);
+    std::cout << "Heading: " << heading << " speed: " << speed << std::endl;
     return server.send_action(data);
 }
 

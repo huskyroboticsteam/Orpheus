@@ -43,8 +43,8 @@ RP::Server::Server()
 
 	//Example of how to set up sendto address:
 	server.sin_family = AF_INET;
-	server.sin_port = htons(54100);
-	inet_aton("10.19.216.238", &(server.sin_addr));
+	server.sin_port = htons(2001);
+	inet_aton("192.168.0.20", &(server.sin_addr));
 	memset(&(server.sin_zero), '\0', 8);
 
 	// Bind socket to ip address and port
@@ -52,7 +52,7 @@ RP::Server::Server()
 	serverHint.sin_addr.s_addr = INADDR_ANY;
 	//inet_pton(AF_INET, "10.19.161.242", &serverHint.sin_addr.s_addr);
 	serverHint.sin_family = AF_INET;
-	serverHint.sin_port = htons(54050);
+	serverHint.sin_port = htons(2002);
 
 	if (bind(in, (sockaddr *)&serverHint, sizeof(serverHint)) == SOCKET_ERROR)
 	{
@@ -67,6 +67,7 @@ RP::Server::Server()
 bool RP::Server::get_packet_data(char* output) {
 	bool result = false;
 	buf_mutex.lock();
+  //std::cout << new_packet << std::endl;
 	if(new_packet) {
 		memcpy(output, packet_buf, buf_size);
 		new_packet = false;
@@ -77,37 +78,47 @@ bool RP::Server::get_packet_data(char* output) {
 }
 
 void RP::Server::data_receiver_loop()
-{
-	char local_buf[buf_size];
-	sockaddr_in client;
-	client = {};
-	unsigned int clientLength = sizeof(client);
+{ 
+  while(true) {
+    char local_buf[buf_size];
+    sockaddr_in client;
+    client = {};
+    unsigned int clientLength = sizeof(client);
 
-	memset(local_buf, 0, buf_size);
+    memset(local_buf, 0, buf_size);
 
-	// Wait for message
-	int bytesIn = recvfrom(in, local_buf, buf_size, 0, (sockaddr *)&client, &clientLength);
-	if (bytesIn == SOCKET_ERROR)
-	{
-		std::cout << "That didn't work! " << strerror(errno);
-	}
+    // Wait for message
+    int bytesIn = recvfrom(in, local_buf, buf_size, 0, (sockaddr *)&client, &clientLength);
 
-	// Display message and client
-	char clientIp[256];
+    if (bytesIn == SOCKET_ERROR)
+    {
+      std::cout << "recvfrom failed: " << strerror(errno) << std::endl;
+    } else {
+      std::cout << "got a packet" << std::endl;
+    }
 
-	memset(clientIp, 0, buf_size);
-	inet_ntop(AF_INET, &client.sin_addr, clientIp, 256);
 
-	//std::cout << "Message received from " << clientIp << " : " << buf << std::endl;
+    // Display message and client
+    char clientIp[256];
 
-	buf_mutex.lock();
-	memcpy(packet_buf, local_buf, buf_size);
-	new_packet = true;
-	buf_mutex.unlock();
+    memset(clientIp, 0, buf_size);
+    inet_ntop(AF_INET, &client.sin_addr, clientIp, 256);
+
+    //std::cout << "Message received from " << clientIp << " : " << buf << std::endl;
+
+    buf_mutex.lock();
+    memcpy(packet_buf, local_buf, buf_size);
+    new_packet = true;
+    buf_mutex.unlock();
+  }
 }
 
 bool RP::Server::send_action(std::vector<unsigned char> data)
 {
+  for (int i = 0; i < data.size(); i++) {
+    //printf("%x ", data[i]);
+  }
+  //printf("\n");
 	int sendOk = sendto(out, (const char *)data.data(), data.size() + 1, 0, (sockaddr *)&server, sizeof(server));
 	if (sendOk == SOCKET_ERROR)
 	{
@@ -115,7 +126,7 @@ bool RP::Server::send_action(std::vector<unsigned char> data)
 		std::cout << "That didn't work! " << WSAGetLastError();
 		return false;
 #else
-		std::cout << "That didn't work! " << strerror(errno);
+//		std::cout << "That didn't work! " << strerror(errno);
 		return false;
 #endif
 	}

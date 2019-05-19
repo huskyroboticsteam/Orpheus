@@ -26,7 +26,7 @@ class Controller {
     void foundTennisBall(float dist, float dir);
 
   private:
-    bool sendPacket(signed short speed, unsigned short heading);
+    bool sendPacket(signed short speed, float heading);
     bool sendDestinationPacket();
     float get_target_angle();
     void turn_and_go();
@@ -41,7 +41,6 @@ class Controller {
     bool found_ball();
     RP::point convertToLatLng(float dist, float dir);
     RobotEKF filter;
-    std::thread watchdogThread;
     std::thread receiverThread;
     tb::Detector detector;
     RP::Pather pather;

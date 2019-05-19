@@ -80,7 +80,7 @@ float RP::rad_to_deg(float rad)
 float RP::normalize_angle(float rad)
 {
     rad = fmod(rad, 2 * PI);
-    if (rad < 0)
+    if (rad < 0 && fabs(rad) > 1e-5)
         rad += 2 * PI;
     return rad;
 }
@@ -88,7 +88,7 @@ float RP::normalize_angle(float rad)
 float RP::normalize_angle_deg(float deg)
 {
     deg = fmod(deg, 360);
-    if (deg < 0)
+    if (deg < 0 && fabs(deg) > 1e-5f)
         deg += 360;
     return deg;
 }

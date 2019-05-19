@@ -22,6 +22,18 @@ struct point
     float y;
     bool operator==(const point &p) const;
     bool operator!=(const point &p) const;
+    point operator+(const point &other) const
+    {
+      return point{x + other.x, y + other.y};
+    }
+
+    point operator-(const point &other) const
+    {
+      return point{x - other.x, y - other.y};
+    }
+    point operator*(const float& scalar) {
+      return point{scalar*x, scalar*y};
+    }
     // point &operator=(const point &other);
     // point &operator=(const point&& other);
     float dot(const point& other) const { return x * other.x + y * other.y; }
