@@ -297,6 +297,7 @@ void Controller::update() {
         //TODO: Use FOV of Camera to determine where the obstacles actually are
         std::vector<RP::line> obstacles;
         for (auto raw_obstacle : raw_obstacles) {
+            std::cout << "Obstacle: distance: " << raw_obstacle.second << std::endl;
             double obstacle_width = raw_obstacle.first.width;
             float obstacle_dist = raw_obstacle.second;
             /*
@@ -315,6 +316,7 @@ void Controller::update() {
             RP::line obstacleLine{a, b}; 
             
             obstacles.push_back(obstacleLine);
+            cv::rectangle(image, raw_obstacle.first, cv::Scalar(0, 255, 0));
         }
         pather.add_obstacles(obstacles);
 
@@ -329,6 +331,12 @@ void Controller::update() {
         //sendPacket(0x7FFF / 2, heading);
         tar_angle = normalize_angle_deg(get_target_angle());
         std::cout << "tar_angle: " << tar_angle << std::endl;
+                
+        //for(char key = ' '; key != 'q'; key = cv::waitKey(10)) {
+            //cv::imshow("Camera", image);
+            //cv::waitKey(10);
+
+        
         }
     
 }

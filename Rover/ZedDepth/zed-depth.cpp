@@ -95,6 +95,9 @@ std::vector<std::pair<cv::Rect, float> > get_obstacle_data(cv::Mat& out)
 
   // retrieve images from zed api
   sl::Mat sl_depth_f32;
+
+  if(zed.grab(runtime_params) != sl::SUCCESS) return result;
+  std::cout << "Succeeded to grab image" << std::endl; 
   zed.retrieveImage(img_zed, sl::VIEW_LEFT, sl::MEM_CPU, new_width, new_height);
   zed.retrieveImage(depth_img_zed, sl::VIEW_DEPTH, sl::MEM_CPU, new_width, new_height);
   zed.retrieveMeasure(sl_depth_f32, sl::MEASURE_DEPTH);
@@ -104,6 +107,8 @@ std::vector<std::pair<cv::Rect, float> > get_obstacle_data(cv::Mat& out)
   std::vector<std::vector<cv::Point> > contours;
 
   cv::Mat img_cv = slMat2cvMat(img_zed);
+  //cv::imshow("img_cv", img_cv);
+  //cv::waitKey(10);
   img_cv.copyTo(out);
 #define TIME std::chrono::duration<float, std::milli>(end - start).count()
 #define NOW std::chrono::high_resolution_clock::now();
