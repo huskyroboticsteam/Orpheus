@@ -20,13 +20,14 @@
 #define TARGET_LAT 123.0
 #define TARGET_LNG 321.0
 
-#define FOLLOW_PATH 0
-#define SPIRAL 1
-#define FOUND_BALL 2
+
 
 constexpr float TARGET_TOL = 1e-6f; // tolerance distance for testing if we've reached target
 constexpr float TARGET_TOL_SQ = TARGET_TOL * TARGET_TOL;
 constexpr float AUTO_TURN_RANGE = 90;
+
+point origin;
+point max_point;
 
 /*
 LATITUDE IS X
@@ -37,7 +38,30 @@ cv::Mat image;
 
 int main() {
     std::deque<RP::point> targetSites(0);
-    std::cout << "Enter coordinates: " << std::endl;
+    origin.x = 47.648531;
+    origin.y = -122.309705;
+    max_point.x = 47.654537;
+    max_point.y = -122.302730;
+    char answer;
+    std::cout << "Origin: " << origin.x << " " << origin.y << std::endl;
+    std::cout << "Change origin? (y/n) ";
+    std::cin >> answer;
+    if(answer == 'y') {
+        std::cout << "lat: ";
+        std::cin >> origin.x;
+        std::cout << "lng: ";
+        std::cin >> origin.y;
+    }
+    std::cout << "Max point: " << max_point.x << " " << max_point.y << std::endl;
+    std::cout << "Change max point? (y/n) ";
+    std::cin >> answer;
+    if(answer == 'y') {
+        std::cout << "lat: ";
+        std::cin >> max_point.x;
+        std::cout << "lng: ";
+        std::cin >> max_point.y;
+    }
+    std::cout << "Enter target coordinates: " << std::endl;
     float lat = 0;
     float lng = 0;
     RP::point p;
@@ -57,9 +81,7 @@ int main() {
     RP::Controller controller(p, targetSites);
     zdInit();
     std::cout << "Finished constructing" << std::endl;
-    while (true) {
-        controller.update();
-    }
+    controller.update();
 }
 
 namespace RP {
@@ -69,7 +91,7 @@ Controller::Controller(const point &cur_pos, std::deque<point> targetSites)
       detector("Tennisball/data/final_models/frozen_inference_graph.pb",
                "Tennisball/data/final_models/graph.pbtxt"),
       receiverThread(&RP::Server::data_receiver_loop, &server),
-      pather(RP::point{-40, -40}, RP::point{1000, 1000},RP::point{curr_lat, curr_lng}, targetSites[0])
+      pather(RP::point{-40, -40}, RP::point{1000, 1000}, RP::point{curr_lat, curr_lng}, targetSites[0])
 {
     this->targetSites = targetSites;
     state = FOLLOW_PATH;
@@ -108,11 +130,20 @@ bool Controller::setSpeed(float speed) {
 }
 
 void Controller::update() {
-
-    std::cout << "Update loop started" << std::endl;
+     
     // step 1: get obstacle data from camera
     while (!targetSites.empty()) {
-    //    std::cout << "target sites is non-empty " << targetSites.size()
+        std::string long_end = "                       \n";
+        for(int i = 0; i < 7; i++)
+            std::cout << "\033[F";
+        std::cout << "update loop\n";
+        std::cout << "position: " << curr_lat << " " << curr_lng << long_end;
+        std::cout << "heading: " << curr_dir << long_end;
+        std::cout << "target: " << targetSites.front().x << " " << targetSites.front().y << long_end;
+        std::cout << "tar_angle: " << tar_angle << long_end;
+        std::cout << "pather state: " << state << long_end;
+        std::cout << "turn state: " << turnstate << long_end  << std::flush;
+  //    std::cout << "target sites is non-empty " << targetSites.size()
                   //<< std::endl;
         // TODO: actually get obstacle data from camera
         // std:vector<obstacleVector> obstacles = METHOD_GOES_HERE
@@ -160,6 +191,7 @@ void Controller::update() {
         // std::cout << "Controller got a packet" << std::endl;
         point nextPoint{0.0, 0.0};
         //std::cout << state << std::endl;
+        //TODO: Make a diagram or documentation of the state machine
         if (state == FOLLOW_PATH) {
             if (in_spiral_radius()) {
                 state = SPIRAL;
@@ -248,9 +280,6 @@ void Controller::update() {
                     case FIND_BALL:
                         state = SPIRAL;
                         break;
-                    case FINISHED:
-                        // TODO send back whatever instructions needed
-                        break;
                     }
                 } else {
                     std::vector<point> path = pather.get_cur_path();
@@ -289,6 +318,10 @@ void Controller::update() {
                 dst = targetSites.front();
                 targetSites.pop_front();
                 pather.set_tar(dst);
+            } else {
+                //End the program, we are at the last target site and have found the tennis ball
+                sendDestinationPacket();
+                return 0;
             }
             
         }
