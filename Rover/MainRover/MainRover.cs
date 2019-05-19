@@ -45,9 +45,9 @@ namespace MainRover
         public static void PinConfig()
         {
             BBBPinManager.AddBusCAN(0);
-            //BBBPinManager.AddMappingUART(Pins.MTK3339_RX);
-            //BBBPinManager.AddMappingUART(Pins.MTK3339_TX);
-            //BBBPinManager.AddMappingsI2C(Pins.BNO055_SCL, Pins.BNO055_SDA);
+            BBBPinManager.AddMappingUART(Pins.MTK3339_RX);
+            BBBPinManager.AddMappingUART(Pins.MTK3339_TX);
+            BBBPinManager.AddMappingsI2C(Pins.BNO055_SCL, Pins.BNO055_SDA);
             //BBBPinManager.AddMappingGPIO(Pins.SteeringLimitSwitch, false, Scarlet.IO.ResistorState.PULL_UP, true);
             //BBBPinManager.AddMappingPWM(Pins.SteeringMotor);
             //BBBPinManager.AddMappingPWM(Pins.ServoMotor);
@@ -64,9 +64,9 @@ namespace MainRover
             Sensors = new List<ISensor>();
             try
             {
-                //MTK3339 location = new MTK3339(UARTBBB.UARTBus4);
-                //Sensors.Add(new BNO055(I2CBBB.I2CBus2, -1, 0x28,  location));
-                //Sensors.Add(location);
+                MTK3339 location = new MTK3339(UARTBBB.UARTBus4);
+                Sensors.Add(new BNO055(I2CBBB.I2CBus1, -1, 0x28,  location));
+                Sensors.Add(location);
             }
             catch (Exception e)
             {
@@ -109,12 +109,12 @@ namespace MainRover
             udpServer = new UdpClient(2001); 
             remoteEP = new IPEndPoint(IPAddress.Any, 2001);
             client = new UdpClient();
-            ep = new IPEndPoint(IPAddress.Parse("192.168.0.5"), 2002);
+            ep = new IPEndPoint(IPAddress.Parse("192.168.0.25"), 2002);
             client.Connect(ep);
             recieveList = new Queue<byte[]>();
             ParseThread = new Thread(new ThreadStart(parser));
             ParseThread.Start();
-            timeout = 500;
+            timeout = 20;
         }
 
         public static void parser()
@@ -274,6 +274,7 @@ namespace MainRover
                 }
             }
 
+            Console.WriteLine("GPS: " + Lat + "  " + Long + " Mag: " + readHeading);
             if (readHeading == -1 || Lat == -1)
             {
                 // Sensor not read
@@ -318,7 +319,7 @@ namespace MainRover
                 {
                     Console.Write(recieveByte[i] + " ");
                 }
-                timeout = 500;
+                timeout = 20;
                 // Old code for refrence
                 /*
                 string stringData = Encoding.ASCII.GetString(recieveByte);
@@ -429,7 +430,7 @@ namespace MainRover
             InitBeagleBone();
             SetupClient();
             MotorControl.Initialize();
-            MotorBoards.Initialize(CANBBB.CANBus0);
+            //MotorBoards.Initialize(CANBBB.CANBus0);
             int count = 0;
             Console.WriteLine("Finished the initalize");
             do
