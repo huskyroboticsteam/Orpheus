@@ -392,7 +392,7 @@ namespace HuskyRobotics.BaseStation.Server
 
         private static void MagnetomerHandler(Packet magData)
         {
-            direction = magData.Data.Payload[1];
+            direction = UtilData.ToDouble(magData.Data.Payload);
         }
 
         private static void RFSignalHandler(Packet data)

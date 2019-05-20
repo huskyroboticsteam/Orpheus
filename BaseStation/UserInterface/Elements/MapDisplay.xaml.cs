@@ -143,7 +143,7 @@ namespace HuskyRobotics.UI
                 TransformedBitmap TempImage = new TransformedBitmap();
 
                 TempImage.BeginInit();
-                double degree = HuskyRobotics.BaseStation.Server.PacketSender.direction;
+                double degree = HuskyRobotics.BaseStation.Server.PacketSender.direction;                
                 int mult = setRotation(degree);
                 RotateTransform transform2 = new RotateTransform(90 * mult);
                 TempImage.Source = _roverIconBitmap; 
