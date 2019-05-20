@@ -18,7 +18,7 @@ namespace Science
         private readonly ISubsystem[] EStopProcedure;
         private readonly ISubsystem[] UpdateProcedure;
 
-        //public readonly Rail RailController;
+        public readonly Rail RailController;
         public readonly Drill DrillController;
         //public readonly Sample SampleController;
         public readonly LEDs LEDController;
@@ -81,7 +81,7 @@ namespace Science
 
             MotorEnable.SetOutput(true);
 
-            //this.RailController = new Rail(this.PWMGenHighFreq.Outputs[0], new DigitalInPi(11), this.SPI, new DigitalOutPi(29), this.I2C, null) { TraceLogging = true };
+            this.RailController = new Rail(RailMotorPWM, DirectionRail, new DigitalInPi(12), this.SPI, this.IOExpander.Outputs[0], this.I2C, null) { TraceLogging = true };
             this.DrillController = new Drill(DrillMotorPWM, DirectionDrill, this.PWMGenServo.Outputs[4]);
             //this.SampleController = new Sample(this.PWMGenLowFreq.Outputs[1]);
             this.LEDController = new LEDs(this.PWMGenServo.Outputs, null);//EnablePWM);
@@ -93,9 +93,9 @@ namespace Science
 
             
 
-            this.InitProcedure = new ISubsystem[] { /*this.RailController, */this.DrillController, this.LEDController, /*this.AuxSensors,*/ this.SysSensors, this.Music };
-            this.EStopProcedure = new ISubsystem[] { this.Music, /*this.RailController,*/ this.DrillController, this.LEDController, /*this.AuxSensors,*/ this.SysSensors };
-            this.UpdateProcedure = new ISubsystem[] { /*this.RailController,*/ this.DrillController, this.LEDController/*, this.AuxSensors, this.SysSensors*/ };
+            this.InitProcedure = new ISubsystem[] { this.RailController, this.DrillController, this.LEDController, /*this.AuxSensors,*/ this.SysSensors, this.Music };
+            this.EStopProcedure = new ISubsystem[] { this.Music, this.RailController, this.DrillController, this.LEDController, /*this.AuxSensors,*/ this.SysSensors };
+            this.UpdateProcedure = new ISubsystem[] { this.RailController, this.DrillController, this.LEDController/*, this.AuxSensors, this.SysSensors*/ };
             if (this.EStopProcedure.Length < this.InitProcedure.Length || this.EStopProcedure.Length < this.UpdateProcedure.Length) { throw new Exception("A system is registered for init or updates, but not for emergency stop. For safety reasons, this is not permitted."); }
         }
 

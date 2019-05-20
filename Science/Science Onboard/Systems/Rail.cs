@@ -46,17 +46,18 @@ namespace Science.Systems
 
         public float RailSpeed = 0.3F; // The speed that the rail should move at when applicable.
 
-        private readonly TalonMC MotorCtrl;
+        private readonly PololuHPMDG2 MotorCtrl;
         private readonly LimitSwitch Limit;
         private readonly LS7366R Encoder;
-        private readonly VL53L0X_MVP Ranger;
+        //private readonly VL53L0X_MVP Ranger;
 
         private readonly LEDController LED;
 
         /// <summary> Handles moving the linear rail up and down for the various experiments. </summary>
-        public Rail(IPWMOutput MotorPWM, IDigitalIn LimitSw, ISPIBus EncoderSPI, IDigitalOut EncoderCS, II2CBus RangerBus, RGBLED LED)
+        public Rail(IPWMOutput MotorPWM, IDigitalOut MotorDir, IDigitalIn LimitSw, ISPIBus EncoderSPI, IDigitalOut EncoderCS, II2CBus RangerBus, RGBLED LED)
         {
-            this.MotorCtrl = new TalonMC(MotorPWM, MOTOR_MAX_SPEED);
+            if (this.TraceLogging) { Log.Trace(this, "Rail controller starting."); }
+            this.MotorCtrl = new PololuHPMDG2(MotorPWM, MotorDir, MOTOR_MAX_SPEED);
             IDigitalIn FakeInterrupt = new SoftwareInterrupt(LimitSw) { TraceLogging = true };
             
             this.Limit = new LimitSwitch(FakeInterrupt, false);
@@ -66,9 +67,10 @@ namespace Science.Systems
             this.Encoder.Configure(Config);
             this.GroundHeightFilter = new Average<double>(4);
             this.VelocityTracker = new Average<double>(6);
-            this.Ranger = new VL53L0X_MVP(RangerBus);
-            this.Ranger.SetMeasurementTimingBudget(50000);
+            //this.Ranger = new VL53L0X_MVP(RangerBus);
+            //this.Ranger.SetMeasurementTimingBudget(50000);
             this.LED = new LEDController(LED);
+            if (this.TraceLogging) { Log.Trace(this, "Rail controller start finished."); }
         }
 
         private void EventTriggered(object Sender, EventArgs Event)
@@ -159,7 +161,7 @@ namespace Science.Systems
             if (ENABLE_VELOCITY_TRACKING)
             {
                 this.VelocityTracker.Feed((this.LastEncoderCount - this.Encoder.Count) * ENCODER_MM_PER_TICK / 0.020);
-                if (this.TraceLogging) { Log.Trace(this, "Velocity: " + this.VelocityTracker.GetOutput()); }
+                if (this.TraceLogging) { Log.Trace(this, "Velocity: " + this.VelocityTracker.GetOutput() + " (Encoder Pos: " + this.Encoder.Count + ")"); }
             }
             this.LastEncoderCount = this.Encoder.Count;
 
@@ -180,11 +182,11 @@ namespace Science.Systems
                 Log.Exception(Log.Source.NETWORK, Exc);
             }
 
-            this.Ranger.UpdateState();
-            if (this.TraceLogging) { Log.Trace(this, "Ranger seeing " + this.Ranger.GetDistance() + "mm."); }
-            uint GroundDist = this.Ranger.GetDistance();
-            if (GroundDist == 0 || this.Ranger.LastHadTimeout()) { Log.Output(Log.Severity.INFO, Log.Source.SENSORS, "VL53L0X did not return a valid distance."); }
-            else { this.GroundHeightFilter.Feed((int)GroundDist - 140); }
+            //this.Ranger.UpdateState();
+            //if (this.TraceLogging) { Log.Trace(this, "Ranger seeing " + this.Ranger.GetDistance() + "mm."); }
+            //uint GroundDist = this.Ranger.GetDistance();
+            //if (GroundDist == 0 || this.Ranger.LastHadTimeout()) { Log.Output(Log.Severity.INFO, Log.Source.SENSORS, "VL53L0X did not return a valid distance."); }
+            //else { this.GroundHeightFilter.Feed((int)GroundDist - 140); }
 
             if (this.Initializing && ENABLE_VELOCITY_TRACKING)
             {
