@@ -3,19 +3,15 @@ using Gst.Video;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Interop;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace HuskyRobotics.UI.VideoStreamer
 {
@@ -26,12 +22,13 @@ namespace HuskyRobotics.UI.VideoStreamer
     // gst-launch-1.0 rtspsrc -v location = rtsp://192.168.0.42 user-id=admin user-pw=1234 latency=0 ! rtpjpegdepay ! jpegdec ! d3dvideosink
     public partial class RTSPVideoWindow : Window, VideoWindow
     {
-        private Pipeline Pipeline;
+        public PipelineElements runningPipeline;
+        public PipelineElements pendingPipeline;
 
-        private Bin RTSP = (Bin) ElementFactory.Make("rtspsrc");
-        private Element Depay = ElementFactory.Make("rtpjpegdepay");
-        private Element Dec = ElementFactory.Make("jpegdec");
-        private Element VideoSink = ElementFactory.Make("d3dvideosink");
+        NetworkInterface networkInterface;
+
+        double bytesRecvSpeed = 0;
+        long lastBytesRecv;
 
         private int Port;
         private int BufferSizeMs;
@@ -48,6 +45,15 @@ namespace HuskyRobotics.UI.VideoStreamer
             }
         }
 
+        public struct PipelineElements
+        {
+            public Pipeline pipeline;
+            public VideoOverlayAdapter overlay;
+            public Bin RTSP;
+            public Element Depay;
+            public Element VideoSink;
+        }
+
         public RTSPVideoWindow(int Port, string StreamName, string RecordingPath, int BufferSizeMs = 200)
         {
             DataContext = this;
@@ -56,38 +62,64 @@ namespace HuskyRobotics.UI.VideoStreamer
             this.BufferSizeMs = BufferSizeMs;
             this.RecordingPath = RecordingPath;
 
-            Pipeline = new Pipeline();
-            
+            foreach (NetworkInterface currentNetworkInterface in NetworkInterface.GetAllNetworkInterfaces())
+            {
+                Console.WriteLine(currentNetworkInterface.Description);
+                if (currentNetworkInterface.Description == "Realtek USB GbE Family Controller") {
+                    networkInterface = currentNetworkInterface;
+                }
+            }
 
-            Window window = GetWindow(this);
-            WindowInteropHelper wih = new WindowInteropHelper(this);
-            wih.EnsureHandle(); // Generate Window Handle if current HWND is NULL (always occurs because background window)
-            VideoOverlayAdapter overlay = new VideoOverlayAdapter(VideoSink.Handle);
-            overlay.WindowHandle = wih.Handle;
+            IPv4InterfaceStatistics interfaceStatistic = networkInterface.GetIPv4Statistics();
+            lastBytesRecv = interfaceStatistic.BytesReceived;
+            DispatcherTimer dispatcherTimer = new DispatcherTimer();
+            dispatcherTimer.Tick += new EventHandler(GetNetworkInBackground);
+            dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
+            dispatcherTimer.Start();
 
-            Pipeline["message-forward"] = true;
-            RTSP["location"] = "rtsp://" + StreamName;
-            RTSP["user-id"] = "admin";
-            RTSP["user-pw"] = "1234";
-            RTSP["latency"] = BufferSizeMs;
-
-
-            Pipeline.Add(RTSP, Depay, Dec, VideoSink);
-            RTSP.Link(Depay);
-            RTSP.PadAdded += RTSPPadAdded;
-            Depay.Link(Dec);
-            Dec.Link(VideoSink);
-
-
-            Pipeline.SetState(State.Null);
+            PipelineElements pipeline = CreatePipeline();
+            // Clean up running pipeline
+            runningPipeline = pipeline;
+            pendingPipeline = new PipelineElements();
 
             Closing += OnCloseEvent;
             InitializeComponent();
         }
 
+        private PipelineElements CreatePipeline()
+        {
+            PipelineElements pipe = new PipelineElements();
+            pendingPipeline = pipe;
+            
+            pipe.pipeline = new Pipeline();
+            pipe.RTSP = (Bin)ElementFactory.Make("rtspsrc");
+            pipe.Depay = ElementFactory.Make("rtpvrawdepay");
+            pipe.VideoSink = ElementFactory.Make("d3dvideosink");
+
+            Window window = GetWindow(this);
+            WindowInteropHelper wih = new WindowInteropHelper(this);
+            wih.EnsureHandle(); // Generate Window Handle if current HWND is NULL (always occurs because background window)
+            pipe.overlay = new VideoOverlayAdapter(pipe.VideoSink.Handle);
+            pipe.overlay.WindowHandle = wih.Handle;
+
+            pipe.pipeline["message-forward"] = true;
+            pipe.RTSP["location"] = "rtsp://" + StreamName;
+            pipe.RTSP["latency"] = BufferSizeMs;
+
+            pipe.pipeline.Add(pipe.RTSP, pipe.Depay, pipe.VideoSink);
+            pipe.RTSP.PadAdded += RTSPPadAdded;
+            pipe.RTSP.Link(pipe.Depay);
+            pipe.Depay.Link(pipe.VideoSink);
+
+            pipe.pipeline.SetState(State.Null);
+
+            return pipe;
+        }
+
+        // Called after pipeline state is set to playing
         private void RTSPPadAdded(object o, PadAddedArgs args)
         {
-            Pad Sink = Depay.GetStaticPad("sink");
+            Pad Sink = runningPipeline.Depay.GetStaticPad("sink");
             args.NewPad.Link(Sink);
         }
 
@@ -96,7 +128,7 @@ namespace HuskyRobotics.UI.VideoStreamer
         /// </summary>
         public void StartStream()
         {
-            StateChangeReturn s = Pipeline.SetState(State.Playing);
+            StateChangeReturn s = runningPipeline.pipeline.SetState(State.Playing);
         }
 
         private string GetRecordingFilename()
@@ -110,12 +142,21 @@ namespace HuskyRobotics.UI.VideoStreamer
             // We have to wait for EOS to propogate through the pipeline
             // Unclear how dependent delay is on machine's speed or other process usage
             Console.WriteLine("Shutting down video");
-            Pipeline.SendEvent(Event.NewEos());
+            runningPipeline.pipeline.SendEvent(Event.NewEos());
             Thread.Sleep(1000);
 
             // Cleanup the unmanaged class objects
-            Pipeline.SetState(State.Null);
-            Pipeline.Unref();
+            runningPipeline.pipeline.SetState(State.Null);
+            runningPipeline.pipeline.Unref();
+        }
+
+        private void GetNetworkInBackground(object sender, EventArgs e)
+        {
+            IPv4InterfaceStatistics interfaceStatistic = networkInterface.GetIPv4Statistics();
+            long bytesRecv = interfaceStatistic.BytesReceived;
+            bytesRecvSpeed = (bytesRecv - lastBytesRecv) * 8 / Math.Pow(1024, 2);
+            Console.WriteLine("Receiving data at: " + string.Format("{0:0.00}", bytesRecvSpeed) + " Mbps" + " over " + networkInterface.Description);
+            lastBytesRecv = bytesRecv;
         }
     }
 }
