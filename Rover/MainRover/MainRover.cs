@@ -295,7 +295,7 @@ namespace MainRover
                 }
             }
 
-            Console.WriteLine("GPS: " + Lat + "  " + Long + " Mag: " + readHeading);
+            Console.WriteLine("GPS: " + Lat + "  " + Long + " Mag: " + (float)MagFilter.GetOutput());
             if (readHeading == -1 || Lat == -1)
             {
                 // Sensor not read
@@ -378,7 +378,14 @@ namespace MainRover
                             if (turn < 0) turn += 360;
                             else turn -= 360;
                         }
-                        turn = turn / 4;
+                        if (turn > 0 && turn <= 5)
+                        {
+                            turn = 5;
+                        }
+                        else
+                        {
+                            turn = turn / 4;
+                        }
                     }
                     GSpeed = speed;
                     Gturn = turn;
