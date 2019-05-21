@@ -48,9 +48,15 @@
             this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel10 = new System.Windows.Forms.TableLayoutPanel();
+            this.darkLabel5 = new DarkUI.Controls.DarkLabel();
+            this.darkButton4 = new DarkUI.Controls.DarkButton();
+            this.darkButton3 = new DarkUI.Controls.DarkButton();
+            this.darkButton2 = new DarkUI.Controls.DarkButton();
+            this.darkButton1 = new DarkUI.Controls.DarkButton();
             this.SampleTubeStatus = new DarkUI.Controls.DarkLabel();
             this.SampleTubeToggle = new DarkUI.Controls.DarkButton();
             this.darkLabel4 = new DarkUI.Controls.DarkLabel();
+            this.turntableDisplay1 = new Science_Base.TurntableDisplay();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
             this.DrillSpeed = new System.Windows.Forms.TrackBar();
@@ -110,12 +116,7 @@
             this.StatusImgSystem = new System.Windows.Forms.PictureBox();
             this.SecTimer = new System.Windows.Forms.Timer(this.components);
             this.UIUpdate = new System.Windows.Forms.Timer(this.components);
-            this.darkButton1 = new DarkUI.Controls.DarkButton();
-            this.darkButton2 = new DarkUI.Controls.DarkButton();
-            this.darkButton3 = new DarkUI.Controls.DarkButton();
-            this.darkButton4 = new DarkUI.Controls.DarkButton();
-            this.darkLabel5 = new DarkUI.Controls.DarkLabel();
-            this.turntableDisplay1 = new Science_Base.TurntableDisplay();
+            this.ScienceTooltip = new System.Windows.Forms.ToolTip(this.components);
             this.tableLayoutPanel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.Control.SuspendLayout();
@@ -310,6 +311,7 @@
             this.GaugeRailCurrent.Size = new System.Drawing.Size(244, 182);
             this.GaugeRailCurrent.TabIndex = 7;
             this.GaugeRailCurrent.Text = "angularGauge1";
+            this.ScienceTooltip.SetToolTip(this.GaugeRailCurrent, "THe current consumed by the rail motor.");
             // 
             // GaugeDrillCurrent
             // 
@@ -319,6 +321,7 @@
             this.GaugeDrillCurrent.Size = new System.Drawing.Size(244, 182);
             this.GaugeDrillCurrent.TabIndex = 6;
             this.GaugeDrillCurrent.Text = "angularGauge1";
+            this.ScienceTooltip.SetToolTip(this.GaugeDrillCurrent, "The current consumed by the drill motor.");
             // 
             // GaugeSysCurrent
             // 
@@ -328,6 +331,7 @@
             this.GaugeSysCurrent.Size = new System.Drawing.Size(244, 181);
             this.GaugeSysCurrent.TabIndex = 5;
             this.GaugeSysCurrent.Text = "angularGauge1";
+            this.ScienceTooltip.SetToolTip(this.GaugeSysCurrent, "THe amount of current consumed by all non-motor parts of the module.");
             // 
             // GaugeSysVoltage
             // 
@@ -338,6 +342,7 @@
             this.GaugeSysVoltage.Size = new System.Drawing.Size(244, 181);
             this.GaugeSysVoltage.TabIndex = 4;
             this.GaugeSysVoltage.Text = "angularGauge1";
+            this.ScienceTooltip.SetToolTip(this.GaugeSysVoltage, "The input voltage coming from the rover.");
             // 
             // tableLayoutPanel7
             // 
@@ -408,6 +413,68 @@
             this.tableLayoutPanel10.Size = new System.Drawing.Size(238, 193);
             this.tableLayoutPanel10.TabIndex = 0;
             // 
+            // darkLabel5
+            // 
+            this.darkLabel5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.darkLabel5.AutoSize = true;
+            this.tableLayoutPanel10.SetColumnSpan(this.darkLabel5, 4);
+            this.darkLabel5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.darkLabel5.Location = new System.Drawing.Point(82, 0);
+            this.darkLabel5.Name = "darkLabel5";
+            this.darkLabel5.Size = new System.Drawing.Size(153, 13);
+            this.darkLabel5.TabIndex = 9;
+            this.darkLabel5.Text = "Turntable";
+            this.darkLabel5.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // darkButton4
+            // 
+            this.darkButton4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.darkButton4.Location = new System.Drawing.Point(198, 19);
+            this.darkButton4.Margin = new System.Windows.Forms.Padding(2, 1, 2, 1);
+            this.darkButton4.Name = "darkButton4";
+            this.darkButton4.Padding = new System.Windows.Forms.Padding(5);
+            this.darkButton4.Size = new System.Drawing.Size(38, 23);
+            this.darkButton4.TabIndex = 8;
+            this.darkButton4.Text = "S3";
+            this.ScienceTooltip.SetToolTip(this.darkButton4, "Moves the turntable to the sample #3 position.");
+            // 
+            // darkButton3
+            // 
+            this.darkButton3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.darkButton3.Location = new System.Drawing.Point(159, 19);
+            this.darkButton3.Margin = new System.Windows.Forms.Padding(2, 1, 2, 1);
+            this.darkButton3.Name = "darkButton3";
+            this.darkButton3.Padding = new System.Windows.Forms.Padding(5);
+            this.darkButton3.Size = new System.Drawing.Size(35, 23);
+            this.darkButton3.TabIndex = 7;
+            this.darkButton3.Text = "S2";
+            this.ScienceTooltip.SetToolTip(this.darkButton3, "Moves the turntable to the sample #2 position.");
+            // 
+            // darkButton2
+            // 
+            this.darkButton2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.darkButton2.Location = new System.Drawing.Point(120, 19);
+            this.darkButton2.Margin = new System.Windows.Forms.Padding(2, 1, 2, 1);
+            this.darkButton2.Name = "darkButton2";
+            this.darkButton2.Padding = new System.Windows.Forms.Padding(5);
+            this.darkButton2.Size = new System.Drawing.Size(35, 23);
+            this.darkButton2.TabIndex = 6;
+            this.darkButton2.Text = "S1";
+            this.ScienceTooltip.SetToolTip(this.darkButton2, "Moves the turntable to the sample #1 position.");
+            // 
+            // darkButton1
+            // 
+            this.darkButton1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.darkButton1.Location = new System.Drawing.Point(81, 19);
+            this.darkButton1.Margin = new System.Windows.Forms.Padding(2, 1, 2, 1);
+            this.darkButton1.Name = "darkButton1";
+            this.darkButton1.Padding = new System.Windows.Forms.Padding(5);
+            this.darkButton1.Size = new System.Drawing.Size(35, 23);
+            this.darkButton1.TabIndex = 5;
+            this.darkButton1.Text = "0";
+            this.ScienceTooltip.SetToolTip(this.darkButton1, "Moves the turntable to the home position.");
+            // 
             // SampleTubeStatus
             // 
             this.SampleTubeStatus.AutoSize = true;
@@ -429,6 +496,7 @@
             this.SampleTubeToggle.Size = new System.Drawing.Size(75, 23);
             this.SampleTubeToggle.TabIndex = 4;
             this.SampleTubeToggle.Text = "Toggle";
+            this.ScienceTooltip.SetToolTip(this.SampleTubeToggle, "Opens/closes the sample tube door.");
             this.SampleTubeToggle.Click += new System.EventHandler(this.SampleTubeToggle_Click);
             // 
             // darkLabel4
@@ -443,6 +511,19 @@
             this.darkLabel4.TabIndex = 0;
             this.darkLabel4.Text = "Tube";
             this.darkLabel4.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // turntableDisplay1
+            // 
+            this.turntableDisplay1.Angle = 30;
+            this.tableLayoutPanel10.SetColumnSpan(this.turntableDisplay1, 4);
+            this.turntableDisplay1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.turntableDisplay1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.turntableDisplay1.InitStatus = ((byte)(0));
+            this.turntableDisplay1.Location = new System.Drawing.Point(82, 46);
+            this.turntableDisplay1.Name = "turntableDisplay1";
+            this.turntableDisplay1.Size = new System.Drawing.Size(153, 144);
+            this.turntableDisplay1.TabIndex = 10;
+            this.turntableDisplay1.Text = "turntableDisplay1";
             // 
             // groupBox2
             // 
@@ -488,6 +569,7 @@
             this.DrillSpeed.Size = new System.Drawing.Size(232, 29);
             this.DrillSpeed.TabIndex = 0;
             this.DrillSpeed.TickFrequency = 10;
+            this.ScienceTooltip.SetToolTip(this.DrillSpeed, "Changes the speed at which the drill spins.");
             this.DrillSpeed.ValueChanged += new System.EventHandler(this.DrillSpeed_ValueChanged);
             // 
             // DrillToggle
@@ -500,6 +582,7 @@
             this.DrillToggle.Size = new System.Drawing.Size(117, 23);
             this.DrillToggle.TabIndex = 1;
             this.DrillToggle.Text = "START";
+            this.ScienceTooltip.SetToolTip(this.DrillToggle, "Starts/stops the drill motor at the above speed.");
             this.DrillToggle.Click += new System.EventHandler(this.DrillToggle_Click);
             // 
             // DrillReverse
@@ -511,6 +594,8 @@
             this.DrillReverse.Size = new System.Drawing.Size(113, 19);
             this.DrillReverse.TabIndex = 2;
             this.DrillReverse.Text = "Reverse";
+            this.ScienceTooltip.SetToolTip(this.DrillReverse, "Determines if the drill will spin in reverse. Drill cannot be moving when changin" +
+        "g this.");
             // 
             // darkLabel6
             // 
@@ -607,6 +692,7 @@
             this.RailGoCustomBottom.Size = new System.Drawing.Size(70, 23);
             this.RailGoCustomBottom.TabIndex = 13;
             this.RailGoCustomBottom.Text = "From Gnd";
+            this.ScienceTooltip.SetToolTip(this.RailGoCustomBottom, "Moves the rail to the above specified distance off the ground.");
             this.RailGoCustomBottom.Click += new System.EventHandler(this.RailGoCustomBottom_Click);
             // 
             // RailSpeed
@@ -621,6 +707,7 @@
             this.RailSpeed.SmallChange = 5;
             this.RailSpeed.TabIndex = 0;
             this.RailSpeed.TickFrequency = 5;
+            this.ScienceTooltip.SetToolTip(this.RailSpeed, "Changes the speed/force at which the rail moves.");
             this.RailSpeed.Value = 30;
             this.RailSpeed.ValueChanged += new System.EventHandler(this.RailSpeed_ValueChanged);
             // 
@@ -674,6 +761,7 @@
             this.RailGoTop.Size = new System.Drawing.Size(69, 23);
             this.RailGoTop.TabIndex = 4;
             this.RailGoTop.Text = "Top";
+            this.ScienceTooltip.SetToolTip(this.RailGoTop, "Moves the rail to the topmost position.");
             this.RailGoTop.Click += new System.EventHandler(this.GoToTop_Click);
             // 
             // RailGoGround
@@ -686,6 +774,7 @@
             this.RailGoGround.Size = new System.Drawing.Size(70, 23);
             this.RailGoGround.TabIndex = 5;
             this.RailGoGround.Text = "Ground";
+            this.ScienceTooltip.SetToolTip(this.RailGoGround, "Moves the rail so that the drill touches the ground.");
             this.RailGoGround.Click += new System.EventHandler(this.GoToGround_Click);
             // 
             // darkLabel11
@@ -726,6 +815,7 @@
             this.RailGoCustomTop.Size = new System.Drawing.Size(69, 23);
             this.RailGoCustomTop.TabIndex = 8;
             this.RailGoCustomTop.Text = "From Top";
+            this.ScienceTooltip.SetToolTip(this.RailGoCustomTop, "Moves the rail to be the above specified distance from the top.");
             this.RailGoCustomTop.Click += new System.EventHandler(this.RailGoCustom_Click);
             // 
             // RailDistEntry
@@ -793,6 +883,7 @@
             this.ChartClearRight.Size = new System.Drawing.Size(118, 24);
             this.ChartClearRight.TabIndex = 7;
             this.ChartClearRight.Text = "Clear Right";
+            this.ScienceTooltip.SetToolTip(this.ChartClearRight, "Removes all data series from the right graph (does not delete data).");
             this.ChartClearRight.Click += new System.EventHandler(this.ChartClearRight_Click);
             // 
             // ChartClearLeft
@@ -805,6 +896,7 @@
             this.ChartClearLeft.Size = new System.Drawing.Size(118, 24);
             this.ChartClearLeft.TabIndex = 8;
             this.ChartClearLeft.Text = "Clear Left";
+            this.ScienceTooltip.SetToolTip(this.ChartClearLeft, "Removes all data series from the left graph (does not delete data).");
             this.ChartClearLeft.Click += new System.EventHandler(this.ChartClearLeft_Click);
             // 
             // ChartDataChooser
@@ -831,6 +923,7 @@
             this.ChartAddLeft.Size = new System.Drawing.Size(118, 23);
             this.ChartAddLeft.TabIndex = 11;
             this.ChartAddLeft.Text = "Add Left";
+            this.ScienceTooltip.SetToolTip(this.ChartAddLeft, "Adds the selected item(s) to the left graph.");
             this.ChartAddLeft.Click += new System.EventHandler(this.ChartAddLeft_Click);
             // 
             // ChartAddRight
@@ -843,6 +936,7 @@
             this.ChartAddRight.Size = new System.Drawing.Size(118, 23);
             this.ChartAddRight.TabIndex = 12;
             this.ChartAddRight.Text = "Add Right";
+            this.ScienceTooltip.SetToolTip(this.ChartAddRight, "Adds the selected item(s) to the right graph.");
             this.ChartAddRight.Click += new System.EventHandler(this.ChartAddRight_Click);
             // 
             // Debugging
@@ -1250,77 +1344,6 @@
             this.UIUpdate.Interval = 33;
             this.UIUpdate.Tick += new System.EventHandler(this.UIUpdate_Tick);
             // 
-            // darkButton1
-            // 
-            this.darkButton1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.darkButton1.Location = new System.Drawing.Point(81, 19);
-            this.darkButton1.Margin = new System.Windows.Forms.Padding(2, 1, 2, 1);
-            this.darkButton1.Name = "darkButton1";
-            this.darkButton1.Padding = new System.Windows.Forms.Padding(5);
-            this.darkButton1.Size = new System.Drawing.Size(35, 23);
-            this.darkButton1.TabIndex = 5;
-            this.darkButton1.Text = "0";
-            // 
-            // darkButton2
-            // 
-            this.darkButton2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.darkButton2.Location = new System.Drawing.Point(120, 19);
-            this.darkButton2.Margin = new System.Windows.Forms.Padding(2, 1, 2, 1);
-            this.darkButton2.Name = "darkButton2";
-            this.darkButton2.Padding = new System.Windows.Forms.Padding(5);
-            this.darkButton2.Size = new System.Drawing.Size(35, 23);
-            this.darkButton2.TabIndex = 6;
-            this.darkButton2.Text = "S1";
-            // 
-            // darkButton3
-            // 
-            this.darkButton3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.darkButton3.Location = new System.Drawing.Point(159, 19);
-            this.darkButton3.Margin = new System.Windows.Forms.Padding(2, 1, 2, 1);
-            this.darkButton3.Name = "darkButton3";
-            this.darkButton3.Padding = new System.Windows.Forms.Padding(5);
-            this.darkButton3.Size = new System.Drawing.Size(35, 23);
-            this.darkButton3.TabIndex = 7;
-            this.darkButton3.Text = "S2";
-            // 
-            // darkButton4
-            // 
-            this.darkButton4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.darkButton4.Location = new System.Drawing.Point(198, 19);
-            this.darkButton4.Margin = new System.Windows.Forms.Padding(2, 1, 2, 1);
-            this.darkButton4.Name = "darkButton4";
-            this.darkButton4.Padding = new System.Windows.Forms.Padding(5);
-            this.darkButton4.Size = new System.Drawing.Size(38, 23);
-            this.darkButton4.TabIndex = 8;
-            this.darkButton4.Text = "S3";
-            // 
-            // darkLabel5
-            // 
-            this.darkLabel5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.darkLabel5.AutoSize = true;
-            this.tableLayoutPanel10.SetColumnSpan(this.darkLabel5, 4);
-            this.darkLabel5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkLabel5.Location = new System.Drawing.Point(82, 0);
-            this.darkLabel5.Name = "darkLabel5";
-            this.darkLabel5.Size = new System.Drawing.Size(153, 13);
-            this.darkLabel5.TabIndex = 9;
-            this.darkLabel5.Text = "Turntable";
-            this.darkLabel5.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            // 
-            // turntableDisplay1
-            // 
-            this.turntableDisplay1.Angle = 30;
-            this.tableLayoutPanel10.SetColumnSpan(this.turntableDisplay1, 4);
-            this.turntableDisplay1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.turntableDisplay1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.turntableDisplay1.InitStatus = ((byte)(0));
-            this.turntableDisplay1.Location = new System.Drawing.Point(82, 46);
-            this.turntableDisplay1.Name = "turntableDisplay1";
-            this.turntableDisplay1.Size = new System.Drawing.Size(153, 144);
-            this.turntableDisplay1.TabIndex = 10;
-            this.turntableDisplay1.Text = "turntableDisplay1";
-            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1457,5 +1480,6 @@
         private DarkUI.Controls.DarkButton darkButton2;
         private DarkUI.Controls.DarkButton darkButton1;
         private TurntableDisplay turntableDisplay1;
+        private System.Windows.Forms.ToolTip ScienceTooltip;
     }
 }
