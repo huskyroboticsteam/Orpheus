@@ -273,6 +273,7 @@ namespace MainRover
 
                 if (Sensor is BNO055)
                 {
+                    //TODO Maybe get rid of this since we are using filter from readSensorData
                     //readHeading = (float)((BNO055)Sensor).GetTrueHeading();
                     var Readings = ((BNO055)Sensor).GetVector(BNO055.VectorType.VECTOR_MAGNETOMETER);
 
@@ -290,6 +291,7 @@ namespace MainRover
                         readHeading += 360.0f;
                     }
 
+
                 }
             }
 
@@ -301,7 +303,8 @@ namespace MainRover
             }
             else
             {
-                
+                readHeading = (float)MagFilter.GetOutput();
+
                 byte[] blat = BitConverter.GetBytes(Lat);
                 byte[] blong = BitConverter.GetBytes(Long);
                 byte[] bhead = BitConverter.GetBytes(readHeading);
