@@ -390,5 +390,24 @@ namespace Science_Base
             });
         }
 
+        public void UpdateTurntable(float CurrentPosition, bool InitInProgress, bool InitDone)
+        {
+            Invoke((MethodInvoker)delegate
+            {
+                this.turntableDisplay1.Angle = (int)Math.Round(CurrentPosition);
+                if (InitDone) { this.turntableDisplay1.InitStatus = 2; }
+                else if (InitInProgress) { this.turntableDisplay1.InitStatus = 1; }
+                else { this.turntableDisplay1.InitStatus = 0; }
+            });
+        }
+
+        public void UpdateDrill(byte Speed, bool SampleDoorOpen)
+        {
+            Invoke((MethodInvoker)delegate
+            {
+                this.SampleTubeStatus.Text = SampleDoorOpen ? "OPEN" : "Closed";
+            });
+        }
+
     }
 }

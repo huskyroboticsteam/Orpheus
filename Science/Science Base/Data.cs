@@ -52,7 +52,7 @@ namespace Science_Base
 
         private double GetYVal(Datum<DataType> Datum)
         {
-            return Convert.ToDouble(Datum.Data);
+            return Convert.ToSingle(Datum.Data); // TODO: Consider optimizing this.
         }
     }
 }

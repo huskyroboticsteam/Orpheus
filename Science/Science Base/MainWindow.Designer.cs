@@ -49,10 +49,10 @@
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel10 = new System.Windows.Forms.TableLayoutPanel();
             this.darkLabel5 = new DarkUI.Controls.DarkLabel();
-            this.darkButton4 = new DarkUI.Controls.DarkButton();
-            this.darkButton3 = new DarkUI.Controls.DarkButton();
-            this.darkButton2 = new DarkUI.Controls.DarkButton();
-            this.darkButton1 = new DarkUI.Controls.DarkButton();
+            this.TTBGoTo3 = new DarkUI.Controls.DarkButton();
+            this.TTBGoTo2 = new DarkUI.Controls.DarkButton();
+            this.TTBGoTo1 = new DarkUI.Controls.DarkButton();
+            this.TTBGoHome = new DarkUI.Controls.DarkButton();
             this.SampleTubeStatus = new DarkUI.Controls.DarkLabel();
             this.SampleTubeToggle = new DarkUI.Controls.DarkButton();
             this.darkLabel4 = new DarkUI.Controls.DarkLabel();
@@ -264,8 +264,9 @@
             this.darkLabel3.Name = "darkLabel3";
             this.darkLabel3.Size = new System.Drawing.Size(244, 20);
             this.darkLabel3.TabIndex = 12;
-            this.darkLabel3.Text = "Rail (A)";
+            this.darkLabel3.Text = "Rail Current";
             this.darkLabel3.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.ScienceTooltip.SetToolTip(this.darkLabel3, "The current consumed by the rail motor.");
             // 
             // darkLabel2
             // 
@@ -276,8 +277,9 @@
             this.darkLabel2.Name = "darkLabel2";
             this.darkLabel2.Size = new System.Drawing.Size(244, 20);
             this.darkLabel2.TabIndex = 11;
-            this.darkLabel2.Text = "System (A)";
+            this.darkLabel2.Text = "System Current";
             this.darkLabel2.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.ScienceTooltip.SetToolTip(this.darkLabel2, "The amount of current consumed by all non-motor parts of the module.");
             // 
             // darkLabel1
             // 
@@ -288,8 +290,9 @@
             this.darkLabel1.Name = "darkLabel1";
             this.darkLabel1.Size = new System.Drawing.Size(244, 20);
             this.darkLabel1.TabIndex = 10;
-            this.darkLabel1.Text = "Drill (A)";
+            this.darkLabel1.Text = "Drill Current";
             this.darkLabel1.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.ScienceTooltip.SetToolTip(this.darkLabel1, "The current consumed by the drill motor.");
             // 
             // LabSysVoltage
             // 
@@ -300,8 +303,9 @@
             this.LabSysVoltage.Name = "LabSysVoltage";
             this.LabSysVoltage.Size = new System.Drawing.Size(244, 20);
             this.LabSysVoltage.TabIndex = 9;
-            this.LabSysVoltage.Text = "Supply (V)";
+            this.LabSysVoltage.Text = "Supply Voltage";
             this.LabSysVoltage.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.ScienceTooltip.SetToolTip(this.LabSysVoltage, "The input voltage coming from the rover.");
             // 
             // GaugeRailCurrent
             // 
@@ -311,7 +315,7 @@
             this.GaugeRailCurrent.Size = new System.Drawing.Size(244, 182);
             this.GaugeRailCurrent.TabIndex = 7;
             this.GaugeRailCurrent.Text = "angularGauge1";
-            this.ScienceTooltip.SetToolTip(this.GaugeRailCurrent, "THe current consumed by the rail motor.");
+            this.ScienceTooltip.SetToolTip(this.GaugeRailCurrent, "The current consumed by the rail motor.");
             // 
             // GaugeDrillCurrent
             // 
@@ -331,7 +335,7 @@
             this.GaugeSysCurrent.Size = new System.Drawing.Size(244, 181);
             this.GaugeSysCurrent.TabIndex = 5;
             this.GaugeSysCurrent.Text = "angularGauge1";
-            this.ScienceTooltip.SetToolTip(this.GaugeSysCurrent, "THe amount of current consumed by all non-motor parts of the module.");
+            this.ScienceTooltip.SetToolTip(this.GaugeSysCurrent, "The amount of current consumed by all non-motor parts of the module.");
             // 
             // GaugeSysVoltage
             // 
@@ -394,10 +398,10 @@
             this.tableLayoutPanel10.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 16.66778F));
             this.tableLayoutPanel10.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 16.66778F));
             this.tableLayoutPanel10.Controls.Add(this.darkLabel5, 1, 0);
-            this.tableLayoutPanel10.Controls.Add(this.darkButton4, 4, 1);
-            this.tableLayoutPanel10.Controls.Add(this.darkButton3, 3, 1);
-            this.tableLayoutPanel10.Controls.Add(this.darkButton2, 2, 1);
-            this.tableLayoutPanel10.Controls.Add(this.darkButton1, 1, 1);
+            this.tableLayoutPanel10.Controls.Add(this.TTBGoTo3, 4, 1);
+            this.tableLayoutPanel10.Controls.Add(this.TTBGoTo2, 3, 1);
+            this.tableLayoutPanel10.Controls.Add(this.TTBGoTo1, 2, 1);
+            this.tableLayoutPanel10.Controls.Add(this.TTBGoHome, 1, 1);
             this.tableLayoutPanel10.Controls.Add(this.SampleTubeStatus, 0, 2);
             this.tableLayoutPanel10.Controls.Add(this.SampleTubeToggle, 0, 1);
             this.tableLayoutPanel10.Controls.Add(this.darkLabel4, 0, 0);
@@ -427,53 +431,53 @@
             this.darkLabel5.Text = "Turntable";
             this.darkLabel5.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
-            // darkButton4
+            // TTBGoTo3
             // 
-            this.darkButton4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.darkButton4.Location = new System.Drawing.Point(198, 19);
-            this.darkButton4.Margin = new System.Windows.Forms.Padding(2, 1, 2, 1);
-            this.darkButton4.Name = "darkButton4";
-            this.darkButton4.Padding = new System.Windows.Forms.Padding(5);
-            this.darkButton4.Size = new System.Drawing.Size(38, 23);
-            this.darkButton4.TabIndex = 8;
-            this.darkButton4.Text = "S3";
-            this.ScienceTooltip.SetToolTip(this.darkButton4, "Moves the turntable to the sample #3 position.");
+            this.TTBGoTo3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TTBGoTo3.Location = new System.Drawing.Point(198, 19);
+            this.TTBGoTo3.Margin = new System.Windows.Forms.Padding(2, 1, 2, 1);
+            this.TTBGoTo3.Name = "TTBGoTo3";
+            this.TTBGoTo3.Padding = new System.Windows.Forms.Padding(5);
+            this.TTBGoTo3.Size = new System.Drawing.Size(38, 23);
+            this.TTBGoTo3.TabIndex = 8;
+            this.TTBGoTo3.Text = "S3";
+            this.ScienceTooltip.SetToolTip(this.TTBGoTo3, "Moves the turntable to the sample #3 position.");
             // 
-            // darkButton3
+            // TTBGoTo2
             // 
-            this.darkButton3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.darkButton3.Location = new System.Drawing.Point(159, 19);
-            this.darkButton3.Margin = new System.Windows.Forms.Padding(2, 1, 2, 1);
-            this.darkButton3.Name = "darkButton3";
-            this.darkButton3.Padding = new System.Windows.Forms.Padding(5);
-            this.darkButton3.Size = new System.Drawing.Size(35, 23);
-            this.darkButton3.TabIndex = 7;
-            this.darkButton3.Text = "S2";
-            this.ScienceTooltip.SetToolTip(this.darkButton3, "Moves the turntable to the sample #2 position.");
+            this.TTBGoTo2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TTBGoTo2.Location = new System.Drawing.Point(159, 19);
+            this.TTBGoTo2.Margin = new System.Windows.Forms.Padding(2, 1, 2, 1);
+            this.TTBGoTo2.Name = "TTBGoTo2";
+            this.TTBGoTo2.Padding = new System.Windows.Forms.Padding(5);
+            this.TTBGoTo2.Size = new System.Drawing.Size(35, 23);
+            this.TTBGoTo2.TabIndex = 7;
+            this.TTBGoTo2.Text = "S2";
+            this.ScienceTooltip.SetToolTip(this.TTBGoTo2, "Moves the turntable to the sample #2 position.");
             // 
-            // darkButton2
+            // TTBGoTo1
             // 
-            this.darkButton2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.darkButton2.Location = new System.Drawing.Point(120, 19);
-            this.darkButton2.Margin = new System.Windows.Forms.Padding(2, 1, 2, 1);
-            this.darkButton2.Name = "darkButton2";
-            this.darkButton2.Padding = new System.Windows.Forms.Padding(5);
-            this.darkButton2.Size = new System.Drawing.Size(35, 23);
-            this.darkButton2.TabIndex = 6;
-            this.darkButton2.Text = "S1";
-            this.ScienceTooltip.SetToolTip(this.darkButton2, "Moves the turntable to the sample #1 position.");
+            this.TTBGoTo1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TTBGoTo1.Location = new System.Drawing.Point(120, 19);
+            this.TTBGoTo1.Margin = new System.Windows.Forms.Padding(2, 1, 2, 1);
+            this.TTBGoTo1.Name = "TTBGoTo1";
+            this.TTBGoTo1.Padding = new System.Windows.Forms.Padding(5);
+            this.TTBGoTo1.Size = new System.Drawing.Size(35, 23);
+            this.TTBGoTo1.TabIndex = 6;
+            this.TTBGoTo1.Text = "S1";
+            this.ScienceTooltip.SetToolTip(this.TTBGoTo1, "Moves the turntable to the sample #1 position.");
             // 
-            // darkButton1
+            // TTBGoHome
             // 
-            this.darkButton1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.darkButton1.Location = new System.Drawing.Point(81, 19);
-            this.darkButton1.Margin = new System.Windows.Forms.Padding(2, 1, 2, 1);
-            this.darkButton1.Name = "darkButton1";
-            this.darkButton1.Padding = new System.Windows.Forms.Padding(5);
-            this.darkButton1.Size = new System.Drawing.Size(35, 23);
-            this.darkButton1.TabIndex = 5;
-            this.darkButton1.Text = "0";
-            this.ScienceTooltip.SetToolTip(this.darkButton1, "Moves the turntable to the home position.");
+            this.TTBGoHome.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TTBGoHome.Location = new System.Drawing.Point(81, 19);
+            this.TTBGoHome.Margin = new System.Windows.Forms.Padding(2, 1, 2, 1);
+            this.TTBGoHome.Name = "TTBGoHome";
+            this.TTBGoHome.Padding = new System.Windows.Forms.Padding(5);
+            this.TTBGoHome.Size = new System.Drawing.Size(35, 23);
+            this.TTBGoHome.TabIndex = 5;
+            this.TTBGoHome.Text = "0";
+            this.ScienceTooltip.SetToolTip(this.TTBGoHome, "Moves the turntable to the home position.");
             // 
             // SampleTubeStatus
             // 
@@ -1475,10 +1479,10 @@
         private DarkUI.Controls.DarkButton RailGoCustomBottom;
         private DarkUI.Controls.DarkButton RailGoCustomTop;
         private DarkUI.Controls.DarkLabel darkLabel5;
-        private DarkUI.Controls.DarkButton darkButton4;
-        private DarkUI.Controls.DarkButton darkButton3;
-        private DarkUI.Controls.DarkButton darkButton2;
-        private DarkUI.Controls.DarkButton darkButton1;
+        private DarkUI.Controls.DarkButton TTBGoTo3;
+        private DarkUI.Controls.DarkButton TTBGoTo2;
+        private DarkUI.Controls.DarkButton TTBGoTo1;
+        private DarkUI.Controls.DarkButton TTBGoHome;
         private TurntableDisplay turntableDisplay1;
         private System.Windows.Forms.ToolTip ScienceTooltip;
     }
