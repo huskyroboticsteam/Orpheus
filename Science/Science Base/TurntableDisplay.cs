@@ -38,7 +38,7 @@ namespace Science_Base
         public TurntableDisplay()
         {
             this.ForeColor = Color.FromArgb(220, 220, 220);
-            this.Angle = 30;
+            this.Angle = 0;
             InitializeComponent();
             SetStyle(ControlStyles.ResizeRedraw, true);
         }
@@ -71,6 +71,27 @@ namespace Science_Base
             PointF TableCenter = new PointF((float)(Circle.Left + Circle.Width / 2.0), (float)(Circle.Top + (Circle.Height / 2.0)));
 
             pe.Graphics.DrawLine(TablePen, TableCenter, Radial(TableCenter, 90 - this.Angle, Radius)); // Home line
+
+            int SampleSize = Radius / 3; // Size of the sample circles.
+
+            StringFormat CenterString = new StringFormat();
+            CenterString.LineAlignment = StringAlignment.Center;
+            CenterString.Alignment = StringAlignment.Center;
+
+            PointF S1Center = Radial(TableCenter, 270 - this.Angle, (int)Math.Round(Radius * 0.6667));
+            Rectangle S1Circle = RectAboutCenter(S1Center, SampleSize, SampleSize);
+            pe.Graphics.DrawEllipse(TablePen, S1Circle);
+            pe.Graphics.DrawString("1", this.Font, Fore, S1Circle, CenterString);
+
+            PointF S2Center = Radial(TableCenter, 320 - this.Angle, (int)Math.Round(Radius * 0.6667));
+            Rectangle S2Circle = RectAboutCenter(S2Center, SampleSize, SampleSize);
+            pe.Graphics.DrawEllipse(TablePen, S2Circle);
+            pe.Graphics.DrawString("2", this.Font, Fore, S2Circle, CenterString);
+
+            PointF S3Center = Radial(TableCenter, 370 - this.Angle, (int)Math.Round(Radius * 0.6667));
+            Rectangle S3Circle = RectAboutCenter(S3Center, SampleSize, SampleSize);
+            pe.Graphics.DrawEllipse(TablePen, S3Circle);
+            pe.Graphics.DrawString("3", this.Font, Fore, S3Circle, CenterString);
         }
 
         private Rectangle ShrinkRect(Rectangle Input, int Left, int Top, int Right, int Bottom)
@@ -91,6 +112,11 @@ namespace Science_Base
         {
             double ToRad = Math.PI / 180;
             return new PointF((float)(Center.X + (Math.Cos(Angle * ToRad) * Radius)), (float)(Center.Y - (Math.Sin(Angle * ToRad) * Radius)));
+        }
+
+        private Rectangle RectAboutCenter(PointF Center, int Width, int Height)
+        {
+            return new Rectangle((int)Math.Round(Center.X - (Width / 2F)), (int)Math.Round(Center.Y - (Height / 2F)), Width, Height);
         }
     }
 }
