@@ -98,6 +98,12 @@
     <Compile Include="RailDisplay.Designer.cs">
       <DependentUpon>RailDisplay.cs</DependentUpon>
     </Compile>
+    <Compile Include="TurntableDisplay.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TurntableDisplay.Designer.cs">
+      <DependentUpon>TurntableDisplay.cs</DependentUpon>
+    </Compile>
     <Compile Include="UIHelper.cs" />
   </ItemGroup>
   <ItemGroup>
