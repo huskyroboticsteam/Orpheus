@@ -25,10 +25,10 @@
 
             #region Rover to Base (0xDC through 0xE4)
             public const byte AUX_SENSOR = 0xDC;
-            public const byte GND_SENSOR = 0xDD;
-            public const byte SYS_SENSOR = 0xDE;
-            public const byte SYS_TELEMETRY = 0xDF;
-            public const byte RAIL_STATUS = 0xE0;
+            public const byte SYS_SENSOR = 0xDD;
+            public const byte RAIL_STATUS = 0xDE;
+            public const byte TTB_STATUS = 0xDF;
+            public const byte DRL_STATUS = 0xE0;
             #endregion
         }
     }
