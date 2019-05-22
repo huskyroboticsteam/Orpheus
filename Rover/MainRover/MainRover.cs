@@ -117,7 +117,7 @@ namespace MainRover
             ParseThread = new Thread(new ThreadStart(parser));
             ParseThread.Start();
             timeout = 20;
-            MagFilter = new Average<double>(25);
+            MagFilter = new Average<double>(10);
         }
 
         public static void parser()
@@ -378,7 +378,7 @@ namespace MainRover
                             if (turn < 0) turn += 360;
                             else turn -= 360;
                         }
-                        if (turn > 0 && turn <= 5)
+                        if ((turn > 0 && turn <= 20) || (turn < 0 && turn >= -20))
                         {
                             turn = 5;
                         }
