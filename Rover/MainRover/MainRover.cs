@@ -117,7 +117,7 @@ namespace MainRover
             ParseThread = new Thread(new ThreadStart(parser));
             ParseThread.Start();
             timeout = 20;
-            MagFilter = new Average<double>(25);
+            MagFilter = new Average<double>(10);
         }
 
         public static void parser()
@@ -285,7 +285,7 @@ namespace MainRover
                     else if (Math.Abs(Readings.Item2) <= 1e-6 && Readings.Item1 > 0) { HeadingDirection = 0; }
                     readHeading = (float)HeadingDirection % 360;
 
-                    readHeading -= 90.0f;
+                    readHeading -= 270.0f;
                     if (readHeading < 0f)
                     {
                         readHeading += 360.0f;
@@ -378,13 +378,17 @@ namespace MainRover
                             if (turn < 0) turn += 360;
                             else turn -= 360;
                         }
-                        if (turn > 0 && turn <= 5)
+                        if (turn > 0 && turn <= 30)
                         {
-                            turn = 5;
+                            turn = 10;
+                        }
+                        else if ((turn < 0 && turn > -30))
+                        {
+                            turn = -10;
                         }
                         else
                         {
-                            turn = turn / 4;
+                            turn = turn / 3;
                         }
                     }
                     GSpeed = speed;
@@ -456,7 +460,7 @@ namespace MainRover
                     else if (Math.Abs(Readings.Item2) <= 1e-6 && Readings.Item1 < 0) { HeadingDirection = 180; }
                     else if (Math.Abs(Readings.Item2) <= 1e-6 && Readings.Item1 > 0) { HeadingDirection = 0; }
                     double direction = HeadingDirection % 360;
-                    direction -= 90.0;
+                    direction -= 270.0;
                     if (direction < 0)
                     {
                         direction += 360.0;
