@@ -33,7 +33,7 @@ void RP::Pather::compute_path()
         fineMapper.compute_graph();
         printf("compute graph took %f seconds\n", comptim.elapsed());
         graph g = fineMapper.get_graph();
-
+        
 #if 0
     for(int i = 0; i < nodes.size(); i++)
     {

@@ -16,10 +16,10 @@ enum TurnState {
     FINISHED,
 };
 
-enum PatherState {
- FOLLOW_PATH,
- SPIRAL,
- FOUND_BALL
+enum State {
+  FOLLOW_PATH,
+  SPIRAL,
+  FOUND_BALL
 };
 class Controller {
   public:
@@ -30,13 +30,13 @@ class Controller {
     void update();
     void addObstacle(float dist1, float dir1, float dist2, float dir2);
     void foundTennisBall(float dist, float dir);
-    
+
   private:
-    bool sendPacket(signed short speed, unsigned short heading);
+    bool sendPacket(signed short speed, float heading);
     bool sendDestinationPacket();
     float get_target_angle();
     void turn_and_go();
-    PatherState state;
+    State state;
     RP::point dst;
     std::deque<point> targetSites;
     std::deque<point> spiralPts;
@@ -47,7 +47,6 @@ class Controller {
     bool found_ball();
     RP::point convertToLatLng(float dist, float dir);
     RobotEKF filter;
-    std::thread watchdogThread;
     std::thread receiverThread;
     tb::Detector detector;
     RP::Pather pather;
