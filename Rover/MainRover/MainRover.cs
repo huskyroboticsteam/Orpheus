@@ -27,7 +27,7 @@ namespace MainRover
         public static QueueBuffer DrivePackets;
         public static QueueBuffer PathPackets;
 
-        public enum DriveMode {BaseDrive, toGPS, findTennisBall, toTennisBall, destination};
+        public enum DriveMode { BaseDrive, toGPS, findTennisBall, toTennisBall, destination };
         public static DriveMode CurDriveMode;
         public static Tuple<float, float> previousCoords;
         public static float PathSpeed, PathAngle;
@@ -67,7 +67,7 @@ namespace MainRover
             try
             {
                 MTK3339 location = new MTK3339(UARTBBB.UARTBus4);
-                Sensors.Add(new BNO055(I2CBBB.I2CBus1, -1, 0x28, location) { TraceLogging =  true});
+                Sensors.Add(new BNO055(I2CBBB.I2CBus1, -1, 0x28, location) { TraceLogging = true });
                 Sensors.Add(location);
             }
             catch (Exception e)
@@ -107,8 +107,8 @@ namespace MainRover
             PathSpeed = 0;
             PathAngle = 0;
             //CurDriveMode = DriveMode.BaseDrive;
-            
-            udpServer = new UdpClient(2001); 
+
+            udpServer = new UdpClient(2001);
             remoteEP = new IPEndPoint(IPAddress.Any, 2001);
             client = new UdpClient();
             ep = new IPEndPoint(IPAddress.Parse("192.168.0.25"), 2002);
@@ -132,7 +132,7 @@ namespace MainRover
                     Byte[] recieveByte = udpServer.Receive(ref remoteEP);
                     recieveList.Enqueue(recieveByte);
                 }
-                
+
             }
         }
 
@@ -170,6 +170,7 @@ namespace MainRover
                         recieveList.Clear();
                         break;
                     case DriveMode.destination:
+                        Console.WriteLine("Currently in destination mode");
                         DrivePackets = new QueueBuffer();
                         recieveList.Clear();
                         //Initialize IPWMOutput
@@ -208,12 +209,12 @@ namespace MainRover
 
         public static void ProcessBasePackets()
         {
-            
+
             for (int i = 0; !DrivePackets.IsEmpty() && i < NUM_PACKETS_TO_PROCESS; i++)
             {
                 Packet p = DrivePackets.Dequeue();
                 switch ((PacketID)p.Data.ID)
-                {   
+                {
                     //case PacketID.RPMAllDriveMotors:
                     //    MotorControl.SetAllRPM((sbyte)p.Data.Payload[0]);
                     //    break;
@@ -222,7 +223,7 @@ namespace MainRover
                     case PacketID.RPMBackRight:
                     case PacketID.RPMBackLeft:
                         int MotorID = p.Data.ID - (byte)PacketID.RPMFrontRight;
-                        MotorControl.SetRPM(MotorID, (sbyte)p.Data.Payload[1]);                        
+                        MotorControl.SetRPM(MotorID, (sbyte)p.Data.Payload[1]);
                         break;
                     case PacketID.SpeedAllDriveMotors:
                         float Speed = UtilData.ToFloat(p.Data.Payload);
@@ -249,8 +250,8 @@ namespace MainRover
                             UtilCan.SpeedDir(CANBBB.CANBus0, false, 2, address, p.Data.Payload[1], direction);
                             Console.WriteLine("ADDRESS :" + address + "DIR :" + direction + "PAY :" + p.Data.Payload[1]);
                         }
-                        
-                     
+
+
                         break;
                 }
             }
@@ -326,7 +327,7 @@ namespace MainRover
                 {
                     Console.WriteLine("Error: Connection Refuled");
                 }
-                
+
             }
 
             int speed = 0;
@@ -369,6 +370,11 @@ namespace MainRover
                         desiredHeading = BitConverter.ToInt16(headingarray, 0);
 
                     }
+                    else if (recieveByte[0] == 1) //destination reached
+                    {
+                        CurDriveMode = DriveMode.destination;
+                        Console.WriteLine("Recieved byte of 1");
+                    }
 
                     if (readHeading != -1)
                     {
@@ -401,7 +407,7 @@ namespace MainRover
                     turn = Gturn;
                     timeout--;
                 }
-                
+
             }
             else if (timeout > 0) //keep sending packets if no data recieved until it times out
             {
@@ -429,7 +435,7 @@ namespace MainRover
                     Pack.AppendData(UtilData.ToBytes(Lat));
                     Pack.AppendData(UtilData.ToBytes(Long));
                     Client.SendNow(Pack);
-                    if(count == 100)
+                    if (count == 100)
                     {
                         Packet HeadingFromGPSPack = new Packet((byte)PacketID.HeadingFromGPS, true);
                         //Math between two coords given from Tup and previousCoords
@@ -440,7 +446,7 @@ namespace MainRover
                         {
                             theta = 90 - theta;
                         }
-                        else if(longDiff < 0)
+                        else if (longDiff < 0)
                         {
                             theta = 270 - theta;
                         }
@@ -499,7 +505,7 @@ namespace MainRover
                 ProcessInstructions();
                 Thread.Sleep(50);
                 count++;
-                if(count == 101)
+                if (count == 101)
                 {
                     count = 0;
                 }
