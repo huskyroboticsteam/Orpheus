@@ -71,19 +71,19 @@ namespace Science_Base
 
         public static void PacketAuxSensors(Packet Packet)
         {
-            if (Packet == null || Packet.Data == null || Packet.Data.Payload == null || Packet.Data.Payload.Length != 26)
+            if (Packet == null || Packet.Data == null || Packet.Data.Payload == null || Packet.Data.Payload.Length != 34)
             {
                 Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Aux sensor packet invalid. Discarding. Length: " + Packet?.Data?.Payload?.Length);
                 return;
             }
             DateTime Time = ExtractTime(Packet);
-            int UVLight = UtilData.ToInt(UtilMain.SubArray(Packet.Data.Payload, 0, 4));
-            ushort CO2Reading = UtilData.ToUShort(UtilMain.SubArray(Packet.Data.Payload, 4, 2));
-            int TVOCReading = UtilData.ToInt(UtilMain.SubArray(Packet.Data.Payload, 6, 4));
-            float SoilMoist = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 10, 4));
-            float AtmoTemp = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 14, 4));
-            float AtmoPres = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 18, 4));
-            float AtmoHumid = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 22, 4));
+            int UVLight = UtilData.ToInt(UtilMain.SubArray(Packet.Data.Payload, 8, 4));
+            ushort CO2Reading = UtilData.ToUShort(UtilMain.SubArray(Packet.Data.Payload, 12, 2));
+            int TVOCReading = UtilData.ToInt(UtilMain.SubArray(Packet.Data.Payload, 14, 4));
+            float SoilMoist = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 18, 4));
+            float AtmoTemp = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 22, 4));
+            float AtmoPres = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 26, 4));
+            float AtmoHumid = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 30, 4));
 
             UV.Data.Add(new Datum<int>(Time, UVLight));
             AirCO2.Data.Add(new Datum<ushort>(Time, CO2Reading));
@@ -96,17 +96,17 @@ namespace Science_Base
 
         public static void PacketRailStatus(Packet Packet)
         {
-            if (Packet == null || Packet.Data == null || Packet.Data.Payload == null || Packet.Data.Payload.Length != 17)
+            if (Packet == null || Packet.Data == null || Packet.Data.Payload == null || Packet.Data.Payload.Length != 25)
             {
                 Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Rail status packet invalid. Discarding. Length: " + Packet?.Data?.Payload?.Length);
                 return;
             }
             DateTime Time = ExtractTime(Packet);
-            byte Status = Packet.Data.Payload[0];
-            float Velocity = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 1, 4));
-            float Depth = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 5, 4));
-            float Height = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 9, 4));
-            float Target = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 13, 4));
+            byte Status = Packet.Data.Payload[8];
+            float Velocity = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 9, 4));
+            float Depth = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 13, 4));
+            float Height = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 17, 4));
+            float Target = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 21, 4));
 
             RailGroundDistance.Data.Add(new Datum<float>(Time, Height));
             RailTopDistance.Data.Add(new Datum<float>(Time, Depth));
@@ -117,15 +117,15 @@ namespace Science_Base
 
         public static void PacketTurntableStatus(Packet Packet)
         {
-            if (Packet == null || Packet.Data == null || Packet.Data.Payload == null || Packet.Data.Payload.Length != 9)
+            if (Packet == null || Packet.Data == null || Packet.Data.Payload == null || Packet.Data.Payload.Length != 17)
             {
                 Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Turntable status packet invalid. Discarding. Length: " + Packet?.Data?.Payload?.Length);
                 return;
             }
             DateTime Time = ExtractTime(Packet);
-            byte Status = Packet.Data.Payload[0];
-            float Position = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 1, 4));
-            float Target = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 5, 4));
+            byte Status = Packet.Data.Payload[8];
+            float Position = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 9, 4));
+            float Target = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 13, 4));
 
             TTBPosition.Data.Add(new Datum<float>(Time, Position));
 
@@ -134,14 +134,14 @@ namespace Science_Base
 
         public static void PacketDrillStatus(Packet Packet)
         {
-            if (Packet == null || Packet.Data == null || Packet.Data.Payload == null || Packet.Data.Payload.Length != 2)
+            if (Packet == null || Packet.Data == null || Packet.Data.Payload == null || Packet.Data.Payload.Length != 10)
             {
                 Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Drill status packet invalid. Discarding. Length: " + Packet?.Data?.Payload?.Length);
                 return;
             }
             DateTime Time = ExtractTime(Packet);
-            byte Status = Packet.Data.Payload[0];
-            byte Speed = Packet.Data.Payload[1];
+            byte Status = Packet.Data.Payload[8];
+            byte Speed = Packet.Data.Payload[9];
 
             bool SampleDoor = (Status & 0b1) == 0b1;
 
@@ -153,18 +153,18 @@ namespace Science_Base
 
         public static void PacketSystemSensors(Packet Packet)
         {
-            if (Packet == null || Packet.Data == null || Packet.Data.Payload == null || Packet.Data.Payload.Length != 24)
+            if (Packet == null || Packet.Data == null || Packet.Data.Payload == null || Packet.Data.Payload.Length != 32)
             {
                 Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "System sensor packet invalid. Discarding. Length: " + Packet?.Data?.Payload?.Length);
                 return;
             }
             DateTime Time = ExtractTime(Packet);
-            float SupplyV = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 0, 4));
-            float SysA = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 4, 4));
-            float DrillA = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 8, 4));
-            float RailA = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 12, 4));
-            float TTBA = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 16, 4));
-            float SpareA = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 20, 4));
+            float SupplyV = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 8, 4));
+            float SysA = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 12, 4));
+            float DrillA = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 16, 4));
+            float RailA = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 20, 4));
+            float TTBA = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 24, 4));
+            float SpareA = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 28, 4));
 
             SupplyVoltage.Data.Add(new Datum<float>(Time, SupplyV));
             SystemCurrent.Data.Add(new Datum<float>(Time, SysA));
@@ -172,9 +172,11 @@ namespace Science_Base
             RailCurrent.Data.Add(new Datum<float>(Time, RailA));
             TTBCurrent.Data.Add(new Datum<float>(Time, TTBA));
             SpareCurrent.Data.Add(new Datum<float>(Time, SpareA));
+
+            BaseMain.Window.UpdateGauges(SupplyV, SysA, DrillA, RailA);
         }
 
-        private static DateTime ExtractTime(Packet Packet) => new DateTime(UtilData.ToLong(Packet.Data.Timestamp)).Add(ClientOffset);
+        private static DateTime ExtractTime(Packet Packet) => new DateTime(UtilData.ToLong(UtilMain.SubArray(Packet.Data.Payload, 0, 8))).Add(ClientOffset);
 
         private static void DoAdds()
         {

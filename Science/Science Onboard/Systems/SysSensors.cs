@@ -66,7 +66,6 @@ namespace Science.Systems
                 double SysSV = this.SysCurrent.GetShuntVoltage();
 
                 double DrillA = this.DrillCurrent.GetCurrent();
-                double DrillSV = this.DrillCurrent.GetShuntVoltage();
 
                 double RailA = this.RailCurrent.GetShuntVoltage();
 
@@ -76,7 +75,13 @@ namespace Science.Systems
 
                 if (this.TraceLogging) { Log.Trace(this, string.Format("Sys: {0:N5}A, {1:N5}V (Shunt {2:N5}V).\nDrill: {3:N5}A. Rail: {4:N5}A. TTB: {5:N5}A. Spare: {6:N5}A.", SysA, SysV, SysSV, DrillA, RailA, TurntableA, SpareMotorA));  }
 
-                byte[] Data = UtilData.ToBytes(SysSV / 0.100).Concat(UtilData.ToBytes(DrillSV / 0.005)).Concat(UtilData.ToBytes(RailA / 0.005)).Concat(UtilData.ToBytes(SysV)).Concat(UtilData.ToBytes(Sample.Ticks)).ToArray(); // TODO: Decide if we want to calculate or use device
+                byte[] Data = UtilData.ToBytes(Sample.Ticks)
+                    .Concat(UtilData.ToBytes((float)SysV))
+                    .Concat(UtilData.ToBytes((float)SysA))
+                    .Concat(UtilData.ToBytes((float)DrillA))
+                    .Concat(UtilData.ToBytes((float)RailA))
+                    .Concat(UtilData.ToBytes((float)TurntableA))
+                    .Concat(UtilData.ToBytes((float)SpareMotorA)).ToArray();
                 Packet Packet = new Packet(new Message(ScienceConstants.Packets.SYS_SENSOR, Data), false);
                 Client.Send(Packet);
 

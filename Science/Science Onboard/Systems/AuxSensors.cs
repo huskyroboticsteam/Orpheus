@@ -91,7 +91,7 @@ namespace Science.Systems
                     .ToArray();
                 if (this.TraceLogging) { Log.Trace(this, "UV: " + this.UVLight.GetReading() + ", AirQ: " + this.AirQuality.GetReadingUncalibrated() + ", Soil: " + this.SoilMoisture.GetReading() + ", AirTemp: " + this.Atmospheric.Temperature); }
                 
-                Packet Packet = new Packet(new Message(ScienceConstants.Packets.GND_SENSOR, Data), false);
+                Packet Packet = new Packet(new Message(ScienceConstants.Packets.AUX_SENSOR, Data), false);
                 Client.Send(Packet);
             }
         }

@@ -167,8 +167,9 @@ namespace Science.Systems
 
             try
             {
-                byte[] Data = new byte[] { (byte)((this.InitDone ? 0b1 : 0b0) | (this.Initializing ? 0b10 : 0b00) | (this.TargetLocationRefIsTop ? 0b100 : 0b000)) } // Basic Data
-                    .Concat(UtilData.ToBytes(this.RailSpeed)) // Rail Speed
+                byte[] Data = UtilData.ToBytes(DateTime.Now.Ticks)
+                    .Concat(new byte[] { (byte)((this.InitDone ? 0b1 : 0b0) | (this.Initializing ? 0b10 : 0b00) | (this.TargetLocationRefIsTop ? 0b100 : 0b000)) }) // Basic Data
+                    .Concat(UtilData.ToBytes(ENABLE_VELOCITY_TRACKING ? (float)this.VelocityTracker.GetOutput() : this.RailSpeed)) // Rail Speed
                     .Concat(UtilData.ToBytes((float)this.TopDepth)) // Depth from top
                     .Concat(UtilData.ToBytes((float)this.GroundHeightFilter.GetOutput())) // Height from GND
                     .Concat(UtilData.ToBytes((float)this.TargetLocation)) // Target depth
