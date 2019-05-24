@@ -1,6 +1,8 @@
 *.suo
 *.pdb
 
+/MigrationBackup/
+
 #Don't include library binaries or NuGet package binaries
 /packages/
 /libraries/

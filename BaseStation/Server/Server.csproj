@@ -40,12 +40,6 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="Scarlet">
-      <HintPath>..\..\..\..\..\Scarlet\bin\Debug\Scarlet.dll</HintPath>
-    </Reference>
-    <Reference Include="BBBCSIO">
-      <HintPath>..\..\..\..\..\Scarlet\bin\Debug\BBBCSIO.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="PacketSender.cs" />
@@ -53,7 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="HuskyRobotics.Scarlet">
-      <Version>0.5.1</Version>
+      <Version>0.5.2</Version>
     </PackageReference>
     <PackageReference Include="SharpDX.XInput">
       <Version>4.2.0</Version>
