@@ -80,7 +80,7 @@ namespace MainRover
             {
                 if (Sensor is MTK3339)
                 {
-                    previousCoords = ((MTK3339)Sensor).GetCoords();
+                    previousCoords = ((MTK3339)Sensor).GetCoordinates();
                 }
             }
         }
@@ -255,7 +255,7 @@ namespace MainRover
             {
                 if (Sensor is MTK3339)
                 {
-                    var Tup = ((MTK3339)Sensor).GetCoords();
+                    var Tup = ((MTK3339)Sensor).GetCoordinates();
                     float Lat = Tup.Item1;
                     float Long = Tup.Item2;
                     Packet Pack = new Packet((byte)PacketID.DataGPS, true);
