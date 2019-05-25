@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace ArmInterface
 {
+
+    // SEE DOCUMENTATION FOR CAN HERE:
+    // https://docs.google.com/spreadsheets/d/1Kh6HH6FuGfRw80UQn9ORNWAsChXJ9NLELxFyO2SJyak/edit?usp=sharing
     public enum CANPacket : byte
     {
         MODE_SELECT = 0x00,             // SEND
@@ -22,8 +25,9 @@ namespace ArmInterface
         ENCODER_CNT = 0x14,             // RECEIVE
         STATUS = 0x16,                  // RECEIVE
         TELEMETRY = 0x18,               // RECEIVE
-        SERVO = 0x22,                   // RECEIVE
-        LASER = 0x24,                   // RECEIVE
+        SERVO_PD_VOLTAGE = 0x22,        // RECEIVE ( IF TALKING TO AN ARM PDB, THIS PACKET IS VOLTAGE SENSE ) 
+        LASER_PD_CURRENT = 0x24,        // RECEIVE ( IF TALKING TO AN ARM PDB, THIS PACKET IS CURRENT SENSE ) 
+        RELAY_SHUTOFF = 0x26,           // SEND     SEND A SHUTOFF SIGNAL TO RELAY ON POWER DISTRO 
         ERROR_MSG = 0xFF                // RECEIVE  ( PRIORITY )
     }
 
@@ -35,7 +39,8 @@ namespace ArmInterface
         WRIST = 0x03,
         DIFFERENTIAL_1 = 0x04,
         DIFFERENTIAL_2 = 0x05,
-        HAND = 0x06
+        HAND = 0x06,
+        ARM_POWER_DISTRO_1 = 0x07
     }
 
     public class Vals
