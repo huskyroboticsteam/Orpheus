@@ -13,7 +13,13 @@ before_build:
     
     Invoke-WebRequest "https://github.com/huskyroboticsteam/BaseStationPreload/raw/master/GStreamer.zip" -OutFile $libFile
     
-    Expand-Archive -Path $libFile -DestinationPath "lib"
+    Expand-Archive -Path $libFile -DestinationPath "gst"
+    
+    $pluginFile = "plugins.zip"
+    
+    Invoke-WebRequest "https://github.com/huskyroboticsteam/BaseStationPreload/raw/master/GStreamer_Plugins.zip" -OutFile $pluginFile
+    
+    Expand-Archive -Path $pluginFile -DestinationPath "lib"
 
     $mapsFile = "maps.zip"
 
@@ -27,6 +33,8 @@ build:
   verbosity: minimal
 after_build:
 - ps: >-
+    mv gst\* EntryPoint\bin\Release
+
     mv lib EntryPoint\bin\Release\lib
 
     mv Images EntryPoint\bin\Release\Images
