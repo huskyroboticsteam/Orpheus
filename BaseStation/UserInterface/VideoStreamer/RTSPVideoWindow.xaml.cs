@@ -62,20 +62,20 @@ namespace HuskyRobotics.UI.VideoStreamer
             this.BufferSizeMs = BufferSizeMs;
             this.RecordingPath = RecordingPath;
 
-            foreach (NetworkInterface currentNetworkInterface in NetworkInterface.GetAllNetworkInterfaces())
-            {
-                Console.WriteLine(currentNetworkInterface.Description);
-                if (currentNetworkInterface.Description == "Realtek USB GbE Family Controller") {
-                    networkInterface = currentNetworkInterface;
-                }
-            }
+            //foreach (NetworkInterface currentNetworkInterface in NetworkInterface.GetAllNetworkInterfaces())
+            //{
+            //    Console.WriteLine(currentNetworkInterface.Description);
+            //    if (currentNetworkInterface.Description == "Realtek USB GbE Family Controller") {
+            //        networkInterface = currentNetworkInterface;
+            //    }
+            //}
 
-            IPv4InterfaceStatistics interfaceStatistic = networkInterface.GetIPv4Statistics();
-            lastBytesRecv = interfaceStatistic.BytesReceived;
-            DispatcherTimer dispatcherTimer = new DispatcherTimer();
-            dispatcherTimer.Tick += new EventHandler(GetNetworkInBackground);
-            dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
-            dispatcherTimer.Start();
+            //IPv4InterfaceStatistics interfaceStatistic = networkInterface.GetIPv4Statistics();
+            //lastBytesRecv = interfaceStatistic.BytesReceived;
+            //DispatcherTimer dispatcherTimer = new DispatcherTimer();
+            //dispatcherTimer.Tick += new EventHandler(GetNetworkInBackground);
+            //dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
+            //dispatcherTimer.Start();
 
             PipelineElements pipeline = CreatePipeline();
             // Clean up running pipeline
