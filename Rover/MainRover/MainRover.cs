@@ -26,8 +26,8 @@ namespace MainRover
         public static QueueBuffer ModePackets;
         public static QueueBuffer DrivePackets;
         public static QueueBuffer PathPackets;
-        public static IPWMOutput OutA;
-        public static IPWMOutput OutB;
+        public static IPWMOutput ArrivalServo;
+        public static IPWMOutput CamereaServo;
 
         public enum DriveMode { BaseDrive, toGPS, findTennisBall, toTennisBall, destination };
         public static DriveMode CurDriveMode;
@@ -63,15 +63,14 @@ namespace MainRover
 
         public static void IPWMOutputConfig()
         {
-            OutA = PWMBBB.PWMDevice1.OutputA;
-            OutA.SetFrequency(50);
-            OutA.SetOutput(0.0f);
-            OutA.SetEnabled(true);
-            OutB = PWMBBB.PWMDevice1.OutputB;
-            OutB.SetFrequency(50);
-            OutB.SetOutput(0.0f);
-            OutB.SetEnabled(true);
-            ServoSpinner = 0.05f;
+            ArrivalServo = PWMBBB.PWMDevice1.OutputA;
+            ArrivalServo.SetFrequency(50);
+            ArrivalServo.SetOutput(0.0f); // Zero means stop at 50 freq
+            ArrivalServo.SetEnabled(true);
+            CamereaServo = PWMBBB.PWMDevice1.OutputB;
+            CamereaServo.SetFrequency(500);
+            CamereaServo.SetOutput(1f); // One is stop at 500 freq
+            CamereaServo.SetEnabled(true);
         }
 
         public static void InitBeagleBone()
@@ -174,21 +173,21 @@ namespace MainRover
                     case DriveMode.BaseDrive:
                         ProcessBasePackets();
                         recieveList.Clear();
-                        OutA.SetOutput(0.0f);
+                        ArrivalServo.SetOutput(0.0f);
                         break;
                     case DriveMode.toGPS:
                         ProcessPathPackets();
                         DrivePackets = new QueueBuffer();
-                        OutA.SetOutput(0.0f);
+                        ArrivalServo.SetOutput(0.0f);
                         break;
                     case DriveMode.findTennisBall:
                         DrivePackets = new QueueBuffer();
-                        OutA.SetOutput(0.0f);
+                        ArrivalServo.SetOutput(0.0f);
                         recieveList.Clear();
                         break;
                     case DriveMode.toTennisBall:
                         DrivePackets = new QueueBuffer();
-                        OutA.SetOutput(0.0f);
+                        ArrivalServo.SetOutput(0.0f);
                         recieveList.Clear();
                         break;
                     case DriveMode.destination:
@@ -200,8 +199,8 @@ namespace MainRover
 
                         DrivePackets = new QueueBuffer();
                         recieveList.Clear();
-                        OutA.SetOutput(0.5f);
-                        OutA.Dispose();
+                        ArrivalServo.SetOutput(0.5f);
+                        ArrivalServo.Dispose();
                         break;
                 }
             }
@@ -264,18 +263,20 @@ namespace MainRover
                         }
                         break;
                     case PacketID.CameraRotation:
-                        if ((sbyte)p.Data.Payload[1] > 0 && ServoSpinner >= 0.05)
+                        if ((sbyte)p.Data.Payload[1] > 0 )
                         {
-                            ServoSpinner -= 0.005f;
-                            OutB.SetOutput(ServoSpinner);
+                            CamereaServo.SetOutput(0.1f);
                         }
-                        else if((sbyte)p.Data.Payload[1] < 0 && ServoSpinner <= 0.95)
+                        else if((sbyte)p.Data.Payload[1] < 0)
                         {
-                            ServoSpinner += 0.005f;
-                            OutB.SetOutput(ServoSpinner);
+                            CamereaServo.SetOutput(0.0f);
                         }
-                        OutB.Dispose();
-                        Console.WriteLine("ServoSPinner value: " + ServoSpinner);
+                        else
+                        {
+                            CamereaServo.SetOutput(1f);
+                        }
+                        
+                        CamereaServo.Dispose();
                         break;
                 }
             }
