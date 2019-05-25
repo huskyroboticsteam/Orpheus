@@ -8,7 +8,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>HuskyRobotics.BaseStation</RootNamespace>
     <AssemblyName>BaseStation</AssemblyName>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
@@ -60,10 +60,6 @@
     <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="App.config" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="StartBaseStation.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -85,20 +81,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="BBBCSIO, Version=1.6.0.0, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\packages\HuskyRobotics.Scarlet.0.5.1\lib\BBBCSIO.dll</HintPath>
-    </Reference>
+    <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="SharpDX.DirectInput, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpDX.DirectInput.4.2.0\lib\net45\SharpDX.DirectInput.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Half, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\HuskyRobotics.Scarlet.0.5.1\lib\System.Half.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
-    </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
@@ -119,16 +104,25 @@
   <ItemGroup>
     <Content Include="huskyrobotics.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="HuskyRobotics.Scarlet">
+      <Version>0.5.2</Version>
+    </PackageReference>
+    <PackageReference Include="SharpDX.DirectInput">
+      <Version>4.2.0</Version>
+    </PackageReference>
+    <PackageReference Include="SharpDX.XInput">
+      <Version>4.2.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.ValueTuple">
+      <Version>4.5.0</Version>
+    </PackageReference>
+    <PackageReference Include="WpfAnimatedGif">
+      <Version>1.4.18</Version>
+    </PackageReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="AfterBuild">
-    <!-- Custom build tasks -->
-    <ItemGroup>
-      <IconFiles Include="$(SolutionDir)\UserInterface\Icons\*.*" />
-      <LibraryBinaries Include="$(SolutionDir)\libraries\**\*.*" />
-    </ItemGroup>
-    <Copy SkipUnchangedFiles="true" SourceFiles="@(IconFiles)" DestinationFolder="$(OutputPath)\Icons" />
-    <!-- Copy the map icons -->
-    <Copy SkipUnchangedFiles="true" SourceFiles="@(LibraryBinaries)" DestinationFolder="$(OutputPath)" />
-    <!-- Copy library binaries -->
-  </Target>
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /E /Y /I /Q "$(SolutionDir)Icons" "$(TargetDir)Icons"</PostBuildEvent>
+  </PropertyGroup>
 </Project>
