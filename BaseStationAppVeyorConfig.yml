@@ -11,9 +11,15 @@ before_build:
     
     $libFile = "libs.zip"
     
-    Invoke-WebRequest "https://students.washington.edu/uwrobots/libraries.zip" -OutFile $libFile
+    Invoke-WebRequest "https://github.com/huskyroboticsteam/BaseStationPreload/blob/master/GStreamer.zip" -OutFile $libFile
     
-    Expand-Archive -Path $libFile -DestinationPath "libraries"
+    Expand-Archive -Path $libFile -DestinationPath "lib"
+
+    $mapsFile = "maps.zip"
+
+    Invoke-WebRequest "https://github.com/huskyroboticsteam/BaseStationPreload/blob/master/Maps.zip" -OutFile $mapsFile 
+    
+    Expand-Archive -Path $mapsFile -DestinationPath "Images"
     
     nuget restore
 build:
@@ -21,9 +27,9 @@ build:
   verbosity: minimal
 after_build:
 - ps: >-
-    mkdir EntryPoint\bin\Release\lib
+    mv lib EntryPoint\bin\Release\lib
 
-    mv libraries EntryPoint\bin\Release\lib
+    mv Images EntryPoint\bin\Release\Images
 
     cd EntryPoint\bin\Release
 
