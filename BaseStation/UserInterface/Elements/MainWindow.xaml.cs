@@ -13,6 +13,7 @@ using System.ComponentModel;
 using HuskyRobotics.UI.VideoStreamer;
 using System.Windows.Media;
 using HuskyRobotics.UI.Elements;
+using Scarlet.Utilities;
 
 namespace HuskyRobotics.UI {
 	/// <summary>
@@ -37,7 +38,18 @@ namespace HuskyRobotics.UI {
         public MainWindow()
         {
             Environment.SetEnvironmentVariable("GST_PLUGIN_SYSTEM_PATH", Directory.GetCurrentDirectory() + "\\lib");
-            //Gst.Application.Init();
+            try
+            {
+                Gst.Application.Init();
+            }
+            catch (DllNotFoundException)
+            {
+                Log.Output(Log.Severity.ERROR, Log.Source.OTHER, "GStreamer libs not found, please include them in lib directory");
+            }
+            catch (TypeInitializationException)
+            {
+                Log.Output(Log.Severity.ERROR, Log.Source.OTHER, "GStreamer libs not found, please include them in lib directory");
+            }
             Properties = new MockObservableMap();
             InitializeComponent();
 			((ConsoleView)FindName("console")).Writer.WriteLine("ConsoleView disabled due to performance issues, use Command Prompt view instead.");

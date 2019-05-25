@@ -33,56 +33,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BBBCSIO, Version=1.6.0.0, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\..\packages\HuskyRobotics.Scarlet.0.5.2\lib\BBBCSIO.dll</HintPath>
-    </Reference>
-    <Reference Include="LiveCharts, Version=0.9.7.0, Culture=neutral, PublicKeyToken=0bc1f845d1ebb8df, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\LiveCharts.0.9.7\lib\net45\LiveCharts.dll</HintPath>
-    </Reference>
-    <Reference Include="LiveCharts.Geared, Version=1.2.8.2, Culture=neutral, PublicKeyToken=7292f245d14ab8bf, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\LiveCharts.Geared.1.2.9\lib\net45\LiveCharts.Geared.dll</HintPath>
-    </Reference>
-    <Reference Include="LiveCharts.Wpf, Version=0.9.7.0, Culture=neutral, PublicKeyToken=0bc1f845d1ebb8df, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\LiveCharts.Wpf.0.9.7\lib\net45\LiveCharts.Wpf.dll</HintPath>
-    </Reference>
-    <Reference Include="PresentationCore">
-      <HintPath>..\..\packages\Microsoft.Xaml.4.0.0.1\lib\PresentationCore.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="PresentationFramework">
-      <HintPath>..\..\packages\Microsoft.Xaml.4.0.0.1\lib\PresentationFramework.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Scarlet, Version=0.5.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\HuskyRobotics.Scarlet.0.5.2\lib\Scarlet.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Design">
-      <HintPath>..\..\packages\Microsoft.Xaml.4.0.0.1\lib\System.Design.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Half, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\HuskyRobotics.Scarlet.0.5.2\lib\System.Half.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xaml">
-      <HintPath>..\..\packages\Microsoft.Xaml.4.0.0.1\lib\System.Xaml.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="UIAutomationProvider">
-      <HintPath>..\..\packages\Microsoft.Xaml.4.0.0.1\lib\UIAutomationProvider.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="WindowsBase">
-      <HintPath>..\..\packages\Microsoft.Xaml.4.0.0.1\lib\WindowsBase.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">
@@ -97,10 +55,6 @@
     <Compile Include="ReverseConverter.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
@@ -109,6 +63,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="HuskyRobotics.Scarlet">
+      <Version>0.5.2</Version>
+    </PackageReference>
+    <PackageReference Include="LiveCharts.Geared">
+      <Version>1.2.9</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Xaml">
+      <Version>4.0.0.1</Version>
+    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

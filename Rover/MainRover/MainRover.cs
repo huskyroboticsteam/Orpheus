@@ -26,11 +26,14 @@ namespace MainRover
         public static QueueBuffer ModePackets;
         public static QueueBuffer DrivePackets;
         public static QueueBuffer PathPackets;
+        public static IPWMOutput OutA;
+        public static IPWMOutput OutB;
 
         public enum DriveMode { BaseDrive, toGPS, findTennisBall, toTennisBall, destination };
         public static DriveMode CurDriveMode;
         public static Tuple<float, float> previousCoords;
         public static float PathSpeed, PathAngle;
+        public static float ServoSpinner; 
 
         public static UdpClient udpServer;
         public static IPEndPoint remoteEP;
@@ -53,8 +56,22 @@ namespace MainRover
             //BBBPinManager.AddMappingGPIO(Pins.SteeringLimitSwitch, false, Scarlet.IO.ResistorState.PULL_UP, true);
             //BBBPinManager.AddMappingPWM(Pins.SteeringMotor);
             //BBBPinManager.AddMappingPWM(Pins.ServoMotor);
+            BBBPinManager.AddMappingPWM(Pins.CameraServoMotor);
             //BBBPinManager.ApplyPinSettings(BBBPinManager.ApplicationMode.NO_CHANGES);
             BBBPinManager.ApplyPinSettings(BBBPinManager.ApplicationMode.APPLY_IF_NONE);
+        }
+
+        public static void IPWMOutputConfig()
+        {
+            OutA = PWMBBB.PWMDevice1.OutputA;
+            OutA.SetFrequency(50);
+            OutA.SetOutput(0.0f);
+            OutA.SetEnabled(true);
+            OutB = PWMBBB.PWMDevice1.OutputB;
+            OutB.SetFrequency(50);
+            OutB.SetOutput(0.0f);
+            OutB.SetEnabled(true);
+            ServoSpinner = 0.05f;
         }
 
         public static void InitBeagleBone()
@@ -62,7 +79,7 @@ namespace MainRover
             StateStore.Start("MainRover");
             BeagleBone.Initialize(SystemMode.NO_HDMI, true);
             PinConfig();
-
+            IPWMOutputConfig();
             Sensors = new List<ISensor>();
             try
             {
@@ -100,6 +117,7 @@ namespace MainRover
             Parse.SetParseHandler(0x99, (Packet) => ModePackets.Enqueue(Packet, 0));
             for (byte i = 0x8E; i <= 0x94; i++)
                 Parse.SetParseHandler(i, (Packet) => DrivePackets.Enqueue(Packet, 0));
+            Parse.SetParseHandler(0x98, (Packet) => DrivePackets.Enqueue(Packet, 0));
             for (byte i = 0x9A; i <= 0xA1; i++)
                 Parse.SetParseHandler(i, (Packet) => DrivePackets.Enqueue(Packet, 0));
             for (byte i = 0x95; i <= 0x97; i++)
@@ -212,6 +230,7 @@ namespace MainRover
 
             for (int i = 0; !DrivePackets.IsEmpty() && i < NUM_PACKETS_TO_PROCESS; i++)
             {
+                Console.WriteLine("Processing Base Packets");
                 Packet p = DrivePackets.Dequeue();
                 switch ((PacketID)p.Data.ID)
                 {
@@ -241,17 +260,28 @@ namespace MainRover
                         if (p.Data.Payload[0] > 0)
                         {
                             direction = 0x01;
-                            UtilCan.SpeedDir(CANBBB.CANBus0, false, 2, address, (byte)(-p.Data.Payload[1]), direction);
+                            //UtilCan.SpeedDir(CANBBB.CANBus0, false, 2, address, (byte)(-p.Data.Payload[1]), direction);
                             Console.WriteLine("ADDRESS :" + address + "DIR :" + direction + "PAY :" + (byte)(-p.Data.Payload[1]));
                         }
                         else
                         {
                             direction = 0x00;
-                            UtilCan.SpeedDir(CANBBB.CANBus0, false, 2, address, p.Data.Payload[1], direction);
+                            //UtilCan.SpeedDir(CANBBB.CANBus0, false, 2, address, p.Data.Payload[1], direction);
                             Console.WriteLine("ADDRESS :" + address + "DIR :" + direction + "PAY :" + p.Data.Payload[1]);
                         }
-
-
+                        break;
+                    case PacketID.CameraRotation:
+                        if((sbyte)p.Data.Payload[1] > 0)
+                        {
+                            ServoSpinner -= 0.005f;
+                            OutB.SetOutput(ServoSpinner);
+                        }
+                        else if((sbyte)p.Data.Payload[1] < 0)
+                        {
+                            ServoSpinner += 0.005f;
+                            OutB.SetOutput(ServoSpinner);
+                        }
+                        OutB.Dispose();
                         break;
                 }
             }

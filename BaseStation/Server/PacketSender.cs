@@ -112,6 +112,9 @@ namespace HuskyRobotics.BaseStation.Server
                     bool leftPressedArm = (armState.Gamepad.Buttons & GamepadButtonFlags.DPadLeft) != 0;
                     bool rightPressedArm = (armState.Gamepad.Buttons & GamepadButtonFlags.DPadRight) != 0;
 
+                    bool leftPressedCamera = (driveState.Gamepad.Buttons & GamepadButtonFlags.DPadLeft) != 0;
+                    bool rightPressedCamera = (driveState.Gamepad.Buttons & GamepadButtonFlags.DPadRight) != 0;
+
                     //------------------------------------------------------------------------------------------===
                     // Rover skid steering turn (uses x axis on right joystick)
                     short diffHorz = armState.Gamepad.RightThumbX;
@@ -223,6 +226,16 @@ namespace HuskyRobotics.BaseStation.Server
                         baseArmSpeed = (short)(64 * scaler);
                     else if (leftPressedArm)
                         baseArmSpeed = (short)(-64 * scaler);
+
+                    short cameraSpeed = 0;
+                    if (leftPressedCamera)
+                    {
+                        cameraSpeed = -10;
+                    } else if (rightPressedCamera)
+                    {
+                        cameraSpeed = 10;
+                    }
+
                     /*
                     // Not being used due to rack and pinion steering not setup
                     Packet SteerPack = new Packet(0x8F, true, "MainRover");
@@ -263,6 +276,10 @@ namespace HuskyRobotics.BaseStation.Server
                         SkidRearLeft.AppendData(UtilData.ToBytes((sbyte)Math.Round((0 - forward_back - left_right) * 120)));
                         Console.WriteLine("Test " + (-skidDriveSpeed - skidSteerSpeed));
                         Scarlet.Communications.Server.Send(SkidRearLeft);
+
+                        Packet CameraPack = new Packet(0x98, true, "MainRover");
+                        CameraPack.AppendData(UtilData.ToBytes((short)cameraSpeed));
+                        Scarlet.Communications.Server.Send(CameraPack);
 
                         Packet FingerPack = new Packet(0xA0, true, "MainArm");
                         FingerPack.AppendData(UtilData.ToBytes((short)fingerSpeed));
