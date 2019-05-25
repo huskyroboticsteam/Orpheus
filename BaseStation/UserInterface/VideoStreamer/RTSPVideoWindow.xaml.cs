@@ -143,7 +143,7 @@ namespace HuskyRobotics.UI.VideoStreamer
             // Unclear how dependent delay is on machine's speed or other process usage
             Console.WriteLine("Shutting down video");
             runningPipeline.pipeline.SendEvent(Event.NewEos());
-            Thread.Sleep(1000);
+            //Thread.Sleep(1000); ADD BACK WHEN ADDING RECORDING
 
             // Cleanup the unmanaged class objects
             runningPipeline.pipeline.SetState(State.Null);
