@@ -1,0 +1,11 @@
+* TODO for Tennis ball detection [2/3]
+ - [X] format data [3/3]
+   - [X] gather images
+   - [X] mark bounding box coordinates for each image in CSV
+   - [X] generate TFRecord files from CSV data
+ - [X] train models [2/2]
+   - [X] make sure training config is ok
+   - [X] run training process
+ - [ ] write client program [0/2]
+   - [ ] write testing program to take camera input and mark stuff onscreen (unknown what kind of client program is going to making use of this info yet)
+   - [ ] do some research on speed, etc.

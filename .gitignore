@@ -18,4 +18,7 @@ packages
 
 *.o
 
+.vscode/ipch/2c1132ea1229a9d6/SERVERCOMMANDTESTER.ipch
+.vscode/ipch/9bcaeed9946e6f0a/SERVERCOMMANDTESTER.ipch
+
 MigrationBackup

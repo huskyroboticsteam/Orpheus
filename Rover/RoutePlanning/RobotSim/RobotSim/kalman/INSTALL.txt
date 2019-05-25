@@ -1,0 +1,16 @@
+UNIX/Linux case :
+
+make
+su
+make install
+
+A small static library (libkalman.a) will be installed in /usr/local/lib. A 
+directory named 'kalman' containing all necessary include files will be 
+installed in /usr/local/include. If you wish to install elsewhere, please 
+modify the top variables in 'makefile'.
+
+Windows case :
+
+A Visual Studio project has been created to compile the library. To use the 
+library, you must add a linked library (the .lib) and an include path (root 
+of kalman folder).
