@@ -14,6 +14,7 @@ namespace MainRover
 
         PathingSpeed = 0x96,
         PathingTurnAngle = 0x97,
+        CameraRotation = 0x98,
 
         BaseSpeed = 0x9A,
         ShoulderSpeed = 0x9B,

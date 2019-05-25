@@ -41,9 +41,9 @@ namespace CanTester
                     Console.Write("Enter Priority (true/false) [Previous " + Priority + " ]: ");
                     Priority = oldNew(Console.ReadLine(), Priority);
                     Console.Write("Enter Sender (byte) [Previous " + Sender + "]: ");
-                    Sender = oldNew(Console.ReadLine(), Sender);
+                    Sender = oldNewHex(Console.ReadLine(), Sender);
                     Console.Write("Enter Reciever (byte) [Previous " + Receiver + "]: ");
-                    Receiver = oldNew(Console.ReadLine(), Receiver);
+                    Receiver = oldNewHex(Console.ReadLine(), Receiver);
                     Console.Write("Enter DataID (byte) [Previous " + DataID + "]: ");
                     DataID = oldNew(Console.ReadLine(), DataID);
                     switch (DataID)
@@ -107,7 +107,7 @@ namespace CanTester
                         {
                             keepSending = oldNew(Console.ReadLine(), true);
                         }
-                        catch (Exception e)
+                        catch
                         {
                             if (DataID == 2)
                             {
@@ -167,6 +167,12 @@ namespace CanTester
             else return Convert.ToUInt16(newVal);
         }
 
+        private static byte oldNewHex(String newVal, byte oldVal)
+        {
+            if (newVal == "") return oldVal;
+            else return Convert.ToByte(newVal, 16);
+        }
+
         private static byte oldNew(String newVal, byte oldVal)
         {
             if (newVal == "") return oldVal;
@@ -181,9 +187,12 @@ namespace CanTester
 
         private static uint ConstructCanID(bool Priority, byte Sender, byte Receiver)
         {
-            return Convert.ToUInt16(Convert.ToUInt16(!Priority) * (1024) + Sender * (32)+ Receiver);
+            return Convert.ToUInt16((Convert.ToUInt16(!Priority) << 10) + (Sender << 5) + Receiver);
         }
 
+        /// <summary>
+        /// Write two 16-bit values to a can frame.
+        /// </summary>
         private static void TwoData(ICANBus CANBus, bool Priority, byte Sender, byte Receiver, byte DataID, UInt16 val1, UInt16 val2)
         {
             byte[] Payload = new byte[5];
