@@ -31,7 +31,7 @@ namespace HuskyRobotics.BaseStation.Start
         {
             PacketSender.Update();
             CameraControl.Update();
-            Thread.Sleep(100);
+            Thread.Sleep(150);
         }
 
         private static volatile bool exit;

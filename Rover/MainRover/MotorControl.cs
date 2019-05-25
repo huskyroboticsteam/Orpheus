@@ -28,7 +28,8 @@ namespace MainRover
             for (uint i = 0; i < DriveMotor.Length; i++)
                 DriveMotor[i] = new VESC(CANBBB.CANBus0, 1.0f, 60, 518, i + 1, new LowPass<int>());
 
-            SteerMotor = new TalonMC(PWMBBB.PWMDevice0.OutputA, 0.4f, new LowPass<float>());
+            // Commented out to prevent accidental movement of steering motor
+            //SteerMotor = new TalonMC(PWMBBB.PWMDevice0.OutputA, 0.4f, new LowPass<float>());
         }
 
         public static void SetAllSpeed(float Speed)
@@ -43,6 +44,7 @@ namespace MainRover
             float Theta = GetRackAndPinionAngle();
             if (Math.Abs(Theta) < 1e-6)
             {
+                Console.WriteLine("Set all speed RPM:" + RPM);
                 foreach (VESC M in DriveMotor)
                     M.SetRPM(RPM);
             }
@@ -72,10 +74,28 @@ namespace MainRover
 
         public static void SetRPM(int Motor, int RPM)
         {
+            Console.WriteLine("Set all single RPM:" + RPM);
             if (Motor == BL)
                 RPM = -RPM;
             if (Motor < DriveMotor.Length)
                 DriveMotor[Motor].SetRPM(RPM);
+        }
+
+        public static void SkidSteerDriveSpeed(float Speed, float Turn)
+        {
+            Speed = Math.Min(Speed, 1.0f);
+            Speed = Math.Max(Speed, -1.0f);
+            Turn = Math.Min(Turn, 1.0f);
+            Turn = Math.Max(Turn, -1.0f);
+            SkidSteerDriveRPM((int)(Speed * 60), (int)(Turn * 60));
+        }
+
+        public static void SkidSteerDriveRPM(int speed, int turn)
+        {
+            DriveMotor[FR].SetRPM(speed+turn);
+            DriveMotor[FL].SetRPM(speed-turn);
+            DriveMotor[BR].SetRPM(speed+turn);
+            DriveMotor[BL].SetRPM(speed-turn);
         }
 
         public static void SetSteerSpeed(float Speed)
