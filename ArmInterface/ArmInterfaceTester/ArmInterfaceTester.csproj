@@ -33,17 +33,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BBBCSIO, Version=1.6.0.0, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\packages\HuskyRobotics.Scarlet.0.5.2\lib\BBBCSIO.dll</HintPath>
-    </Reference>
-    <Reference Include="Scarlet, Version=0.5.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\HuskyRobotics.Scarlet.0.5.2\lib\Scarlet.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Half, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\HuskyRobotics.Scarlet.0.5.2\lib\System.Half.dll</HintPath>
-    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -57,10 +48,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\ArmControllerCommonFiles\ArmControllerCommonFiles.csproj">
       <Project>{9f522e71-e121-4b0f-864c-675a7aec4535}</Project>
       <Name>ArmControllerCommonFiles</Name>
@@ -69,6 +56,11 @@
       <Project>{836cfb46-677e-4a4b-bd27-67e6a1926d98}</Project>
       <Name>ArmInterface</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="HuskyRobotics.Scarlet">
+      <Version>0.5.2</Version>
+    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
