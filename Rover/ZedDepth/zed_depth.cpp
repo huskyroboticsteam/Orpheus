@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <chrono>
 #include <atomic>
+#include <mutex>
 #include <opencv2/opencv.hpp>
 #include <opencv2/features2d.hpp>
 #include <opencv2/highgui.hpp>
@@ -26,10 +27,9 @@ std::thread t3;
 sl::Camera zed;
 cv::VideoWriter writer;
 cv::VideoWriter writer_debug;
-std::atomic<int> buffer_idx;
-std::atomic<bool> consuming;
-cv::Mat img_buf[2];
-cv::Mat depth_buf[2];
+std::mutex img_lock;
+cv::Mat g_img;
+cv::Mat g_depth;
 
 cv::Mat slMat2cvMat(const sl::Mat &input)
 {
@@ -66,15 +66,14 @@ void get_images()
     cv::Mat depth_cv = slMat2cvMat(depth_zed);
     for(;;)
     {
-        if(!consuming && zed.grab() == sl::SUCCESS)
+        if(zed.grab() == sl::SUCCESS)
         {
+            std::lock_guard<std::mutex> lk(img_lock);
             zed.retrieveImage(img_zed, sl::VIEW_LEFT);
-            zed.retrieveMeasure(depth_zed, MEASURE_DEPTH);
+            zed.retrieveMeasure(depth_zed, sl::MEASURE_DEPTH);
             
-            int next_idx = (buffer_idx + 1) % 2;
-            img_buf[next_idx] = img_cv.clone();
-            depth_buf[next_idx] = depth_cv.clone();
-            buffer_idx++;
+            g_img = img_cv.clone();
+            g_depth = depth_cv.clone();
         
             cv::Mat three_channel;
             cv::cvtColor(img_cv, three_channel, cv::COLOR_BGRA2BGR);
@@ -92,11 +91,13 @@ ObstacleDetection get_obstacle_data()
     cv::Mat edges, blur_kern;
     std::vector<std::vector<cv::Point> > contours;
 
-    consuming = true;
-    int idx = buffer_idx;
-    cv::Mat img_cv = img_buf[idx];
-    cv::Mat cv_depth_f32 = depth_buf[idx];
-    consuming = false;
+    cv::Mat img_cv;
+    cv::Mat cv_depth_f32;
+    {
+        std::lock_guard<std::mutex> lk(img_lock);
+        img_cv = g_img;
+        cv_depth_f32 = g_depth;
+    }
     
 #define TIME std::chrono::duration<float, std::milli>(end - start).count()
 #define NOW std::chrono::high_resolution_clock::now();
@@ -167,7 +168,6 @@ ObstacleDetection get_obstacle_data()
     }
 
     // convert to cv mat
-    cv::Mat cv_depth_f32 = slMat2cvMat(sl_depth_f32);
     cv::Mat depth_f32;
     cv::resize(cv_depth_f32, depth_f32, cv::Size(new_width, new_height));
     cv::Mat three_channel_img;
@@ -239,14 +239,12 @@ int zdInit()
         std::cout << "Failed to open camera.\n";
         return 1;
     }
-    consuming = false;
-    buffer_idx = 0;
     return 0;
 }
 
 int gsInit(const char* camera_path)
 {
-    // gstreamer 
+    zdInit();
     g_server_data data;
     data.argc = 5;
     data.argv[0] = camera_path;
@@ -254,15 +252,15 @@ int gsInit(const char* camera_path)
     data.argv[2] = "zed_depth";
     data.argv[3] = "5556";
     data.argv[4] = "intervideosrc channel=rgb ! rtpvrawpay name=pay0 pt=96";
-    
+
+    //TODO: this is janky
+    auto res = zed.getResolution();
     writer.open("appsrc ! video/x-raw,format=BGR ! videoconvert ! video/x-raw,format=I420 ! intervideosink channel=rgb", 
                 0, 
-                10, 
-                cv::Size(img_zed.getWidth(), 
-                         img_zed.getHeight()), 
+                10,
+                cv::Size(res.width, res.height),
                 true);
 
-    zdInit();
     // thread to stream stuff
     t1 = std::thread(start_server, data.argc, (char **) data.argv);
  
