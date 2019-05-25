@@ -3,6 +3,10 @@ Contains the code that will run on the base station computer, mainly the user in
 along with the server code that will communicate with rover to control it and receive 
 information from it.
 
+# Build
+The gstreamer dlls are required in the same directory as the BaseStation project executable,
+they can be found in the BaseStationPreload repository of this organization.
+
 ## Project Layout
  - EntryPoint: the "main method" of the base station, in the HuskyRobotics.BaseStation.StartBaseStation class. 
  - UserInterface: user interface, displaying map and other info. 

@@ -25,12 +25,12 @@ namespace HuskyRobotics.UI.VideoStreamer
         public PipelineElements runningPipeline;
         public PipelineElements pendingPipeline;
 
-        NetworkInterface networkInterface;
-
         double bytesRecvSpeed = 0;
         long lastBytesRecv;
 
+        private string IP;
         private int Port;
+        private string URI;
         private int BufferSizeMs;
         private string RecordingPath;
         private string _streamName;
@@ -54,28 +54,15 @@ namespace HuskyRobotics.UI.VideoStreamer
             public Element VideoSink;
         }
 
-        public RTSPVideoWindow(int Port, string StreamName, string RecordingPath, int BufferSizeMs = 200)
+        public RTSPVideoWindow(string StreamName, string IP, int Port, string URI, string RecordingPath, int BufferSizeMs = 200)
         {
             DataContext = this;
+            this.IP = IP;
             this.Port = Port;
+            this.URI = URI;
             this.StreamName = StreamName;
             this.BufferSizeMs = BufferSizeMs;
             this.RecordingPath = RecordingPath;
-
-            //foreach (NetworkInterface currentNetworkInterface in NetworkInterface.GetAllNetworkInterfaces())
-            //{
-            //    Console.WriteLine(currentNetworkInterface.Description);
-            //    if (currentNetworkInterface.Description == "Realtek USB GbE Family Controller") {
-            //        networkInterface = currentNetworkInterface;
-            //    }
-            //}
-
-            //IPv4InterfaceStatistics interfaceStatistic = networkInterface.GetIPv4Statistics();
-            //lastBytesRecv = interfaceStatistic.BytesReceived;
-            //DispatcherTimer dispatcherTimer = new DispatcherTimer();
-            //dispatcherTimer.Tick += new EventHandler(GetNetworkInBackground);
-            //dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
-            //dispatcherTimer.Start();
 
             PipelineElements pipeline = CreatePipeline();
             // Clean up running pipeline
@@ -103,7 +90,7 @@ namespace HuskyRobotics.UI.VideoStreamer
             pipe.overlay.WindowHandle = wih.Handle;
 
             pipe.pipeline["message-forward"] = true;
-            pipe.RTSP["location"] = "rtsp://" + StreamName;
+            pipe.RTSP["location"] = "rtsp://" + IP + ":" + Port + "/" + URI;
             pipe.RTSP["latency"] = BufferSizeMs;
 
             pipe.pipeline.Add(pipe.RTSP, pipe.Depay, pipe.VideoSink);
@@ -148,15 +135,6 @@ namespace HuskyRobotics.UI.VideoStreamer
             // Cleanup the unmanaged class objects
             runningPipeline.pipeline.SetState(State.Null);
             runningPipeline.pipeline.Unref();
-        }
-
-        private void GetNetworkInBackground(object sender, EventArgs e)
-        {
-            IPv4InterfaceStatistics interfaceStatistic = networkInterface.GetIPv4Statistics();
-            long bytesRecv = interfaceStatistic.BytesReceived;
-            bytesRecvSpeed = (bytesRecv - lastBytesRecv) * 8 / Math.Pow(1024, 2);
-            Console.WriteLine("Receiving data at: " + string.Format("{0:0.00}", bytesRecvSpeed) + " Mbps" + " over " + networkInterface.Description);
-            lastBytesRecv = bytesRecv;
         }
     }
 }

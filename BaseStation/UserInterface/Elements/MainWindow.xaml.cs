@@ -153,24 +153,16 @@ namespace HuskyRobotics.UI {
                 VideoDevice selection = (VideoDevice)StreamSelect.SelectedItem;
                 Streams.Add(new VideoStream(selection.Name, "00:00:00"));
 
-                Thread newWindowThread = new Thread(() => ThreadStartingPoint(Convert.ToInt32(selection.Port), selection.Name, Convert.ToInt32(selection.BufferingMs)));
+                Thread newWindowThread = new Thread(() => ThreadStartingPoint(selection.Name, selection.IP, Convert.ToInt32(selection.Port), selection.URI, Convert.ToInt32(selection.BufferingMs)));
                 newWindowThread.SetApartmentState(ApartmentState.STA);
                 newWindowThread.IsBackground = true;
                 newWindowThread.Start();
             }
         }
 
-        private void ThreadStartingPoint(int Port, string Name, int BufferingMs)
+        private void ThreadStartingPoint(string Name, string IP, int Port, string URI, int BufferingMs)
         {
-            VideoWindow tempWindow;
-            //if (Name != "192.168.0.42" && Name != "127.0.0.1")
-            //{
-            //    tempWindow = new RTPVideoWindow(Port, Name, Settings.RecordingPath, BufferingMs);
-            //}
-            //else
-            //{
-            tempWindow = new RTSPVideoWindow(Port, Name, Settings.RecordingPath, BufferingMs);
-            //}
+            VideoWindow tempWindow = new RTSPVideoWindow(Name, IP, Port, URI, Settings.RecordingPath, BufferingMs);
 
             VideoWindows.Add(tempWindow);
 

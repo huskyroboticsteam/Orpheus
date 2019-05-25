@@ -19,7 +19,9 @@ namespace HuskyRobotics.UI
         }
 
         private string _name;
+        private string _IP;
         private string _port;
+        private string _URI;
         private string _bufferingMs;
 
         // Boilerplate
@@ -36,6 +38,17 @@ namespace HuskyRobotics.UI
             }
         }
 
+        [XmlElement("ip")]
+        public string IP
+        {
+            get => _IP;
+            set
+            {
+                _IP = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IP"));
+            }
+        }
+
         [XmlElement("port")]
         public string Port
         {
@@ -44,6 +57,17 @@ namespace HuskyRobotics.UI
             {
                 _port = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Port"));
+            }
+        }
+
+        [XmlElement("uri")]
+        public string URI
+        {
+            get => _URI;
+            set
+            {
+                _URI = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("URI"));
             }
         }
 

@@ -98,9 +98,6 @@
       <DependentUpon>RTSPVideoWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="VideoStreamer\VideoStream.cs" />
-    <Compile Include="VideoStreamer\RTPVideoWindow.xaml.cs">
-      <DependentUpon>RTPVideoWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="VideoStreamer\VideoWindow.cs" />
     <Compile Include="Map\Waypoint.cs" />
     <Compile Include="Map\WaypointsFile.cs" />
@@ -151,10 +148,6 @@
     <Page Include="VideoStreamer\RTSPVideoWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="VideoStreamer\RTPVideoWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>
