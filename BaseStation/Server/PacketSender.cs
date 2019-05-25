@@ -28,6 +28,7 @@ namespace HuskyRobotics.BaseStation.Server
         public static event EventHandler<(float, float)> GPSUpdate;
         public static event EventHandler<(double, double)> RFUpdate;
         public static event EventHandler<(float, float, float)> MagnetometerUpdate;
+        public static event EventHandler<int> NotificationUpdate;
         public static List<Tuple<double, double>> coords;
         public static Tuple<double, double> target;
         public static double direction;
@@ -42,6 +43,7 @@ namespace HuskyRobotics.BaseStation.Server
             Parse.SetParseHandler(0xC0, GpsHandler);
             Parse.SetParseHandler(0xC1, MagnetomerHandler);
             Parse.SetParseHandler(0xD4, RFSignalHandler);
+            Parse.SetParseHandler(0xC4, ArrivalHandler);
             direction = 0;
         }
 
@@ -65,7 +67,7 @@ namespace HuskyRobotics.BaseStation.Server
         public static void SwitchMode(bool manual)
         {
             ManualMode = manual;
-            SendModeChange = true;
+            SendModeChange = false;
         }
 
         /// <summary>
@@ -410,6 +412,11 @@ namespace HuskyRobotics.BaseStation.Server
         private static void MagnetomerHandler(Packet magData)
         {
             direction = UtilData.ToDouble(magData.Data.Payload);
+        }
+
+        private static void ArrivalHandler(Packet arrivalData)
+        {
+            NotificationUpdate(null, 1);
         }
 
         private static void RFSignalHandler(Packet data)

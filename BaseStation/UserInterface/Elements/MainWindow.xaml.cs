@@ -79,6 +79,16 @@ namespace HuskyRobotics.UI {
                 }
             }
             updateMapWaypoints();
+            HuskyRobotics.BaseStation.Server.PacketSender.NotificationUpdate += arrivalPacketScan;
+        }
+
+        private void arrivalPacketScan(object sender, int data)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                Notification popup = new Notification(gLat, gLon);
+                popup.ShowDialog();
+            });
         }
 
         private void updateMapWaypoints()
@@ -243,8 +253,7 @@ namespace HuskyRobotics.UI {
         private void Stop_Navigation(object sender, EventArgs e)
         {
             //for testing purposes
-            Notification popup = new Notification(gLat, gLon);
-            popup.ShowDialog();
+            
         }
     }
 }
