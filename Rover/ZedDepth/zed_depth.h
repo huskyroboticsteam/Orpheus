@@ -13,4 +13,4 @@ ObstacleDetection get_obstacle_data();
 
 //int init(const char*);
 int zdInit();
-int gsInit(const char*); 
+int gsInit();

@@ -35,7 +35,7 @@ RP::point origin;
 RP::point max_point;
 cv::Mat image;
 
-int main() {
+int main(int argc, const char **argv) {
   std::deque<RP::point> targetSites(0);
   origin.x = 47.648531;
   origin.y = -122.309705;
@@ -78,7 +78,7 @@ int main() {
   std::cin >> p.x;
   std::cin >> p.y;
   RP::Controller controller(p, targetSites);
-  zdInit();
+  gsInit();
   std::cout << "Finished constructing" << std::endl;
   controller.update();
 }

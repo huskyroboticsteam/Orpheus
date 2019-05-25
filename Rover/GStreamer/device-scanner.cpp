@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
             int ret;
             if (strcmp(name, "ZED") == 0) 
             {
-                ret = execl("../zed_depth/zed_depth", argv[0]);
+                ret = execl("../RoutePlanning/RobotSim/RobotSim/build/routeplanning", argv[0], NULL);
             }
             else
             {

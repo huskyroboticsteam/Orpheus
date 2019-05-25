@@ -69,6 +69,7 @@ void get_images()
         if(zed.grab() == sl::SUCCESS)
         {
             std::lock_guard<std::mutex> lk(img_lock);
+
             zed.retrieveImage(img_zed, sl::VIEW_LEFT);
             zed.retrieveMeasure(depth_zed, sl::MEASURE_DEPTH);
             
@@ -93,12 +94,15 @@ ObstacleDetection get_obstacle_data()
 
     cv::Mat img_cv;
     cv::Mat cv_depth_f32;
+    if(g_img.empty())
+        std::cout << "G_IMG IS EMPTY" << std::endl;
     {
         std::lock_guard<std::mutex> lk(img_lock);
         img_cv = g_img;
         cv_depth_f32 = g_depth;
     }
-    
+    if(img_cv.empty())
+        std::cout << "IMG CV IS EMPTY" << std::endl;
 #define TIME std::chrono::duration<float, std::milli>(end - start).count()
 #define NOW std::chrono::high_resolution_clock::now();
 
@@ -228,6 +232,7 @@ ObstacleDetection get_obstacle_data()
 
 int zdInit() 
 {
+    std::cerr << "ZDINIT CALLED" << std::endl;
     // setup params for zed
     sl::InitParameters init_params;
     init_params.camera_resolution = sl::RESOLUTION_VGA;
@@ -236,18 +241,35 @@ int zdInit()
 
     if(zed.open(init_params) != sl::SUCCESS)
     {
-        std::cout << "Failed to open camera.\n";
+        std::cerr << "Failed to open camera.\n";
         return 1;
     }
+    if(zed.grab() != sl::SUCCESS)
+    {
+        std::cerr << "Failed to grab from camera.\n";
+        return 1;
+    }
+    
+    sl::Mat img_zed(zed.getResolution(), sl::MAT_TYPE_8U_C4);
+    cv::Mat img_cv = slMat2cvMat(img_zed);
+    sl::Mat depth_zed(zed.getResolution(), sl::MAT_TYPE_32F_C1);
+    cv::Mat depth_cv = slMat2cvMat(depth_zed);
+    
+    zed.retrieveImage(img_zed, sl::VIEW_LEFT);
+    zed.retrieveMeasure(depth_zed, sl::MEASURE_DEPTH);
+    
+    g_img = img_cv.clone();
+    g_depth = depth_cv.clone();
+    
     return 0;
 }
 
-int gsInit(const char* camera_path)
+int gsInit()
 {
     zdInit();
     g_server_data data;
     data.argc = 5;
-    data.argv[0] = camera_path;
+    data.argv[0] = "sebastian";
     data.argv[1] = "intervideosrc";
     data.argv[2] = "zed_depth";
     data.argv[3] = "5556";
@@ -293,7 +315,7 @@ int gsInit(const char* camera_path)
 int _main(int argc, char *argv[])
 {
     zdInit();
-    if (gsInit(argv[1]) != 0) printf("cock\n");
+    if (gsInit() != 0) printf("cock\n");
     for(char key = ' '; key != 'q'; key = cv::waitKey(10))
     {
         if(zed.grab(runtime_params) == sl::SUCCESS)
