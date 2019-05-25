@@ -98,7 +98,6 @@ namespace HuskyRobotics.BaseStation.Server
                     if (Math.Abs(speed) < 0.0001f) { speed = 0; }
                     if (Math.Abs(steerPos) < 0.0001f) { steerPos = 0; }
 
-
                     //testing values to send for autonomous, remove later
                     bool aPressedAuto = (driveState.Gamepad.Buttons & GamepadButtonFlags.A) != 0;
                     bool bPressedAuto = (driveState.Gamepad.Buttons & GamepadButtonFlags.B) != 0;
@@ -114,8 +113,13 @@ namespace HuskyRobotics.BaseStation.Server
                     bool leftPressedArm = (armState.Gamepad.Buttons & GamepadButtonFlags.DPadLeft) != 0;
                     bool rightPressedArm = (armState.Gamepad.Buttons & GamepadButtonFlags.DPadRight) != 0;
 
+                    bool leftShoulderPressed = (armState.Gamepad.Buttons & GamepadButtonFlags.LeftShoulder) != 0;
+                    bool rightShoulderPressed = (armState.Gamepad.Buttons & GamepadButtonFlags.RightShoulder) != 0;
+
                     bool leftPressedCamera = (driveState.Gamepad.Buttons & GamepadButtonFlags.DPadLeft) != 0;
                     bool rightPressedCamera = (driveState.Gamepad.Buttons & GamepadButtonFlags.DPadRight) != 0;
+
+                    bool backPressedLaser = (armState.Gamepad.Buttons & GamepadButtonFlags.Back) != 0;
 
                     //------------------------------------------------------------------------------------------===
                     // Rover skid steering turn (uses x axis on right joystick)
@@ -238,6 +242,22 @@ namespace HuskyRobotics.BaseStation.Server
                         cameraSpeed = 10;
                     }
 
+                    short typerServoSpeed = 0;
+                    if (leftShoulderPressed)
+                    {
+                        typerServoSpeed = -1;
+                    }
+                    else if (rightShoulderPressed)
+                    {
+                        typerServoSpeed = 1;
+                    }
+
+                    short laser = 0;
+                    if (backPressedLaser)
+                    {
+                        laser = 1;
+                    }
+
                     /*
                     // Not being used due to rack and pinion steering not setup
                     Packet SteerPack = new Packet(0x8F, true, "MainRover");
@@ -306,6 +326,14 @@ namespace HuskyRobotics.BaseStation.Server
                         Packet ShoulderPack = new Packet(0x9B, true, "MainArm");
                         ShoulderPack.AppendData(UtilData.ToBytes(shoulderArmSpeed));
                         Scarlet.Communications.Server.Send(ShoulderPack);
+
+                        Packet TyperPack = new Packet(0xA2, true, "MainArm");
+                        TyperPack.AppendData(UtilData.ToBytes(typerServoSpeed));
+                        Scarlet.Communications.Server.Send(TyperPack);
+
+                        Packet LaserPack = new Packet(0xA3, true, "MainArm");
+                        LaserPack.AppendData(UtilData.ToBytes(laser));
+                        Scarlet.Communications.Server.Send(LaserPack);
 
                         Packet BasePack = new Packet(0x9A, true, "MainArm");
                         BasePack.AppendData(UtilData.ToBytes(baseArmSpeed));
