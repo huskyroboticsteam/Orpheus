@@ -21,6 +21,8 @@ namespace MainRover
         public static List<ISensor> Sensors;
         public static QueueBuffer StopPackets;
         public static QueueBuffer DrivePackets;
+        public static Arm armInterface;
+
         public static void PinConfig()
         {
             BBBPinManager.AddBusCAN(0, false);
@@ -86,55 +88,61 @@ namespace MainRover
                         if (p.Data.Payload[0] > 0)
                         {
                             direction = 0x01;
-                            UtilCan.SpeedDir(CANBBB.CANBus0, false, 2, address, (byte)(-p.Data.Payload[1]), direction);
-                            Console.WriteLine("ADDRESS :" + address + "DIR :" + direction + "PAY :" + (byte)(-p.Data.Payload[1]));
+                            SetSpeed((Device)address, (byte)(-1 * p.Data.Payload[1]), direction);
+                            //UtilCan.SpeedDir(CANBBB.CANBus0, false, 2, address, (byte)(-p.Data.Payload[1]), direction);
+                            //Console.WriteLine("ADDRESS :" + address + "DIR :" + direction + "PAY :" + (byte)(-p.Data.Payload[1]));
                         }
                         else
                         {
                             direction = 0x00;
-                            UtilCan.SpeedDir(CANBBB.CANBus0, false, 2, address, p.Data.Payload[1], direction);
-                            Console.WriteLine("ADDRESS :" + address + "DIR :" + direction + "PAY :" + p.Data.Payload[1]);
+                            SetSpeed((Device)address, p.Data.Payload[1], direction);
+                            //UtilCan.SpeedDir(CANBBB.CANBus0, false, 2, address, p.Data.Payload[1], direction);
+                            //Console.WriteLine("ADDRESS :" + address + "DIR :" + direction + "PAY :" + p.Data.Payload[1]);
                         }
-
-
                         break;
                 }
             }
         }
 
-        public static void readCan()
+        public static void SetupArm()
         {
-            Task<Tuple<uint, byte[]>> CanRead = CANBBB.CANBus0.ReadAsync();
-            int msec = 0;
-            while (!CanRead.IsCompleted || (msec > 10))
-                CanRead.Wait(100);
-
-            if (CanRead.IsCompleted)
+            armInterface = new Arm(CANBBB.CANBus0);
+            foreach(Device device in Vals.DEVICES)
             {
-                Tuple<uint, byte[]> temp = CanRead.Result;
-                byte sender = Convert.ToByte(((temp.Item1) >> 0x1F) & 0x1F);
-                byte receiver = Convert.ToByte((temp.Item1) & 0x1F);
-                
-                if (receiver == 2)
-                {
-                    if (temp.Item2[0] == 0x18)
-                    {
-                        Tuple<short, short> voltCur= UtilCan.GetTele(temp.Item2);
-                        
-                        Packet Pack = new Packet((byte)PacketID.CanVoltage, true);
-                        Pack.AppendData(UtilData.ToBytes(voltCur.Item1));
-                        Client.SendNow(Pack);
-
-                        Packet Pack2 = new Packet((byte)PacketID.CanCurrent, true);
-                        Pack.AppendData(UtilData.ToBytes(voltCur.Item2));
-                        Client.SendNow(Pack);
-                    }
-                }
-
-
+                SetMode(device, 0x00);
             }
         }
 
+        private static void SetMode(Device armDevice, byte mode)
+        {
+            armInterface.Send(new ArmPacket() { 
+                TargetDeviceID = armDevice,
+                Priority = true,
+                PacketType = CANPacket.MODE_SELECT,
+                Payload = new byte[] { mode }
+            });
+        }
+
+        private static void SetSpeed(Device armDevice, byte speed, byte direction)
+        {
+            armInterface.Send(new ArmPacket() {
+                TargetDeviceID = armDevice,
+                Priority = true,
+                PacketType = CANPacket.SPEED_DIR,
+                Payload = new byte[] { (byte)(speed << 1 | direction) }
+            });
+        }
+
+        /// <summary>
+        /// TODO: Interpret CAN Packets.
+        /// </summary>
+        private static void ProcessCAN()
+        {
+            if (armInterface.ReceiveQueueSize() > 0)
+            {
+                ArmPacket nextPacket = (ArmPacket)armInterface.ReadNext();
+            }
+        }
 
         public static void Main(string[] args)
         {
@@ -150,12 +158,14 @@ namespace MainRover
             Quit = false;
             InitBeagleBone();
             SetupClient();
-            //readCan();
-            MotorBoards.Initialize(CANBBB.CANBus0);
+            SetupArm();
+            // readCan();
+            // MotorBoards.Initialize(CANBBB.CANBus0);
             Console.WriteLine("Finished the initalize");
             do
             {
                 ProcessInstructions();
+                //ProcessCAN();
                 Thread.Sleep(50);
             } while (!Quit);
         }
