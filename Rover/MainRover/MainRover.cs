@@ -45,6 +45,8 @@ namespace MainRover
         private static int GSpeed;
         private static int Gturn;
         private static Average<double> MagFilter;
+        private static int servoTurn;
+        private static Thread servoThread;
 
 
         public static void PinConfig()
@@ -135,6 +137,29 @@ namespace MainRover
             ParseThread.Start();
             timeout = 20;
             MagFilter = new Average<double>(10);
+            servoTurn = 0;
+            servoThread = new Thread(new ThreadStart(cameraServoThread));
+            servoThread.Start();
+        }
+
+        private static void cameraServoThread()
+        {
+            while (true)
+            {
+                if (servoTurn == 1)
+                {
+                    CamereaServo.SetOutput(0.1f);
+                    servoTurn = 0;
+                }
+                else if (servoTurn == 2)
+                {
+                    CamereaServo.SetOutput(0.0f);
+                    servoTurn = 0;
+                }
+                Thread.Sleep(500);
+                CamereaServo.SetOutput(1f);
+            }
+
         }
 
         public static void parser()
@@ -263,20 +288,15 @@ namespace MainRover
                         }
                         break;
                     case PacketID.CameraRotation:
-                        if ((sbyte)p.Data.Payload[1] > 0 )
+                        if ((sbyte)p.Data.Payload[1] > 0)
                         {
-                            CamereaServo.SetOutput(0.1f);
+                            servoTurn = 1;
                         }
-                        else if((sbyte)p.Data.Payload[1] < 0)
+                        else if ((sbyte)p.Data.Payload[1] < 0)
                         {
-                            CamereaServo.SetOutput(0.0f);
+                            servoTurn = 2;
                         }
-                        else
-                        {
-                            CamereaServo.SetOutput(1f);
-                        }
-                        
-                        CamereaServo.Dispose();
+                        //CamereaServo.Dispose();
                         break;
                 }
             }
