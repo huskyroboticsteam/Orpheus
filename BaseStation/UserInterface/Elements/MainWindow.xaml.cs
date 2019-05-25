@@ -32,7 +32,6 @@ namespace HuskyRobotics.UI {
         }
         public ObservableCollection<VideoStream> Streams { get; private set; } = new ObservableCollection<VideoStream>();
         public bool manualMode = true;
-        Thread arrivalThread;
         public double gLat = 0.0;
         public double gLon = 0.0;
 
@@ -80,23 +79,16 @@ namespace HuskyRobotics.UI {
                 }
             }
             updateMapWaypoints();
-
-            arrivalThread = new Thread(new ThreadStart(arrivalPacketScan));
-            arrivalThread.SetApartmentState(ApartmentState.STA);
-            arrivalThread.Start();
+            HuskyRobotics.BaseStation.Server.PacketSender.NotificationUpdate += arrivalPacketScan;
         }
 
-        private void arrivalPacketScan()
+        private void arrivalPacketScan(object sender, int data)
         {
-            while (true)
+            Dispatcher.Invoke(() =>
             {
-                while (!HuskyRobotics.BaseStation.Server.PacketSender.arrived)
-                { }
-                    Notification popup = new Notification(gLat, gLon);
-                    popup.ShowDialog();
-                    HuskyRobotics.BaseStation.Server.PacketSender.arrived = false;
-                
-            }
+                Notification popup = new Notification(gLat, gLon);
+                popup.ShowDialog();
+            });
         }
 
         private void updateMapWaypoints()

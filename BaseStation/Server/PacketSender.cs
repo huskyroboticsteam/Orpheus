@@ -28,10 +28,10 @@ namespace HuskyRobotics.BaseStation.Server
         public static event EventHandler<(float, float)> GPSUpdate;
         public static event EventHandler<(double, double)> RFUpdate;
         public static event EventHandler<(float, float, float)> MagnetometerUpdate;
+        public static event EventHandler<int> NotificationUpdate;
         public static List<Tuple<double, double>> coords;
         public static Tuple<double, double> target;
         public static double direction;
-        public static bool arrived;
 
         public static void Setup()
         {
@@ -45,7 +45,6 @@ namespace HuskyRobotics.BaseStation.Server
             Parse.SetParseHandler(0xD4, RFSignalHandler);
             Parse.SetParseHandler(0xC4, ArrivalHandler);
             direction = 0;
-            arrived = false;
         }
 
         public static void Shutdown()
@@ -417,7 +416,7 @@ namespace HuskyRobotics.BaseStation.Server
 
         private static void ArrivalHandler(Packet arrivalData)
         {
-            arrived = true;
+            NotificationUpdate(null, 1);
         }
 
         private static void RFSignalHandler(Packet data)
