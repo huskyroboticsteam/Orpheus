@@ -13,7 +13,7 @@ namespace Science_Base
         // Aux sensor packets
         public static DataSeries<int> UV = new DataSeries<int>("UV Light", "UV Light (µW/cm²)"); // TODO: Update for VEML6075
         public static DataSeries<ushort> AirCO2 = new DataSeries<ushort>("Air CO2", "CO2 Concentration (PPM)");
-        public static DataSeries<float> AirTVOC = new DataSeries<float>("Air TVOC", "TVOC Concentration (PPB)");
+        public static DataSeries<ushort> AirTVOC = new DataSeries<ushort>("Air TVOC", "TVOC Concentration (PPB)");
         public static DataSeries<float> AirTemp = new DataSeries<float>("Air Temperature", "Temperature (°C)");
         public static DataSeries<float> AirHumidity = new DataSeries<float>("Air Humidity", "Relative Humidity (%)");
         public static DataSeries<float> AirPressure = new DataSeries<float>("Air Pressure", "Pressure (Pa)");
@@ -71,7 +71,7 @@ namespace Science_Base
 
         public static void PacketAuxSensors(Packet Packet)
         {
-            if (Packet == null || Packet.Data == null || Packet.Data.Payload == null || Packet.Data.Payload.Length != 34)
+            if (Packet == null || Packet.Data == null || Packet.Data.Payload == null || Packet.Data.Payload.Length != 32)
             {
                 Log.Output(Log.Severity.WARNING, Log.Source.NETWORK, "Aux sensor packet invalid. Discarding. Length: " + Packet?.Data?.Payload?.Length);
                 return;
@@ -79,15 +79,15 @@ namespace Science_Base
             DateTime Time = ExtractTime(Packet);
             int UVLight = UtilData.ToInt(UtilMain.SubArray(Packet.Data.Payload, 8, 4));
             ushort CO2Reading = UtilData.ToUShort(UtilMain.SubArray(Packet.Data.Payload, 12, 2));
-            int TVOCReading = UtilData.ToInt(UtilMain.SubArray(Packet.Data.Payload, 14, 4));
-            float SoilMoist = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 18, 4));
-            float AtmoTemp = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 22, 4));
-            float AtmoPres = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 26, 4));
-            float AtmoHumid = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 30, 4));
+            ushort TVOCReading = UtilData.ToUShort(UtilMain.SubArray(Packet.Data.Payload, 14, 2));
+            float SoilMoist = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 16, 4));
+            float AtmoTemp = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 20, 4));
+            float AtmoPres = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 24, 4));
+            float AtmoHumid = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 28, 4));
 
             UV.Data.Add(new Datum<int>(Time, UVLight));
             AirCO2.Data.Add(new Datum<ushort>(Time, CO2Reading));
-            AirTVOC.Data.Add(new Datum<float>(Time, TVOCReading));
+            AirTVOC.Data.Add(new Datum<ushort>(Time, TVOCReading));
             SoilMoisture.Data.Add(new Datum<float>(Time, SoilMoist));
             AirTemp.Data.Add(new Datum<float>(Time, AtmoTemp));
             AirPressure.Data.Add(new Datum<float>(Time, AtmoPres));

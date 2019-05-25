@@ -27,10 +27,9 @@ namespace Science.Systems
         private TLV2544 ADC;
 
         // Sensor endpoints
-        private MAX31855 Thermocouple;
         private VEML6070 UVLight;
         private BME280 Atmospheric;
-        private MQ135 AirQuality;
+        private iAQCore AirQuality;
         private VH400 SoilMoisture;
 
         public AuxSensors(ISPIBus SPI, II2CBus I2C)
@@ -52,13 +51,12 @@ namespace Science.Systems
             //Config.UseLongSample = true;
             this.ADC.Configure(Config);
 
-            this.Thermocouple = new MAX31855(this.SPI0, new DigitalOutPi(18));
             this.UVLight = new VEML6070(this.I2C1);
             this.Atmospheric = new BME280(this.I2C1);
             this.Atmospheric.Configure();
             
             this.Atmospheric.ChangeMode(BME280.Mode.NORMAL);
-            this.AirQuality = new MQ135(this.ADC.Inputs[0], 3300, 6400, 4.6);
+            this.AirQuality = new iAQCore(this.I2C1);
             this.SoilMoisture = new VH400(this.ADC.Inputs[1]);
 
             this.TakeReadings = true;
@@ -70,26 +68,22 @@ namespace Science.Systems
         {
             if (this.TakeReadings)
             {
-                DateTime Sample = DateTime.Now;
-                this.Thermocouple.UpdateState();
-                if (this.Thermocouple.GetFaults() != MAX31855.Fault.NONE) { Log.Output(Log.Severity.WARNING, Log.Source.SENSORS, "Thermocouple has faults: " + this.Thermocouple.GetFaults());}
+                DateTime SampleTime = DateTime.Now;
                 this.UVLight.UpdateState();
                 this.Atmospheric.UpdateState();
                 this.AirQuality.UpdateState();
                 this.SoilMoisture.UpdateState();
-
-                if (this.TraceLogging) { Log.Trace(this, "Thermocouple: int " + this.Thermocouple.GetInternalTemp() + " ext " + this.Thermocouple.GetExternalTemp() + " faults " + this.Thermocouple.GetFaults()); }
-
-                //Log.Output(Log.Severity.INFO, Log.Source.SENSORS, "Temp: " + this.Atmospheric.Temperature + ", press: " + this.Atmospheric.Pressure + ", humid: " + this.Atmospheric.Humidity + ", on: " + this.Atmospheric.Test());
-                byte[] Data = UtilData.ToBytes(this.UVLight.GetReading())
-                    .Concat(UtilData.ToBytes(this.AirQuality.GetReadingUncalibrated()))
-                    .Concat(UtilData.ToBytes(this.SoilMoisture.GetReading()))
-                    .Concat(UtilData.ToBytes(this.Thermocouple.GetExternalTemp()))
-                    .Concat(UtilData.ToBytes(this.Atmospheric.Temperature))
-                    .Concat(UtilData.ToBytes(this.Atmospheric.Pressure))
-                    .Concat(UtilData.ToBytes(this.Atmospheric.Humidity))
+                
+                byte[] Data = UtilData.ToBytes(SampleTime.Ticks)
+                    .Concat(UtilData.ToBytes((int)this.UVLight.GetReading()))
+                    .Concat(UtilData.ToBytes((ushort)this.AirQuality.GetCO2Value()))
+                    .Concat(UtilData.ToBytes((ushort)this.AirQuality.GetTVOCValue()))
+                    .Concat(UtilData.ToBytes((float)this.SoilMoisture.GetReading()))
+                    .Concat(UtilData.ToBytes((float)this.Atmospheric.Temperature))
+                    .Concat(UtilData.ToBytes((float)this.Atmospheric.Pressure))
+                    .Concat(UtilData.ToBytes((float)this.Atmospheric.Humidity))
                     .ToArray();
-                if (this.TraceLogging) { Log.Trace(this, "UV: " + this.UVLight.GetReading() + ", AirQ: " + this.AirQuality.GetReadingUncalibrated() + ", Soil: " + this.SoilMoisture.GetReading() + ", AirTemp: " + this.Atmospheric.Temperature); }
+                if (this.TraceLogging) { Log.Trace(this, "UV: " + this.UVLight.GetReading() + ", AirQ: [CO2 " + this.AirQuality.GetCO2Value() + ",TVOC " + this.AirQuality.GetTVOCValue() + "], Soil: " + this.SoilMoisture.GetReading() + ", AirTemp: " + this.Atmospheric.Temperature); }
                 
                 Packet Packet = new Packet(new Message(ScienceConstants.Packets.AUX_SENSOR, Data), false);
                 Client.Send(Packet);

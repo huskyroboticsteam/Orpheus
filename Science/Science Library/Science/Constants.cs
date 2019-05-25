@@ -10,17 +10,13 @@
 
         public static class Packets
         {
-            #region Bidirectional (0x4C through 0x64)
-            public const byte WATCHDOG_PING = 0x00;
-            public const byte ERROR = 0x4C;
-            #endregion
-
             #region Base to Rover (0xA6 through 0xB1)
             public const byte EMERGENCY_STOP = 0x80;
-            public const byte DRILL_SPEED_SET = 0xA6;
+            public const byte DRL_CTRL = 0xA6;
             public const byte SERVO_SET = 0xA7;
             public const byte RAIL_TARGET_SET = 0xA8;
             public const byte RAIL_SPEED_SET = 0xA9;
+            public const byte TTB_SET = 0xB0;
             #endregion
 
             #region Rover to Base (0xDC through 0xE4)

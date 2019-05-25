@@ -21,7 +21,7 @@ namespace Science.Systems
 
         private const float MOTOR_MAX_SPEED = 0.5F;
         private const int INIT_TIMEOUT = 5000;
-        private const float ENCODER_MM_PER_TICK = 0.935F; // TODO: Update this.
+        private const float ENCODER_MM_PER_TICK = 1.08F; // TODO: Update this.
         private const bool ENABLE_VELOCITY_TRACKING = true;
 
         private bool P_Initializing = false;
@@ -70,6 +70,7 @@ namespace Science.Systems
             //this.Ranger = new VL53L0X_MVP(RangerBus);
             //this.Ranger.SetMeasurementTimingBudget(50000);
             this.LED = new LEDController(LED);
+            this.Limit.SwitchToggle += this.EventTriggered;
             if (this.TraceLogging) { Log.Trace(this, "Rail controller start finished."); }
         }
 
@@ -104,8 +105,7 @@ namespace Science.Systems
         public void Initialize()
         {
             this.Initializing = true;
-            this.Limit.SwitchToggle += this.EventTriggered;
-
+            
             System.Timers.Timer TimeoutTrigger = new System.Timers.Timer() { Interval = (ENABLE_VELOCITY_TRACKING ? 30000 : INIT_TIMEOUT), AutoReset = false };
             TimeoutTrigger.Elapsed += this.EventTriggered;
             TimeoutTrigger.Enabled = true;
@@ -169,7 +169,7 @@ namespace Science.Systems
             {
                 byte[] Data = UtilData.ToBytes(DateTime.Now.Ticks)
                     .Concat(new byte[] { (byte)((this.InitDone ? 0b1 : 0b0) | (this.Initializing ? 0b10 : 0b00) | (this.TargetLocationRefIsTop ? 0b100 : 0b000)) }) // Basic Data
-                    .Concat(UtilData.ToBytes(ENABLE_VELOCITY_TRACKING ? (float)this.VelocityTracker.GetOutput() : this.RailSpeed)) // Rail Speed
+                    .Concat(UtilData.ToBytes(ENABLE_VELOCITY_TRACKING ? (float)this.VelocityTracker.GetOutput() : (float)this.RailSpeed)) // Rail Speed
                     .Concat(UtilData.ToBytes((float)this.TopDepth)) // Depth from top
                     .Concat(UtilData.ToBytes((float)this.GroundHeightFilter.GetOutput())) // Height from GND
                     .Concat(UtilData.ToBytes((float)this.TargetLocation)) // Target depth

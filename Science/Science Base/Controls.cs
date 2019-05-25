@@ -48,7 +48,7 @@ namespace Science_Base
 
         private static void SendDrillSpdPacket()
         {
-            Packet Packet = new Packet(new Message(ScienceConstants.Packets.DRILL_SPEED_SET, new byte[]
+            Packet Packet = new Packet(new Message(ScienceConstants.Packets.DRL_CTRL, new byte[]
             {
                 (byte)(((DrillSpd < 0) ? 0b10 : 0b00) | (IsDrillEnabled ? 0b01 : 0b00)),
                 (byte)Math.Abs(DrillSpd)
