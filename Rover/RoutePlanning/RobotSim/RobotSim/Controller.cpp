@@ -7,7 +7,7 @@
 #include <iostream>
 #include <math.h>
 #include <thread>
-#include "../../../ZedDepth/zed-depth.h"
+#include "../../../ZedDepth/zed_depth.h"
 
 #define MOVE_SPEED 0x7FFF / 2
 
@@ -22,7 +22,7 @@
 
 #define ANGLE_TOL 20.
 
-constexpr float TARGET_TOL = 4.f; // tolerance distance for testing if we've reached target
+constexpr float TARGET_TOL = 4.0f; // tolerance distance for testing if we've reached target
 constexpr float TARGET_TOL_SQ = TARGET_TOL * TARGET_TOL;
 constexpr float AUTO_TURN_RANGE = 90;
 constexpr float GPS_MULT = 1e6;
@@ -31,10 +31,9 @@ LATITUDE IS X
 LONGITUDE IS
 */
 
-cv::Mat image;
-
 RP::point origin;
 RP::point max_point;
+cv::Mat image;
 
 int main() {
   std::deque<RP::point> targetSites(0);
@@ -144,7 +143,10 @@ void Controller::update() {
 //        std::vector<obstacleVector> obstacles{
 //            obstacleVector{1, 2}, obstacleVector{3, 4}, obstacleVector{5, 6}};
 
-        std::vector<std::pair<cv::Rect, float>> raw_obstacles;// = get_obstacle_data(image);
+        ObstacleDetection obsts = get_obstacle_data();
+        image = obsts.image;
+        auto &raw_obstacles = obsts.obstacles;
+        
         // step 2: wait for server to give current location
         // Note: If Scarlet changes size of Timestamp, be sure to update the
         // parsePacket paramaters below
@@ -156,11 +158,9 @@ void Controller::update() {
         std::cout << "Current state: ";
         switch(state) {
           case FOLLOW_PATH:
-            
             std::cout << "FOLLOW PATH" << std::endl;
             break;
           case SPIRAL:
-
             std::cout << "SPIRAL" << std::endl;
             break;
           case FOUND_BALL:

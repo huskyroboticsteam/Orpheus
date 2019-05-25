@@ -20,7 +20,7 @@
 #include "interface.hpp"
 #include "RobotEKF.hpp"
 
-#include "../../../ZedDepth/zed-depth.h"
+#include "../../../ZedDepth/zed_depth.h"
 
 std::default_random_engine generator;
 std::normal_distribution<double> distribution(0.0,3.0);

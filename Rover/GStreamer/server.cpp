@@ -27,8 +27,6 @@ construct_pipeline(const char * devpath, const char * input_type, int width, int
     {
         snprintf(output, 512, "intervideosrc ! video/x-raw, format=I420, width=%d, height=%d ! videoscale ! video/x-raw, format=I420, width=%d, height=%d ! rtpvrawpay name=pay0 pt=96", width, height, scaled_width, scaled_height);
     }
-
-
     return output;
 }
 

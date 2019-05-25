@@ -11,7 +11,7 @@
 #include <thread>
 #include "server.h"
 #include <glib.h>
-#include "zed-depth.h"
+#include "zed_depth.h"
 
 // parameters for zed
 sl::RuntimeParameters runtime_params;
