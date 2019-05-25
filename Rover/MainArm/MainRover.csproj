@@ -38,6 +38,7 @@
     <Reference Include="System.Half, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\HuskyRobotics.Scarlet.0.5.1\lib\System.Half.dll</HintPath>
     </Reference>
+    <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GetCSVData.cs" />
@@ -48,6 +49,8 @@
     <Compile Include="PacketID.cs" />
     <Compile Include="MotorControl.cs" />
     <Compile Include="UtilCan.cs" />
+    <Compile Include="ArmInterface.cs" />
+    <Compile Include="Enums.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

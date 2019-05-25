@@ -301,22 +301,28 @@ namespace MainRover
                 {
                     //TODO Maybe get rid of this since we are using filter from readSensorData
                     //readHeading = (float)((BNO055)Sensor).GetTrueHeading();
-                    var Readings = ((BNO055)Sensor).GetVector(BNO055.VectorType.VECTOR_MAGNETOMETER);
-
-                    double HeadingDirection = 0;
-
-                    if (Readings.Item2 > 0) { HeadingDirection = 90 - (Math.Atan2(Readings.Item1, Readings.Item2) * 180 / Math.PI); }
-                    else if (Readings.Item2 < 0) { HeadingDirection = 270 - (Math.Atan(Readings.Item1 / Readings.Item2) * 180 / Math.PI); }
-                    else if (Math.Abs(Readings.Item2) <= 1e-6 && Readings.Item1 < 0) { HeadingDirection = 180; }
-                    else if (Math.Abs(Readings.Item2) <= 1e-6 && Readings.Item1 > 0) { HeadingDirection = 0; }
-                    readHeading = (float)HeadingDirection % 360;
-
-                    readHeading -= 270.0f;
-                    if (readHeading < 0f)
+                    try
                     {
-                        readHeading += 360.0f;
-                    }
+                        var Readings = ((BNO055)Sensor).GetVector(BNO055.VectorType.VECTOR_MAGNETOMETER);
 
+                        double HeadingDirection = 0;
+
+                        if (Readings.Item2 > 0) { HeadingDirection = 90 - (Math.Atan2(Readings.Item1, Readings.Item2) * 180 / Math.PI); }
+                        else if (Readings.Item2 < 0) { HeadingDirection = 270 - (Math.Atan(Readings.Item1 / Readings.Item2) * 180 / Math.PI); }
+                        else if (Math.Abs(Readings.Item2) <= 1e-6 && Readings.Item1 < 0) { HeadingDirection = 180; }
+                        else if (Math.Abs(Readings.Item2) <= 1e-6 && Readings.Item1 > 0) { HeadingDirection = 0; }
+                        readHeading = (float)HeadingDirection % 360;
+
+                        readHeading -= 270.0f;
+                        if (readHeading < 0f)
+                        {
+                            readHeading += 360.0f;
+                        }
+                    }
+                    catch
+                    {
+                        Console.WriteLine("ERROR: Mag wire is loose or disconnected");
+                    }
 
                 }
             }
@@ -483,23 +489,30 @@ namespace MainRover
                 if (Sensor is BNO055)
                 {
                     //double direction = ((BNO055)Sensor).GetTrueHeading();
-                    var Readings = ((BNO055)Sensor).GetVector(BNO055.VectorType.VECTOR_MAGNETOMETER);
-                    double HeadingDirection = 0;
-
-                    if (Readings.Item2 > 0) { HeadingDirection = 90 - (Math.Atan2(Readings.Item1, Readings.Item2) * 180 / Math.PI); }
-                    else if (Readings.Item2 < 0) { HeadingDirection = 270 - (Math.Atan(Readings.Item1 / Readings.Item2) * 180 / Math.PI); }
-                    else if (Math.Abs(Readings.Item2) <= 1e-6 && Readings.Item1 < 0) { HeadingDirection = 180; }
-                    else if (Math.Abs(Readings.Item2) <= 1e-6 && Readings.Item1 > 0) { HeadingDirection = 0; }
-                    double direction = HeadingDirection % 360;
-                    direction -= 270.0;
-                    if (direction < 0)
+                    try
                     {
-                        direction += 360.0;
+                        var Readings = ((BNO055)Sensor).GetVector(BNO055.VectorType.VECTOR_MAGNETOMETER);
+                        double HeadingDirection = 0;
+
+                        if (Readings.Item2 > 0) { HeadingDirection = 90 - (Math.Atan2(Readings.Item1, Readings.Item2) * 180 / Math.PI); }
+                        else if (Readings.Item2 < 0) { HeadingDirection = 270 - (Math.Atan(Readings.Item1 / Readings.Item2) * 180 / Math.PI); }
+                        else if (Math.Abs(Readings.Item2) <= 1e-6 && Readings.Item1 < 0) { HeadingDirection = 180; }
+                        else if (Math.Abs(Readings.Item2) <= 1e-6 && Readings.Item1 > 0) { HeadingDirection = 0; }
+                        double direction = HeadingDirection % 360;
+                        direction -= 270.0;
+                        if (direction < 0)
+                        {
+                            direction += 360.0;
+                        }
+                        MagFilter.Feed(direction);
+                        Packet Pack = new Packet((byte)PacketID.DataMagnetometer, true);
+                        Pack.AppendData(UtilData.ToBytes(MagFilter.GetOutput()));
+                        Client.SendNow(Pack);
                     }
-                    MagFilter.Feed(direction);
-                    Packet Pack = new Packet((byte)PacketID.DataMagnetometer, true);
-                    Pack.AppendData(UtilData.ToBytes(MagFilter.GetOutput()));
-                    Client.SendNow(Pack);
+                    catch
+                    {
+                        Console.WriteLine("ERROR: Mag wire is loose or disconnected");
+                    }
                 }
             }
         }
