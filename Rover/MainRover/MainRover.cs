@@ -174,17 +174,21 @@ namespace MainRover
                     case DriveMode.BaseDrive:
                         ProcessBasePackets();
                         recieveList.Clear();
+                        OutA.SetOutput(0.0f);
                         break;
                     case DriveMode.toGPS:
                         ProcessPathPackets();
                         DrivePackets = new QueueBuffer();
+                        OutA.SetOutput(0.0f);
                         break;
                     case DriveMode.findTennisBall:
                         DrivePackets = new QueueBuffer();
+                        OutA.SetOutput(0.0f);
                         recieveList.Clear();
                         break;
                     case DriveMode.toTennisBall:
                         DrivePackets = new QueueBuffer();
+                        OutA.SetOutput(0.0f);
                         recieveList.Clear();
                         break;
                     case DriveMode.destination:
@@ -196,23 +200,7 @@ namespace MainRover
 
                         DrivePackets = new QueueBuffer();
                         recieveList.Clear();
-                        //Initialize IPWMOutput
-                        IPWMOutput OutA = PWMBBB.PWMDevice1.OutputA;
-                        OutA.SetFrequency(50);
-                        OutA.SetOutput(0.0f);
-                        OutA.SetEnabled(true);
-                        //Spinning Motor
-                        float t = 0.1f;
-                        while (t < .9f)
-                        {
-                            OutA.SetOutput(t);
-                            t += 0.0001f;
-                        }
-                        while (t > .1f)
-                        {
-                            OutA.SetOutput(t);
-                            t -= 0.0001f;
-                        }
+                        OutA.SetOutput(0.5f);
                         OutA.Dispose();
                         break;
                 }
@@ -276,12 +264,12 @@ namespace MainRover
                         }
                         break;
                     case PacketID.CameraRotation:
-                        if((sbyte)p.Data.Payload[1] > 0)
+                        if ((sbyte)p.Data.Payload[1] > 0 && ServoSpinner >= 0.05)
                         {
                             ServoSpinner -= 0.005f;
                             OutB.SetOutput(ServoSpinner);
                         }
-                        else if((sbyte)p.Data.Payload[1] < 0)
+                        else if((sbyte)p.Data.Payload[1] < 0 && ServoSpinner <= 0.95)
                         {
                             ServoSpinner += 0.005f;
                             OutB.SetOutput(ServoSpinner);
