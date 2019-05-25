@@ -11,9 +11,21 @@ before_build:
     
     $libFile = "libs.zip"
     
-    Invoke-WebRequest "https://students.washington.edu/uwrobots/libraries.zip" -OutFile $libFile
+    Invoke-WebRequest "https://github.com/huskyroboticsteam/BaseStationPreload/raw/master/GStreamer.zip" -OutFile $libFile
     
-    Expand-Archive -Path $libFile -DestinationPath "libraries"
+    Expand-Archive -Path $libFile -DestinationPath "gst"
+    
+    $pluginFile = "plugins.zip"
+    
+    Invoke-WebRequest "https://github.com/huskyroboticsteam/BaseStationPreload/raw/master/GStreamer_Plugins.zip" -OutFile $pluginFile
+    
+    Expand-Archive -Path $pluginFile -DestinationPath "lib"
+
+    $mapsFile = "maps.zip"
+
+    Invoke-WebRequest "https://github.com/huskyroboticsteam/BaseStationPreload/raw/master/Maps.zip" -OutFile $mapsFile 
+    
+    Expand-Archive -Path $mapsFile -DestinationPath "Images"
     
     nuget restore
 build:
@@ -21,9 +33,11 @@ build:
   verbosity: minimal
 after_build:
 - ps: >-
-    mkdir EntryPoint\bin\Release\lib
+    mv gst\* EntryPoint\bin\Release
 
-    mv libraries EntryPoint\bin\Release\lib
+    mv lib EntryPoint\bin\Release\lib
+
+    mv Images EntryPoint\bin\Release\Images
 
     cd EntryPoint\bin\Release
 
