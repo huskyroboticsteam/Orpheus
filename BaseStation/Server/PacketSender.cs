@@ -67,7 +67,7 @@ namespace HuskyRobotics.BaseStation.Server
         public static void SwitchMode(bool manual)
         {
             ManualMode = manual;
-            SendModeChange = false;
+            SendModeChange = true;
         }
 
         /// <summary>
