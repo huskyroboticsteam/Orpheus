@@ -171,6 +171,11 @@ namespace MainRover
                         break;
                     case DriveMode.destination:
                         Console.WriteLine("Currently in destination mode");
+                        //send notification to Base station UI to display
+                        Packet Pack = new Packet((byte)PacketID.ArrivalNotification, true);
+                        Pack.AppendData(UtilData.ToBytes(1));
+                        Client.SendNow(Pack);
+
                         DrivePackets = new QueueBuffer();
                         recieveList.Clear();
                         //Initialize IPWMOutput
@@ -501,6 +506,11 @@ namespace MainRover
             {
                 //Console.WriteLine("Looping");
                 //Console.WriteLine("Current mode: " + CurDriveMode);
+                string temp = Console.ReadLine();
+                Packet Pack = new Packet((byte)PacketID.ArrivalNotification, true);
+                Pack.AppendData(UtilData.ToBytes(1));
+                Client.SendNow(Pack);
+                /*
                 SendSensorData(count);
                 ProcessInstructions();
                 Thread.Sleep(50);
@@ -508,7 +518,7 @@ namespace MainRover
                 if (count == 101)
                 {
                     count = 0;
-                }
+                } */
             } while (!Quit);
         }
     }
