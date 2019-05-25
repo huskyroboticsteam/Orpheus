@@ -11,13 +11,13 @@ before_build:
     
     $libFile = "libs.zip"
     
-    Invoke-WebRequest "https://github.com/huskyroboticsteam/BaseStationPreload/blob/master/GStreamer.zip" -OutFile $libFile
+    Invoke-WebRequest "https://github.com/huskyroboticsteam/BaseStationPreload/raw/master/GStreamer.zip" -OutFile $libFile
     
     Expand-Archive -Path $libFile -DestinationPath "lib"
 
     $mapsFile = "maps.zip"
 
-    Invoke-WebRequest "https://github.com/huskyroboticsteam/BaseStationPreload/blob/master/Maps.zip" -OutFile $mapsFile 
+    Invoke-WebRequest "https://github.com/huskyroboticsteam/BaseStationPreload/raw/master/Maps.zip" -OutFile $mapsFile 
     
     Expand-Archive -Path $mapsFile -DestinationPath "Images"
     
