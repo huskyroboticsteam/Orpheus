@@ -218,9 +218,15 @@ namespace MainRover
                     case DriveMode.destination:
                         Console.WriteLine("Currently in destination mode");
                         //send notification to Base station UI to display
-                        Packet Pack = new Packet((byte)PacketID.ArrivalNotification, true);
+                        // Moved to pathing location
+                        /*Packet Pack = new Packet((byte)PacketID.ArrivalNotification, true);
                         Pack.AppendData(UtilData.ToBytes(1));
-                        Client.SendNow(Pack);
+                        Client.SendNow(Pack);*/
+
+                        MotorControl.SetRPM(0, 0);
+                        MotorControl.SetRPM(2, 0);
+                        MotorControl.SetRPM(1, 0);
+                        MotorControl.SetRPM(3, 0);
 
                         DrivePackets = new QueueBuffer();
                         recieveList.Clear();
@@ -425,6 +431,10 @@ namespace MainRover
                     {
                         CurDriveMode = DriveMode.destination;
                         Console.WriteLine("Recieved byte of 1");
+
+                        Packet Pack = new Packet((byte)PacketID.ArrivalNotification, true);
+                        Pack.AppendData(UtilData.ToBytes(1));
+                        Client.SendNow(Pack);
                     }
 
                     if (readHeading != -1)
