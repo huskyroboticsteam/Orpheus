@@ -29,6 +29,8 @@ namespace CanTester
             byte Speed = 0;
             byte Direction = 0;
             byte Mode = 0;
+            byte position = 0;
+            byte lasertoggle = 0;
 
             Console.WriteLine("CAN TESTER TOOL");
 
@@ -41,9 +43,9 @@ namespace CanTester
                     Console.Write("Enter Priority (true/false) [Previous " + Priority + " ]: ");
                     Priority = oldNew(Console.ReadLine(), Priority);
                     Console.Write("Enter Sender (byte) [Previous " + Sender + "]: ");
-                    Sender = oldNewHex(Console.ReadLine(), Sender);
+                    Sender = oldNew(Console.ReadLine(), Sender);
                     Console.Write("Enter Reciever (byte) [Previous " + Receiver + "]: ");
-                    Receiver = oldNewHex(Console.ReadLine(), Receiver);
+                    Receiver = oldNew(Console.ReadLine(), Receiver);
                     Console.Write("Enter DataID (byte) [Previous " + DataID + "]: ");
                     DataID = oldNew(Console.ReadLine(), DataID);
                     switch (DataID)
@@ -71,6 +73,14 @@ namespace CanTester
                             break;
                         case 0x16:
                             break;
+                        case 0x22:
+                            Console.Write("Enter in servo position [Previous " + position + "]: ");
+                            position = oldNew(Console.ReadLine(), position);
+                            break;
+                        case 0x24:
+                            Console.Write("Enter in laser toggle [Previous " + lasertoggle + "]: ");
+                            lasertoggle = oldNew(Console.ReadLine(), lasertoggle);
+                            break;
                         default:
                             Console.WriteLine("Unknown or unsupported data value");
                             break;
@@ -97,6 +107,12 @@ namespace CanTester
                                 break;
                             case 0x10:
                                 ModelReq(CANBBB.CANBus0, Priority, Sender, Receiver);
+                                break;
+                            case 0x22:
+                                ServoPos(CANBBB.CANBus0, Priority, Sender, Receiver, position);
+                                break;
+                            case 0x24:
+                                LaserToggle(CANBBB.CANBus0, Priority, Sender, Receiver, lasertoggle);
                                 break;
                             default:
                                 Console.WriteLine("Unknown or unsupported data value");
@@ -254,6 +270,22 @@ namespace CanTester
         {
             byte[] Payload = new byte[1];
             Payload[0] = 16;
+            CANBus.Write(ConstructCanID(Priority, Sender, Receiver), Payload);
+        }
+
+        public static void ServoPos(ICANBus CANBus, bool Priority, byte Sender, byte Receiver, byte position)
+        {
+            byte[] Payload = new byte[2];
+            Payload[0] = 0x22;
+            Payload[1] = position;
+            CANBus.Write(ConstructCanID(Priority, Sender, Receiver), Payload);
+        }
+
+        public static void LaserToggle(ICANBus CANBus, bool Priority, byte Sender, byte Receiver, byte toggle)
+        {
+            byte[] Payload = new byte[2];
+            Payload[0] = 0x24;
+            Payload[1] = toggle;
             CANBus.Write(ConstructCanID(Priority, Sender, Receiver), Payload);
         }
 
