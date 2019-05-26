@@ -421,7 +421,7 @@ namespace MainRover
                         desiredHeading = BitConverter.ToInt16(headingarray, 0);
 
                     }
-                    else if (recieveByte[0] == 1) //destination reached
+                    else if (recieveByte[0] != 0) //destination reached
                     {
                         CurDriveMode = DriveMode.destination;
                         Console.WriteLine("Recieved byte of 1");
