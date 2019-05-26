@@ -68,7 +68,7 @@ namespace Science
                         RoverMain.IOHandler.RailController.TargetLocationRefIsTop = false;
                         break;
                     case 0x04:
-                        RoverMain.IOHandler.RailController.Initialize();
+                        RoverMain.IOHandler.RailController.DoInit();
                         break;
                 }
             }
@@ -90,7 +90,7 @@ namespace Science
                 }
                 else if(Packet.Data.Payload[0] == 0x01) // Init
                 {
-                    RoverMain.IOHandler.TurntableController.Initialize();
+                    RoverMain.IOHandler.TurntableController.DoInit();
                 }
             }
         }

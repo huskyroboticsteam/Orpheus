@@ -56,7 +56,6 @@
             this.SampleTubeStatus = new DarkUI.Controls.DarkLabel();
             this.SampleTubeToggle = new DarkUI.Controls.DarkButton();
             this.darkLabel4 = new DarkUI.Controls.DarkLabel();
-            this.turntableDisplay1 = new Science_Base.TurntableDisplay();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
             this.DrillSpeed = new System.Windows.Forms.TrackBar();
@@ -79,7 +78,6 @@
             this.RailDistEntry = new DarkUI.Controls.DarkTextBox();
             this.darkLabel13 = new DarkUI.Controls.DarkLabel();
             this.darkLabel14 = new DarkUI.Controls.DarkLabel();
-            this.railDisplay1 = new Science_Base.RailDisplay();
             this.ChartClearRight = new DarkUI.Controls.DarkButton();
             this.ChartClearLeft = new DarkUI.Controls.DarkButton();
             this.ChartDataChooser = new System.Windows.Forms.ListView();
@@ -117,6 +115,8 @@
             this.SecTimer = new System.Windows.Forms.Timer(this.components);
             this.UIUpdate = new System.Windows.Forms.Timer(this.components);
             this.ScienceTooltip = new System.Windows.Forms.ToolTip(this.components);
+            this.turntableDisplay1 = new Science_Base.TurntableDisplay();
+            this.railDisplay1 = new Science_Base.RailDisplay();
             this.tableLayoutPanel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.Control.SuspendLayout();
@@ -442,6 +442,7 @@
             this.TTBGoTo3.TabIndex = 8;
             this.TTBGoTo3.Text = "S3";
             this.ScienceTooltip.SetToolTip(this.TTBGoTo3, "Moves the turntable to the sample #3 position.");
+            this.TTBGoTo3.Click += new System.EventHandler(this.TTBGoTo3_Click);
             // 
             // TTBGoTo2
             // 
@@ -454,6 +455,7 @@
             this.TTBGoTo2.TabIndex = 7;
             this.TTBGoTo2.Text = "S2";
             this.ScienceTooltip.SetToolTip(this.TTBGoTo2, "Moves the turntable to the sample #2 position.");
+            this.TTBGoTo2.Click += new System.EventHandler(this.TTBGoTo2_Click);
             // 
             // TTBGoTo1
             // 
@@ -466,6 +468,7 @@
             this.TTBGoTo1.TabIndex = 6;
             this.TTBGoTo1.Text = "S1";
             this.ScienceTooltip.SetToolTip(this.TTBGoTo1, "Moves the turntable to the sample #1 position.");
+            this.TTBGoTo1.Click += new System.EventHandler(this.TTBGoTo1_Click);
             // 
             // TTBGoHome
             // 
@@ -478,6 +481,7 @@
             this.TTBGoHome.TabIndex = 5;
             this.TTBGoHome.Text = "0";
             this.ScienceTooltip.SetToolTip(this.TTBGoHome, "Moves the turntable to the home position.");
+            this.TTBGoHome.Click += new System.EventHandler(this.TTBGoHome_Click);
             // 
             // SampleTubeStatus
             // 
@@ -515,19 +519,6 @@
             this.darkLabel4.TabIndex = 0;
             this.darkLabel4.Text = "Tube";
             this.darkLabel4.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            // 
-            // turntableDisplay1
-            // 
-            this.turntableDisplay1.Angle = 30;
-            this.tableLayoutPanel10.SetColumnSpan(this.turntableDisplay1, 4);
-            this.turntableDisplay1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.turntableDisplay1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.turntableDisplay1.InitStatus = ((byte)(0));
-            this.turntableDisplay1.Location = new System.Drawing.Point(82, 46);
-            this.turntableDisplay1.Name = "turntableDisplay1";
-            this.turntableDisplay1.Size = new System.Drawing.Size(153, 144);
-            this.turntableDisplay1.TabIndex = 10;
-            this.turntableDisplay1.Text = "turntableDisplay1";
             // 
             // groupBox2
             // 
@@ -861,21 +852,6 @@
             this.darkLabel14.TabIndex = 11;
             this.darkLabel14.Text = "?? mm/s";
             this.darkLabel14.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
-            // railDisplay1
-            // 
-            this.railDisplay1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.railDisplay1.DrillLocation = 75;
-            this.railDisplay1.ForeColor = System.Drawing.Color.Gainsboro;
-            this.railDisplay1.InitStatus = ((byte)(0));
-            this.railDisplay1.Location = new System.Drawing.Point(3, 56);
-            this.railDisplay1.Name = "railDisplay1";
-            this.tableLayoutPanel9.SetRowSpan(this.railDisplay1, 11);
-            this.railDisplay1.ShowDistanceBottom = false;
-            this.railDisplay1.ShowDistanceTop = false;
-            this.railDisplay1.Size = new System.Drawing.Size(89, 222);
-            this.railDisplay1.TabIndex = 12;
-            this.railDisplay1.Text = "railDisplay1";
             // 
             // ChartClearRight
             // 
@@ -1347,6 +1323,34 @@
             // 
             this.UIUpdate.Interval = 33;
             this.UIUpdate.Tick += new System.EventHandler(this.UIUpdate_Tick);
+            // 
+            // turntableDisplay1
+            // 
+            this.turntableDisplay1.Angle = 30;
+            this.tableLayoutPanel10.SetColumnSpan(this.turntableDisplay1, 4);
+            this.turntableDisplay1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.turntableDisplay1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.turntableDisplay1.InitStatus = ((byte)(0));
+            this.turntableDisplay1.Location = new System.Drawing.Point(82, 46);
+            this.turntableDisplay1.Name = "turntableDisplay1";
+            this.turntableDisplay1.Size = new System.Drawing.Size(153, 144);
+            this.turntableDisplay1.TabIndex = 10;
+            this.turntableDisplay1.Text = "turntableDisplay1";
+            // 
+            // railDisplay1
+            // 
+            this.railDisplay1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.railDisplay1.DrillLocation = 75;
+            this.railDisplay1.ForeColor = System.Drawing.Color.Gainsboro;
+            this.railDisplay1.InitStatus = ((byte)(0));
+            this.railDisplay1.Location = new System.Drawing.Point(3, 56);
+            this.railDisplay1.Name = "railDisplay1";
+            this.tableLayoutPanel9.SetRowSpan(this.railDisplay1, 11);
+            this.railDisplay1.ShowDistanceBottom = false;
+            this.railDisplay1.ShowDistanceTop = false;
+            this.railDisplay1.Size = new System.Drawing.Size(89, 222);
+            this.railDisplay1.TabIndex = 12;
+            this.railDisplay1.Text = "railDisplay1";
             // 
             // MainWindow
             // 

@@ -101,8 +101,10 @@ namespace Science.Systems
             }
         }
 
+        public void Initialize() { } // Don't initialize at startup.
+
         /// <summary> Prepares the rail for use by moving the motor all the way up to the top to find the zero position. </summary>
-        public void Initialize()
+        public void DoInit()
         {
             this.Initializing = true;
             

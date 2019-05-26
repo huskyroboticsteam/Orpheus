@@ -344,7 +344,7 @@ namespace Science_Base
 
         private void GoToTop_Click(object sender, EventArgs e)
         {
-            Science_Base.Controls.RailTargetChange(true, float.NaN);
+            Science_Base.Controls.RailTargetChange(true, float.NaN, this.ButtonWillDoRailInit);
         }
 
         private void GoToGround_Click(object sender, EventArgs e)
@@ -378,6 +378,8 @@ namespace Science_Base
             this.RailGoCustomBottom.Enabled = Enable;
         }
 
+        private bool ButtonWillDoRailInit = false;
+
         public void UpdateRail(float CurrentRailSpeed, float DistTop, float DistGround, float DistTarget, bool TargetTopRef, bool InitInProgress, bool InitDone)
         {
             Invoke((MethodInvoker) delegate
@@ -387,8 +389,26 @@ namespace Science_Base
                 if(InitDone) { this.railDisplay1.InitStatus = 2; }
                 else if(InitInProgress) { this.railDisplay1.InitStatus = 1; }
                 else { this.railDisplay1.InitStatus = 0; }
+                if(!InitDone) // User needs to start init
+                {
+                    this.RailGoGround.Enabled = false;
+                    this.RailDistEntry.Enabled = false;
+                    this.RailGoCustomBottom.Enabled = false;
+                    this.RailGoCustomTop.Enabled = false;
+                    this.ButtonWillDoRailInit = true;
+                }
+                else // Enable controls
+                {
+                    this.RailGoGround.Enabled = true;
+                    this.RailDistEntry.Enabled = true;
+                    this.RailGoCustomBottom.Enabled = true;
+                    this.RailGoCustomTop.Enabled = true;
+                    this.ButtonWillDoRailInit = false;
+                }
             });
         }
+
+        private bool ButtonWillDoTTBInit = false;
 
         public void UpdateTurntable(float CurrentPosition, bool InitInProgress, bool InitDone)
         {
@@ -398,6 +418,21 @@ namespace Science_Base
                 if (InitDone) { this.turntableDisplay1.InitStatus = 2; }
                 else if (InitInProgress) { this.turntableDisplay1.InitStatus = 1; }
                 else { this.turntableDisplay1.InitStatus = 0; }
+
+                if (!InitDone) // User needs to start init
+                {
+                    this.TTBGoTo1.Enabled = false;
+                    this.TTBGoTo2.Enabled = false;
+                    this.TTBGoTo3.Enabled = false;
+                    this.ButtonWillDoTTBInit = true;
+                }
+                else // Enable controls
+                {
+                    this.TTBGoTo1.Enabled = true;
+                    this.TTBGoTo2.Enabled = true;
+                    this.TTBGoTo3.Enabled = true;
+                    this.ButtonWillDoTTBInit = false;
+                }
             });
         }
 
@@ -409,5 +444,24 @@ namespace Science_Base
             });
         }
 
+        private void TTBGoHome_Click(object sender, EventArgs e)
+        {
+            Science_Base.Controls.TTBTargetChange(0, this.ButtonWillDoTTBInit);
+        }
+
+        private void TTBGoTo1_Click(object sender, EventArgs e)
+        {
+            Science_Base.Controls.TTBTargetChange(30);
+        }
+
+        private void TTBGoTo2_Click(object sender, EventArgs e)
+        {
+            Science_Base.Controls.TTBTargetChange(90);
+        }
+
+        private void TTBGoTo3_Click(object sender, EventArgs e)
+        {
+            Science_Base.Controls.TTBTargetChange(150);
+        }
     }
 }

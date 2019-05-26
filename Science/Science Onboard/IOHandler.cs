@@ -58,10 +58,10 @@ namespace Science
             this.DAC = new MAX571x(this.SPI, CS_DAC, MAX571x.Resolution.BitCount12, MAX571x.VoltageReferenceMode.Reference2V500);
             this.DAC.TraceLogging = true;
 
-            IAnalogueOut RailMotorDAC = this.DAC.Outputs[1];
+            IAnalogueOut RailMotorDAC = this.DAC.Outputs[3];
             AnalogueOutTransform RailTransform = new AnalogueOutTransform(RailMotorDAC, (range => range / 2.5), (val => val * 2.5));
             LTC6992 RailMotorPWM = new LTC6992(RailTransform);
-            IDigitalOut DirectionRail = this.IOExpander.Outputs[9];
+            IDigitalOut DirectionRail = this.IOExpander.Outputs[11];
             IDigitalOut CS_RailEncoder = this.IOExpander.Outputs[0];
 
             IAnalogueOut DrillMotorDAC = this.DAC.Outputs[0];
@@ -72,7 +72,7 @@ namespace Science
             IAnalogueOut TurntableMotorDAC = this.DAC.Outputs[2];
             AnalogueOutTransform TurntableTransform = new AnalogueOutTransform(TurntableMotorDAC, (range => range / 2.5), (val => val * 2.5));
             LTC6992 TurntableMotorPWM = new LTC6992(TurntableTransform);
-            IDigitalOut DirectionTurntable = this.IOExpander.Outputs[2];
+            IDigitalOut DirectionTurntable = this.IOExpander.Outputs[10];
 
             //IAnalogueOut SpareMotorDAC = this.DAC.Outputs[3];
             //AnalogueOutTransform SpareTransform = new AnalogueOutTransform(SpareMotorDAC, (range => range / 2.5), (val => val * 2.5));
@@ -81,11 +81,11 @@ namespace Science
 
             MotorEnable.SetOutput(true);
 
-            this.RailController = new Rail(RailMotorPWM, DirectionRail, new DigitalInPi(12), this.SPI, this.IOExpander.Outputs[0], this.I2C, null) { TraceLogging = true };
-            this.DrillController = new Drill(DrillMotorPWM, DirectionDrill, this.PWMGenServo.Outputs[4]);
+            this.RailController = new Rail(RailMotorPWM, DirectionRail, new DigitalInPi(12), this.SPI, this.IOExpander.Outputs[0], this.I2C, null);// { TraceLogging = true };
+            this.DrillController = new Drill(DrillMotorPWM, DirectionDrill, this.PWMGenServo.Outputs[0]);
             this.LEDController = new LEDs(this.PWMGenServo.Outputs, null);//EnablePWM);
             //this.LEDController.TraceLogging = true;
-            this.TurntableController = new Turntable(TurntableMotorPWM, DirectionTurntable, this.SPI, this.IOExpander.Outputs[1], new DigitalInPi(16));
+            this.TurntableController = new Turntable(TurntableMotorPWM, DirectionTurntable, this.SPI, this.IOExpander.Outputs[1], new DigitalInPi(18));
             this.AuxSensors = new AuxSensors(this.SPI, this.I2C) { TraceLogging = false };
             this.SysSensors = new SysSensors(this.I2C, this.SPI);
             //this.SysSensors.TraceLogging = true; // TODO: Turn this off.

@@ -57,6 +57,7 @@ namespace Science.Systems
             
             this.Atmospheric.ChangeMode(BME280.Mode.NORMAL);
             this.AirQuality = new iAQCore(this.I2C1);
+            this.AirQuality.UpdateState();
             this.SoilMoisture = new VH400(this.ADC.Inputs[1]);
 
             this.TakeReadings = true;
@@ -71,7 +72,7 @@ namespace Science.Systems
                 DateTime SampleTime = DateTime.Now;
                 this.UVLight.UpdateState();
                 this.Atmospheric.UpdateState();
-                this.AirQuality.UpdateState();
+                //this.AirQuality.UpdateState();
                 this.SoilMoisture.UpdateState();
                 
                 byte[] Data = UtilData.ToBytes(SampleTime.Ticks)

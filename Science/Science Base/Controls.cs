@@ -27,13 +27,21 @@ namespace Science_Base
             SendRailSpdPacket();
         }
 
-        public static void RailTargetChange(bool FromTop, float TargetDist)
+        public static void RailTargetChange(bool FromTop, float TargetDist, bool DoInitInstead = false)
         {
             byte Command;
-            if (FromTop && float.IsNaN(TargetDist)) { Command = 0x00; }
+            if (DoInitInstead) { Command = 0x04; }
+            else if (FromTop && float.IsNaN(TargetDist)) { Command = 0x00; }
             else if (!FromTop && float.IsNaN(TargetDist)) { Command = 0x01; }
             else { Command = (byte)(FromTop ? 0x02 : 0x03); }
             Packet Packet = new Packet(new Message(ScienceConstants.Packets.RAIL_TARGET_SET, new byte[] { Command }.Concat(UtilData.ToBytes(TargetDist)).ToArray()), false, ScienceConstants.CLIENT_NAME);
+            Server.Send(Packet);
+        }
+
+        public static void TTBTargetChange(int TargetAngle, bool DoInitInstead = false)
+        {
+            byte Command = (byte)(DoInitInstead ? 0x01 : 0x00);
+            Packet Packet = new Packet(new Message(ScienceConstants.Packets.TTB_SET, new byte[] { Command }.Concat(UtilData.ToBytes(TargetAngle)).ToArray()), false, ScienceConstants.CLIENT_NAME);
             Server.Send(Packet);
         }
 

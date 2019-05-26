@@ -21,7 +21,7 @@ namespace Science.Systems
 
         private const float MOTOR_MAX_SPEED = 0.99F;
         private const int INIT_TIMEOUT = 5000;
-        private const float ENCODER_DEG_PER_TICK = 0.935F; // TODO: Update this value.
+        private const float ENCODER_DEG_PER_TICK = -4.3F; // TODO: Update this value.
         private const bool ENABLE_VELOCITY_TRACKING = false;
 
         private bool InitDone = false;
@@ -37,7 +37,7 @@ namespace Science.Systems
         public Turntable(IPWMOutput MotorPWM, IDigitalOut MotorDir, ISPIBus SPI, IDigitalOut CS_Encoder, IDigitalIn LimitSw)
         {
             this.MotorCtrl = new PololuHPMDG2(MotorPWM, MotorDir, MOTOR_MAX_SPEED);
-            this.Limit = new LimitSwitch(new SoftwareInterrupt(LimitSw));
+            this.Limit = new LimitSwitch(new SoftwareInterrupt(LimitSw) { TraceLogging = true});
             this.Encoder = new LS7366R(SPI, CS_Encoder);
             LS7366R.Configuration Config = LS7366R.DefaultConfig;
             Config.QuadMode = LS7366R.QuadMode.X4_QUAD;
@@ -71,8 +71,11 @@ namespace Science.Systems
             }
         }
 
-        public void Initialize()
+        public void Initialize() { } // Don't initialize at startup.
+
+        public void DoInit()
         {
+            Log.Output(Log.Severity.INFO, Log.Source.SUBSYSTEM, "Starting turntable initialization.");
             this.Initializing = true;
             
             System.Timers.Timer TimeoutTrigger = new System.Timers.Timer() { Interval = (ENABLE_VELOCITY_TRACKING ? 30000 : INIT_TIMEOUT), AutoReset = false };
@@ -89,7 +92,7 @@ namespace Science.Systems
                 this.Angle = 0;
                 return;
             }
-            this.MotorCtrl.SetSpeed(0.2F); // TODO: Check polarity
+            this.MotorCtrl.SetSpeed(0.2F);
             this.MotorCtrl.SetEnabled(true);
             // Either the limit switch will be toggled, or the timeout event will happen after this.
         }
@@ -107,6 +110,9 @@ namespace Science.Systems
             this.Encoder.UpdateState();
             this.Angle += ((this.LastEncoderCount - this.Encoder.Count) * ENCODER_DEG_PER_TICK);
             this.LastEncoderCount = this.Encoder.Count;
+            if (this.TargetAngle < 0) { this.TargetAngle = 0; }
+
+            Log.Trace(this, "TTB @ " + this.Angle + ", target " + this.TargetAngle + ", encoder " + this.Encoder.Count);
 
             try
             {
@@ -126,13 +132,11 @@ namespace Science.Systems
 
             if (!this.InitDone) { return; } // Don't try to move the turntable if we don't know where we are.
 
-            float SpeedUsed = 0.6F;
+            float SpeedUsed = 0.2F;
             if (Math.Abs(this.TargetAngle - this.Angle) < 2) { SpeedUsed = 0; } // We are close enough, stop.
-            else if (Math.Abs(this.TargetAngle - this.Angle) < 15) { SpeedUsed = 0.4F; } // We are close, go slower.
+            else if (Math.Abs(this.TargetAngle - this.Angle) < 20) { SpeedUsed /= 2; } // We are close, go slower.
 
-            if (this.TargetAngle > this.Angle) { SpeedUsed *= -1; } // TODO: Determine correct direction.
-
-            if (this.Angle <= 0) { SpeedUsed = 0; } // We are at the end, don't keep going.
+            if (this.TargetAngle > this.Angle) { SpeedUsed *= -1; }
 
             this.MotorCtrl.SetSpeed(SpeedUsed);
         }

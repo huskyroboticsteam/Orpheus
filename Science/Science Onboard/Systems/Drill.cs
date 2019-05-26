@@ -8,6 +8,7 @@ using Scarlet.Components.Sensors;
 using Scarlet.IO;
 using Scarlet.Utilities;
 using Science.Library;
+using static Scarlet.Components.Outputs.PCA9685;
 
 namespace Science.Systems
 {
@@ -38,6 +39,7 @@ namespace Science.Systems
         {
             this.Out = MotorPWM;
             this.MotorCtrl = new PololuHPMDG2(MotorPWM, MotorDir, MOTOR_MAX_SPEED);
+            ((PWMOutputPCA9685)ServoPWM).SetPolarity(true);
             this.DoorServo = new Servo(ServoPWM) { TraceLogging = true };
             this.DoorServo.SetEnabled(true);
         }
