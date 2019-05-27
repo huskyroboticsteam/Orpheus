@@ -51,7 +51,7 @@ namespace Science.Systems
             //Config.UseLongSample = true;
             this.ADC.Configure(Config);
 
-            this.UVLight = new VEML6075(this.I2C1) { TraceLogging = true };
+            this.UVLight = new VEML6075(this.I2C1) { TraceLogging = false };
             this.Atmospheric = new BME280(this.I2C1);
             this.Atmospheric.Configure();
             

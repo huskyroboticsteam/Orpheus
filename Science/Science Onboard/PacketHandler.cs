@@ -15,6 +15,7 @@ namespace Science
             Parse.SetParseHandler(ScienceConstants.Packets.RAIL_TARGET_SET, ParseRailTargetPacket);
             Parse.SetParseHandler(ScienceConstants.Packets.RAIL_SPEED_SET, ParseRailSpeedPacket);
             Parse.SetParseHandler(ScienceConstants.Packets.TTB_SET, ParseTurntableTargetPacket);
+            Parse.SetParseHandler(ScienceConstants.Packets.MICROSCOPE, ParseMicroscopePacket);
         }
 
         public static void ParseDrillSpeedPacket(Packet Packet)
@@ -91,6 +92,25 @@ namespace Science
                 else if(Packet.Data.Payload[0] == 0x01) // Init
                 {
                     RoverMain.IOHandler.TurntableController.DoInit();
+                }
+            }
+        }
+
+        public static void ParseMicroscopePacket(Packet Packet)
+        {
+            if(CheckPacket(Packet, 5, "Microscope Control"))
+            {
+                if (Packet.Data.Payload[0] == 0x00) // Take a picture
+                {
+                    RoverMain.IOHandler.Microscope.TakePicture(false);
+                }
+                else if (Packet.Data.Payload[0] == 0x01) // Take a picture with autofocus
+                {
+                    RoverMain.IOHandler.Microscope.TakePicture(true);
+                }
+                else if(Packet.Data.Payload[0] == 0x02) // Move the servo manually
+                {
+                    RoverMain.IOHandler.Microscope.MoveServo(UtilData.ToInt(UtilMain.SubArray(Packet.Data.Payload, 1, 4)));
                 }
             }
         }

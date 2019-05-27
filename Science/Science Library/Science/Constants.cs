@@ -17,6 +17,7 @@
             public const byte RAIL_TARGET_SET = 0xA8;
             public const byte RAIL_SPEED_SET = 0xA9;
             public const byte TTB_SET = 0xB0;
+            public const byte MICROSCOPE = 0xB1;
             #endregion
 
             #region Rover to Base (0xDC through 0xE4)

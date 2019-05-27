@@ -25,6 +25,7 @@ namespace Science
         public readonly AuxSensors AuxSensors;
         public readonly SysSensors SysSensors;
         public readonly MusicPlayer Music;
+        public readonly Microscope Microscope;
 
         private readonly II2CBus I2C;
         private readonly ISPIBus SPI;
@@ -88,10 +89,11 @@ namespace Science
             this.AuxSensors = new AuxSensors(this.SPI, this.I2C) { TraceLogging = false };
             this.SysSensors = new SysSensors(this.I2C, this.SPI) { TraceLogging = false };
             this.Music = new MusicPlayer();
+            this.Microscope = new Microscope(this.PWMGenServo.Outputs[1]) { TraceLogging = true };
 
-            this.InitProcedure = new ISubsystem[] { this.RailController, this.DrillController, this.TurntableController, this.LEDController, this.AuxSensors, this.SysSensors, this.Music };
-            this.EStopProcedure = new ISubsystem[] { this.Music, this.RailController, this.DrillController, this.TurntableController, this.LEDController, this.AuxSensors, this.SysSensors };
-            this.UpdateProcedure = new ISubsystem[] { this.RailController, this.DrillController, this.TurntableController, this.LEDController, this.AuxSensors, this.SysSensors };
+            this.InitProcedure = new ISubsystem[] { this.RailController, this.DrillController, this.TurntableController, this.LEDController, this.AuxSensors, this.SysSensors, this.Music, this.Microscope };
+            this.EStopProcedure = new ISubsystem[] { this.Microscope, this.Music, this.RailController, this.DrillController, this.TurntableController, this.LEDController, this.AuxSensors, this.SysSensors };
+            this.UpdateProcedure = new ISubsystem[] { this.RailController, this.DrillController, this.TurntableController, this.LEDController, this.AuxSensors, this.SysSensors, this.Microscope };
             if (this.EStopProcedure.Length < this.InitProcedure.Length || this.EStopProcedure.Length < this.UpdateProcedure.Length) { throw new Exception("A system is registered for init or updates, but not for emergency stop. For safety reasons, this is not permitted."); }
         }
 

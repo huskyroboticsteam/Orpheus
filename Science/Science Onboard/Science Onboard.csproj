@@ -46,6 +46,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -58,6 +59,7 @@
     <Compile Include="Systems\AuxSensors.cs" />
     <Compile Include="Systems\Drill.cs" />
     <Compile Include="Systems\LEDs.cs" />
+    <Compile Include="Systems\Microscope.cs" />
     <Compile Include="Systems\MusicPlayer.cs" />
     <Compile Include="Systems\Rail.cs" />
     <Compile Include="PacketHandler.cs" />

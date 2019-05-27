@@ -73,5 +73,13 @@ namespace Science_Base
             if (Server.GetClients().Contains(ScienceConstants.CLIENT_NAME)) { Server.Send(Packet); }
         }
 
+        internal static void ActivateMicroscope(byte Operation, int Angle)
+        {
+            Packet Packet = new Packet(new Message(ScienceConstants.Packets.MICROSCOPE, new byte[]
+            {
+                Operation
+            }.Concat(UtilData.ToBytes(Angle)).ToArray()), false, ScienceConstants.CLIENT_NAME);
+            if (Server.GetClients().Contains(ScienceConstants.CLIENT_NAME)) { Server.Send(Packet); }
+        }
     }
 }

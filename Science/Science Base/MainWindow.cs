@@ -481,5 +481,14 @@ namespace Science_Base
             Science_Base.Controls.TTBTargetChange((int)(this.DebugBar.Value * 1.5F));
         }
 
+        private void StartMicroscope_Click(object sender, EventArgs e)
+        {
+            Science_Base.Controls.ActivateMicroscope((byte)(this.UseAutofocus.Checked ? 0x01 : 0x00), 0);
+        }
+
+        private void MicroscopeFocusBar_Scroll(object sender, EventArgs e)
+        {
+            Science_Base.Controls.ActivateMicroscope(0x02, this.MicroscopeFocusBar.Value);
+        }
     }
 }
