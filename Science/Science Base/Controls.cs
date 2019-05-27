@@ -45,12 +45,12 @@ namespace Science_Base
             Server.Send(Packet);
         }
 
-        public static void SampleDoorChange(bool NewValue)
+        public static void SampleDoorChange(int NewValue)
         {
             Packet Packet = new Packet(new Message(ScienceConstants.Packets.SERVO_SET, new byte[]
             {
                 0x00,
-            }.Concat(UtilData.ToBytes((int)(NewValue ? 0x01 : 0x00))).ToArray()), false, ScienceConstants.CLIENT_NAME);
+            }.Concat(UtilData.ToBytes(NewValue)).ToArray()), false, ScienceConstants.CLIENT_NAME);
             Server.Send(Packet);
         }
 

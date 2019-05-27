@@ -27,7 +27,7 @@ namespace Science_Base
             Server.Start(ScienceConstants.DEFAULT_PORT_TCP, ScienceConstants.DEFAULT_PORT_UDP, OperationPeriod:5);
             Server.ClientConnectionChange += Window.UpdateClientList;
             DataHandler.Start();
-            Microscope Mic = new Microscope();
+            //Microscope Mic = new Microscope();
             Application.Run(Window);
         }
     }

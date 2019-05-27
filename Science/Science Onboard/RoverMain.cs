@@ -23,7 +23,7 @@ namespace Science
             ParseArgs(Args);
             StateStore.Start(ScienceConstants.CLIENT_NAME);
             Log.SetGlobalOutputLevel(LogLevel);
-            //Log.SetSingleOutputLevel(Log.Source.NETWORK, Log.Severity.DEBUG);
+            Log.SetSingleOutputLevel(Log.Source.NETWORK, Log.Severity.DEBUG);
             Log.ErrorCodes = ScienceErrors.ERROR_CODES;
             Log.SystemNames = ScienceErrors.SYSTEMS;
             Log.Destination = Log.WriteDestination.ALL;
@@ -44,7 +44,7 @@ namespace Science
             while (!Console.KeyAvailable)
             {
                 IOHandler.UpdateStates();
-                Thread.Sleep(20);
+                Thread.Sleep(50);
             }
             IOHandler.Exit();
             Client.Stop();

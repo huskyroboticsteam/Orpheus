@@ -37,7 +37,7 @@ namespace Science_Base
         public static DataSeries<float> DrillCurrent = new DataSeries<float>("Drill Current", "Drill Current (A)");
         public static DataSeries<float> RailCurrent = new DataSeries<float>("Rail Current", "Rail Current (A)");
         public static DataSeries<float> TTBCurrent = new DataSeries<float>("Turntable Current", "Turntable Current (A)");
-        public static DataSeries<float> SpareCurrent = new DataSeries<float>("Spare Current", "Spare Motor Current (A)");
+        //public static DataSeries<float> SpareCurrent = new DataSeries<float>("Spare Current", "Spare Motor Current (A)");
 
         // Garbage for testing
         public static DataSeries<int> RandomData = new DataSeries<int>("Random", "Rubbish");
@@ -60,7 +60,7 @@ namespace Science_Base
         {
             return new object[]
             {
-                SupplyVoltage, SystemCurrent, DrillCurrent, RailCurrent, TTBCurrent, SpareCurrent,
+                SupplyVoltage, SystemCurrent, DrillCurrent, RailCurrent, TTBCurrent,// SpareCurrent,
                 UV, AirCO2, AirTVOC, AirTemp, AirHumidity, AirPressure, SoilMoisture,
                 RailGroundDistance, RailTopDistance, RailVelocity,
                 TTBPosition,
@@ -169,11 +169,11 @@ namespace Science_Base
             SupplyVoltage.Data.Add(new Datum<float>(Time, SupplyV));
             SystemCurrent.Data.Add(new Datum<float>(Time, SysA));
             DrillCurrent.Data.Add(new Datum<float>(Time, DrillA));
-            RailCurrent.Data.Add(new Datum<float>(Time, RailA));
+            RailCurrent.Data.Add(new Datum<float>(Time, SpareA));
             TTBCurrent.Data.Add(new Datum<float>(Time, TTBA));
-            SpareCurrent.Data.Add(new Datum<float>(Time, SpareA));
+            //SpareCurrent.Data.Add(new Datum<float>(Time, RailA));
 
-            BaseMain.Window.UpdateGauges(SupplyV, SysA, DrillA, RailA);
+            BaseMain.Window.UpdateGauges(SupplyV, SysA, DrillA, SpareA);
         }
 
         private static DateTime ExtractTime(Packet Packet) => new DateTime(UtilData.ToLong(UtilMain.SubArray(Packet.Data.Payload, 0, 8))).Add(ClientOffset);

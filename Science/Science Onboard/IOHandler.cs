@@ -81,7 +81,7 @@ namespace Science
 
             MotorEnable.SetOutput(true);
 
-            this.RailController = new Rail(RailMotorPWM, DirectionRail, new DigitalInPi(12), this.SPI, this.IOExpander.Outputs[0], this.I2C, null);// { TraceLogging = true };
+            this.RailController = new Rail(RailMotorPWM, DirectionRail, new DigitalInPi(12), this.SPI, this.IOExpander.Outputs[0], this.I2C, null) { TraceLogging = true };
             this.DrillController = new Drill(DrillMotorPWM, DirectionDrill, this.PWMGenServo.Outputs[0]);
             this.LEDController = new LEDs(this.PWMGenServo.Outputs, null);//EnablePWM);
             //this.LEDController.TraceLogging = true;

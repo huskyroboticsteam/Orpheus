@@ -338,8 +338,8 @@ namespace Science_Base
         private void SampleTubeToggle_Click(object sender, EventArgs e)
         {
             Science_Base.Controls.SampleDoorState = !Science_Base.Controls.SampleDoorState;
-            Science_Base.Controls.SampleDoorChange(Science_Base.Controls.SampleDoorState);
-            this.SampleTubeStatus.Text = (Science_Base.Controls.SampleDoorState ? "Open" : "Closed");
+            Science_Base.Controls.SampleDoorChange(Science_Base.Controls.SampleDoorState ? 180 : 50);
+            this.SampleTubeStatus.Text = (Science_Base.Controls.SampleDoorState ? "Opening" : "Closing");
         }
 
         private void GoToTop_Click(object sender, EventArgs e)
@@ -431,7 +431,7 @@ namespace Science_Base
                     this.TTBGoTo1.Enabled = true;
                     this.TTBGoTo2.Enabled = true;
                     this.TTBGoTo3.Enabled = true;
-                    this.ButtonWillDoTTBInit = false;
+                    this.ButtonWillDoTTBInit = true; // Yes, this is intended.
                 }
             });
         }
@@ -462,6 +462,18 @@ namespace Science_Base
         private void TTBGoTo3_Click(object sender, EventArgs e)
         {
             Science_Base.Controls.TTBTargetChange(150);
+        }
+
+        private void DebugBar_Scroll(object sender, EventArgs e)
+        {
+            // Ooh, spooky.
+            //Science_Base.Controls.SampleDoorChange((int)(this.DebugBar.Value * 3.6F));
+        }
+
+        private void DebugShipButton_Click(object sender, EventArgs e)
+        {
+            // Ooh, spooky.
+            Science_Base.Controls.TTBTargetChange((int)(this.DebugBar.Value * 1.5F));
         }
     }
 }

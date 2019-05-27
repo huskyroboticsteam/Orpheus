@@ -33,7 +33,7 @@ namespace Science
             {
                 if(Packet.Data.Payload[0] == 0x00) // Sample Door
                 {
-                    RoverMain.IOHandler.DrillController.DoorOpen = (UtilData.ToInt(UtilMain.SubArray(Packet.Data.Payload, 1, 4)) == 1); // TODO: See if this is correct.
+                    RoverMain.IOHandler.DrillController.SetDoorPos(UtilData.ToInt(UtilMain.SubArray(Packet.Data.Payload, 1, 4)));
                 }
             }
         }

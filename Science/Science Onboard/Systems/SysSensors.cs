@@ -69,7 +69,7 @@ namespace Science.Systems
 
                 double RailA = this.RailCurrent.GetShuntVoltage();
 
-                double TurntableA = this.DrillCurrent.GetCurrent();
+                double TurntableA = this.TurntableCurrent.GetCurrent();
 
                 double SpareMotorA = this.SpareMotorCurrent.GetCurrent();
 

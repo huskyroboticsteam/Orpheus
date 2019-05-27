@@ -115,8 +115,12 @@
             this.SecTimer = new System.Windows.Forms.Timer(this.components);
             this.UIUpdate = new System.Windows.Forms.Timer(this.components);
             this.ScienceTooltip = new System.Windows.Forms.ToolTip(this.components);
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.DebugBar = new System.Windows.Forms.TrackBar();
             this.turntableDisplay1 = new Science_Base.TurntableDisplay();
             this.railDisplay1 = new Science_Base.RailDisplay();
+            this.tableLayoutPanel11 = new System.Windows.Forms.TableLayoutPanel();
+            this.DebugShipButton = new DarkUI.Controls.DarkButton();
             this.tableLayoutPanel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.Control.SuspendLayout();
@@ -143,6 +147,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.StatusImgNetwork)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.StatusImgPower)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.StatusImgSystem)).BeginInit();
+            this.groupBox5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.DebugBar)).BeginInit();
+            this.tableLayoutPanel11.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -936,6 +943,7 @@
             this.DebugList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.DebugList.Controls.Add(this.PacketGenBox, 0, 0);
             this.DebugList.Controls.Add(this.groupBox1, 0, 1);
+            this.DebugList.Controls.Add(this.groupBox5, 0, 2);
             this.DebugList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.DebugList.Location = new System.Drawing.Point(0, 0);
             this.DebugList.Margin = new System.Windows.Forms.Padding(0);
@@ -1324,6 +1332,33 @@
             this.UIUpdate.Interval = 33;
             this.UIUpdate.Tick += new System.EventHandler(this.UIUpdate_Tick);
             // 
+            // groupBox5
+            // 
+            this.groupBox5.Controls.Add(this.tableLayoutPanel11);
+            this.groupBox5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox5.ForeColor = System.Drawing.Color.Gainsboro;
+            this.groupBox5.Location = new System.Drawing.Point(3, 335);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(994, 160);
+            this.groupBox5.TabIndex = 3;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "Debug Slider";
+            // 
+            // DebugBar
+            // 
+            this.DebugBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanel11.SetColumnSpan(this.DebugBar, 4);
+            this.DebugBar.Location = new System.Drawing.Point(3, 10);
+            this.DebugBar.Margin = new System.Windows.Forms.Padding(3, 10, 3, 3);
+            this.DebugBar.Maximum = 100;
+            this.DebugBar.Name = "DebugBar";
+            this.DebugBar.Size = new System.Drawing.Size(982, 45);
+            this.DebugBar.TabIndex = 0;
+            this.DebugBar.TickFrequency = 5;
+            this.ScienceTooltip.SetToolTip(this.DebugBar, "Magic debugging slider. Don\'t use if you don\'t know what it does!");
+            this.DebugBar.Scroll += new System.EventHandler(this.DebugBar_Scroll);
+            // 
             // turntableDisplay1
             // 
             this.turntableDisplay1.Angle = 30;
@@ -1351,6 +1386,36 @@
             this.railDisplay1.Size = new System.Drawing.Size(89, 222);
             this.railDisplay1.TabIndex = 12;
             this.railDisplay1.Text = "railDisplay1";
+            // 
+            // tableLayoutPanel11
+            // 
+            this.tableLayoutPanel11.ColumnCount = 4;
+            this.tableLayoutPanel11.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel11.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel11.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel11.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel11.Controls.Add(this.DebugBar, 0, 0);
+            this.tableLayoutPanel11.Controls.Add(this.DebugShipButton, 3, 1);
+            this.tableLayoutPanel11.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel11.Location = new System.Drawing.Point(3, 16);
+            this.tableLayoutPanel11.Name = "tableLayoutPanel11";
+            this.tableLayoutPanel11.RowCount = 2;
+            this.tableLayoutPanel11.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel11.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tableLayoutPanel11.Size = new System.Drawing.Size(988, 141);
+            this.tableLayoutPanel11.TabIndex = 0;
+            // 
+            // DebugShipButton
+            // 
+            this.DebugShipButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.DebugShipButton.Location = new System.Drawing.Point(744, 114);
+            this.DebugShipButton.Name = "DebugShipButton";
+            this.DebugShipButton.Padding = new System.Windows.Forms.Padding(5);
+            this.DebugShipButton.Size = new System.Drawing.Size(241, 24);
+            this.DebugShipButton.TabIndex = 1;
+            this.DebugShipButton.Text = "SHIP IT";
+            this.ScienceTooltip.SetToolTip(this.DebugShipButton, "Definitely don\'t click this one if you don\'t know what you are doing.");
+            this.DebugShipButton.Click += new System.EventHandler(this.DebugShipButton_Click);
             // 
             // MainWindow
             // 
@@ -1396,6 +1461,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.StatusImgNetwork)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.StatusImgPower)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.StatusImgSystem)).EndInit();
+            this.groupBox5.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.DebugBar)).EndInit();
+            this.tableLayoutPanel11.ResumeLayout(false);
+            this.tableLayoutPanel11.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1489,5 +1558,9 @@
         private DarkUI.Controls.DarkButton TTBGoHome;
         private TurntableDisplay turntableDisplay1;
         private System.Windows.Forms.ToolTip ScienceTooltip;
+        private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.TrackBar DebugBar;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel11;
+        private DarkUI.Controls.DarkButton DebugShipButton;
     }
 }

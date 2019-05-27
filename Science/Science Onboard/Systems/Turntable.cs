@@ -64,7 +64,7 @@ namespace Science.Systems
             }
             else if (Event is LimitSwitchToggle && ((LimitSwitchToggle)Event).CurrentState && !this.Initializing) // We hit the end during operation.
             {
-                this.MotorCtrl.SetEnabled(false); // Immediately stop.
+                this.MotorCtrl.SetSpeed(0);
                 this.Angle = 0;
                 this.TargetAngle = 0;
                 Log.Output(Log.Severity.WARNING, Log.Source.MOTORS, "Turntable motor hit limit switch and was stopped for safety.");
@@ -82,6 +82,7 @@ namespace Science.Systems
             TimeoutTrigger.Elapsed += this.EventTriggered;
             TimeoutTrigger.Enabled = true;
             this.Encoder.UpdateState();
+            this.TargetAngle = 0;
             this.LastEncoderCount = this.Encoder.Count;
             if (this.Limit.State) // We are already at the top, nothing needs to be done.
             {
@@ -112,7 +113,7 @@ namespace Science.Systems
             this.LastEncoderCount = this.Encoder.Count;
             if (this.TargetAngle < 0) { this.TargetAngle = 0; }
 
-            Log.Trace(this, "TTB @ " + this.Angle + ", target " + this.TargetAngle + ", encoder " + this.Encoder.Count);
+            if (this.TraceLogging) { Log.Trace(this, "TTB @ " + this.Angle + ", target " + this.TargetAngle + ", encoder " + this.Encoder.Count); }
 
             try
             {
@@ -134,7 +135,8 @@ namespace Science.Systems
 
             float SpeedUsed = 0.2F;
             if (Math.Abs(this.TargetAngle - this.Angle) < 2) { SpeedUsed = 0; } // We are close enough, stop.
-            else if (Math.Abs(this.TargetAngle - this.Angle) < 20) { SpeedUsed /= 2; } // We are close, go slower.
+            else if (Math.Abs(this.TargetAngle - this.Angle) >= 30) { SpeedUsed = 0.2F; }
+            else { SpeedUsed = (float)(0.15F + (0.05F * (Math.Abs(this.TargetAngle - this.Angle)) / 30F)); }
 
             if (this.TargetAngle > this.Angle) { SpeedUsed *= -1; }
 

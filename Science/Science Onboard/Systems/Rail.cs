@@ -19,9 +19,9 @@ namespace Science.Systems
     {
         public bool TraceLogging { get; set; }
 
-        private const float MOTOR_MAX_SPEED = 0.5F;
+        private const float MOTOR_MAX_SPEED = 0.8F;
         private const int INIT_TIMEOUT = 5000;
-        private const float ENCODER_MM_PER_TICK = 1.08F; // TODO: Update this.
+        private const float ENCODER_MM_PER_TICK = 0.92F; // TODO: Update this.
         private const bool ENABLE_VELOCITY_TRACKING = true;
 
         private bool P_Initializing = false;
@@ -44,12 +44,12 @@ namespace Science.Systems
         public bool TargetLocationRefIsTop = true; // The following target distance is from the top of the rail (true) or the ground (false).
         public double TargetLocation; // Where the operator would like the rail to go.
 
-        public float RailSpeed = 0.3F; // The speed that the rail should move at when applicable.
+        public float RailSpeed = 0.55F; // The speed that the rail should move at when applicable.
 
         private readonly PololuHPMDG2 MotorCtrl;
         private readonly LimitSwitch Limit;
         private readonly LS7366R Encoder;
-        //private readonly VL53L0X_MVP Ranger;
+        private readonly VL53L0X_MVP Ranger;
 
         private readonly LEDController LED;
 
@@ -67,8 +67,8 @@ namespace Science.Systems
             this.Encoder.Configure(Config);
             this.GroundHeightFilter = new Average<double>(4);
             this.VelocityTracker = new Average<double>(6);
-            //this.Ranger = new VL53L0X_MVP(RangerBus);
-            //this.Ranger.SetMeasurementTimingBudget(50000);
+            this.Ranger = new VL53L0X_MVP(RangerBus);
+            this.Ranger.SetMeasurementTimingBudget(50000);
             this.LED = new LEDController(LED);
             this.Limit.SwitchToggle += this.EventTriggered;
             if (this.TraceLogging) { Log.Trace(this, "Rail controller start finished."); }
@@ -93,7 +93,7 @@ namespace Science.Systems
             }
             else if(Event is LimitSwitchToggle && ((LimitSwitchToggle)Event).CurrentState && !this.Initializing) // We hit the end during operation.
             {
-                this.MotorCtrl.SetEnabled(false); // Immediately stop.
+                this.MotorCtrl.SetSpeed(0); // Immediately stop.
                 this.TopDepth = 0;
                 this.TargetLocation = 0;
                 this.TargetLocationRefIsTop = true;
@@ -106,6 +106,7 @@ namespace Science.Systems
         /// <summary> Prepares the rail for use by moving the motor all the way up to the top to find the zero position. </summary>
         public void DoInit()
         {
+            this.VelocityWarningTimes = 0;
             this.Initializing = true;
             
             System.Timers.Timer TimeoutTrigger = new System.Timers.Timer() { Interval = (ENABLE_VELOCITY_TRACKING ? 30000 : INIT_TIMEOUT), AutoReset = false };
@@ -122,7 +123,7 @@ namespace Science.Systems
                 this.TopDepth = 0;
                 return;
             }
-            this.MotorCtrl.SetSpeed(this.RailSpeed);
+            this.MotorCtrl.SetSpeed(-this.RailSpeed);
             this.MotorCtrl.SetEnabled(true);
             // Either the limit switch will be toggled, or the timeout event will happen after this.
         }
@@ -185,16 +186,18 @@ namespace Science.Systems
                 Log.Exception(Log.Source.NETWORK, Exc);
             }
 
-            //this.Ranger.UpdateState();
+            this.Ranger.UpdateState();
             //if (this.TraceLogging) { Log.Trace(this, "Ranger seeing " + this.Ranger.GetDistance() + "mm."); }
-            //uint GroundDist = this.Ranger.GetDistance();
-            //if (GroundDist == 0 || this.Ranger.LastHadTimeout()) { Log.Output(Log.Severity.INFO, Log.Source.SENSORS, "VL53L0X did not return a valid distance."); }
-            //else { this.GroundHeightFilter.Feed((int)GroundDist - 140); }
+            uint GroundDist = this.Ranger.GetDistance();
+            if (GroundDist == 0 || this.Ranger.LastHadTimeout()) { Log.Output(Log.Severity.INFO, Log.Source.SENSORS, "VL53L0X did not return a valid distance."); }
+            else { this.GroundHeightFilter.Feed((int)GroundDist - 227); }
+
+            if (this.Limit.State) { this.TopDepth = 0; }
 
             if (this.Initializing && ENABLE_VELOCITY_TRACKING)
             {
                 double Vel = this.VelocityTracker.GetOutput();
-                if (Vel > -30) { this.VelocityWarningTimes++; } // We should be moving up.
+                if (Vel > -60) { this.VelocityWarningTimes++; } // We should be moving up.
                 else { this.VelocityWarningTimes = 0; }
 
                 if (this.VelocityWarningTimes >= 20) // Something is going wrong, we should be moving but aren't.
@@ -211,21 +214,30 @@ namespace Science.Systems
             if (this.TraceLogging) { Log.Trace(this, "Rail at " + this.TopDepth.ToString("F2") + "mm from top, and wants to be at " + this.TargetLocation.ToString("F2") + "mm from " + (this.TargetLocationRefIsTop ? "top" : "bottom") + "."); }
 
             float TargetSpeed;
-            if (this.TargetLocationRefIsTop && (Math.Abs(this.TargetLocation - this.TopDepth) > 2.5)) // The rail needs to be moved.
+            if (this.TargetLocationRefIsTop && (Math.Abs(this.TargetLocation - this.TopDepth) > 4)) // The rail needs to be moved.
             {
-                TargetSpeed = this.RailSpeed * (((this.TargetLocation - this.TopDepth) > 0) ? -1 : 1);
-                if((TargetSpeed < -0.15F || TargetSpeed > 0.25F) && Math.Abs(this.TargetLocation - this.TopDepth) < 40) { TargetSpeed += (TargetSpeed < 0 ? 0.1F : -0.1F); } // We are close, go slower.
+                TargetSpeed = this.RailSpeed * (((this.TargetLocation - this.TopDepth) > 0) ? 1 : -1);
+                if (Math.Abs(this.TargetLocation - this.TopDepth) < 40) { TargetSpeed += (TargetSpeed < 0 ? 0.2F : -0.2F); } // We are close, go slower.
                 if (this.TraceLogging) { Log.Trace(this, "Moving at " + (TargetSpeed * 100).ToString("N1") + "%."); }
             }
             else { TargetSpeed = 0; }
 
-            if (TargetSpeed > 0) { TargetSpeed += 0.1F; } // Up is much slower than down, so we correct this here.
+            if (TargetSpeed < 0) { TargetSpeed -= 0.1F; } // Up is much slower than down, so we correct this here.
 
-            if (TargetSpeed > 0.4) { TargetSpeed = 0.4F; } // We shouldn't move up very fast (high speeds only for down)
+            if (TargetSpeed < -0.55) { TargetSpeed = -0.55F; } // We shouldn't move up very fast (high speeds only for down)
+
+            if ((TargetSpeed < 0 && TargetSpeed > -0.45F) || (TargetSpeed > 0 && TargetSpeed < 0.4F)) // If we are going slow
+            {
+                if (Math.Abs(this.VelocityTracker.GetOutput()) < 20) // Stop the motor if stalled.
+                {
+                    TargetSpeed = 0;
+                    Log.Output(Log.Severity.INFO, Log.Source.MOTORS, "Motor wasn't moving when being driven slow, so stopped.");
+                }
+            }
 
             // Now we know our intentions, check if there is anything that should stop movement.
-            if (this.TopDepth > 500) { TargetSpeed = 0; }
-            if (this.GroundHeightFilter.GetOutput() < -110) { TargetSpeed = 0; }
+            if (this.TopDepth >= 600 && TargetSpeed > 0) { TargetSpeed = 0; Log.Output(Log.Severity.INFO, Log.Source.SUBSYSTEM, "We are at the extent of the rail, so not moving further down."); }
+            if (this.GroundHeightFilter.GetOutput() < -150 && TargetSpeed > 0) { TargetSpeed = 0; Log.Output(Log.Severity.INFO, Log.Source.SUBSYSTEM, "We are deep in the ground, so not moving further down."); }
 
             this.MotorCtrl.SetSpeed(TargetSpeed);
         }

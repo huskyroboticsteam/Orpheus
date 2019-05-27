@@ -18,16 +18,6 @@ namespace Science.Systems
 
         private const float MOTOR_MAX_SPEED = 0.99F; // Setting motor speed to 1 will cause the PWM generator to stop oscillating, and actually stop the motor.
 
-        private bool P_DoorOpen;
-        public bool DoorOpen
-        {
-            get { return this.P_DoorOpen; }
-            set
-            {
-                this.DoorServo.SetPosition(value ? 0 : 300);
-                this.P_DoorOpen = value;
-            }
-        }
         private float Speed;
 
         private readonly PololuHPMDG2 MotorCtrl;
@@ -42,6 +32,7 @@ namespace Science.Systems
             ((PWMOutputPCA9685)ServoPWM).SetPolarity(true);
             this.DoorServo = new Servo(ServoPWM) { TraceLogging = true };
             this.DoorServo.SetEnabled(true);
+            this.DoorServo.SetPosition(50);
         }
 
         public void EmergencyStop()
@@ -61,11 +52,13 @@ namespace Science.Systems
             else { this.MotorCtrl.SetSpeed(0); }
         }
 
+        public void SetDoorPos(int Angle) { this.DoorServo.SetPosition(Angle); }
+
         public void UpdateState()
         {
             DateTime Time = DateTime.Now;
             byte[] Data = UtilData.ToBytes(Time.Ticks)
-                    .Concat(new byte[] { (byte)(this.DoorOpen ? 0b1 : 0b0), (byte)this.Speed })
+                    .Concat(new byte[] { (byte)(this.DoorServo.Position > 160 ? 0b1 : 0b0), (byte)this.Speed })
                     .ToArray();
 
             Packet Packet = new Packet(new Message(ScienceConstants.Packets.DRL_STATUS, Data), false);

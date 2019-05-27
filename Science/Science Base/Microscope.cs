@@ -14,7 +14,7 @@ namespace Science_Base
 {
     public class Microscope
     {
-        public bool TraceLogging { get; set; }
+        public bool TraceLogging { get; set; } = true;
 
         public Microscope()
         {
@@ -29,7 +29,7 @@ namespace Science_Base
             BitmapData ImgData = Img.LockBits(new Rectangle(Img.Width / 3, Img.Height / 3, Img.Width / 3, Img.Height / 3), ImageLockMode.ReadOnly, Img.PixelFormat);
             int Width = ImgData.Width;
             int Height = ImgData.Height;
-            int ArrSize = ImgData.Stride * ImgData.Height;
+            int ArrSize = ImgData.Stride * ImgData.Height; // Takes into account the number of bytes per pixel
 
             byte[] Data = new byte[ArrSize];
             Marshal.Copy(ImgData.Scan0, Data, 0, ArrSize);
@@ -41,10 +41,12 @@ namespace Science_Base
             Img.Dispose();
         }
 
-        private void TakePicture(string Filename)
+        private void TakePicture(string Path, string Filename)
         {
             Process Capture = new Process();
             Capture.StartInfo.FileName = "fswebcam";
+            Capture.StartInfo.WorkingDirectory = Path;
+            Capture.StartInfo.UseShellExecute = false;
             Capture.StartInfo.Arguments = "-r 1600x1200 " + Filename;
             Capture.Start();
             Capture.WaitForExit();
