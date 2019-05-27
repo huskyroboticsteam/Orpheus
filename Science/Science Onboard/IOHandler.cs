@@ -81,12 +81,12 @@ namespace Science
 
             MotorEnable.SetOutput(true);
 
-            this.RailController = new Rail(RailMotorPWM, DirectionRail, new DigitalInPi(12), this.SPI, this.IOExpander.Outputs[0], this.I2C, null) { TraceLogging = true };
+            this.RailController = new Rail(RailMotorPWM, DirectionRail, new DigitalInPi(12), this.SPI, this.IOExpander.Outputs[0], this.I2C, null) { TraceLogging = false };
             this.DrillController = new Drill(DrillMotorPWM, DirectionDrill, this.PWMGenServo.Outputs[0]);
             this.LEDController = new LEDs(this.PWMGenServo.Outputs, null);//EnablePWM);
             //this.LEDController.TraceLogging = true;
             this.TurntableController = new Turntable(TurntableMotorPWM, DirectionTurntable, this.SPI, this.IOExpander.Outputs[1], new DigitalInPi(18));
-            this.AuxSensors = new AuxSensors(this.SPI, this.I2C) { TraceLogging = false };
+            this.AuxSensors = new AuxSensors(this.SPI, this.I2C) { TraceLogging = true };
             this.SysSensors = new SysSensors(this.I2C, this.SPI);
             //this.SysSensors.TraceLogging = true; // TODO: Turn this off.
             this.Music = new MusicPlayer();

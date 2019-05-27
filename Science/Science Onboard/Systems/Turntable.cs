@@ -51,7 +51,7 @@ namespace Science.Systems
             {
                 this.MotorCtrl.SetSpeed(0);
                 this.Angle = 0;
-                Log.Output(Log.Severity.DEBUG, Log.Source.MOTORS, "Turntable motor finished initializing.");
+                Log.Output(Log.Severity.INFO, Log.Source.MOTORS, "Turntable motor finished initializing.");
                 this.Initializing = false;
                 this.InitDone = true;
             }

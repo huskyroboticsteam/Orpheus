@@ -11,7 +11,7 @@ namespace Science_Base
     public static class DataHandler
     {
         // Aux sensor packets
-        public static DataSeries<int> UV = new DataSeries<int>("UV Light", "UV Light (µW/cm²)"); // TODO: Update for VEML6075
+        public static DataSeries<float> UV = new DataSeries<float>("UV Index", "UV Index");
         public static DataSeries<ushort> AirCO2 = new DataSeries<ushort>("Air CO2", "CO2 Concentration (PPM)");
         public static DataSeries<ushort> AirTVOC = new DataSeries<ushort>("Air TVOC", "TVOC Concentration (PPB)");
         public static DataSeries<float> AirTemp = new DataSeries<float>("Air Temperature", "Temperature (°C)");
@@ -77,7 +77,7 @@ namespace Science_Base
                 return;
             }
             DateTime Time = ExtractTime(Packet);
-            int UVLight = UtilData.ToInt(UtilMain.SubArray(Packet.Data.Payload, 8, 4));
+            float UVLight = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 8, 4));
             ushort CO2Reading = UtilData.ToUShort(UtilMain.SubArray(Packet.Data.Payload, 12, 2));
             ushort TVOCReading = UtilData.ToUShort(UtilMain.SubArray(Packet.Data.Payload, 14, 2));
             float SoilMoist = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 16, 4));
@@ -85,7 +85,7 @@ namespace Science_Base
             float AtmoPres = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 24, 4));
             float AtmoHumid = UtilData.ToFloat(UtilMain.SubArray(Packet.Data.Payload, 28, 4));
 
-            UV.Data.Add(new Datum<int>(Time, UVLight));
+            UV.Data.Add(new Datum<float>(Time, UVLight));
             AirCO2.Data.Add(new Datum<ushort>(Time, CO2Reading));
             AirTVOC.Data.Add(new Datum<ushort>(Time, TVOCReading));
             SoilMoisture.Data.Add(new Datum<float>(Time, SoilMoist));
