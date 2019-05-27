@@ -141,14 +141,14 @@ namespace Science_Base
             }
             DateTime Time = ExtractTime(Packet);
             byte Status = Packet.Data.Payload[8];
-            byte Speed = Packet.Data.Payload[9];
+            byte Speed = (byte)Packet.Data.Payload[9];
 
             bool SampleDoor = (Status & 0b1) == 0b1;
 
             DrillSpeed.Data.Add(new Datum<byte>(Time, Speed));
             SampleDoorState.Data.Add(new Datum<bool>(Time, SampleDoor));
 
-            BaseMain.Window.UpdateDrill(Speed, SampleDoor);
+            BaseMain.Window.UpdateDrill((byte)Math.Abs(Speed), SampleDoor);
         }
 
         public static void PacketSystemSensors(Packet Packet)

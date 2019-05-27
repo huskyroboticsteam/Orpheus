@@ -58,7 +58,7 @@ namespace Science.Systems
         {
             DateTime Time = DateTime.Now;
             byte[] Data = UtilData.ToBytes(Time.Ticks)
-                    .Concat(new byte[] { (byte)(this.DoorServo.Position > 160 ? 0b1 : 0b0), (byte)this.Speed })
+                    .Concat(new byte[] { (byte)(this.DoorServo.Position > 160 ? 0b1 : 0b0), (byte)(this.Speed * 100) })
                     .ToArray();
 
             Packet Packet = new Packet(new Message(ScienceConstants.Packets.DRL_STATUS, Data), false);

@@ -20,7 +20,7 @@ namespace Science.Systems
         public bool TraceLogging { get; set; }
 
         private const float MOTOR_MAX_SPEED = 0.99F;
-        private const int INIT_TIMEOUT = 5000;
+        private const int INIT_TIMEOUT = 5500;
         private const float ENCODER_DEG_PER_TICK = -4.3F; // TODO: Update this value.
         private const bool ENABLE_VELOCITY_TRACKING = false;
 
