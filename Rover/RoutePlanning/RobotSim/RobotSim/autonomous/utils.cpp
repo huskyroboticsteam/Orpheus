@@ -422,25 +422,6 @@ RP::point RP::lat_long_to_meters(RP::point pt, RP::point origin)
     return point{(pt.x - origin.x) * 87029, (pt.y - origin.y) * 111111};
 }
 
-// generates 100 points in spiral formation around origin and returns in vector
-std::vector<RP::point> RP::generate_spiral()
-{
-    int scaleFactor = 10;
-    std::vector<point> spiralPoints;
-
-    for (int i = 0; i < 100; ++i)
-    {
-        int x = round(scaleFactor * i * cos(i + (PI)));
-        int y = round(scaleFactor * i * sin(i + (PI)));
-        spiralPoints.push_back(point{(float)x, (float)y});
-#if 0
-		std::cout << i << ": (" << px << ", " << py << ")" << '\n';
-#endif
-    }
-
-    return spiralPoints;
-}
-
 // All angles should already be normalized and in radians
 bool RP::within_angle(float ang, float lower, float upper)
 {

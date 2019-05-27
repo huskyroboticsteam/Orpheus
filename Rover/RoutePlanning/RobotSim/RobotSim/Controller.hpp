@@ -19,7 +19,8 @@ enum TurnState {
 enum State {
   FOLLOW_PATH,
   SPIRAL,
-  FOUND_BALL
+  FOUND_BALL,
+	DONE,
 };
 class Controller {
   public:
@@ -36,6 +37,7 @@ class Controller {
     bool sendDestinationPacket();
     float get_target_angle();
     void turn_and_go();
+		bool near_ball(tb::Detection);
     State state;
     RP::point dst;
     std::deque<point> targetSites;
@@ -45,6 +47,10 @@ class Controller {
     float curr_dir;
     bool in_spiral_radius();
     bool found_ball();
+		void signal_ball(); // signal that we're at the ball
+		void terminate();
+		bool prompt_continue();
+		std::deque<RP::point> generate_spiral();
     RP::point convertToLatLng(float dist, float dir);
     RobotEKF filter;
     std::thread receiverThread;

@@ -20,7 +20,7 @@
 #include "interface.hpp"
 #include "RobotEKF.hpp"
 
-#include "../../../ZedDepth/zed-depth.h"
+#include "../../../ZedDepth/zed_depth.h"
 
 std::default_random_engine generator;
 std::normal_distribution<double> distribution(0.0,3.0);
@@ -72,7 +72,9 @@ static void zed_depth_init()
 
 int main(int, char const **)
 {
+    printf("about to open zed\n");
     zed_depth_init();
+    printf("oppened zed\n");
     // ---------------------------------------- //
     // ----------- SFML Window Setup ---------- //
     // ---------------------------------------- //
@@ -349,7 +351,7 @@ int main(int, char const **)
         
         pather.set_pos(filterOutput);
 
-        pather.add_obstacles(sim.visible_obstacles());
+        pather.add_obstacles(sim.visible_obstacles(r));
         bool graph_updated = false;
         if (!auton && recompute_timer.elapsed() > RECOMPUTE_COOLDOWN)
         {

@@ -7,7 +7,7 @@
 #include <iostream>
 #include <math.h>
 #include <thread>
-#include "../../../ZedDepth/zed-depth.h"
+#include "../../../ZedDepth/zed_depth.h"
 
 #define MOVE_SPEED 0x7FFF / 2
 
@@ -20,9 +20,10 @@
 #define TARGET_LAT 123.0
 #define TARGET_LNG 321.0
 
-#define ANGLE_TOL 20.
+#define ANGLE_TOL 10.
+#define NEAR_BALL_TOL 45.f
 
-constexpr float TARGET_TOL = 4.f; // tolerance distance for testing if we've reached target
+constexpr float TARGET_TOL = 4.0f; // tolerance distance for testing if we've reached target
 constexpr float TARGET_TOL_SQ = TARGET_TOL * TARGET_TOL;
 constexpr float AUTO_TURN_RANGE = 90;
 constexpr float GPS_MULT = 1e6;
@@ -31,12 +32,11 @@ LATITUDE IS X
 LONGITUDE IS
 */
 
-cv::Mat image;
-
 RP::point origin;
 RP::point max_point;
+cv::Mat image;
 
-int main() {
+int main(int argc, const char **argv) {
   std::deque<RP::point> targetSites(0);
   origin.x = 47.648531;
   origin.y = -122.309705;
@@ -68,6 +68,7 @@ int main() {
   std::cin >> p.x;
   std::cin >> p.y;
   while (p.x != -1) {
+		printf("more:\n");
     targetSites.push_back(p);
     std::cin >> p.x;
     std::cin >> p.y;
@@ -79,7 +80,7 @@ int main() {
   std::cin >> p.x;
   std::cin >> p.y;
   RP::Controller controller(p, targetSites);
-  zdInit();
+  gsInit();
   std::cout << "Finished constructing" << std::endl;
   controller.update();
 }
@@ -115,22 +116,84 @@ Controller::Controller(const point &cur_pos, std::deque<point> targetSites)
     std::cout << "Initialized kalman filter" << std::endl;
 }
 
+#define EARTH_R 6378.137 // Radius of earth in KM
+// latlng distance in meters
+float latLngDist(RP::point p, RP::point q) {
+	float dLat = q.x * M_PI / 180 - p.x * M_PI / 180;
+	float dLon = q.y * M_PI / 180 - p.y * M_PI / 180;
+	float a = sin(dLat/2) * sin(dLat/2) +
+		cos(p.x * M_PI / 180) * cos(q.x * M_PI / 180) *
+		sin(dLon/2) * sin(dLon/2);
+	float c = 2 * atan2(sqrt(a), sqrt(1-a));
+	float d = EARTH_R * c;
+	return d * 1000; // meters
+}
+
 // using given packet data and server send a packet containing either a
 // direction or motor power
 bool Controller::setDirection(float delta_heading) {
-    std::vector<unsigned char> data(4);
-    std::memcpy(&data[0], &delta_heading, 4);
-    return server.send_action(delta_heading, HEADING_CHANGE);
+	std::vector<unsigned char> data(4);
+	std::memcpy(&data[0], &delta_heading, 4);
+	return server.send_action(delta_heading, HEADING_CHANGE);
 }
 
 bool Controller::setSpeed(float speed) {
-    std::vector<unsigned char> data(4);
-    std::memcpy(&data[0], &speed, 4);
-    return server.send_action(data, SET_SPEED);
+	std::vector<unsigned char> data(4);
+	std::memcpy(&data[0], &speed, 4);
+	return server.send_action(data, SET_SPEED);
+}
+
+bool Controller::near_ball(tb::Detection detection) {
+	int height = detection.getBBoxHeight();
+	printf("tennis ball height: %d\n", height);
+	return height > NEAR_BALL_TOL;
+}
+
+void Controller::signal_ball() {
+	if (!server.send_action((char) 2))
+		std::cout << "WARNING: signal ball packet didn't send" << std::endl;
+}
+
+void Controller::terminate() {
+	printf("terminating...\n");
+	bool good = true;
+	do {
+		if (!good)
+			printf("WARNING send terminate failed\n");
+		good = server.send_action((char) 1);
+	} while (!good);
+}
+
+bool within_range(float n, float left, float right) {
+	return left <= n && n <= right;
+}
+
+bool Controller::prompt_continue() {
+	printf("continue finding balls? ");
+	char ans;
+	std::cin >> ans;
+	if (ans == 'n') return false;
+
+	printf("enter one pair of coordinates for targetSite: ");
+	float x, y;
+	bool good;
+	do {
+		std::cin >> x >> y;
+		good = true;
+		if (!within_range(x, origin.x, max_point.x)) {
+			printf("x out of range\n");
+			good = false;
+		}
+		if (!within_range(y, origin.y, max_point.y)) {
+			printf("y out of range\n");
+			good = false;
+		}
+	} while (!good);
+	targetSites.push_back(point{x, y});
+	return true;
 }
 
 void Controller::update() {
-
     pather.compute_path();
     std::cout << "Update loop started" << std::endl;
     // step 1: get obstacle data from camera
@@ -144,7 +207,10 @@ void Controller::update() {
 //        std::vector<obstacleVector> obstacles{
 //            obstacleVector{1, 2}, obstacleVector{3, 4}, obstacleVector{5, 6}};
 
-        std::vector<std::pair<cv::Rect, float>> raw_obstacles;// = get_obstacle_data(image);
+        ObstacleDetection obsts = get_obstacle_data();
+        image = obsts.image;
+        auto &raw_obstacles = obsts.obstacles;
+        
         // step 2: wait for server to give current location
         // Note: If Scarlet changes size of Timestamp, be sure to update the
         // parsePacket paramaters below
@@ -156,11 +222,9 @@ void Controller::update() {
         std::cout << "Current state: ";
         switch(state) {
           case FOLLOW_PATH:
-            
             std::cout << "FOLLOW PATH" << std::endl;
             break;
           case SPIRAL:
-
             std::cout << "SPIRAL" << std::endl;
             break;
           case FOUND_BALL:
@@ -201,191 +265,235 @@ void Controller::update() {
         } else { //step the filter without new data
             filter.timeUpdateStep(u);
         }
+
         pather.set_pos(RP::point{curr_lat, curr_lng});
         // std::cout << "Controller got a packet" << std::endl;
-        point nextPoint{0.0, 0.0};
+        point nextPoint = pather.get_cur_next_point();
         //std::cout << state << std::endl;
-        if (state == FOLLOW_PATH) {
+        if (state == FOLLOW_PATH || state == SPIRAL) {
+					if (found_ball()) {
+							state = FOUND_BALL;
+							continue;
+					}
+					if (state == FOLLOW_PATH) {
             if (in_spiral_radius()) {
               std::cout << "We started spiraling! yay!" << std::endl;
-                state = SPIRAL;
-                // spiralPts = RP::generate_spiral(0.1, 100, curr_lng,
-                // curr_lat);
-            } else if (found_ball()) {
-                state = FOUND_BALL;
-            } else {
-                if (turning) 
-                {
-                    switch (turnstate) {
-                    case TOWARD_TARGET:
-                        //if (angleCloseEnough(curr_dir, tar_angle, ANGLE_TOL)) {
-                        if(angleCloseEnough(curr_dir, tar_angle,  ANGLE_TOL)) {
-                            pather.compute_path();
-                            auto path = pather.get_cur_path();
-                            if (path.size() == 0)
-                                break;
-                            // TODO this is a hack. later, implement flag in
-                            // mapper that tells if tar is the final target or
-                            // even better, implement a better algorithm
-                            if (path.size() == 1 &&
-                                dist_sq(point{curr_lat, curr_lng},
-                                        path.back()) <= TARGET_TOL_SQ &&
-                                same_point(path.back(), pather.tar_point)) {
-                                printf("Target reached.\n");
-                                turnstate = FIND_BALL;
-                                break;
-                            }
-                            tar_angle = normalize_angle_deg(get_target_angle());
-                            if (angleCloseEnough(curr_dir, tar_angle, ANGLE_TOL)) {
-                                // printf("reached turning target of %f\n",
-                                // tar_angle);
-                                // TODO recompute tar_angle again and
-                                // iteratively turn until angle is the same as
-                                // target angle
-                                turn_and_go();
-                            } else {
-                                timer.reset(); // turn again
-                            }
-                        } else {
-                             printf("turning toward target %f\n", tar_angle);
-                             
-                            sendPacket(0, tar_angle);
-                        }
+							state = SPIRAL;
+							spiralPts = generate_spiral();
+							pather.set_tar(spiralPts.front());
+							spiralPts.pop_front();
+							turning = true;
+							turnstate = TOWARD_TARGET;
+							/*
+							spiralPts = RP::generate_spiral(0.1, 100, curr_lng,
+								curr_lat);
+							*/
+							continue;
+						}
+					} else {
+						// spiral
+						// get and remove first element of spiralPts
+						float dist = latLngDist(nextPoint, point{curr_lat/GPS_MULT, curr_lng/GPS_MULT});
+						if (dist < 3.f) {
+							printf("reached one target\n");
+							assert(spiralPts.size());
+							dst = spiralPts.front();
+							spiralPts.pop_front();
+							pather.set_tar(dst);
+							assert(nextPoint.x != INFINITY);
+							turning = true;
+							turnstate = TOWARD_TARGET;
+						}
+					}
+					if (turning) 
+					{
+						switch (turnstate) {
+						case TOWARD_TARGET:
+							if(angleCloseEnough(curr_dir, tar_angle,  ANGLE_TOL)) {
+									pather.compute_path();
+									auto path = pather.get_cur_path();
+									if (path.size() == 0)
+											break;
+									// TODO this is a hack. later, implement flag in
+									// mapper that tells if tar is the final target or
+									// even better, implement a better algorithm
+									if (path.size() == 1 &&
+											dist_sq(point{curr_lat, curr_lng},
+															path.back()) <= TARGET_TOL_SQ &&
+											same_point(path.back(), pather.tar_point)) {
+											printf("Target reached.\n");
+											turnstate = FIND_BALL;
+											break;
+									}
+									tar_angle = normalize_angle_deg(get_target_angle());
+									if (angleCloseEnough(curr_dir, tar_angle, ANGLE_TOL)) {
+											// printf("reached turning target of %f\n",
+											// tar_angle);
+											// TODO recompute tar_angle again and
+											// iteratively turn until angle is the same as
+											// target angle
+											turn_and_go();
+									} else {
+											timer.reset(); // turn again
+									}
+							} else {
+								printf("turning toward target %f\n", tar_angle);
+								sendPacket(0, tar_angle);
+							}
 
-                        break;
-                    case SURVEY_COUNTERCW:
-                        if (angleCloseEnough(curr_dir, tar_angle, ANGLE_TOL)) {
-                            tar_angle = normalize_angle_deg(orig_angle - AUTO_TURN_RANGE / 2.f);
-                            turnstate = SURVEY_CW;
-                            // printf("turning cw toward %f\n", tar_angle);
-                            break;
-                        }
-                        sendPacket(0, tar_angle);
-                        break;
-                    case SURVEY_CW:
-                        if (angleCloseEnough(curr_dir, tar_angle, ANGLE_TOL)) {
-                            auto tar_point = pather.get_cur_next_point();
-                            if (tar_point.x == INFINITY)
-                                break;
-                            // printf("target point: %f, %f\n", tar_point.x,
-                            // tar_point.y);
-                            tar_angle = normalize_angle_deg(atan2(tar_point.y - curr_lng,
-                                              tar_point.x - curr_lat) *
-                                        180 / M_PI);
-                            // printf("turning toward target %f\n", tar_angle);
-                            turnstate = BACK_TO_TARGET;
-                            break;
-                        }
-                        sendPacket(0, tar_angle);
-                        break;
-                    case BACK_TO_TARGET:
-                        if (angleCloseEnough(curr_dir, tar_angle, ANGLE_TOL)) {
-                            // printf("reached turning target of %f\n",
-                            // tar_angle);
-                            pather.compute_path();
-                            tar_angle = normalize_angle_deg(get_target_angle());
-                            if (angleCloseEnough(curr_dir, tar_angle, ANGLE_TOL)) {
-                                printf("close enough to %f\n", tar_angle);
-                                turn_and_go();
-                            }
-                            break;
-                        }
-                        sendPacket(0, tar_angle);
-                        break;
-                    case FIND_BALL:
-                        state = SPIRAL;
-                        break;
-                    case FINISHED:
-                        // TODO send back whatever instructions needed
-                        break;
-                    }
-                } else {
-                    std::vector<point> path = pather.get_cur_path();
-                    if (path.empty())
-                        return;
-                    if (timer.elapsed() > last_move_time) {
-                        tar_angle = normalize_angle_deg(get_target_angle());
-                        if (path.size() == 1) {
-                            // if no obstacle, go straight to point
-                            turning = true;
-                            turnstate = TOWARD_TARGET;
-                        } else {
-                            timer.reset();
-                            pather.compute_path();
-                            tar_angle = normalize_angle_deg(get_target_angle());
-                            turnstate = TOWARD_TARGET;
-                            turning = true;
-                        }
-                    } else {
-                        sendPacket(MOVE_SPEED, curr_dir);
-                    }
-                }
-            }
-        } else if (state == SPIRAL) {
-            if (found_ball()) {
-                state = FOUND_BALL;
-            } else {
-                // get and remove first element of spiralPts
-                dst = spiralPts.front();
-                spiralPts.pop_front();
-                nextPoint = pather.get_cur_next_point();
-            }
-        } else { // if state is FOUND_BALL
-            if (targetSites.size() > 0) {
-                // get and remove first element of targets
-                dst = targetSites.front();
-                targetSites.pop_front();
-                pather.set_tar(dst);
-            }
-            
-        }
+							break;
+					case SURVEY_COUNTERCW:
+							if (angleCloseEnough(curr_dir, tar_angle, ANGLE_TOL)) {
+									tar_angle = normalize_angle_deg(orig_angle - AUTO_TURN_RANGE / 2.f);
+									turnstate = SURVEY_CW;
+									// printf("turning cw toward %f\n", tar_angle);
+									break;
+							}
+							sendPacket(0, tar_angle);
+							break;
+					case SURVEY_CW:
+							if (angleCloseEnough(curr_dir, tar_angle, ANGLE_TOL)) {
+									auto tar_point = pather.get_cur_next_point();
+									if (tar_point.x == INFINITY)
+											break;
+									// printf("target point: %f, %f\n", tar_point.x,
+									// tar_point.y);
+									tar_angle = normalize_angle_deg(atan2(tar_point.y - curr_lng,
+																		tar_point.x - curr_lat) *
+															180 / M_PI);
+									// printf("turning toward target %f\n", tar_angle);
+									turnstate = BACK_TO_TARGET;
+									break;
+							}
+							sendPacket(0, tar_angle);
+							break;
+					case BACK_TO_TARGET:
+							if (angleCloseEnough(curr_dir, tar_angle, ANGLE_TOL)) {
+									// printf("reached turning target of %f\n",
+									// tar_angle);
+									pather.compute_path();
+									tar_angle = normalize_angle_deg(get_target_angle());
+									if (angleCloseEnough(curr_dir, tar_angle, ANGLE_TOL)) {
+											printf("close enough to %f\n", tar_angle);
+											turn_and_go();
+									}
+									break;
+							}
+							sendPacket(0, tar_angle);
+							break;
+					case FIND_BALL:
+							state = SPIRAL;
+							break;
+					case FINISHED:
+							// TODO send back whatever instructions needed
+							break;
+					}
+				} else {
+						std::vector<point> path = pather.get_cur_path();
+						if (path.empty())
+								return;
+						if (timer.elapsed() > last_move_time) {
+								tar_angle = normalize_angle_deg(get_target_angle());
+								if (path.size() == 1) {
+										// if no obstacle, go straight to point
+										turning = true;
+										turnstate = TOWARD_TARGET;
+								} else {
+										timer.reset();
+										pather.compute_path();
+										tar_angle = normalize_angle_deg(get_target_angle());
+										turnstate = TOWARD_TARGET;
+										turning = true;
+								}
+						} else {
+								sendPacket(MOVE_SPEED, curr_dir);
+						}
+			}
+		} else { // if state is FOUND_BALL
+				std::vector<tb::Detection> balls = detector.performDetection(image);
+				if (balls.empty()) { //lmao
+					state = SPIRAL;
+					continue;
+				}
+				tb::Detection det = balls.front();
 
-        // step 3: use current location and obstacle data to update map
-        //TODO: Use FOV of Camera to determine where the obstacles actually are
-        std::vector<RP::line> obstacles;
-        for (auto raw_obstacle : raw_obstacles) {
-            std::cout << "Obstacle: distance: " << raw_obstacle.second << std::endl;
-            double obstacle_width = raw_obstacle.first.width;
-            float obstacle_dist = raw_obstacle.second;
-            /*
-             * heading := current heading vector normalized
-             * ortho = orthogonal heading normalized
-             * pt1 cur_pos + (heading * obstacle_distance + ortho * half_width)
-             * pt2 cur_pos + (heading * obstacle_distance - ortho * half_width)
-             * */
-            std::vector<RP::line> obstacles;
-            point norm_heading = point{cos(curr_dir), sin(curr_dir)};
-            point ortho_norm = get_ortho(line{norm_heading, norm_heading*2}, false);
-            point a = point{curr_lat, curr_lng} + norm_heading*obstacle_dist
-                      + ortho_norm*(obstacle_width/2);
-            point b = point{curr_lat, curr_lng} + norm_heading*obstacle_dist
-                      - ortho_norm*(obstacle_width/2);
-            RP::line obstacleLine{a, b}; 
-            
-            obstacles.push_back(obstacleLine);
-            cv::rectangle(image, raw_obstacle.first, cv::Scalar(0, 255, 0));
-        }
-        pather.add_obstacles(obstacles);
+				if (near_ball(det)) {
+					std::cout << "We're close enough to ball" << std::endl;
+					signal_ball();
+					bool keep_finding = false; // TODO change this to targetSites.size() != 0 after debug is done
+					if (keep_finding) {
+						dst = targetSites.front();
+						targetSites.pop_front();
+						pather.set_tar(dst);
+						state = FOLLOW_PATH;
+						turnstate = TOWARD_TARGET;
+						turning = true;
+					 } else {
+						 /*
+						 if (prompt_continue()) {
+							 printf("continuing...\n");
+							 state = FOLLOW_PATH;
+						 } else {
+						 */
+						 terminate();
+						 std::cout << "Found all balls. Terminating..." << std::endl;
+						 return;
+					 }
+				} else {
+					cv::Point2f center = det.getBBoxCenter();
+					float x = center.x - static_cast<float>(image.cols / 2);
+					float angle_rad = (x > 0) ? 0.5f : -0.5f;
+					point dst = convertToLatLng(10.f, angle_rad);
+					pather.set_tar(dst);
+					tar_angle = normalize_angle_deg(get_target_angle());
+					sendPacket(0, tar_angle);
+				}
+		}
 
-        // step 5: use next point to send packets specifying new direction and
-        // speed to proceed
-        short heading =
-            (short)(180 / M_PI *
-                    atan2(nextPoint.y - curr_lng, nextPoint.x - curr_lat));
-        // setDirection(delta_heading);
-        //  setSpeed(1.0); // TODO: figure out how setting speed and heading
-        // actually works
-        //sendPacket(0x7FFF / 2, heading);
-        tar_angle = normalize_angle_deg(get_target_angle());
+			// step 3: use current location and obstacle data to update map
+			//TODO: Use FOV of Camera to determine where the obstacles actually are
+			std::vector<RP::line> obstacles;
+			for (auto raw_obstacle : raw_obstacles) {
+					std::cout << "Obstacle: distance: " << raw_obstacle.second << std::endl;
+					double obstacle_width = raw_obstacle.first.width;
+					float obstacle_dist = raw_obstacle.second;
+					/*
+					 * heading := current heading vector normalized
+					 * ortho = orthogonal heading normalized
+					 * pt1 cur_pos + (heading * obstacle_distance + ortho * half_width)
+					 * pt2 cur_pos + (heading * obstacle_distance - ortho * half_width)
+					 * */
+					std::vector<RP::line> obstacles;
+					point norm_heading = point{cos(curr_dir), sin(curr_dir)};
+					point ortho_norm = get_ortho(line{norm_heading, norm_heading*2}, false);
+					point a = point{curr_lat, curr_lng} + norm_heading*obstacle_dist
+										+ ortho_norm*(obstacle_width/2);
+					point b = point{curr_lat, curr_lng} + norm_heading*obstacle_dist
+										- ortho_norm*(obstacle_width/2);
+					RP::line obstacleLine{a, b}; 
+					
+					obstacles.push_back(obstacleLine);
+					cv::rectangle(image, raw_obstacle.first, cv::Scalar(0, 255, 0));
+			}
+			pather.add_obstacles(obstacles);
+
+			// step 5: use next point to send packets specifying new direction and
+			// speed to proceed
+			short heading =
+					(short)(180 / M_PI *
+									atan2(nextPoint.y - curr_lng, nextPoint.x - curr_lat));
+			// setDirection(delta_heading);
+			//  setSpeed(1.0); // TODO: figure out how setting speed and heading
+			// actually works
+			//sendPacket(0x7FFF / 2, heading);
+			tar_angle = normalize_angle_deg(get_target_angle());
         std::cout << "tar_angle: " << tar_angle << std::endl;
                 
         //for(char key = ' '; key != 'q'; key = cv::waitKey(10)) {
             //cv::imshow("Camera", image);
             //cv::waitKey(10);
-
-        
-        }
-    
+				//}
+		}
 }
 
 void RP::Controller::turn_and_go() {
@@ -418,14 +526,22 @@ float RP::Controller::get_target_angle() {
     return atan2(next->y - curr_lng, next->x - curr_lat) * 180 / M_PI;
 }
 
-bool Controller::in_spiral_radius() { return dist_sq(point{curr_lat, curr_lng}
-    , targetSites.front()) < TARGET_TOL;  }
+bool Controller::in_spiral_radius() { 
+	// TODO return this true
+	//return true;
+	//return dist_sq(point{curr_lat, curr_lng}, targetSites.front()) < TARGET_TOL;
+	float d = latLngDist(point{curr_lat/GPS_MULT, curr_lng/GPS_MULT}, targetSites.front());
+	printf("lat lng dist: %f. Tol: %f\n", d, TARGET_TOL);
+	return d < TARGET_TOL;
+}
 
 bool Controller::found_ball() {
   //cv::imshow("MAH BALL", image);
   //cv::waitKey(0);
   return false;
-  return detector.performDetection(image).size() == 1;
+	int numFound = detector.performDetection(image).size();
+	printf("Number of tennis found: %d\n", numFound);
+  return numFound != 0;
 }
 
 bool Controller::sendPacket(signed short speed, float fheading) {
@@ -444,6 +560,23 @@ bool Controller::sendDestinationPacket() {
     return server.send_action(data);
 }
 
+// generates 100 points in spiral formation around origin and returns in vector
+std::deque<RP::point> RP::Controller::generate_spiral()
+{
+	int scaleFactor = 10;
+	std::deque<point> spiralPoints;
+
+	for (int i = 20; i < 100; ++i)
+	{
+		point p = convertToLatLng(i / 5.f, i + M_PI);
+		spiralPoints.push_back(p);
+#if 1
+		std::cout << i << ": (" << p.x << ", " << p.y << ")" << '\n';
+#endif
+	}
+
+	return spiralPoints;
+}
 
 void Controller::addObstacle(float dist1, float dir1, float dist2, float dir2) {
     // Need to update this for use

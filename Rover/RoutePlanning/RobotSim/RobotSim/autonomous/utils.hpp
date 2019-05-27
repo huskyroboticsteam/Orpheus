@@ -126,7 +126,6 @@ point lat_long_offset(float lat1, float lon1, float brng, float dist);
 //Given pt in lat-long units, normalize it to be in cartesian coordinates (meters/km undecided) with origin provided
 point lat_long_to_meters(point pt, point origin);
 
-std::vector<RP::point> generate_spiral();
 //Returns true if ang is within range of [lower, upper] (going counterclocwise).
 bool within_angle(float ang, float lower, float upper);
 //Polar to cartesian relative to the given origin

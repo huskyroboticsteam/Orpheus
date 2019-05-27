@@ -7,7 +7,7 @@
 #include <iostream>
 #include <math.h>
 #include <thread>
-#include "../../../ZedDepth/zed-depth.h"
+#include "../../../ZedDepth/zed_depth.h"
 
 #define MOVE_SPEED 0x7FFF / 2
 
