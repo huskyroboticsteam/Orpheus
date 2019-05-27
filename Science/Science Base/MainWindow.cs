@@ -451,17 +451,22 @@ namespace Science_Base
 
         private void TTBGoTo1_Click(object sender, EventArgs e)
         {
-            Science_Base.Controls.TTBTargetChange(30);
+            Science_Base.Controls.TTBTargetChange(143);
         }
 
         private void TTBGoTo2_Click(object sender, EventArgs e)
         {
-            Science_Base.Controls.TTBTargetChange(90);
+            Science_Base.Controls.TTBTargetChange(66);
         }
 
         private void TTBGoTo3_Click(object sender, EventArgs e)
         {
-            Science_Base.Controls.TTBTargetChange(150);
+            Science_Base.Controls.TTBTargetChange(0);
+        }
+
+        private void TTBGoTo4_Click(object sender, EventArgs e)
+        {
+            Science_Base.Controls.TTBTargetChange(30);
         }
 
         private void DebugBar_Scroll(object sender, EventArgs e)
@@ -475,5 +480,6 @@ namespace Science_Base
             // Ooh, spooky.
             Science_Base.Controls.TTBTargetChange((int)(this.DebugBar.Value * 1.5F));
         }
+
     }
 }

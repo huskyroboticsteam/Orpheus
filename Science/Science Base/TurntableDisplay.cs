@@ -62,6 +62,7 @@ namespace Science_Base
             else { TableColour = Color.Red; }
 
             Pen TablePen = new Pen(TableColour, 1);
+            Pen White = new Pen(Color.White, 1);
 
             Rectangle TableSpace = ShrinkRect(OverallArea, 0, 16, 0, 0);
             int Radius = (Math.Min(TableSpace.Width, TableSpace.Height) / 2) - 4;
@@ -71,6 +72,7 @@ namespace Science_Base
             PointF TableCenter = new PointF((float)(Circle.Left + Circle.Width / 2.0), (float)(Circle.Top + (Circle.Height / 2.0)));
 
             pe.Graphics.DrawLine(TablePen, TableCenter, Radial(TableCenter, 90 - this.Angle, Radius)); // Home line
+            pe.Graphics.DrawLine(TablePen, TableCenter, Radial(TableCenter, 345 - this.Angle, Radius));
 
             int SampleSize = Radius / 3; // Size of the sample circles.
 
@@ -78,20 +80,30 @@ namespace Science_Base
             CenterString.LineAlignment = StringAlignment.Center;
             CenterString.Alignment = StringAlignment.Center;
 
-            PointF S1Center = Radial(TableCenter, 270 - this.Angle, (int)Math.Round(Radius * 0.6667));
+            PointF S1Center = Radial(TableCenter, 10 - this.Angle, (int)Math.Round(Radius * 0.6667));
             Rectangle S1Circle = RectAboutCenter(S1Center, SampleSize, SampleSize);
             pe.Graphics.DrawEllipse(TablePen, S1Circle);
-            pe.Graphics.DrawString("1", this.Font, Fore, S1Circle, CenterString);
+            pe.Graphics.DrawString("S", this.Font, Fore, S1Circle, CenterString);
 
-            PointF S2Center = Radial(TableCenter, 320 - this.Angle, (int)Math.Round(Radius * 0.6667));
+            PointF S2Center = Radial(TableCenter, 40 - this.Angle, (int)Math.Round(Radius * 0.6667));
             Rectangle S2Circle = RectAboutCenter(S2Center, SampleSize, SampleSize);
             pe.Graphics.DrawEllipse(TablePen, S2Circle);
-            pe.Graphics.DrawString("2", this.Font, Fore, S2Circle, CenterString);
+            pe.Graphics.DrawString("L", this.Font, Fore, S2Circle, CenterString);
 
-            PointF S3Center = Radial(TableCenter, 370 - this.Angle, (int)Math.Round(Radius * 0.6667));
+            PointF S3Center = Radial(TableCenter, 76 - this.Angle, (int)Math.Round(Radius * 0.6667));
             Rectangle S3Circle = RectAboutCenter(S3Center, SampleSize, SampleSize);
             pe.Graphics.DrawEllipse(TablePen, S3Circle);
-            pe.Graphics.DrawString("3", this.Font, Fore, S3Circle, CenterString);
+            pe.Graphics.DrawString("C", this.Font, Fore, S3Circle, CenterString);
+
+            PointF MicroscopeCenter = Radial(TableCenter, 10, Radius + 10);
+            Rectangle Microscope = RectAboutCenter(MicroscopeCenter, 12, 12);
+            pe.Graphics.DrawRectangle(White, Microscope);
+            pe.Graphics.DrawString("M", this.Font, Fore, Microscope, CenterString);
+
+            PointF DumpCenter = Radial(TableCenter, 227, Radius + 10);
+            Rectangle Dump = RectAboutCenter(DumpCenter, 12, 12);
+            pe.Graphics.DrawRectangle(White, Dump);
+            pe.Graphics.DrawString("D", this.Font, Fore, Dump, CenterString);
         }
 
         private Rectangle ShrinkRect(Rectangle Input, int Left, int Top, int Right, int Bottom)
