@@ -118,7 +118,7 @@ namespace Science.Systems
             try
             {
                 byte[] Data = UtilData.ToBytes(DateTime.Now.Ticks)
-                    .Concat(new byte[] { (byte)((this.InitDone ? 0b1 : 0b0) | (this.Initializing ? 0b10 : 0b00)) }) // Basic Data
+                    .Concat(new byte[] { (byte)((this.InitDone ? 0b1 : 0b0) | (this.Initializing ? 0b10 : 0b00) | (RoverMain.IOHandler.Microscope.Busy ? 0b100 : 0b000)) }) // Basic Data
                     .Concat(UtilData.ToBytes((float)this.Angle))
                     .Concat(UtilData.ToBytes((float)this.TargetAngle))
                     .ToArray();

@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Scarlet.Communications;
 using Scarlet.Components;
 using Scarlet.Components.Motors;
 using Scarlet.Filters;
@@ -25,7 +26,8 @@ namespace Science.Systems
         private readonly string Folder, FolderAF;
         private readonly Servo Servo;
         private readonly Average<int> ServoFilter;
-        private int ServoPos;
+        public int ServoPos { get; private set; } = 50;
+        public bool Busy = false;
 
         private const string KeyFolder = "LastFolder";
         private const string KeyFile = "LastFile";
@@ -54,7 +56,7 @@ namespace Science.Systems
         {
             this.ServoFilter.Feed(this.ServoPos);
             this.Servo.SetPosition(this.ServoFilter.GetOutput());
-            if (this.TraceLogging) { Log.Trace(this, "Servo going to " + this.ServoFilter.GetOutput()); }
+            if (this.TraceLogging && (this.ServoPos != this.ServoFilter.GetOutput())) { Log.Trace(this, "Servo going to " + this.ServoFilter.GetOutput()); }
         }
 
         public void Exit() { }
@@ -71,12 +73,14 @@ namespace Science.Systems
             }
             else
             {
+                this.Busy = true;
                 int FolderNum = int.Parse(StateStore.Get(KeyFolder)) + 1;
                 StateStore.Set(KeyFolder, FolderNum.ToString());
                 StateStore.Save();
                 string CurrentFolder = Path.Combine(this.FolderAF, FolderNum.ToString("D5") + Path.DirectorySeparatorChar);
                 Directory.CreateDirectory(CurrentFolder);
                 AutofocusMain(CurrentFolder);
+                this.Busy = false;
             }
         }
 
@@ -107,12 +111,12 @@ namespace Science.Systems
                 if (this.TraceLogging) { Log.Trace(this, "Took picture " + FileName + ", sharpness " + Sharpness); }
             }
             int BestPictureInd = 0;
-            for (int i = 0; i < PicFoci.Count; i++)
+            for (int i = 1; i < PicFoci.Count; i++)
             {
                 if (PicFoci[i] > PicFoci[BestPictureInd]) { BestPictureInd = i; }
             }
-            Log.Output(Log.Severity.INFO, Log.Source.CAMERAS, "Best AF picture was #" + BestPictureInd + 1);
-
+            Log.Output(Log.Severity.INFO, Log.Source.CAMERAS, "Best AF picture was #" + (BestPictureInd + 1));
+            File.Copy(Path.Combine(Folder, AFPicName(BestPictureInd)), Path.Combine(Folder, "AAA_Best.jpg"));
             PicFoci.Clear();
             ServoPositions.Clear();
             FocusIsNear = false;
@@ -128,7 +132,7 @@ namespace Science.Systems
 
         private bool LimitMoveAndContinue(float Movement)
         {
-            if(Math.Abs(Movement) > 0.2F)
+            if(Math.Abs(Movement) > 0.3F)
             {
                 if ((this.ServoPos + Movement) < 0 || (this.ServoPos + Movement) > 100) // We'd go out of bounds
                 {
@@ -150,9 +154,9 @@ namespace Science.Systems
             PicFoci.Add(CurrFocus);
             ServoPositions.Add(ServoPos);
             float Avg = AvgList(PicFoci);
-            if(PicFoci.Count > 40)
+            if(PicFoci.Count > 30)
             {
-                if (this.TraceLogging) { Log.Trace(this, "Took 40 pictures, giving up."); }
+                if (this.TraceLogging) { Log.Trace(this, "Took 30 pictures, giving up."); }
                 return 0;
             }
             if(CurrFocus > (Avg * 1.12))

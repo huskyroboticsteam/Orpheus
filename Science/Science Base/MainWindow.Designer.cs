@@ -86,6 +86,11 @@
             this.ChartDataChooser = new System.Windows.Forms.ListView();
             this.ChartAddLeft = new DarkUI.Controls.DarkButton();
             this.ChartAddRight = new DarkUI.Controls.DarkButton();
+            this.GroupMicroscope = new System.Windows.Forms.GroupBox();
+            this.tableLayoutPanel12 = new System.Windows.Forms.TableLayoutPanel();
+            this.StartMicroscope = new DarkUI.Controls.DarkButton();
+            this.UseAutofocus = new DarkUI.Controls.DarkCheckBox();
+            this.MicroscopeFocusBar = new System.Windows.Forms.TrackBar();
             this.Debugging = new System.Windows.Forms.TabPage();
             this.DebugList = new System.Windows.Forms.TableLayoutPanel();
             this.PacketGenBox = new System.Windows.Forms.GroupBox();
@@ -122,11 +127,6 @@
             this.SecTimer = new System.Windows.Forms.Timer(this.components);
             this.UIUpdate = new System.Windows.Forms.Timer(this.components);
             this.ScienceTooltip = new System.Windows.Forms.ToolTip(this.components);
-            this.GroupMicroscope = new System.Windows.Forms.GroupBox();
-            this.tableLayoutPanel12 = new System.Windows.Forms.TableLayoutPanel();
-            this.StartMicroscope = new DarkUI.Controls.DarkButton();
-            this.UseAutofocus = new DarkUI.Controls.DarkCheckBox();
-            this.MicroscopeFocusBar = new System.Windows.Forms.TrackBar();
             this.tableLayoutPanel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.Control.SuspendLayout();
@@ -141,6 +141,9 @@
             this.groupBox3.SuspendLayout();
             this.tableLayoutPanel9.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.RailSpeed)).BeginInit();
+            this.GroupMicroscope.SuspendLayout();
+            this.tableLayoutPanel12.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.MicroscopeFocusBar)).BeginInit();
             this.Debugging.SuspendLayout();
             this.DebugList.SuspendLayout();
             this.PacketGenBox.SuspendLayout();
@@ -156,9 +159,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.StatusImgNetwork)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.StatusImgPower)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.StatusImgSystem)).BeginInit();
-            this.GroupMicroscope.SuspendLayout();
-            this.tableLayoutPanel12.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.MicroscopeFocusBar)).BeginInit();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -982,6 +982,77 @@
             this.ScienceTooltip.SetToolTip(this.ChartAddRight, "Adds the selected item(s) to the right graph.");
             this.ChartAddRight.Click += new System.EventHandler(this.ChartAddRight_Click);
             // 
+            // GroupMicroscope
+            // 
+            this.GroupMicroscope.Controls.Add(this.tableLayoutPanel12);
+            this.GroupMicroscope.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.GroupMicroscope.ForeColor = System.Drawing.Color.Gainsboro;
+            this.GroupMicroscope.Location = new System.Drawing.Point(297, 3);
+            this.GroupMicroscope.Name = "GroupMicroscope";
+            this.GroupMicroscope.Size = new System.Drawing.Size(288, 76);
+            this.GroupMicroscope.TabIndex = 13;
+            this.GroupMicroscope.TabStop = false;
+            this.GroupMicroscope.Text = "Microscope";
+            // 
+            // tableLayoutPanel12
+            // 
+            this.tableLayoutPanel12.ColumnCount = 2;
+            this.tableLayoutPanel12.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel12.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel12.Controls.Add(this.StartMicroscope, 1, 1);
+            this.tableLayoutPanel12.Controls.Add(this.UseAutofocus, 0, 1);
+            this.tableLayoutPanel12.Controls.Add(this.MicroscopeFocusBar, 0, 0);
+            this.tableLayoutPanel12.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel12.Location = new System.Drawing.Point(3, 16);
+            this.tableLayoutPanel12.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanel12.Name = "tableLayoutPanel12";
+            this.tableLayoutPanel12.RowCount = 2;
+            this.tableLayoutPanel12.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tableLayoutPanel12.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel12.Size = new System.Drawing.Size(282, 57);
+            this.tableLayoutPanel12.TabIndex = 0;
+            // 
+            // StartMicroscope
+            // 
+            this.StartMicroscope.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.StartMicroscope.Location = new System.Drawing.Point(142, 31);
+            this.StartMicroscope.Margin = new System.Windows.Forms.Padding(1);
+            this.StartMicroscope.Name = "StartMicroscope";
+            this.StartMicroscope.Padding = new System.Windows.Forms.Padding(5);
+            this.StartMicroscope.Size = new System.Drawing.Size(139, 25);
+            this.StartMicroscope.TabIndex = 0;
+            this.StartMicroscope.Text = "Take Picture(s)";
+            this.ScienceTooltip.SetToolTip(this.StartMicroscope, "Takes one or more microscope pictures");
+            this.StartMicroscope.Click += new System.EventHandler(this.StartMicroscope_Click);
+            // 
+            // UseAutofocus
+            // 
+            this.UseAutofocus.AutoSize = true;
+            this.UseAutofocus.Checked = true;
+            this.UseAutofocus.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.UseAutofocus.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.UseAutofocus.Location = new System.Drawing.Point(3, 33);
+            this.UseAutofocus.Name = "UseAutofocus";
+            this.UseAutofocus.Size = new System.Drawing.Size(135, 21);
+            this.UseAutofocus.TabIndex = 1;
+            this.UseAutofocus.Text = "Use Autofocus";
+            this.ScienceTooltip.SetToolTip(this.UseAutofocus, "Whether to try to automatically find the best focus setting for the microscope.");
+            // 
+            // MicroscopeFocusBar
+            // 
+            this.tableLayoutPanel12.SetColumnSpan(this.MicroscopeFocusBar, 2);
+            this.MicroscopeFocusBar.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.MicroscopeFocusBar.Location = new System.Drawing.Point(3, 3);
+            this.MicroscopeFocusBar.Maximum = 100;
+            this.MicroscopeFocusBar.Name = "MicroscopeFocusBar";
+            this.MicroscopeFocusBar.Size = new System.Drawing.Size(276, 24);
+            this.MicroscopeFocusBar.SmallChange = 5;
+            this.MicroscopeFocusBar.TabIndex = 2;
+            this.MicroscopeFocusBar.TickFrequency = 10;
+            this.ScienceTooltip.SetToolTip(this.MicroscopeFocusBar, "Manual focus adjustment");
+            this.MicroscopeFocusBar.Value = 50;
+            this.MicroscopeFocusBar.Scroll += new System.EventHandler(this.MicroscopeFocusBar_Scroll);
+            // 
             // Debugging
             // 
             this.Debugging.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
@@ -989,7 +1060,7 @@
             this.Debugging.Location = new System.Drawing.Point(4, 22);
             this.Debugging.Margin = new System.Windows.Forms.Padding(0);
             this.Debugging.Name = "Debugging";
-            this.Debugging.Size = new System.Drawing.Size(1000, 664);
+            this.Debugging.Size = new System.Drawing.Size(1176, 736);
             this.Debugging.TabIndex = 1;
             this.Debugging.Text = "Debugging";
             // 
@@ -1011,7 +1082,7 @@
             this.DebugList.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.DebugList.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.DebugList.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.DebugList.Size = new System.Drawing.Size(1000, 664);
+            this.DebugList.Size = new System.Drawing.Size(1176, 736);
             this.DebugList.TabIndex = 0;
             // 
             // PacketGenBox
@@ -1023,7 +1094,7 @@
             this.PacketGenBox.Margin = new System.Windows.Forms.Padding(5);
             this.PacketGenBox.MinimumSize = new System.Drawing.Size(0, 100);
             this.PacketGenBox.Name = "PacketGenBox";
-            this.PacketGenBox.Size = new System.Drawing.Size(990, 156);
+            this.PacketGenBox.Size = new System.Drawing.Size(1166, 174);
             this.PacketGenBox.TabIndex = 1;
             this.PacketGenBox.TabStop = false;
             this.PacketGenBox.Text = "Packet Builder";
@@ -1055,7 +1126,7 @@
             this.PacketGenLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.PacketGenLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.PacketGenLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.PacketGenLayout.Size = new System.Drawing.Size(984, 137);
+            this.PacketGenLayout.Size = new System.Drawing.Size(1160, 155);
             this.PacketGenLayout.TabIndex = 0;
             // 
             // TimestampTitle
@@ -1065,7 +1136,7 @@
             this.TimestampTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.TimestampTitle.Location = new System.Drawing.Point(3, 0);
             this.TimestampTitle.Name = "TimestampTitle";
-            this.TimestampTitle.Size = new System.Drawing.Size(158, 17);
+            this.TimestampTitle.Size = new System.Drawing.Size(193, 17);
             this.TimestampTitle.TabIndex = 0;
             this.TimestampTitle.Text = "Timestamp";
             // 
@@ -1074,9 +1145,9 @@
             this.IDTitle.AutoSize = true;
             this.IDTitle.Dock = System.Windows.Forms.DockStyle.Fill;
             this.IDTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.IDTitle.Location = new System.Drawing.Point(167, 0);
+            this.IDTitle.Location = new System.Drawing.Point(202, 0);
             this.IDTitle.Name = "IDTitle";
-            this.IDTitle.Size = new System.Drawing.Size(117, 17);
+            this.IDTitle.Size = new System.Drawing.Size(143, 17);
             this.IDTitle.TabIndex = 2;
             this.IDTitle.Text = "ID";
             // 
@@ -1087,9 +1158,9 @@
             this.IDTextbox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.IDTextbox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.IDTextbox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.IDTextbox.Location = new System.Drawing.Point(167, 20);
+            this.IDTextbox.Location = new System.Drawing.Point(202, 20);
             this.IDTextbox.Name = "IDTextbox";
-            this.IDTextbox.Size = new System.Drawing.Size(117, 20);
+            this.IDTextbox.Size = new System.Drawing.Size(143, 20);
             this.IDTextbox.TabIndex = 3;
             this.IDTextbox.TextChanged += new System.EventHandler(this.IDTextbox_TextChanged);
             // 
@@ -1100,9 +1171,9 @@
             this.DataTextbox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.DataTextbox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.DataTextbox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.DataTextbox.Location = new System.Drawing.Point(290, 20);
+            this.DataTextbox.Location = new System.Drawing.Point(351, 20);
             this.DataTextbox.Name = "DataTextbox";
-            this.DataTextbox.Size = new System.Drawing.Size(527, 20);
+            this.DataTextbox.Size = new System.Drawing.Size(641, 20);
             this.DataTextbox.TabIndex = 4;
             this.DataTextbox.TextChanged += new System.EventHandler(this.DataTextbox_TextChanged);
             // 
@@ -1111,9 +1182,9 @@
             this.DataTitle.AutoSize = true;
             this.DataTitle.Dock = System.Windows.Forms.DockStyle.Fill;
             this.DataTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.DataTitle.Location = new System.Drawing.Point(290, 0);
+            this.DataTitle.Location = new System.Drawing.Point(351, 0);
             this.DataTitle.Name = "DataTitle";
-            this.DataTitle.Size = new System.Drawing.Size(527, 17);
+            this.DataTitle.Size = new System.Drawing.Size(641, 17);
             this.DataTitle.TabIndex = 5;
             this.DataTitle.Text = "Data";
             // 
@@ -1130,7 +1201,7 @@
             this.tableLayoutPanel2.RowCount = 2;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(164, 107);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(199, 125);
             this.tableLayoutPanel2.TabIndex = 7;
             // 
             // UseCurrentTime
@@ -1152,7 +1223,7 @@
             this.TimestampTextbox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.TimestampTextbox.Location = new System.Drawing.Point(3, 3);
             this.TimestampTextbox.Name = "TimestampTextbox";
-            this.TimestampTextbox.Size = new System.Drawing.Size(158, 20);
+            this.TimestampTextbox.Size = new System.Drawing.Size(193, 20);
             this.TimestampTextbox.TabIndex = 2;
             this.TimestampTextbox.TextChanged += new System.EventHandler(this.TimestampTextbox_TextChanged);
             // 
@@ -1161,9 +1232,9 @@
             this.InterpretationTimestamp.AutoSize = true;
             this.InterpretationTimestamp.Dock = System.Windows.Forms.DockStyle.Fill;
             this.InterpretationTimestamp.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.InterpretationTimestamp.Location = new System.Drawing.Point(3, 124);
+            this.InterpretationTimestamp.Location = new System.Drawing.Point(3, 142);
             this.InterpretationTimestamp.Name = "InterpretationTimestamp";
-            this.InterpretationTimestamp.Size = new System.Drawing.Size(158, 13);
+            this.InterpretationTimestamp.Size = new System.Drawing.Size(193, 13);
             this.InterpretationTimestamp.TabIndex = 8;
             this.InterpretationTimestamp.Text = "Unknown";
             // 
@@ -1172,9 +1243,9 @@
             this.InterpretationID.AutoSize = true;
             this.InterpretationID.Dock = System.Windows.Forms.DockStyle.Fill;
             this.InterpretationID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.InterpretationID.Location = new System.Drawing.Point(167, 124);
+            this.InterpretationID.Location = new System.Drawing.Point(202, 142);
             this.InterpretationID.Name = "InterpretationID";
-            this.InterpretationID.Size = new System.Drawing.Size(117, 13);
+            this.InterpretationID.Size = new System.Drawing.Size(143, 13);
             this.InterpretationID.TabIndex = 9;
             this.InterpretationID.Text = "Unknown";
             // 
@@ -1183,9 +1254,9 @@
             this.InterpretationData.AutoSize = true;
             this.InterpretationData.Dock = System.Windows.Forms.DockStyle.Fill;
             this.InterpretationData.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.InterpretationData.Location = new System.Drawing.Point(290, 124);
+            this.InterpretationData.Location = new System.Drawing.Point(351, 142);
             this.InterpretationData.Name = "InterpretationData";
-            this.InterpretationData.Size = new System.Drawing.Size(527, 13);
+            this.InterpretationData.Size = new System.Drawing.Size(641, 13);
             this.InterpretationData.TabIndex = 10;
             this.InterpretationData.Text = "Unknown";
             // 
@@ -1194,9 +1265,9 @@
             this.PacketConstructStatus.AutoSize = true;
             this.PacketConstructStatus.Dock = System.Windows.Forms.DockStyle.Fill;
             this.PacketConstructStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.PacketConstructStatus.Location = new System.Drawing.Point(823, 124);
+            this.PacketConstructStatus.Location = new System.Drawing.Point(998, 142);
             this.PacketConstructStatus.Name = "PacketConstructStatus";
-            this.PacketConstructStatus.Size = new System.Drawing.Size(158, 13);
+            this.PacketConstructStatus.Size = new System.Drawing.Size(159, 13);
             this.PacketConstructStatus.TabIndex = 11;
             this.PacketConstructStatus.Text = "Unknown";
             // 
@@ -1208,23 +1279,23 @@
             this.tableLayoutPanel3.Controls.Add(this.SendPacketBtn, 0, 1);
             this.tableLayoutPanel3.Controls.Add(this.ClientSelector, 0, 0);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(820, 17);
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(995, 17);
             this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.RowCount = 2;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(164, 107);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(165, 125);
             this.tableLayoutPanel3.TabIndex = 12;
             // 
             // SendPacketBtn
             // 
             this.SendPacketBtn.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.SendPacketBtn.Location = new System.Drawing.Point(3, 56);
+            this.SendPacketBtn.Location = new System.Drawing.Point(3, 65);
             this.SendPacketBtn.Name = "SendPacketBtn";
             this.SendPacketBtn.Padding = new System.Windows.Forms.Padding(5);
-            this.SendPacketBtn.Size = new System.Drawing.Size(158, 25);
+            this.SendPacketBtn.Size = new System.Drawing.Size(159, 25);
             this.SendPacketBtn.TabIndex = 5;
             this.SendPacketBtn.Text = "Send";
             this.SendPacketBtn.Click += new System.EventHandler(this.SendPacketBtn_Click);
@@ -1236,7 +1307,7 @@
             this.ClientSelector.FormattingEnabled = true;
             this.ClientSelector.Location = new System.Drawing.Point(3, 3);
             this.ClientSelector.Name = "ClientSelector";
-            this.ClientSelector.Size = new System.Drawing.Size(158, 21);
+            this.ClientSelector.Size = new System.Drawing.Size(159, 21);
             this.ClientSelector.TabIndex = 6;
             // 
             // SendAsUDP
@@ -1244,7 +1315,7 @@
             this.SendAsUDP.AutoSize = true;
             this.SendAsUDP.Checked = true;
             this.SendAsUDP.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.SendAsUDP.Location = new System.Drawing.Point(823, 0);
+            this.SendAsUDP.Location = new System.Drawing.Point(998, 0);
             this.SendAsUDP.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
             this.SendAsUDP.Name = "SendAsUDP";
             this.SendAsUDP.Size = new System.Drawing.Size(49, 17);
@@ -1257,10 +1328,10 @@
             this.groupBox1.Controls.Add(this.tableLayoutPanel4);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.ForeColor = System.Drawing.Color.Gainsboro;
-            this.groupBox1.Location = new System.Drawing.Point(5, 171);
+            this.groupBox1.Location = new System.Drawing.Point(5, 189);
             this.groupBox1.Margin = new System.Windows.Forms.Padding(5);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(990, 156);
+            this.groupBox1.Size = new System.Drawing.Size(1166, 174);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Base Status";
@@ -1282,7 +1353,7 @@
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(984, 137);
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(1160, 155);
             this.tableLayoutPanel4.TabIndex = 0;
             // 
             // StatsPacketQueueOut
@@ -1292,7 +1363,7 @@
             this.StatsPacketQueueOut.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.StatsPacketQueueOut.Location = new System.Drawing.Point(3, 0);
             this.StatsPacketQueueOut.Name = "StatsPacketQueueOut";
-            this.StatsPacketQueueOut.Size = new System.Drawing.Size(240, 45);
+            this.StatsPacketQueueOut.Size = new System.Drawing.Size(284, 51);
             this.StatsPacketQueueOut.TabIndex = 0;
             this.StatsPacketQueueOut.Text = "Packet Queue Out: N/A";
             this.StatsPacketQueueOut.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1302,9 +1373,9 @@
             this.StatsPacketQueueIn.AutoSize = true;
             this.StatsPacketQueueIn.Dock = System.Windows.Forms.DockStyle.Fill;
             this.StatsPacketQueueIn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.StatsPacketQueueIn.Location = new System.Drawing.Point(3, 45);
+            this.StatsPacketQueueIn.Location = new System.Drawing.Point(3, 51);
             this.StatsPacketQueueIn.Name = "StatsPacketQueueIn";
-            this.StatsPacketQueueIn.Size = new System.Drawing.Size(240, 45);
+            this.StatsPacketQueueIn.Size = new System.Drawing.Size(284, 51);
             this.StatsPacketQueueIn.TabIndex = 1;
             this.StatsPacketQueueIn.Text = "Packet Queue In: N/A";
             this.StatsPacketQueueIn.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1314,9 +1385,9 @@
             this.groupBox5.Controls.Add(this.tableLayoutPanel11);
             this.groupBox5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox5.ForeColor = System.Drawing.Color.Gainsboro;
-            this.groupBox5.Location = new System.Drawing.Point(3, 335);
+            this.groupBox5.Location = new System.Drawing.Point(3, 371);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(994, 160);
+            this.groupBox5.Size = new System.Drawing.Size(1170, 178);
             this.groupBox5.TabIndex = 3;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Debug Slider";
@@ -1336,7 +1407,7 @@
             this.tableLayoutPanel11.RowCount = 2;
             this.tableLayoutPanel11.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel11.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
-            this.tableLayoutPanel11.Size = new System.Drawing.Size(988, 141);
+            this.tableLayoutPanel11.Size = new System.Drawing.Size(1164, 159);
             this.tableLayoutPanel11.TabIndex = 0;
             // 
             // DebugBar
@@ -1348,7 +1419,7 @@
             this.DebugBar.Margin = new System.Windows.Forms.Padding(3, 10, 3, 3);
             this.DebugBar.Maximum = 100;
             this.DebugBar.Name = "DebugBar";
-            this.DebugBar.Size = new System.Drawing.Size(982, 45);
+            this.DebugBar.Size = new System.Drawing.Size(1158, 45);
             this.DebugBar.TabIndex = 0;
             this.DebugBar.TickFrequency = 5;
             this.ScienceTooltip.SetToolTip(this.DebugBar, "Magic debugging slider. Don\'t use if you don\'t know what it does!");
@@ -1357,10 +1428,10 @@
             // DebugShipButton
             // 
             this.DebugShipButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.DebugShipButton.Location = new System.Drawing.Point(744, 114);
+            this.DebugShipButton.Location = new System.Drawing.Point(876, 132);
             this.DebugShipButton.Name = "DebugShipButton";
             this.DebugShipButton.Padding = new System.Windows.Forms.Padding(5);
-            this.DebugShipButton.Size = new System.Drawing.Size(241, 24);
+            this.DebugShipButton.Size = new System.Drawing.Size(285, 24);
             this.DebugShipButton.TabIndex = 1;
             this.DebugShipButton.Text = "SHIP IT";
             this.ScienceTooltip.SetToolTip(this.DebugShipButton, "Definitely don\'t click this one if you don\'t know what you are doing.");
@@ -1445,74 +1516,6 @@
             this.UIUpdate.Interval = 33;
             this.UIUpdate.Tick += new System.EventHandler(this.UIUpdate_Tick);
             // 
-            // GroupMicroscope
-            // 
-            this.GroupMicroscope.Controls.Add(this.tableLayoutPanel12);
-            this.GroupMicroscope.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.GroupMicroscope.ForeColor = System.Drawing.Color.Gainsboro;
-            this.GroupMicroscope.Location = new System.Drawing.Point(297, 3);
-            this.GroupMicroscope.Name = "GroupMicroscope";
-            this.GroupMicroscope.Size = new System.Drawing.Size(288, 76);
-            this.GroupMicroscope.TabIndex = 13;
-            this.GroupMicroscope.TabStop = false;
-            this.GroupMicroscope.Text = "Microscope";
-            // 
-            // tableLayoutPanel12
-            // 
-            this.tableLayoutPanel12.ColumnCount = 2;
-            this.tableLayoutPanel12.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel12.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel12.Controls.Add(this.StartMicroscope, 1, 1);
-            this.tableLayoutPanel12.Controls.Add(this.UseAutofocus, 0, 1);
-            this.tableLayoutPanel12.Controls.Add(this.MicroscopeFocusBar, 0, 0);
-            this.tableLayoutPanel12.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel12.Location = new System.Drawing.Point(3, 16);
-            this.tableLayoutPanel12.Margin = new System.Windows.Forms.Padding(0);
-            this.tableLayoutPanel12.Name = "tableLayoutPanel12";
-            this.tableLayoutPanel12.RowCount = 2;
-            this.tableLayoutPanel12.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
-            this.tableLayoutPanel12.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel12.Size = new System.Drawing.Size(282, 57);
-            this.tableLayoutPanel12.TabIndex = 0;
-            // 
-            // StartMicroscope
-            // 
-            this.StartMicroscope.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.StartMicroscope.Location = new System.Drawing.Point(142, 31);
-            this.StartMicroscope.Margin = new System.Windows.Forms.Padding(1);
-            this.StartMicroscope.Name = "StartMicroscope";
-            this.StartMicroscope.Padding = new System.Windows.Forms.Padding(5);
-            this.StartMicroscope.Size = new System.Drawing.Size(139, 25);
-            this.StartMicroscope.TabIndex = 0;
-            this.StartMicroscope.Text = "Take Picture(s)";
-            this.ScienceTooltip.SetToolTip(this.StartMicroscope, "Takes one or more microscope pictures");
-            this.StartMicroscope.Click += new System.EventHandler(this.StartMicroscope_Click);
-            // 
-            // UseAutofocus
-            // 
-            this.UseAutofocus.AutoSize = true;
-            this.UseAutofocus.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.UseAutofocus.Location = new System.Drawing.Point(3, 33);
-            this.UseAutofocus.Name = "UseAutofocus";
-            this.UseAutofocus.Size = new System.Drawing.Size(135, 21);
-            this.UseAutofocus.TabIndex = 1;
-            this.UseAutofocus.Text = "Use Autofocus";
-            this.ScienceTooltip.SetToolTip(this.UseAutofocus, "Whether to try to automatically find the best focus setting for the microscope.");
-            // 
-            // MicroscopeFocusBar
-            // 
-            this.tableLayoutPanel12.SetColumnSpan(this.MicroscopeFocusBar, 2);
-            this.MicroscopeFocusBar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.MicroscopeFocusBar.Location = new System.Drawing.Point(3, 3);
-            this.MicroscopeFocusBar.Maximum = 100;
-            this.MicroscopeFocusBar.Name = "MicroscopeFocusBar";
-            this.MicroscopeFocusBar.Size = new System.Drawing.Size(276, 24);
-            this.MicroscopeFocusBar.SmallChange = 5;
-            this.MicroscopeFocusBar.TabIndex = 2;
-            this.MicroscopeFocusBar.TickFrequency = 10;
-            this.ScienceTooltip.SetToolTip(this.MicroscopeFocusBar, "Manual focus adjustment");
-            this.MicroscopeFocusBar.Scroll += new System.EventHandler(this.MicroscopeFocusBar_Scroll);
-            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1542,6 +1545,10 @@
             this.tableLayoutPanel9.ResumeLayout(false);
             this.tableLayoutPanel9.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.RailSpeed)).EndInit();
+            this.GroupMicroscope.ResumeLayout(false);
+            this.tableLayoutPanel12.ResumeLayout(false);
+            this.tableLayoutPanel12.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.MicroscopeFocusBar)).EndInit();
             this.Debugging.ResumeLayout(false);
             this.DebugList.ResumeLayout(false);
             this.PacketGenBox.ResumeLayout(false);
@@ -1561,10 +1568,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.StatusImgNetwork)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.StatusImgPower)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.StatusImgSystem)).EndInit();
-            this.GroupMicroscope.ResumeLayout(false);
-            this.tableLayoutPanel12.ResumeLayout(false);
-            this.tableLayoutPanel12.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.MicroscopeFocusBar)).EndInit();
             this.ResumeLayout(false);
 
         }
