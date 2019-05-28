@@ -27,7 +27,7 @@ namespace Science.Systems
         private TLV2544 ADC;
 
         // Sensor endpoints
-        private VEML6075 UVLight;
+        //private VEML6075 UVLight;
         private BME280 Atmospheric;
         private iAQCore AirQuality;
         private VH400 SoilMoisture;
@@ -51,7 +51,7 @@ namespace Science.Systems
             //Config.UseLongSample = true;
             this.ADC.Configure(Config);
 
-            this.UVLight = new VEML6075(this.I2C1) { TraceLogging = false };
+            //this.UVLight = new VEML6075(this.I2C1) { TraceLogging = false };
             this.Atmospheric = new BME280(this.I2C1);
             this.Atmospheric.Configure();
             
@@ -70,13 +70,13 @@ namespace Science.Systems
             if (this.TakeReadings)
             {
                 DateTime SampleTime = DateTime.Now;
-                this.UVLight.UpdateState();
+                //this.UVLight.UpdateState();
                 this.Atmospheric.UpdateState();
                 this.AirQuality.UpdateState();
                 this.SoilMoisture.UpdateState();
                 
                 byte[] Data = UtilData.ToBytes(SampleTime.Ticks)
-                    .Concat(UtilData.ToBytes((float)this.UVLight.GetApproximateUVIndex()))
+                    .Concat(UtilData.ToBytes((float)0))//this.UVLight.GetApproximateUVIndex()))
                     .Concat(UtilData.ToBytes((ushort)this.AirQuality.GetCO2Value()))
                     .Concat(UtilData.ToBytes((ushort)this.AirQuality.GetTVOCValue()))
                     .Concat(UtilData.ToBytes((float)this.SoilMoisture.GetReading()))
@@ -84,7 +84,7 @@ namespace Science.Systems
                     .Concat(UtilData.ToBytes((float)this.Atmospheric.Pressure))
                     .Concat(UtilData.ToBytes((float)this.Atmospheric.Humidity))
                     .ToArray();
-                if (this.TraceLogging) { Log.Trace(this, "UV: [A " + this.UVLight.GetReadingUVA() + ", B " + this.UVLight.GetReadingUVB() + ", I " + this.UVLight.GetApproximateUVIndex().ToString("N4") + "], AirQ: [CO2 " + this.AirQuality.GetCO2Value() + ",TVOC " + this.AirQuality.GetTVOCValue() + "], Soil: " + this.SoilMoisture.GetReading() + ", AirTemp: " + this.Atmospheric.Temperature); }
+                if (this.TraceLogging) { Log.Trace(this, /*"UV: [A " + this.UVLight.GetReadingUVA() + ", B " + this.UVLight.GetReadingUVB() + ", I " + this.UVLight.GetApproximateUVIndex().ToString("N4") + */"], AirQ: [CO2 " + this.AirQuality.GetCO2Value() + ",TVOC " + this.AirQuality.GetTVOCValue() + "], Soil: " + this.SoilMoisture.GetReading() + ", AirTemp: " + this.Atmospheric.Temperature); }
                 
                 Packet Packet = new Packet(new Message(ScienceConstants.Packets.AUX_SENSOR, Data), false);
                 Client.Send(Packet);
