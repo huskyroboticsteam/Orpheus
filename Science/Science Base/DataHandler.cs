@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Net.NetworkInformation;
+using System.Text;
 using System.Threading;
 using System.Windows.Threading;
 using Scarlet.Communications;
@@ -39,9 +41,14 @@ namespace Science_Base
         public static DataSeries<float> TTBCurrent = new DataSeries<float>("Turntable Current", "Turntable Current (A)");
         //public static DataSeries<float> SpareCurrent = new DataSeries<float>("Spare Current", "Spare Motor Current (A)");
 
+        // Connection info
+        public static DataSeries<float> PingTime = new DataSeries<float>("Ping Time", "Ping Roundtrip Time (ms)");
+
         // Garbage for testing
         public static DataSeries<int> RandomData = new DataSeries<int>("Random", "Rubbish");
         private static Random Random;
+
+        public static bool ShuttingDown = false;
 
         public static TimeSpan ClientOffset = new TimeSpan(0);
 
@@ -54,6 +61,7 @@ namespace Science_Base
             Parse.SetParseHandler(ScienceConstants.Packets.DRL_STATUS, PacketDrillStatus);
             Parse.SetParseHandler(ScienceConstants.Packets.SYS_SENSOR, PacketSystemSensors);
             new Thread(new ThreadStart(DoAdds)).Start();
+            new Thread(new ThreadStart(DoPing)).Start();
         }
 
         public static object[] GetSeries()
@@ -65,6 +73,7 @@ namespace Science_Base
                 RailGroundDistance, RailTopDistance, RailVelocity,
                 TTBPosition,
                 DrillSpeed, SampleDoorState,
+                PingTime,
                 RandomData
             };
         }
@@ -188,6 +197,37 @@ namespace Science_Base
             }
             Log.Output(Log.Severity.DEBUG, Log.Source.GUI, "Random data addition finished.");
             
+        }
+
+        private static void DoPing()
+        {
+            Log.Output(Log.Severity.DEBUG, Log.Source.GUI, "Beginning pings.");
+
+            // To prevent the graph from crashing the UI because the data range is too small.
+            PingTime.Data.Add(new Datum<float>(DateTime.Now, 0F));
+            PingTime.Data.Add(new Datum<float>(DateTime.Now, 1F));
+
+            Ping PingSender = new Ping();
+            PingOptions Options = new PingOptions { DontFragment = true };
+            byte[] Buffer = Encoding.ASCII.GetBytes("HomuraDidNothingWrong");
+            while (!ShuttingDown)
+            {
+                DateTime SendTime = DateTime.Now;
+                try
+                {
+                    PingReply Reply = PingSender.Send("192.168.0.50", 2000, Buffer, Options);
+                    if (Reply.Status == IPStatus.Success)
+                    {
+                        PingTime.Data.Add(new Datum<float>(SendTime, (float)Reply.RoundtripTime));
+                    }
+                    else
+                    {
+                        PingTime.Data.Add(new Datum<float>(SendTime, float.NaN));
+                    }
+                }
+                catch(Exception Exc) { PingTime.Data.Add(new Datum<float>(SendTime, float.NaN)); } // Just keep trying.
+                Thread.Sleep(500);
+            }
         }
 
     }

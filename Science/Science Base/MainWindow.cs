@@ -261,7 +261,8 @@ namespace Science_Base
 
         private void MainWindow_FormClosed(object sender, FormClosedEventArgs e)
         {
-            Log.Output(Log.Severity.INFO, Log.Source.GUI, "Base station shuttng down, saving graph settings...");
+            Log.Output(Log.Severity.INFO, Log.Source.GUI, "Base station shutting down, saving graph settings...");
+            DataHandler.ShuttingDown = true;
             UIHelper.SaveCharts(this.Charts);
             Log.Output(Log.Severity.INFO, Log.Source.GUI, "Stopping server... (If this hangs, it should be safe to force close now)");
             Server.Stop();
