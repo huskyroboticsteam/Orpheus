@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading;
@@ -227,6 +228,151 @@ namespace Science_Base
                 }
                 catch(Exception Exc) { PingTime.Data.Add(new Datum<float>(SendTime, float.NaN)); } // Just keep trying.
                 Thread.Sleep(500);
+            }
+        }
+
+        private static readonly string KeyFolderID = "DataFileNum";
+        private static readonly string TimeFormat = "yyyy-MM-dd HH:mm:ss.fffffff";
+
+        public static void SaveAllToFile()
+        {
+            try
+            {
+                if (!StateStore.Started) { StateStore.Start("RoverScience"); }
+                int FileID = int.Parse(StateStore.GetOrCreate(KeyFolderID, "0"));
+                string FolderName = Path.Combine(Environment.CurrentDirectory, "GatheredData" + Path.DirectorySeparatorChar);
+                if (!Directory.Exists(FolderName)) { Directory.CreateDirectory(FolderName); }
+                Log.Output(Log.Severity.INFO, Log.Source.GUI, "Saving data to: \"" + FolderName + FileID.ToString("D5") + "_xxx.csv");
+
+                StateStore.Set(KeyFolderID, (FileID + 1).ToString());
+                StateStore.Save();
+
+                // Aux Sensor
+                if (UV.Data.Count > 0)
+                {
+                    Log.Output(Log.Severity.INFO, Log.Source.GUI, "Saving aux sensor data to file...");
+                    DataLog DataLog = new DataLog(Path.Combine(FolderName, FileID.ToString("D5") + "_AuxSensors_"), false);
+                    for (int i = 0; i < UV.Data.Count; i++)
+                    {
+                        DateTime Time = UV.Data[i].Time;
+                        DataUnit DataItem = new DataUnit("AuxSensors")
+                        {
+                            { "Time", Time.ToString(TimeFormat) },
+                            { "UVIndex", UV.Data[i].Data },
+                            { "AirCO2PPM", AirCO2.Data[i].Data },
+                            { "AirTVOCPPB", AirTVOC.Data[i].Data },
+                            { "AirTemp", AirTemp.Data[i].Data },
+                            { "AirHumidity", AirHumidity.Data[i].Data },
+                            { "AirPressure", AirPressure.Data[i].Data },
+                            { "SoilMoisture", SoilMoisture.Data[i].Data }
+                        };
+                        DataLog.Output(DataItem);
+                    }
+                    DataLog.CloseFile();
+                }
+
+                // Rail Data
+                if (RailGroundDistance.Data.Count > 0)
+                {
+                    Log.Output(Log.Severity.INFO, Log.Source.GUI, "Saving rail data to file...");
+                    DataLog DataLog = new DataLog(Path.Combine(FolderName, FileID.ToString("D5") + "_Rail_"), false);
+                    for (int i = 0; i < RailGroundDistance.Data.Count; i++)
+                    {
+                        DateTime Time = RailGroundDistance.Data[i].Time;
+                        DataUnit DataItem = new DataUnit("Rail")
+                        {
+                            { "Time", Time.ToString(TimeFormat) },
+                            { "GroundDist", RailGroundDistance.Data[i].Data },
+                            { "TopDist", RailTopDistance.Data[i].Data },
+                            { "Velocity", RailVelocity.Data[i].Data }
+                        };
+                        DataLog.Output(DataItem);
+                    }
+                    DataLog.CloseFile();
+                }
+
+                // Turntable Data
+                if (TTBPosition.Data.Count > 0)
+                {
+                    Log.Output(Log.Severity.INFO, Log.Source.GUI, "Saving turntable data to file...");
+                    DataLog DataLog = new DataLog(Path.Combine(FolderName, FileID.ToString("D5") + "_Turntable_"), false);
+                    for (int i = 0; i < TTBPosition.Data.Count; i++)
+                    {
+                        DateTime Time = TTBPosition.Data[i].Time;
+                        DataUnit DataItem = new DataUnit("Turntable")
+                        {
+                            { "Time", Time.ToString(TimeFormat) },
+                            { "Position", TTBPosition.Data[i].Data }
+                        };
+                        DataLog.Output(DataItem);
+                    }
+                    DataLog.CloseFile();
+                }
+
+                // Drill Data
+                if (DrillSpeed.Data.Count > 0)
+                {
+                    Log.Output(Log.Severity.INFO, Log.Source.GUI, "Saving drill data to file...");
+                    DataLog DataLog = new DataLog(Path.Combine(FolderName, FileID.ToString("D5") + "_Drill_"), false);
+                    for (int i = 0; i < DrillSpeed.Data.Count; i++)
+                    {
+                        DateTime Time = DrillSpeed.Data[i].Time;
+                        DataUnit DataItem = new DataUnit("Drill")
+                        {
+                            { "Time", Time.ToString(TimeFormat) },
+                            { "DrillSpeed", DrillSpeed.Data[i].Data },
+                            { "SampleDoorState", SampleDoorState.Data[i].Data }
+                        };
+                        DataLog.Output(DataItem);
+                    }
+                    DataLog.CloseFile();
+                }
+
+                // System Sensor
+                if (SupplyVoltage.Data.Count > 0)
+                {
+                    Log.Output(Log.Severity.INFO, Log.Source.GUI, "Saving system sensor data to file...");
+                    DataLog DataLog = new DataLog(Path.Combine(FolderName, FileID.ToString("D5") + "_SysSensors_"), false);
+                    for (int i = 0; i < SupplyVoltage.Data.Count; i++)
+                    {
+                        DateTime Time = SupplyVoltage.Data[i].Time;
+                        DataUnit DataItem = new DataUnit("SysSensor")
+                        {
+                            { "Time", Time.ToString(TimeFormat) },
+                            { "SupplyVoltage", SupplyVoltage.Data[i].Data },
+                            { "SysCurrent", SystemCurrent.Data[i].Data },
+                            { "DrillCurrent", DrillCurrent.Data[i].Data },
+                            { "RailCurrent", RailCurrent.Data[i].Data },
+                            { "TurntableCurrent", TTBCurrent.Data[i].Data }
+                        };
+                        DataLog.Output(DataItem);
+                    }
+                    DataLog.CloseFile();
+                }
+
+                // Network Data
+                if (PingTime.Data.Count > 0)
+                {
+                    Log.Output(Log.Severity.INFO, Log.Source.GUI, "Saving network data to file...");
+                    DataLog DataLog = new DataLog(Path.Combine(FolderName, FileID.ToString("D5") + "_Network_"), false);
+                    for (int i = 0; i < PingTime.Data.Count; i++)
+                    {
+                        DateTime Time = PingTime.Data[i].Time;
+                        DataUnit DataItem = new DataUnit("Network")
+                        {
+                            { "Time", Time.ToString(TimeFormat) },
+                            { "PingTime", PingTime.Data[i].Data }
+                        };
+                        DataLog.Output(DataItem);
+                    }
+                    DataLog.CloseFile();
+                }
+                Log.Output(Log.Severity.INFO, Log.Source.GUI, "Finished saving data to CSV.");
+            }
+            catch(Exception Exc)
+            {
+                Log.Output(Log.Severity.ERROR, Log.Source.GUI, "Encountered a problem while saving gathered data to CSV files. Data may not be saved.");
+                Log.Exception(Log.Source.GUI, Exc);
             }
         }
 
