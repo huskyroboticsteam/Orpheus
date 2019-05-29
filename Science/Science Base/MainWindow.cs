@@ -438,6 +438,16 @@ namespace Science_Base
             });
         }
 
+        public void UpdateMicroscope(bool Busy)
+        {
+            Invoke((MethodInvoker)delegate
+            {
+                this.StartMicroscope.Enabled = !Busy;
+                this.MicroscopeFocusBar.Enabled = !Busy;
+                this.StartMicroscope.Text = (Busy ? "AF Busy..." : "Take Picture(s)");
+            });
+        }
+
         public void UpdateDrill(byte Speed, bool SampleDoorOpen)
         {
             Invoke((MethodInvoker)delegate

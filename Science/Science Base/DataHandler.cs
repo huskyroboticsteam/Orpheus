@@ -140,6 +140,7 @@ namespace Science_Base
             TTBPosition.Data.Add(new Datum<float>(Time, Position));
 
             BaseMain.Window.UpdateTurntable(Position, ((Status & 0b10) == 0b10), ((Status & 0b1) == 0b1));
+            BaseMain.Window.UpdateMicroscope((Status & 0b100) == 0b100);
         }
 
         public static void PacketDrillStatus(Packet Packet)
