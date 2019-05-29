@@ -89,6 +89,22 @@ namespace MainRover
             CANBus.Write(ConstructCanID(Priority, Sender, Receiver), Payload);
         }
 
+        public static void ServoPos(ICANBus CANBus, bool Priority, byte Sender, byte Receiver, byte position)
+        {
+            byte[] Payload = new byte[2];
+            Payload[0] = 0x22;
+            Payload[1] = position;
+            CANBus.Write(ConstructCanID(Priority, Sender, Receiver), Payload);
+        }
+
+        public static void LaserToggle(ICANBus CANBus, bool Priority, byte Sender, byte Receiver, byte toggle)
+        {
+            byte[] Payload = new byte[2];
+            Payload[0] = 0x24;
+            Payload[1] = toggle;
+            CANBus.Write(ConstructCanID(Priority, Sender, Receiver), Payload);
+        }
+
         public static Tuple<short, short> GetTele(byte[] data)
         {
             short voltage = -1;

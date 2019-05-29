@@ -22,7 +22,9 @@ namespace MainRover
         DifferentialVert = 0x9E,
         DifferentialRotate = 0x9F,
         HandGrip = 0xA0,
-            
+        ArmServo = 0xA2,
+        ArmLaser = 0xA3,
+
         DataGPS = 0xC0,
         DataMagnetometer = 0xC1,
         HeadingFromGPS = 0xC2,

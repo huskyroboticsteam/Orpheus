@@ -88,17 +88,30 @@ namespace MainRover
                         if (p.Data.Payload[0] > 0)
                         {
                             direction = 0x01;
-                            SetSpeed((Device)address, (byte)(-1 * p.Data.Payload[1]), direction);
-                            //UtilCan.SpeedDir(CANBBB.CANBus0, false, 2, address, (byte)(-p.Data.Payload[1]), direction);
+                            //SetSpeed((Device)address, (byte)(-1 * p.Data.Payload[1]), direction);
+                            UtilCan.SpeedDir(CANBBB.CANBus0, false, 2, address, (byte)(-p.Data.Payload[1]), direction);
                             //Console.WriteLine("ADDRESS :" + address + "DIR :" + direction + "PAY :" + (byte)(-p.Data.Payload[1]));
                         }
                         else
                         {
                             direction = 0x00;
-                            SetSpeed((Device)address, p.Data.Payload[1], direction);
-                            //UtilCan.SpeedDir(CANBBB.CANBus0, false, 2, address, p.Data.Payload[1], direction);
+                            //SetSpeed((Device)address, p.Data.Payload[1], direction);
+                            UtilCan.SpeedDir(CANBBB.CANBus0, false, 2, address, p.Data.Payload[1], direction);
                             //Console.WriteLine("ADDRESS :" + address + "DIR :" + direction + "PAY :" + p.Data.Payload[1]);
                         }
+                        break;
+                    case PacketID.ArmServo:
+                        if ((sbyte)p.Data.Payload[1] == 1)
+                        {
+                            UtilCan.ServoPos(CANBBB.CANBus0, false, 0x2, 0x22, 170);
+                        }
+                        else if ((sbyte)p.Data.Payload[1] == -1)
+                        {
+                            UtilCan.ServoPos(CANBBB.CANBus0, false, 0x2, 0x22, 10);
+                        }
+                        break;
+                    case PacketID.ArmLaser:
+                        UtilCan.LaserToggle(CANBBB.CANBus0, false, 0x2, 0x24, p.Data.Payload[1]);
                         break;
                 }
             }
