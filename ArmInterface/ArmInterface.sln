@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.645
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArmInterface", "ArmInterface\ArmInterface.csproj", "{836CFB46-677E-4A4B-BD27-67E6A1926D98}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArmInterfaceTester", "ArmInterfaceTester\ArmInterfaceTester.csproj", "{CCBC7311-29EE-440F-8FD1-75761EC04F8F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestArmControllerGUI", "WindowsFormsApp1\TestArmControllerGUI.csproj", "{61EAB1D4-5A31-4ACE-AE18-F07ED752BF8D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArmControllerCommonFiles", "ArmControllerCommonFiles\ArmControllerCommonFiles.csproj", "{9F522E71-E121-4B0F-864C-675A7AEC4535}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{836CFB46-677E-4A4B-BD27-67E6A1926D98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{836CFB46-677E-4A4B-BD27-67E6A1926D98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{836CFB46-677E-4A4B-BD27-67E6A1926D98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{836CFB46-677E-4A4B-BD27-67E6A1926D98}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCBC7311-29EE-440F-8FD1-75761EC04F8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCBC7311-29EE-440F-8FD1-75761EC04F8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCBC7311-29EE-440F-8FD1-75761EC04F8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCBC7311-29EE-440F-8FD1-75761EC04F8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61EAB1D4-5A31-4ACE-AE18-F07ED752BF8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61EAB1D4-5A31-4ACE-AE18-F07ED752BF8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61EAB1D4-5A31-4ACE-AE18-F07ED752BF8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61EAB1D4-5A31-4ACE-AE18-F07ED752BF8D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F522E71-E121-4B0F-864C-675A7AEC4535}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F522E71-E121-4B0F-864C-675A7AEC4535}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F522E71-E121-4B0F-864C-675A7AEC4535}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F522E71-E121-4B0F-864C-675A7AEC4535}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4EA6CDA2-165F-4349-B367-075314F55A0F}
+	EndGlobalSection
+EndGlobal
