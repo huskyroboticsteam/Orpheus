@@ -68,7 +68,7 @@
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
           <StackPanel>
             <Label Content="Video Streams:" />
-            <DataGrid Name="Streams" Width="600" Height="200" ItemsSource="{Binding Settings.VideoDevices}" CanUserAddRows="True" AutoGenerateColumns="False">
+            <DataGrid Name="Streams" Width="600" Height="400" ItemsSource="{Binding Settings.VideoDevices}" CanUserAddRows="True" AutoGenerateColumns="False">
               <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Name}" Header="Name" Width="*"/>
                 <DataGridTextColumn Binding="{Binding IP}" Header="IP" Width="*"/>

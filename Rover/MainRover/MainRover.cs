@@ -306,6 +306,8 @@ namespace MainRover
                         break;
                 }
             }
+            DrivePackets = new QueueBuffer();
+            Console.WriteLine("Finished Base Packets");
         }
 
         public static void ProcessPathPackets()
@@ -485,10 +487,12 @@ namespace MainRover
 
         public static void SendSensorData(int count)
         {
+            Console.WriteLine("Sending snensor data");
             foreach (ISensor Sensor in Sensors)
             {
                 if (Sensor is MTK3339)
                 {
+                    Console.WriteLine("Getting GPS");
                     var Tup = ((MTK3339)Sensor).GetCoordinates();
                     float Lat = Tup.Item1;
                     float Long = Tup.Item2;
@@ -514,6 +518,7 @@ namespace MainRover
                         HeadingFromGPSPack.AppendData(UtilData.ToBytes(theta));
                         Client.SendNow(HeadingFromGPSPack);
                         previousCoords = Tup;
+                        Console.WriteLine("Sent GPS");
                     }
                 }
                 if (Sensor is BNO055)
@@ -521,6 +526,7 @@ namespace MainRover
                     //double direction = ((BNO055)Sensor).GetTrueHeading();
                     try
                     {
+                        Console.WriteLine("Getting Mag");/*
                         var Readings = ((BNO055)Sensor).GetVector(BNO055.VectorType.VECTOR_MAGNETOMETER);
                         double HeadingDirection = 0;
 
@@ -537,7 +543,8 @@ namespace MainRover
                         MagFilter.Feed(direction);
                         Packet Pack = new Packet((byte)PacketID.DataMagnetometer, true);
                         Pack.AppendData(UtilData.ToBytes(MagFilter.GetOutput()));
-                        Client.SendNow(Pack);
+                        Client.SendNow(Pack);*/
+                        Console.WriteLine("Sent Mag");
                     }
                     catch
                     {
@@ -545,6 +552,7 @@ namespace MainRover
                     }
                 }
             }
+            Console.WriteLine("finished snensor data");
         }
 
         public static void Main(string[] args)
@@ -568,8 +576,21 @@ namespace MainRover
             do
             {
                 //Console.WriteLine("Looping");
-                //Console.WriteLine("Current mode: " + CurDriveMode);                
-                SendSensorData(count);
+                //Console.WriteLine("Current mode: " + CurDriveMode);           
+
+                IAsyncResult result;
+                Action action = () =>
+                {
+                    SendSensorData(count);
+                };
+                result = action.BeginInvoke(null, null);
+
+                if (result.AsyncWaitHandle.WaitOne(10000))
+                    Console.WriteLine("Sent All sensor data.");
+                else
+                    Console.WriteLine("sensor timed out.");
+
+
                 ProcessInstructions();
                 Thread.Sleep(50);
                 count++;

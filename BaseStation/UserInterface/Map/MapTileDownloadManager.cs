@@ -75,7 +75,7 @@ namespace HuskyRobotics.UI
         // Will return null if the image was not downloaded
         public static String Fetch(MapConfiguration config)
         {
-            String requestUrl = "https://maps.googleapis.com/maps/api/staticmap?" + config.URLParams();
+            String requestUrl = "https://maps.googleapis.com/maps/api/staticmap?" + config.URLParams() + "&key=AIzaSyAc3p60ZqKV4TpYSmf97yjfFAehfP4Py8M";
             bool notDownloaded = true;
 
             HttpWebResponse response = null;

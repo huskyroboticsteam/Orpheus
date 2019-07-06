@@ -31,7 +31,7 @@ namespace HuskyRobotics.BaseStation
                 else if (rightPressed) { horizontalSpeed = 1; }
                 else if (upPressed) { verticalSpeed = 1; }
                 else if (downPressed) { verticalSpeed = -1; }
-                Console.WriteLine(verticalSpeed + " " + horizontalSpeed);
+                //Console.WriteLine(verticalSpeed + " " + horizontalSpeed);
                 int xSpeed = Convert.ToInt16(horizontalSpeed * MAX_SPEED);
                 int ySpeed = Convert.ToInt16(verticalSpeed * MAX_SPEED);
                 cam.SetSpeeds(xSpeed, ySpeed);

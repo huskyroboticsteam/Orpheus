@@ -50,7 +50,7 @@ namespace MainRover
             DrivePackets = new QueueBuffer();
             StopPackets = new QueueBuffer();
             Parse.SetParseHandler(0x80, (Packet) => StopPackets.Enqueue(Packet, 0));
-            for (byte i = 0x9A; i <= 0xA1; i++)
+            for (byte i = 0x9A; i <= 0xA3; i++)
                 Parse.SetParseHandler(i, (Packet) => DrivePackets.Enqueue(Packet, 0));
         }
 
@@ -103,15 +103,15 @@ namespace MainRover
                     case PacketID.ArmServo:
                         if ((sbyte)p.Data.Payload[1] == 1)
                         {
-                            UtilCan.ServoPos(CANBBB.CANBus0, false, 0x2, 0x22, 170);
+                            UtilCan.ServoPos(CANBBB.CANBus0, false, 0x2, 22, 170);
                         }
                         else if ((sbyte)p.Data.Payload[1] == -1)
                         {
-                            UtilCan.ServoPos(CANBBB.CANBus0, false, 0x2, 0x22, 10);
+                            UtilCan.ServoPos(CANBBB.CANBus0, false, 0x2, 22, 10);
                         }
                         break;
                     case PacketID.ArmLaser:
-                        UtilCan.LaserToggle(CANBBB.CANBus0, false, 0x2, 0x24, p.Data.Payload[1]);
+                        UtilCan.LaserToggle(CANBBB.CANBus0, false, 0x2, 22, p.Data.Payload[1]);
                         break;
                 }
             }
@@ -173,7 +173,7 @@ namespace MainRover
             SetupClient();
             SetupArm();
             // readCan();
-            // MotorBoards.Initialize(CANBBB.CANBus0);
+            MotorBoards.Initialize(CANBBB.CANBus0);
             Console.WriteLine("Finished the initalize");
             do
             {

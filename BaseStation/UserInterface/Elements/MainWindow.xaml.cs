@@ -228,9 +228,40 @@ namespace HuskyRobotics.UI {
 
         private void UpdateSliderValue(object sender, EventArgs e)
         {
-            double scale = Math.Round(Arm_Sensitivity.Value / 10, 2);
-            HuskyRobotics.BaseStation.Server.PacketSender.SwitchScaler(scale);
-            Sensitivty_percentages.Content = System.Convert.ToString(scale);
+            double a = Math.Round(Base_Arm_Sensitivity.Value / 10, 2);
+            Base_Sensitivty_percentages.Content = System.Convert.ToString(a);
+            HuskyRobotics.BaseStation.Server.PacketSender.SwitchScaler(a, 0);
+            /*
+            scaleArray[1] = Math.Round(Shoulder_Arm_Sensitivity.Value / 10, 2);
+            Shoulder_Sensitivty_percentages.Content = System.Convert.ToString(scaleArray[1]);
+            
+            scaleArray[2] = Math.Round(Elbow_Arm_Sensitivity.Value / 10, 2);
+            Elbow_Sensitivty_percentages.Content = System.Convert.ToString(scaleArray[2]);
+            
+            scaleArray[3] = Math.Round(Wrist_Arm_Sensitivity.Value / 10, 2);
+            Wrist_Sensitivty_percentages.Content = System.Convert.ToString(scaleArray[3]);
+            HuskyRobotics.BaseStation.Server.PacketSender.SwitchScaler(scaleArray);*/
+        }
+
+        private void updateSliderValue2(object sender, EventArgs e)
+        {
+            double a = Math.Round(Shoulder_Arm_Sensitivity.Value / 10, 2);
+            Shoulder_Sensitivty_percentages.Content = System.Convert.ToString(a);
+            HuskyRobotics.BaseStation.Server.PacketSender.SwitchScaler(a, 1);
+        }
+
+        private void updateSliderValue3(object sender, EventArgs e)
+        {
+            double a = Math.Round(Elbow_Arm_Sensitivity.Value / 10, 2);
+            Elbow_Sensitivty_percentages.Content = System.Convert.ToString(a);
+            HuskyRobotics.BaseStation.Server.PacketSender.SwitchScaler(a, 2);
+        }
+
+        private void updateSliderValue4(object sender, EventArgs e)
+        {
+            double a = Math.Round(Wrist_Arm_Sensitivity.Value / 10, 2);
+            Wrist_Sensitivty_percentages.Content = System.Convert.ToString(a);
+            HuskyRobotics.BaseStation.Server.PacketSender.SwitchScaler(a, 3);
         }
 
         private void Start_Navigation(object sender, EventArgs e)
@@ -246,6 +277,40 @@ namespace HuskyRobotics.UI {
         {
             //for testing purposes
             
+        }
+
+        private void Emergency_Stop(object sender, EventArgs e)
+        {
+            bool stopped = HuskyRobotics.BaseStation.Server.PacketSender.Emergency_stop;
+            if (!stopped)
+            {
+                Stop_Button.Content = "Resume Rover";
+                Stop_Button.Background = Brushes.Green;
+                HuskyRobotics.BaseStation.Server.PacketSender.Emergency_stop = !stopped;
+            }
+            else
+            {
+                Stop_Button.Content = "Emergency Stop";
+                Stop_Button.Background = Brushes.Red;
+                HuskyRobotics.BaseStation.Server.PacketSender.Emergency_stop = !stopped;
+            }
+        }
+
+        private void Reset_BBB (object sender, EventArgs e)
+        {
+            bool stopped = HuskyRobotics.BaseStation.Server.PacketSender.Emergency_stop;
+            if (!stopped)
+            {
+                Stop_Button.Content = "Resume Rover";
+                Stop_Button.Background = Brushes.Green;
+                HuskyRobotics.BaseStation.Server.PacketSender.Emergency_stop = !stopped;
+            }
+            else
+            {
+                Stop_Button.Content = "Emergency Stop";
+                Stop_Button.Background = Brushes.Red;
+                HuskyRobotics.BaseStation.Server.PacketSender.Emergency_stop = !stopped;
+            }
         }
     }
 }

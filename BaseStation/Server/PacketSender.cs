@@ -23,7 +23,7 @@ namespace HuskyRobotics.BaseStation.Server
         private static long lastControlSend = 0;
         private static bool ManualMode = true;
         private static bool SendModeChange = false;
-        private static double scaler = 1.0;
+        private static double [] scaler = { 1.0, 1.0, 1.0, 1.0 };
 
         public static event EventHandler<(float, float)> GPSUpdate;
         public static event EventHandler<(double, double)> RFUpdate;
@@ -32,19 +32,25 @@ namespace HuskyRobotics.BaseStation.Server
         public static List<Tuple<double, double>> coords;
         public static Tuple<double, double> target;
         public static double direction;
+        public static bool LaserOn;
+        public static DateTime LastPressed;
+        public static bool Emergency_stop;
 
         public static void Setup()
         {
             coords = new List<Tuple<double, double>>();
             target = Tuple.Create(0.0, 0.0);
-            Log.SetGlobalOutputLevel(Log.Severity.DEBUG);
+            Log.SetGlobalOutputLevel(Log.Severity.FATAL);
             Scarlet.Communications.Server.Start(1025, 1026, OperationPeriod: 1);
-            Scarlet.Communications.Server.ClientConnectionChange += ClientConnected;
+            //Scarlet.Communications.Server.ClientConnectionChange += ClientConnected;
             Parse.SetParseHandler(0xC0, GpsHandler);
             Parse.SetParseHandler(0xC1, MagnetomerHandler);
             Parse.SetParseHandler(0xD4, RFSignalHandler);
             Parse.SetParseHandler(0xC4, ArrivalHandler);
             direction = 0;
+            LaserOn = false;
+            LastPressed = DateTime.Now;
+            Emergency_stop = false;
         }
 
         public static void Shutdown()
@@ -59,9 +65,9 @@ namespace HuskyRobotics.BaseStation.Server
             Console.WriteLine(Scarlet.Communications.Server.GetClients());
         }
 
-        public static void SwitchScaler(double num)
+        public static void SwitchScaler(double num, int index)
         {
-            scaler = num;
+            scaler[index] = num;
         }
 
         public static void SwitchMode(bool manual)
@@ -80,12 +86,15 @@ namespace HuskyRobotics.BaseStation.Server
             Controller armController = GamepadFactory.ArmGamepad;
             if (SendIntervalElapsed())
             {
-                if (driveController.IsConnected && armController.IsConnected)
+                if (driveController.IsConnected && armController.IsConnected && !Emergency_stop)
                 {
                     State driveState = driveController.GetState();
                     State armState = armController.GetState();
                     byte rightTrigger = driveState.Gamepad.RightTrigger;
                     byte leftTrigger = driveState.Gamepad.LeftTrigger;
+
+                    byte rightTriggerFinger = armState.Gamepad.RightTrigger;
+                    byte leftTriggerFinger = armState.Gamepad.LeftTrigger;
 
                     short leftThumbX = PreventOverflow(driveState.Gamepad.LeftThumbX);
 
@@ -123,7 +132,7 @@ namespace HuskyRobotics.BaseStation.Server
 
                     //------------------------------------------------------------------------------------------===
                     // Rover skid steering turn (uses x axis on right joystick)
-                    short diffHorz = armState.Gamepad.RightThumbX;
+                    short diffHorz = armState.Gamepad.LeftThumbX;
                     if (diffHorz > -JoystickTreshold && diffHorz < JoystickTreshold) { diffHorz = 0; }
                     short diffHorzShort = (short)UtilMain.LinearMap(diffHorz, -32768, 32767, -128, 128);
                     //if (Math.Abs(diffHorzShort) < 1) { diffHorzShort = 0; }
@@ -191,10 +200,12 @@ namespace HuskyRobotics.BaseStation.Server
                         autoTurnSpeed = 0.5f;
                     //----------------------------------------------------
                     short fingerSpeed = 0;
-                    if (rightTrigger > 0)
-                        fingerSpeed = 128;
-                    else if (leftTrigger > 0)
+                    byte min = 30;
+                    //Console.WriteLine(rightTriggerFinger);
+                    if (rightTriggerFinger > min)
                         fingerSpeed = -128;
+                    else if (leftTriggerFinger > min)
+                        fingerSpeed = 128;
 
                     /*
                     if (startPressedArm)
@@ -210,28 +221,28 @@ namespace HuskyRobotics.BaseStation.Server
                     } */
 
                     short wristArmSpeed = 0;
-                    if (yPressedArm)
-                        wristArmSpeed = (short)(-64 * scaler);
+                    if (bPressedArm)
+                        wristArmSpeed = (short)(64 * scaler[3]);
                     else if (xPressedArm)
-                        wristArmSpeed = (short)(64 * scaler);
+                        wristArmSpeed = (short)(-64 * scaler[3]);
 
                     short elbowArmSpeed = 0;
-                    if (bPressedArm)
-                        elbowArmSpeed = (short)(64 * scaler);
+                    if (yPressedArm)
+                        elbowArmSpeed = (short)(64 * scaler[2]);
                     else if (aPressedArm)
-                        elbowArmSpeed = (short)(-64 * scaler);
+                        elbowArmSpeed = (short)(-64 * scaler[2]);
 
                     short shoulderArmSpeed = 0;
                     if (downPressedArm)
-                        shoulderArmSpeed = (short)(-94 * scaler);
+                        shoulderArmSpeed = (short)(94 * scaler[1]);
                     else if (upPressedArm)
-                        shoulderArmSpeed = (short)(94 * scaler);
+                        shoulderArmSpeed = (short)(-94 * scaler[1]);
 
                     short baseArmSpeed = 0;
                     if (rightPressedArm)
-                        baseArmSpeed = (short)(64 * scaler);
+                        baseArmSpeed = (short)(-64 * scaler[0]);
                     else if (leftPressedArm)
-                        baseArmSpeed = (short)(-64 * scaler);
+                        baseArmSpeed = (short)(64 * scaler[0]);
 
                     short cameraSpeed = 0;
                     if (leftPressedCamera)
@@ -252,11 +263,19 @@ namespace HuskyRobotics.BaseStation.Server
                         typerServoSpeed = 1;
                     }
 
-                    short laser = 0;
                     if (backPressedLaser)
+                    {
+                        LaserOn = !LaserOn;
+                    }
+
+                    short laser = 0;
+                    DateTime current = DateTime.Now;
+                    var DurationSinceLastPressed = (current - LastPressed).TotalSeconds;
+                    if (LaserOn && DurationSinceLastPressed > 1)
                     {
                         laser = 1;
                     }
+                    
 
                     /*
                     // Not being used due to rack and pinion steering not setup
@@ -271,73 +290,79 @@ namespace HuskyRobotics.BaseStation.Server
 
                     if (SendModeChange)
                     {
-                        Console.WriteLine("calling mode changeer");
+                       // Console.WriteLine("calling mode changeer");
                         Packet ModePack = new Packet(0x99, true, "MainRover");
                         ModePack.AppendData(UtilData.ToBytes(modeSet));
                         Scarlet.Communications.Server.Send(ModePack);
-                        Console.WriteLine("sending switching drive mode: " + modeSet);
+                        //Console.WriteLine("sending switching drive mode: " + modeSet);
                         SendModeChange = false;
                     }
 
                     if (ManualMode)
                     {
+                        if (Scarlet.Communications.Server.GetClients().Contains("MainRover"))
+                        {
+                            Packet SkidFrontRight = new Packet(0x90, true, "MainRover");
+                            SkidFrontRight.AppendData(UtilData.ToBytes((sbyte)Math.Round((forward_back - left_right) * 120)));
+                            Scarlet.Communications.Server.Send(SkidFrontRight);
 
-                        Packet SkidFrontRight = new Packet(0x90, true, "MainRover");
-                        SkidFrontRight.AppendData(UtilData.ToBytes((sbyte)Math.Round((forward_back - left_right) * 120)));
-                        Scarlet.Communications.Server.Send(SkidFrontRight);
+                            Packet SkidRearRight = new Packet(0x92, true, "MainRover");
+                            SkidRearRight.AppendData(UtilData.ToBytes((sbyte)Math.Round((forward_back - left_right) * 120)));
+                            Scarlet.Communications.Server.Send(SkidRearRight);
 
-                        Packet SkidRearRight = new Packet(0x92, true, "MainRover");
-                        SkidRearRight.AppendData(UtilData.ToBytes((sbyte)Math.Round((forward_back - left_right) * 120)));
-                        Scarlet.Communications.Server.Send(SkidRearRight);
+                            Packet SkidFrontLeft = new Packet(0x91, true, "MainRover");
+                            SkidFrontLeft.AppendData(UtilData.ToBytes((sbyte)Math.Round((forward_back + left_right) * 120)));
+                            Scarlet.Communications.Server.Send(SkidFrontLeft);
 
-                        Packet SkidFrontLeft = new Packet(0x91, true, "MainRover");
-                        SkidFrontLeft.AppendData(UtilData.ToBytes((sbyte)Math.Round((forward_back + left_right) * 120)));
-                        Scarlet.Communications.Server.Send(SkidFrontLeft);
+                            Packet SkidRearLeft = new Packet(0x93, true, "MainRover");
+                            SkidRearLeft.AppendData(UtilData.ToBytes((sbyte)Math.Round((0 - forward_back - left_right) * 120)));
+                            //Console.WriteLine("Test " + (-skidDriveSpeed - skidSteerSpeed));
+                            Scarlet.Communications.Server.Send(SkidRearLeft);
 
-                        Packet SkidRearLeft = new Packet(0x93, true, "MainRover");
-                        SkidRearLeft.AppendData(UtilData.ToBytes((sbyte)Math.Round((0 - forward_back - left_right) * 120)));
-                        Console.WriteLine("Test " + (-skidDriveSpeed - skidSteerSpeed));
-                        Scarlet.Communications.Server.Send(SkidRearLeft);
+                            Packet CameraPack = new Packet(0x98, true, "MainRover");
+                            CameraPack.AppendData(UtilData.ToBytes((short)cameraSpeed));
+                            Scarlet.Communications.Server.Send(CameraPack);
+                        } 
+                        if (Scarlet.Communications.Server.GetClients().Contains("MainArm"))
+                        {
+                            Packet FingerPack = new Packet(0xA0, true, "MainArm");
+                            FingerPack.AppendData(UtilData.ToBytes((short)fingerSpeed));
+                            Scarlet.Communications.Server.Send(FingerPack);
 
-                        Packet CameraPack = new Packet(0x98, true, "MainRover");
-                        CameraPack.AppendData(UtilData.ToBytes((short)cameraSpeed));
-                        Scarlet.Communications.Server.Send(CameraPack);
+                            Packet DiffHorzPack = new Packet(0x9F, true, "MainArm");
+                            DiffHorzPack.AppendData(UtilData.ToBytes((short)((-diffVertShort + diffHorzShort) * 1)));
+                            Scarlet.Communications.Server.Send(DiffHorzPack);
 
-                        Packet FingerPack = new Packet(0xA0, true, "MainArm");
-                        FingerPack.AppendData(UtilData.ToBytes((short)fingerSpeed));
-                        Scarlet.Communications.Server.Send(FingerPack);
+                            Packet DiffVertPack = new Packet(0x9E, true, "MainArm");
+                            DiffVertPack.AppendData(UtilData.ToBytes((short)((diffVertShort + diffHorzShort) * 1)));
+                            Scarlet.Communications.Server.Send(DiffVertPack);
 
-                        Packet DiffHorzPack = new Packet(0x9F, true, "MainArm");
-                        DiffHorzPack.AppendData(UtilData.ToBytes((short)(diffVertShort + diffHorzShort)));
-                        Scarlet.Communications.Server.Send(DiffHorzPack);
+                            Packet WristPack = new Packet(0x9D, true, "MainArm");
+                            WristPack.AppendData(UtilData.ToBytes(wristArmSpeed));
+                            Scarlet.Communications.Server.Send(WristPack);
 
-                        Packet DiffVertPack = new Packet(0x9E, true, "MainArm");
-                        DiffVertPack.AppendData(UtilData.ToBytes((short)(-diffVertShort + diffHorzShort)));
-                        Scarlet.Communications.Server.Send(DiffVertPack);
+                            Packet ElbowPack = new Packet(0x9C, true, "MainArm");
+                            ElbowPack.AppendData(UtilData.ToBytes(elbowArmSpeed));
+                            Scarlet.Communications.Server.Send(ElbowPack);
 
-                        Packet WristPack = new Packet(0x9D, true, "MainArm");
-                        WristPack.AppendData(UtilData.ToBytes(wristArmSpeed));
-                        Scarlet.Communications.Server.Send(WristPack);
+                            Packet ShoulderPack = new Packet(0x9B, true, "MainArm");
+                            ShoulderPack.AppendData(UtilData.ToBytes(shoulderArmSpeed));
+                            Scarlet.Communications.Server.Send(ShoulderPack);
 
-                        Packet ElbowPack = new Packet(0x9C, true, "MainArm");
-                        ElbowPack.AppendData(UtilData.ToBytes(elbowArmSpeed));
-                        Scarlet.Communications.Server.Send(ElbowPack);
+                            Packet TyperPack = new Packet(0xA2, true, "MainArm");
+                            TyperPack.AppendData(UtilData.ToBytes(typerServoSpeed));
+                            Scarlet.Communications.Server.Send(TyperPack);
 
-                        Packet ShoulderPack = new Packet(0x9B, true, "MainArm");
-                        ShoulderPack.AppendData(UtilData.ToBytes(shoulderArmSpeed));
-                        Scarlet.Communications.Server.Send(ShoulderPack);
+                            Packet LaserPack = new Packet(0xA3, true, "MainArm");
+                            LaserPack.AppendData(UtilData.ToBytes(laser));
+                            Scarlet.Communications.Server.Send(LaserPack);
 
-                        Packet TyperPack = new Packet(0xA2, true, "MainArm");
-                        TyperPack.AppendData(UtilData.ToBytes(typerServoSpeed));
-                        Scarlet.Communications.Server.Send(TyperPack);
+                            Packet BasePack = new Packet(0x9A, true, "MainArm");
+                            BasePack.AppendData(UtilData.ToBytes(baseArmSpeed));
+                            Scarlet.Communications.Server.Send(BasePack);
+                        }
 
-                        Packet LaserPack = new Packet(0xA3, true, "MainArm");
-                        LaserPack.AppendData(UtilData.ToBytes(laser));
-                        Scarlet.Communications.Server.Send(LaserPack);
-
-                        Packet BasePack = new Packet(0x9A, true, "MainArm");
-                        BasePack.AppendData(UtilData.ToBytes(baseArmSpeed));
-                        Scarlet.Communications.Server.Send(BasePack);
+                        
                     }
                     else
                     {
@@ -355,7 +380,7 @@ namespace HuskyRobotics.BaseStation.Server
                         // Sending desired location to jetson autonomous code should be done in mainwindow.xmal.cs
                         // in main rover should be in listening mode to read which way to go
                         // here, it should recieve any updates of its position from the main rover and print out
-                        Console.WriteLine("desired location: " + target.Item1 + "   ,   " + target.Item2);
+                        //Console.WriteLine("desired location: " + target.Item1 + "   ,   " + target.Item2);
 
                     }
 
@@ -363,7 +388,7 @@ namespace HuskyRobotics.BaseStation.Server
                 else
                 {
                     HaltRoverMotion();
-                    Console.WriteLine("desired location: " + target.Item1 + "   ,   " + target.Item2);
+                    //Console.WriteLine("desired location: " + target.Item1 + "   ,   " + target.Item2);
                 }
 
                 lastControlSend = TimeNanoseconds();
@@ -434,7 +459,7 @@ namespace HuskyRobotics.BaseStation.Server
 
             GPSUpdate(null, (lat, lng));
 
-            Console.WriteLine(lat + ", " + lng);
+            //Console.WriteLine(lat + ", " + lng);
         }
 
         private static void MagnetomerHandler(Packet magData)

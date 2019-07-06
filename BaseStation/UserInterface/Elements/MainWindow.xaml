@@ -67,18 +67,33 @@
                                     <RowDefinition />
                                     <RowDefinition />
                                     <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
                                 <Label Grid.Column="0" Grid.Row="1" Content="Current Mode:"/>
-                                <Label Grid.Column="0" Grid.Row="2" Content="Arm Sensitivity:"/>
-                                <Label Name ="Sensitivty_percentages" Grid.Column="1" Grid.Row="3" Content=""/>
                                 <Button Name="Swtich_Modes" Grid.Column="1" Grid.Row="0" Content ="Switch Modes" Click="SwitchModes"/>
-                                <Label Name="ModeLabel" Grid.Column="1" Grid.Row="1" Foreground="Red" Content="Manual"/>
-                                <Slider Name="Arm_Sensitivity" Grid.Column="1" Grid.Row="2" Value="10" ValueChanged="UpdateSliderValue"/>
-
+                                <Label Grid.Column="0" Grid.Row="2" Content="Base Arm Sensitivity:"/>
+                                <Label Name ="Base_Sensitivty_percentages" Grid.Column="1" Grid.Row="3" Content="0"/>
+                                <Slider Name="Base_Arm_Sensitivity" Grid.Column="1" Grid.Row="2" Minimum="3" Value="10" ValueChanged="UpdateSliderValue"/>
+                                <Label Grid.Column="0" Grid.Row="4" Content="Shoulder Arm Sensitivity:"/>
+                                <Label Name ="Shoulder_Sensitivty_percentages" Grid.Column="1" Grid.Row="5" Content="0"/>
+                                <Slider Name="Shoulder_Arm_Sensitivity" Grid.Column="1" Grid.Row="4" Minimum="6" Value="10" ValueChanged="updateSliderValue2"/>
+                                <Label Grid.Column="0" Grid.Row="6" Content="Elbow Arm Sensitivity:"/>
+                                <Label Name ="Elbow_Sensitivty_percentages" Grid.Column="1" Grid.Row="7" Content="0"/>
+                                <Slider Name="Elbow_Arm_Sensitivity" Grid.Column="1" Grid.Row="6" Value="10" Minimum="3" ValueChanged="updateSliderValue3"/>
+                                <Label Grid.Column="0" Grid.Row="8" Content="Wrist Arm Sensitivity:"/>
+                                <Label Name ="Wrist_Sensitivty_percentages" Grid.Column="1" Grid.Row="9" Content="0"/>
+                                <Slider Name="Wrist_Arm_Sensitivity" Grid.Column="1" Grid.Row="8" Minimum="3" Value="10" ValueChanged="updateSliderValue4"/>
+                                <Label Name="ModeLabel" Grid.Column="1" Grid.Row="1" Foreground="Red" Content="Manual"/>                                
                             </Grid>
                             <Label Content="Waypoints" />
                         </StackPanel>
@@ -127,6 +142,12 @@
                                     </ComboBox>
                                 </DockPanel>
                                 
+                            </StackPanel>
+                            <StackPanel>
+                                <Button Name="Stop_Button"  Background="Red" Width="200"  Foreground="White" Content="Emergency Stop" Click="Emergency_Stop"/>
+                            </StackPanel>
+                            <StackPanel>                                
+                                <Button Name="Main_BBB_Reset"  Width="200" Content="Main BBB Reset" Click="Reset_BBB"/>
                             </StackPanel>
                         </StackPanel>
                         <DataGrid ItemsSource="{Binding Waypoints}" CanUserDeleteRows="True" ColumnWidth="*" Name="WaypointList"/>
