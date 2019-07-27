@@ -347,24 +347,39 @@ namespace HuskyRobotics.UI {
 
         void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
+            if (e.Key == Key.F9)
+            {
+                LaunchStreamKey("ZED");
+            }
+
             if (e.Key == Key.F1)
             {
-                MessageBox.Show(" F1 ");
+                LaunchStreamKey("Sauron High Res");
             }
 
             if (e.Key == Key.F2)
             {
-                MessageBox.Show(" F2 ");
+                LaunchStreamKey("Sauron Med Res");
             }
 
             if (e.Key == Key.F3)
             {
-                LaunchStreamKey("Device1");
+                LaunchStreamKey("Sauron Low Res");
             }
 
-            if (e.Key == Key.F4)
+            if (e.Key == Key.F5)
             {
-                LaunchStreamKey("Devices");
+                LaunchStreamKey("Arm High Res");
+            }
+
+            if (e.Key == Key.F6)
+            {
+                LaunchStreamKey("Arm Med Res");
+            }
+
+            if (e.Key == Key.F7)
+            {
+                LaunchStreamKey("Arm Low Res");
             }
         }
     }

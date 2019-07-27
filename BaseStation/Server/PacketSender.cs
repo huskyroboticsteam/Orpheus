@@ -203,9 +203,9 @@ namespace HuskyRobotics.BaseStation.Server
                     byte min = 30;
                     //Console.WriteLine(rightTriggerFinger);
                     if (rightTriggerFinger > min)
-                        fingerSpeed = -128;
+                        fingerSpeed = -255;
                     else if (leftTriggerFinger > min)
-                        fingerSpeed = 128;
+                        fingerSpeed = 255;
 
                     /*
                     if (startPressedArm)
@@ -234,9 +234,9 @@ namespace HuskyRobotics.BaseStation.Server
 
                     short shoulderArmSpeed = 0;
                     if (downPressedArm)
-                        shoulderArmSpeed = (short)(94 * scaler[1]);
+                        shoulderArmSpeed = (short)(128 * scaler[1]);
                     else if (upPressedArm)
-                        shoulderArmSpeed = (short)(-94 * scaler[1]);
+                        shoulderArmSpeed = (short)(-128 * scaler[1]);
 
                     short baseArmSpeed = 0;
                     if (rightPressedArm)

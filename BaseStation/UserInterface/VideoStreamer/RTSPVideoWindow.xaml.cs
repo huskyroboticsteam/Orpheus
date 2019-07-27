@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Threading;
 
@@ -71,6 +72,8 @@ namespace HuskyRobotics.UI.VideoStreamer
 
             Closing += OnCloseEvent;
             InitializeComponent();
+
+            this.PreviewKeyDown += new KeyEventHandler(HandleEsc);
         }
 
         private PipelineElements CreatePipeline()
@@ -135,6 +138,12 @@ namespace HuskyRobotics.UI.VideoStreamer
             // Cleanup the unmanaged class objects
             runningPipeline.pipeline.SetState(State.Null);
             runningPipeline.pipeline.Unref();
+        }
+
+        private void HandleEsc(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape)
+                Close();
         }
     }
 }
