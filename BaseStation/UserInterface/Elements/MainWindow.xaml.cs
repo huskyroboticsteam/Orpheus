@@ -80,6 +80,8 @@ namespace HuskyRobotics.UI {
             }
             updateMapWaypoints();
             HuskyRobotics.BaseStation.Server.PacketSender.NotificationUpdate += arrivalPacketScan;
+
+            this.KeyDown += new KeyEventHandler(MainWindow_KeyDown);
         }
 
         private void arrivalPacketScan(object sender, int data)
@@ -158,6 +160,36 @@ namespace HuskyRobotics.UI {
                 newWindowThread.IsBackground = true;
                 newWindowThread.Start();
             }
+        }
+
+        private void LaunchStreamKey(string devicename)
+        {
+
+            VideoDevice selection = null;
+
+            for (int i=0; i < Settings.VideoDevices.Count; i++)
+            {
+                if(devicename == Settings.VideoDevices[i].Name)
+                {
+                    selection = Settings.VideoDevices[i];
+                }
+            }
+
+            if (selection != null)
+            {
+                Streams.Add(new VideoStream(selection.Name, "00:00:00"));
+
+                Thread newWindowThread = new Thread(() => ThreadStartingPoint(selection.Name, selection.IP, Convert.ToInt32(selection.Port), selection.URI, Convert.ToInt32(selection.BufferingMs)));
+                newWindowThread.SetApartmentState(ApartmentState.STA);
+                newWindowThread.IsBackground = true;
+                newWindowThread.Start();
+            }
+            else
+            {
+                MessageBox.Show(" Device with name \"" + devicename + "\" not found. Either remape key to desired device change or change device name to \"" + devicename + "\" ");
+            }
+
+
         }
 
         private void ThreadStartingPoint(string Name, string IP, int Port, string URI, int BufferingMs)
@@ -310,6 +342,29 @@ namespace HuskyRobotics.UI {
                 Stop_Button.Content = "Emergency Stop";
                 Stop_Button.Background = Brushes.Red;
                 HuskyRobotics.BaseStation.Server.PacketSender.Emergency_stop = !stopped;
+            }
+        }
+
+        void MainWindow_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.F1)
+            {
+                MessageBox.Show(" F1 ");
+            }
+
+            if (e.Key == Key.F2)
+            {
+                MessageBox.Show(" F2 ");
+            }
+
+            if (e.Key == Key.F3)
+            {
+                LaunchStreamKey("Device1");
+            }
+
+            if (e.Key == Key.F4)
+            {
+                LaunchStreamKey("Devices");
             }
         }
     }
