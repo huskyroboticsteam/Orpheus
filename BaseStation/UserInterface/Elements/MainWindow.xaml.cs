@@ -356,11 +356,13 @@ namespace HuskyRobotics.UI {
 
         void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.F9)
+            //ZED camera F12
+            if (e.Key == Key.F12)
             {
                 LaunchStreamKey("ZED");
             }
 
+            //Sauron F1,2,3
             if (e.Key == Key.F1)
             {
                 LaunchStreamKey("Sauron High Res");
@@ -376,6 +378,7 @@ namespace HuskyRobotics.UI {
                 LaunchStreamKey("Sauron Low Res");
             }
 
+            //Arm F5,6,7
             if (e.Key == Key.F5)
             {
                 LaunchStreamKey("Arm High Res");
@@ -389,6 +392,22 @@ namespace HuskyRobotics.UI {
             if (e.Key == Key.F7)
             {
                 LaunchStreamKey("Arm Low Res");
+            }
+
+            //Extra F9,10,11
+            if (e.Key == Key.F9)
+            {
+                LaunchStreamKey("ZED");
+            }
+
+            if (e.Key == Key.F10)
+            {
+                LaunchStreamKey("ZED");
+            }
+
+            if (e.Key == Key.F11)
+            {
+                LaunchStreamKey("ZED");
             }
         }
     }

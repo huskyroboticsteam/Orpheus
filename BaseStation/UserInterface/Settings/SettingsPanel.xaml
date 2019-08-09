@@ -64,11 +64,11 @@
               <Label Name="MapStatus" />
           </StackPanel>
       </StackPanel>
-      <StackPanel Margin="3" Height="200">
+      <StackPanel Margin="3" Height="456">
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
           <StackPanel>
             <Label Content="Video Streams:" />
-            <DataGrid Name="Streams" Width="600" Height="400" ItemsSource="{Binding Settings.VideoDevices}" CanUserAddRows="True" AutoGenerateColumns="False">
+              <DataGrid Name="Streams" Width="600" ItemsSource="{Binding Settings.VideoDevices}" CanUserAddRows="True" AutoGenerateColumns="False">
               <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Name}" Header="Name" Width="*"/>
                 <DataGridTextColumn Binding="{Binding IP}" Header="IP" Width="*"/>
@@ -78,11 +78,13 @@
               </DataGrid.Columns>
             </DataGrid>
           </StackPanel>
+            <!--
           <StackPanel>
             <Label Content="Recording Path: " />
             <TextBox Height="23" Margin="5" TextWrapping="NoWrap"  Text="{Binding Settings.RecordingPath}" Width="300" Name="dst" ToolTip="File Destination"/>
           </StackPanel>
-        </StackPanel>
+            -->
+        </StackPanel> 
       </StackPanel>
     </StackPanel>
     <!--</ScrollViewer>-->
