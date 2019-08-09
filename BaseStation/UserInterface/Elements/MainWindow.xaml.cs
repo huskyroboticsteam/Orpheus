@@ -14,6 +14,7 @@ using HuskyRobotics.UI.VideoStreamer;
 using System.Windows.Media;
 using HuskyRobotics.UI.Elements;
 using Scarlet.Utilities;
+using HuskyRobotics.BaseStation.Server;
 
 namespace HuskyRobotics.UI {
 	/// <summary>
@@ -80,8 +81,16 @@ namespace HuskyRobotics.UI {
             }
             updateMapWaypoints();
             HuskyRobotics.BaseStation.Server.PacketSender.NotificationUpdate += arrivalPacketScan;
-
+            PacketSender.GPSUpdate += UpdateRoverPosition;
             this.KeyDown += new KeyEventHandler(MainWindow_KeyDown);
+        }
+
+        private void UpdateRoverPosition(object sender, (float, float) data)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                Location.Content = data.Item1 + " , " + data.Item2;
+            });
         }
 
         private void arrivalPacketScan(object sender, int data)
