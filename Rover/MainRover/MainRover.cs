@@ -572,6 +572,7 @@ namespace MainRover
             MotorControl.Initialize();
             //MotorBoards.Initialize(CANBBB.CANBus0);
             int count = 0;
+            int GPSSaveCount = 0;
             Console.WriteLine("Finished the initalize ");
             do
             {
@@ -594,10 +595,27 @@ namespace MainRover
                 ProcessInstructions();
                 Thread.Sleep(50);
                 count++;
+                GPSSaveCount++;
                 if (count == 101)
                 {
                    count = 0;
-                } 
+                }
+                if (GPSSaveCount == 600) // Save every 30+ seconds
+                {
+                    count = 0;
+                    foreach (ISensor Sensor in Sensors)
+                    {
+                        if (Sensor is MTK3339)
+                        {
+                            var Tup = ((MTK3339)Sensor).GetCoordinates();
+                            float Lat = Tup.Item1;
+                            float Long = Tup.Item2;
+                            System.IO.StreamWriter file = new System.IO.StreamWriter("GPSPath.txt");
+                            file.WriteLine(Lat + "," + Long);
+                            file.Close();
+                        }
+                    }
+                }
             } while (!Quit);
         }
     }
