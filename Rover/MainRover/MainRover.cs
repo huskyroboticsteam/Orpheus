@@ -417,7 +417,7 @@ namespace MainRover
                     endLong = Convert.ToDouble(values[1]);
 
                     Console.WriteLine("GPS Point Reached - Preparing for next point");
-                    Thread.Sleep(3000);
+                    Thread.Sleep(5000);
                     Console.WriteLine("Going to point: " + endLat + " , " + endLong);
                 }
             }
@@ -445,7 +445,7 @@ namespace MainRover
                         if (turn < 0) turn += 360;
                         else turn -= 360;
                     }
-                    if (turn > 90)
+                    if (turn > 90 || turn < -90)
                     {
                         speed = 0;
                     }
