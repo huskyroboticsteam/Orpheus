@@ -75,8 +75,6 @@ namespace MainRover
         public static void SetRPM(int Motor, int RPM)
         {
             Console.WriteLine("Set all single RPM:" + RPM);
-            if (Motor == BL)
-                RPM = -RPM;
             if (Motor < DriveMotor.Length)
                 DriveMotor[Motor].SetRPM(RPM);
         }
