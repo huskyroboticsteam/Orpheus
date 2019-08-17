@@ -35,6 +35,7 @@ namespace HuskyRobotics.BaseStation.Server
         public static bool LaserOn;
         public static DateTime LastPressed;
         public static bool Emergency_stop;
+        public static int drill_status;
 
         public static void Setup()
         {
@@ -51,6 +52,7 @@ namespace HuskyRobotics.BaseStation.Server
             LaserOn = false;
             LastPressed = DateTime.Now;
             Emergency_stop = false;
+            drill_status = 0;
         }
 
         public static void Shutdown()
@@ -325,6 +327,14 @@ namespace HuskyRobotics.BaseStation.Server
                         } 
                         if (Scarlet.Communications.Server.GetClients().Contains("MainArm"))
                         {
+                            if (drill_status == 0)
+                            {
+                                laser = 0;
+                            } else if (drill_status == 1)
+                            {
+                                laser = 1;
+                            }
+                            
                             Packet FingerPack = new Packet(0xA0, true, "MainArm");
                             FingerPack.AppendData(UtilData.ToBytes((short)fingerSpeed));
                             Scarlet.Communications.Server.Send(FingerPack);

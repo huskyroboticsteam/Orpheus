@@ -57,8 +57,9 @@
                         <StackPanel Grid.Column="4" Orientation="Vertical">
                             <Label Content="Devices" />
                             <Button Content="Connect with PuTTY" Click="PuTTY_Button_Click"></Button>
-                            <Label Content="Current Position" />
+                            <Label Content="Current Position and Mag" />
                             <Label Name="Location" Content="0,0"/>
+                            <Label Name="Magno" Content="0.0"/>
                         </StackPanel>
                     </Grid>
                     <DockPanel Width="250" DockPanel.Dock="Right">
@@ -99,7 +100,7 @@
                             </Grid>
                             <Label Content="Waypoints" />
                         </StackPanel>
-                        <StackPanel DockPanel.Dock="Bottom">
+                        <StackPanel DockPanel.Dock="Bottom" Height="Auto">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition />
@@ -108,7 +109,7 @@
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>                                    
                                 </Grid.ColumnDefinitions>
                                 <Label Grid.Column="0" Grid.Row="0" Content="Name:"/>
                                 <Label Grid.Column="0" Grid.Row="1" Content="Lat:"/>
@@ -127,7 +128,8 @@
                             </StackPanel>
                             <StackPanel>
                                 <Label Content="Video Streams" />
-                                <DataGrid Name="VideoStreams"  Height="150" ItemsSource="{Binding Streams}" CanUserAddRows="False" AutoGenerateColumns="False">
+                                <!--CHANGE THIS LINE BELOW FOR HEIGHT-->
+                                <DataGrid Name="VideoStreams"  Height="10" ItemsSource="{Binding Streams}" CanUserAddRows="False" AutoGenerateColumns="False">
                                     <DataGrid.Columns>
                                         <DataGridTextColumn Binding="{Binding Name}" Header="Name" Width="*"/>
                                         <DataGridTextColumn Binding="{Binding Time}" Header="Time" Width="*"/>
@@ -151,6 +153,39 @@
                             <StackPanel>                                
                                 <Button Name="Main_BBB_Reset"  Width="200" Content="Main BBB Reset" Click="Reset_BBB"/>
                             </StackPanel>
+                            <!--
+                            <Label Content="Drill Setting"></Label>
+                            <ComboBox Name ="Drill_mode" DropDownClosed="ChangeDrillMode">
+                                <ComboBoxItem Name="Stopped">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Foreground="Red">Stopped</TextBlock>
+                                    </StackPanel>
+                                </ComboBoxItem>
+                                <ComboBoxItem Name="Drilling">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Foreground="Green">Drilling</TextBlock>
+                                    </StackPanel>
+                                </ComboBoxItem>
+                                <ComboBoxItem Name ="Reverse">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Foreground="Blue">Reverse</TextBlock>
+                                    </StackPanel>
+                                </ComboBoxItem>
+                            </ComboBox>
+                            -->
+                            <Label Content="Laser Settings"></Label>
+                            <ComboBox Name ="Drill_mode" DropDownClosed="ChangeDrillMode">
+                                <ComboBoxItem Name="Laser_Off">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Foreground="Green">Laser Off</TextBlock>
+                                    </StackPanel>
+                                </ComboBoxItem>
+                                <ComboBoxItem Name="Laser_On">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Foreground="Red">Laser On</TextBlock>
+                                    </StackPanel>
+                                </ComboBoxItem>                                
+                            </ComboBox>
                         </StackPanel>
                         <DataGrid ItemsSource="{Binding Waypoints}" CanUserDeleteRows="True" ColumnWidth="*" Name="WaypointList"/>
                     </DockPanel>

@@ -83,6 +83,9 @@ namespace HuskyRobotics.UI {
             HuskyRobotics.BaseStation.Server.PacketSender.NotificationUpdate += arrivalPacketScan;
             PacketSender.GPSUpdate += UpdateRoverPosition;
             this.KeyDown += new KeyEventHandler(MainWindow_KeyDown);
+            Drill_mode.SelectedIndex = 0;
+            Thread magThread = new Thread(new ThreadStart(UpdateRoverOrientation));
+            magThread.Start();
         }
 
         private void UpdateRoverPosition(object sender, (float, float) data)
@@ -90,6 +93,14 @@ namespace HuskyRobotics.UI {
             Dispatcher.Invoke(() =>
             {
                 Location.Content = data.Item1 + " , " + data.Item2;
+            });
+        }
+
+        private void UpdateRoverOrientation()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                Magno.Content = HuskyRobotics.BaseStation.Server.PacketSender.direction;
             });
         }
 
@@ -143,7 +154,7 @@ namespace HuskyRobotics.UI {
         {
             double lat, long_;
             if (Double.TryParse(WaypointLatInput.Text, out lat) &&
-                Double.TryParse(WaypointLongInput.Text, out long_))
+                Double.TryParse(WaypointLongInput.Text, out long_) && !WaypointLatInput.Text.Contains(","))
             {
                 Waypoints.Add(new Waypoint(lat, long_, WaypointNameInput.Text));
 
@@ -155,6 +166,43 @@ namespace HuskyRobotics.UI {
                 //HuskyRobotics.BaseStation.Server.PacketSender.coords.Add(temp);
                 //HuskyRobotics.BaseStation.Server.PacketSender.target = temp;
             }
+            else
+            {
+                try
+                {
+                    string[] latDegree = WaypointLatInput.Text.Split(',');
+                    string[] lonDegree = WaypointLongInput.Text.Split(',');
+
+                    lat = 0.0;
+                    lat += Convert.ToDouble(latDegree[0]);
+                    lat += Convert.ToDouble(latDegree[1]) / 60.0;
+                    lat += Convert.ToDouble(latDegree[2]) / 3600.0;
+
+                    long_ = 0.0;
+                    long_ += Convert.ToDouble(lonDegree[0]);
+                    int  invert = 1;
+                    if(long_ < 0)
+                    {
+                        invert = -1;
+                    }
+                    long_ += invert * Convert.ToDouble(lonDegree[1]) / 60.0;
+                    long_ += invert * Convert.ToDouble(lonDegree[2]) / 3600.0;
+
+                    Waypoints.Add(new Waypoint(lat, long_, WaypointNameInput.Text));
+
+                    WaypointNameInput.Text = "";
+                    FocusManager.SetFocusedElement(this, WaypointLatInput);
+
+
+                    Tuple<double, double> temp = Tuple.Create(lat, long_);
+                }
+                catch
+                {
+                    Console.WriteLine("Parsing Failed");
+                }
+            }
+
+            
         }
 
         private void LaunchStream(object sender, RoutedEventArgs e)
@@ -356,8 +404,8 @@ namespace HuskyRobotics.UI {
 
         void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
-            //ZED camera F12
-            if (e.Key == Key.F12)
+            //ZED camera F4
+            if (e.Key == Key.F4)
             {
                 LaunchStreamKey("ZED");
             }
@@ -394,21 +442,31 @@ namespace HuskyRobotics.UI {
                 LaunchStreamKey("Arm Low Res");
             }
 
-            //Extra F9,10,11
+            //Extra F9,11,12
             if (e.Key == Key.F9)
             {
-                LaunchStreamKey("ZED");
+                LaunchStreamKey("Arm2 Med Res");
             }
 
             if (e.Key == Key.F10)
             {
-                LaunchStreamKey("ZED");
+                LaunchStreamKey("Arm2 Med Res");
             }
 
             if (e.Key == Key.F11)
             {
-                LaunchStreamKey("ZED");
+                LaunchStreamKey("Arm2 Low Res");
             }
+
+            if (e.Key == Key.F12)
+            {
+                LaunchStreamKey("Arm2 High Res");
+            }
+        }
+
+        private void ChangeDrillMode(object sender, EventArgs e)
+        {
+            HuskyRobotics.BaseStation.Server.PacketSender.drill_status = Drill_mode.SelectedIndex;            
         }
     }
 }

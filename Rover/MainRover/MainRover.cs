@@ -492,7 +492,7 @@ namespace MainRover
             {
                 if (Sensor is MTK3339)
                 {
-                    Console.WriteLine("Getting GPS");
+                    //Console.WriteLine("Getting GPS");
                     var Tup = ((MTK3339)Sensor).GetCoordinates();
                     float Lat = Tup.Item1;
                     float Long = Tup.Item2;
@@ -518,7 +518,7 @@ namespace MainRover
                         HeadingFromGPSPack.AppendData(UtilData.ToBytes(theta));
                         Client.SendNow(HeadingFromGPSPack);
                         previousCoords = Tup;
-                        Console.WriteLine("Sent GPS");
+                        //onsole.WriteLine("Sent GPS");
                     }
                 }
                 if (Sensor is BNO055)
@@ -526,7 +526,7 @@ namespace MainRover
                     //double direction = ((BNO055)Sensor).GetTrueHeading();
                     try
                     {
-                        Console.WriteLine("Getting Mag");/*
+                        Console.WriteLine("Getting Mag");
                         var Readings = ((BNO055)Sensor).GetVector(BNO055.VectorType.VECTOR_MAGNETOMETER);
                         double HeadingDirection = 0;
 
@@ -535,15 +535,17 @@ namespace MainRover
                         else if (Math.Abs(Readings.Item2) <= 1e-6 && Readings.Item1 < 0) { HeadingDirection = 180; }
                         else if (Math.Abs(Readings.Item2) <= 1e-6 && Readings.Item1 > 0) { HeadingDirection = 0; }
                         double direction = HeadingDirection % 360;
+                        Console.WriteLine("          Direction: " + direction);
                         direction -= 270.0;
                         if (direction < 0)
                         {
                             direction += 360.0;
                         }
                         MagFilter.Feed(direction);
+                        Console.WriteLine("          MagFilter: " + MagFilter.GetOutput());
                         Packet Pack = new Packet((byte)PacketID.DataMagnetometer, true);
                         Pack.AppendData(UtilData.ToBytes(MagFilter.GetOutput()));
-                        Client.SendNow(Pack);*/
+                        Client.SendNow(Pack);
                         Console.WriteLine("Sent Mag");
                     }
                     catch
@@ -574,6 +576,7 @@ namespace MainRover
             int count = 0;
             int GPSSaveCount = 0;
             Console.WriteLine("Finished the initalize ");
+            int masterCount = 0;
             do
             {
                 //Console.WriteLine("Looping");
@@ -600,22 +603,7 @@ namespace MainRover
                 {
                    count = 0;
                 }
-                if (GPSSaveCount == 600) // Save every 30+ seconds
-                {
-                    count = 0;
-                    foreach (ISensor Sensor in Sensors)
-                    {
-                        if (Sensor is MTK3339)
-                        {
-                            var Tup = ((MTK3339)Sensor).GetCoordinates();
-                            float Lat = Tup.Item1;
-                            float Long = Tup.Item2;
-                            System.IO.StreamWriter file = new System.IO.StreamWriter("GPSPath.txt");
-                            file.WriteLine(Lat + "," + Long);
-                            file.Close();
-                        }
-                    }
-                }
+                
             } while (!Quit);
         }
     }
