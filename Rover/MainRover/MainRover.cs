@@ -141,7 +141,7 @@ namespace MainRover
             ParseThread = new Thread(new ThreadStart(parser));
             ParseThread.Start();
             timeout = 20;
-            MagFilter = new Average<double>(10);
+            MagFilter = new Average<double>(1);
             servoTurn = 0;
             servoThread = new Thread(new ThreadStart(cameraServoThread));
             servoThread.Start();
@@ -394,8 +394,8 @@ namespace MainRover
             Console.WriteLine("Desired turn: " + desiredHeading);
 
             // If GPS is close enough to cordinates
-            if ((Lat < endLat + 0.000005 && Lat > endLat - 0.000005 &&
-                Long < endLong + 0.000005 && Long < endLong - 0.000005))
+            if ((Lat < endLat + 0.000003 && Lat > endLat - 0.000003 &&
+                Long < endLong + 0.000003 && Long < endLong - 0.000003))
             {
                 if (singlePointGPS || reader.EndOfStream)
                 {
@@ -416,6 +416,11 @@ namespace MainRover
                     endLat = Convert.ToDouble(values[0]);
                     endLong = Convert.ToDouble(values[1]);
 
+                    MotorControl.SetRPM(0, (speed - turn));
+                    MotorControl.SetRPM(2, (speed - turn));
+                    MotorControl.SetRPM(1, (speed + turn));
+                    MotorControl.SetRPM(3, (0 - speed - turn));
+
                     Console.WriteLine("GPS Point Reached - Preparing for next point");
                     Thread.Sleep(5000);
                     Console.WriteLine("Going to point: " + endLat + " , " + endLong);
@@ -435,7 +440,7 @@ namespace MainRover
             }
             else
             {
-                readHeading = (float)MagFilter.GetOutput();
+                //readHeading = (float)MagFilter.GetOutput();
 
                 if (readHeading != -1)
                 {
@@ -445,11 +450,28 @@ namespace MainRover
                         if (turn < 0) turn += 360;
                         else turn -= 360;
                     }
-                    if (turn > 90 || turn < -90)
+                    else if (turn > 180 || turn < -180)
                     {
-                        speed = 0;
+                        speed = 00;
                     }
-                    else if (turn > 0 && turn <= 30)
+                    else if (turn > 90 || turn < -90)
+                    {
+                        speed = 5;
+                    }
+                    else if (turn > 45 || turn < -45)
+                    {
+                        speed = 15;
+                    }
+                    else if (turn > 30 || turn < -30)
+                    {
+                        speed = 30;
+                    }
+                    else if (turn > 15 || turn < -15)
+                    {
+                        speed = 50;
+                    }
+
+                    if (turn > 0 && turn <= 30)
                     {
                         turn = 10;
                     }
