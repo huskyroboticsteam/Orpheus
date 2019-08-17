@@ -12,6 +12,7 @@ using System.Threading;
 using System.Net.Sockets;
 using System.Text;
 using Scarlet.Filters;
+using System.IO;
 
 namespace MainRover
 {
@@ -48,6 +49,10 @@ namespace MainRover
         private static int servoTurn;
         private static Thread servoThread;
 
+        private static double endLat;
+        private static double endLong;
+        private static bool singlePointGPS;
+        private static StreamReader reader;
 
         public static void PinConfig()
         {
@@ -136,7 +141,7 @@ namespace MainRover
             ParseThread = new Thread(new ThreadStart(parser));
             ParseThread.Start();
             timeout = 20;
-            MagFilter = new Average<double>(10);
+            MagFilter = new Average<double>(1);
             servoTurn = 0;
             servoThread = new Thread(new ThreadStart(cameraServoThread));
             servoThread.Start();
@@ -246,6 +251,26 @@ namespace MainRover
                 CurDriveMode = (DriveMode)p.Data.Payload[1];
                 Console.WriteLine("Switching to mode: " + CurDriveMode.ToString());
             }
+
+            if (CurDriveMode == DriveMode.toGPS && !singlePointGPS)
+            {
+                if (reader == default(StreamReader))
+                {
+                    reader = new StreamReader("GPS.txt");
+                }
+                else
+                {
+                    reader.Close();
+                    reader = new StreamReader("GPS.txt");
+                }
+
+                var line = reader.ReadLine();
+                var values = line.Split(',');
+
+                endLat = Convert.ToDouble(values[0]);
+                endLong = Convert.ToDouble(values[1]);
+                Console.WriteLine("Going to point: " + endLat + " , " + endLong);
+            }
         }
 
         public static void ProcessBasePackets()
@@ -313,8 +338,16 @@ namespace MainRover
         public static void ProcessPathPackets()
         {
             float readHeading = -1f;
-            float Lat = -1f;
-            float Long = -1f;
+            double Lat = -1f;
+            double Long = -1f;
+            /*
+            readHeading = 0;
+            Lat = 38.333581;
+            Long = -111.542353;
+            */
+
+            int speed = 0;
+            int turn = 0;
 
             foreach (ISensor Sensor in Sensors)
             {
@@ -355,6 +388,50 @@ namespace MainRover
                 }
             }
 
+            // Get Turn and Desired Heading
+
+            int desiredHeading = Convert.ToInt32(DegreeBearing(Lat, Long, endLat, endLong));
+            Console.WriteLine("Desired turn: " + desiredHeading);
+
+            // If GPS is close enough to cordinates
+            if ((Lat < endLat + 0.000003 && Lat > endLat - 0.000003 &&
+                Long < endLong + 0.000003 && Long < endLong - 0.000003))
+            {
+                if (singlePointGPS || reader.EndOfStream)
+                {
+                    speed = 0;
+                    CurDriveMode = DriveMode.destination;
+                    Console.WriteLine("We made it!!!!!!!!!!!!!!!!!");
+
+                    Packet Pack = new Packet((byte)PacketID.ArrivalNotification, true);
+                    Pack.AppendData(UtilData.ToBytes(1));
+                    Client.SendNow(Pack);
+                }
+                else
+                {
+                    speed = 0;
+                    var line = reader.ReadLine();
+                    var values = line.Split(',');
+
+                    endLat = Convert.ToDouble(values[0]);
+                    endLong = Convert.ToDouble(values[1]);
+
+                    MotorControl.SetRPM(0, (speed - turn));
+                    MotorControl.SetRPM(2, (speed - turn));
+                    MotorControl.SetRPM(1, (speed + turn));
+                    MotorControl.SetRPM(3, (0 - speed - turn));
+
+                    Console.WriteLine("GPS Point Reached - Preparing for next point");
+                    Thread.Sleep(5000);
+                    Console.WriteLine("Going to point: " + endLat + " , " + endLong);
+                }
+            }
+            else // If GPS cordinate has not been reached
+            {
+                speed = 72;
+            }
+
+
             Console.WriteLine("GPS: " + Lat + "  " + Long + " Mag: " + (float)MagFilter.GetOutput());
             if (readHeading == -1 || Lat == -1)
             {
@@ -363,122 +440,53 @@ namespace MainRover
             }
             else
             {
-                readHeading = (float)MagFilter.GetOutput();
+                //readHeading = (float)MagFilter.GetOutput();
 
-                byte[] blat = BitConverter.GetBytes(Lat);
-                byte[] blong = BitConverter.GetBytes(Long);
-                byte[] bhead = BitConverter.GetBytes(readHeading);
-
-                byte[] sendbytes = new byte[12];
-
-                for (int i = 0; i < 4; i++)
+                if (readHeading != -1)
                 {
-                    sendbytes[i] = blat[i];
-                    sendbytes[i + 4] = blong[i];
-                    sendbytes[i + 8] = bhead[i];
-                }
+                    turn = desiredHeading - Convert.ToInt32(Math.Round(readHeading));
+                    if (Math.Abs(turn) > 180)
+                    {
+                        if (turn < 0) turn += 360;
+                        else turn -= 360;
+                    }
+                    else if (turn > 180 || turn < -180)
+                    {
+                        speed = 00;
+                    }
+                    else if (turn > 90 || turn < -90)
+                    {
+                        speed = 5;
+                    }
+                    else if (turn > 45 || turn < -45)
+                    {
+                        speed = 15;
+                    }
+                    else if (turn > 30 || turn < -30)
+                    {
+                        speed = 30;
+                    }
+                    else if (turn > 15 || turn < -15)
+                    {
+                        speed = 50;
+                    }
 
-                try
-                {
-                    client.Send(sendbytes, sendbytes.Length);
-                }
-                catch
-                {
-                    Console.WriteLine("Error: Connection Refuled");
+                    if (turn > 0 && turn <= 30)
+                    {
+                        turn = 10;
+                    }
+                    else if ((turn < 0 && turn > -30))
+                    {
+                        turn = -10;
+                    }
+                    else
+                    {
+                        turn = turn / 2;
+                    }
                 }
 
             }
 
-            int speed = 0;
-            int turn = 0;
-            if (recieveList.Count != 0)
-            {
-                try
-                {
-                    Byte[] recieveByte = recieveList.Dequeue();
-                    recieveList.Clear(); //may not be needed if communicatoin is slow enough
-
-                    Console.Write("Recieved Data: ");
-                    for (int i = 0; i < recieveByte.Length; i++)
-                    {
-                        Console.Write(recieveByte[i] + " ");
-                    }
-                    timeout = 20;
-                    // Old code for refrence
-                    /*
-                    string stringData = Encoding.ASCII.GetString(recieveByte);
-                    Console.WriteLine("String data: " + stringData);
-                    int intData = Convert.ToInt32(stringData);
-                    Console.WriteLine("int data: " + intData);
-                    Console.WriteLine();
-                    float speed = (float)UtilMain.LinearMap(intData, -128, 127, -0.5, 0.5);
-                    Console.WriteLine("speed : " + speed);
-                    */
-
-                    int desiredHeading = 0;
-                    if (recieveByte[0] == 0)
-                    {
-                        Byte[] speedarray = new Byte[2];
-                        speedarray[0] = recieveByte[1];
-                        speedarray[1] = recieveByte[2];
-                        speed = BitConverter.ToInt16(speedarray, 0);
-
-                        Byte[] headingarray = new Byte[2];
-                        headingarray[0] = recieveByte[3];
-                        headingarray[1] = recieveByte[4];
-                        desiredHeading = BitConverter.ToInt16(headingarray, 0);
-
-                    }
-                    else if (recieveByte[0] != 0) //destination reached
-                    {
-                        CurDriveMode = DriveMode.destination;
-                        Console.WriteLine("Recieved byte of 1");
-
-                        Packet Pack = new Packet((byte)PacketID.ArrivalNotification, true);
-                        Pack.AppendData(UtilData.ToBytes(1));
-                        Client.SendNow(Pack);
-                    }
-
-                    if (readHeading != -1)
-                    {
-                        turn = desiredHeading - Convert.ToInt32(Math.Round(readHeading));
-                        if (Math.Abs(turn) > 180)
-                        {
-                            if (turn < 0) turn += 360;
-                            else turn -= 360;
-                        }
-                        if (turn > 0 && turn <= 30)
-                        {
-                            turn = 10;
-                        }
-                        else if ((turn < 0 && turn > -30))
-                        {
-                            turn = -10;
-                        }
-                        else
-                        {
-                            turn = turn / 3;
-                        }
-                    }
-                    GSpeed = speed;
-                    Gturn = turn;
-                }
-                catch
-                {
-                    Console.WriteLine("ERROR null recieved Byte Array");
-                    speed = GSpeed;
-                    turn = Gturn;
-                    timeout--;
-                }
-
-            }
-            else if (timeout > 0) //keep sending packets if no data recieved until it times out
-            {
-                Console.WriteLine("No recieved data. Remining counts: " + timeout);
-                speed = GSpeed;
-                turn = Gturn;
-                timeout--;
-            }
             MotorControl.SetRPM(0, (speed - turn));
             MotorControl.SetRPM(2, (speed - turn));
             MotorControl.SetRPM(1, (speed + turn));
@@ -557,12 +565,54 @@ namespace MainRover
             Console.WriteLine("finished snensor data");
         }
 
+        static double DegreeBearing(
+        double lat1, double lon1,
+        double lat2, double lon2)
+        {
+            var dLon = ToRad(lon2 - lon1);
+            var dPhi = Math.Log(
+                Math.Tan(ToRad(lat2) / 2 + Math.PI / 4) / Math.Tan(ToRad(lat1) / 2 + Math.PI / 4));
+            if (Math.Abs(dLon) > Math.PI)
+                dLon = dLon > 0 ? -(2 * Math.PI - dLon) : (2 * Math.PI + dLon);
+            return ToBearing(Math.Atan2(dLon, dPhi));
+        }
+
+        public static double ToRad(double degrees)
+        {
+            return degrees * (Math.PI / 180);
+        }
+
+        public static double ToDegrees(double radians)
+        {
+            return radians * 180 / Math.PI;
+        }
+
+        public static double ToBearing(double radians)
+        {
+            // convert radians to degrees (as bearing: 0...360)
+            return (ToDegrees(radians) + 360) % 360;
+        }
+
         public static void Main(string[] args)
         {
             if (args != null && args.Length > 0)
             {
-                SERVER_IP = args[0];
-                Console.WriteLine("Using argument Specified IP of: " + SERVER_IP);
+                singlePointGPS = false;
+                if (args[0] == "GPS")
+                {
+                    singlePointGPS = true;
+                    endLat = Convert.ToDouble(args[1]);
+                    endLong = Convert.ToDouble(args[2]);
+                }
+                else if (args[0] == "N")
+                {
+                    Log.SetGlobalOutputLevel(Log.Severity.INFO);
+                }
+                else
+                {
+                    SERVER_IP = args[0];
+                    Console.WriteLine("Using argument Specified IP of: " + SERVER_IP);
+                }
             }
             else
             {
