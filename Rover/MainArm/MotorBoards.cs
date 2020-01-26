@@ -24,11 +24,20 @@ namespace MainRover
                 UtilCan.ModelReq(CANBus, true, 2, Convert.ToByte(16 + i));
             }
 
+
             // Send Model Request to each Motor Board
             for (int i = 0; i < 7; i++)
             {
                 UtilCan.ModeSelect(CANBus, true, 2, Convert.ToByte(16 + i), 0);
             }
+
+
+            UtilCan.ModeSelect(CANBus, true, 2, Convert.ToByte(24), 0);
+            UtilCan.ModeSelect(CANBus, true, 2, Convert.ToByte(25), 0);
+            UtilCan.ModeSelect(CANBus, true, 2, Convert.ToByte(17), 0);
+            UtilCan.ModeSelect(CANBus, true, 2, Convert.ToByte(27), 0);
+
+
             /*
             int count = 10; // How many reads to do before giving up
             for (int j = 0; j < count; j++)
@@ -86,7 +95,7 @@ namespace MainRover
                     count = 0;
                 }
             }*/
-            
+
         }
 
         private static void sendPIDT(ICANBus CANBus, byte receiver, MotorBoardData MBD)

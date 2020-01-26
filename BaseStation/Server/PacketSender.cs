@@ -304,26 +304,7 @@ namespace HuskyRobotics.BaseStation.Server
                     {
                         if (Scarlet.Communications.Server.GetClients().Contains("MainRover"))
                         {
-                            Packet SkidFrontRight = new Packet(0x90, true, "MainRover");
-                            SkidFrontRight.AppendData(UtilData.ToBytes((sbyte)Math.Round((forward_back - left_right) * 120)));
-                            Scarlet.Communications.Server.Send(SkidFrontRight);
-
-                            Packet SkidRearRight = new Packet(0x92, true, "MainRover");
-                            SkidRearRight.AppendData(UtilData.ToBytes((sbyte)Math.Round((forward_back - left_right) * 120)));
-                            Scarlet.Communications.Server.Send(SkidRearRight);
-
-                            Packet SkidFrontLeft = new Packet(0x91, true, "MainRover");
-                            SkidFrontLeft.AppendData(UtilData.ToBytes((sbyte)Math.Round((forward_back + left_right) * 120)));
-                            Scarlet.Communications.Server.Send(SkidFrontLeft);
-
-                            Packet SkidRearLeft = new Packet(0x93, true, "MainRover");
-                            SkidRearLeft.AppendData(UtilData.ToBytes((sbyte)Math.Round((0 - forward_back - left_right) * 120)));
-                            //Console.WriteLine("Test " + (-skidDriveSpeed - skidSteerSpeed));
-                            Scarlet.Communications.Server.Send(SkidRearLeft);
-
-                            Packet CameraPack = new Packet(0x98, true, "MainRover");
-                            CameraPack.AppendData(UtilData.ToBytes((short)cameraSpeed));
-                            Scarlet.Communications.Server.Send(CameraPack);
+                            
                         } 
                         if (Scarlet.Communications.Server.GetClients().Contains("MainArm"))
                         {
@@ -334,7 +315,27 @@ namespace HuskyRobotics.BaseStation.Server
                             {
                                 laser = 1;
                             }
-                            
+                            Packet SkidFrontRight = new Packet(0x90, true, "MainArm");
+                            SkidFrontRight.AppendData(UtilData.ToBytes((sbyte)Math.Round((-forward_back + left_right) * 254)));
+                            Scarlet.Communications.Server.Send(SkidFrontRight);
+
+                            Packet SkidRearRight = new Packet(0x92, true, "MainArm");
+                            SkidRearRight.AppendData(UtilData.ToBytes((sbyte)Math.Round((forward_back - left_right) * 254)));
+                            Scarlet.Communications.Server.Send(SkidRearRight);
+
+                            Packet SkidFrontLeft = new Packet(0x91, true, "MainArm");
+                            SkidFrontLeft.AppendData(UtilData.ToBytes((sbyte)Math.Round((forward_back + left_right) * 254)));
+                            Scarlet.Communications.Server.Send(SkidFrontLeft);
+
+                            Packet SkidRearLeft = new Packet(0x93, true, "MainArm");
+                            SkidRearLeft.AppendData(UtilData.ToBytes((sbyte)Math.Round((forward_back - -left_right) * 254)));
+                            //Console.WriteLine("Test " + (-skidDriveSpeed - skidSteerSpeed));
+                            Scarlet.Communications.Server.Send(SkidRearLeft);
+                            /*
+                            Packet CameraPack = new Packet(0x98, true, "MainArm");
+                            CameraPack.AppendData(UtilData.ToBytes((short)cameraSpeed));
+                            Scarlet.Communications.Server.Send(CameraPack);
+
                             Packet FingerPack = new Packet(0xA0, true, "MainArm");
                             FingerPack.AppendData(UtilData.ToBytes((short)fingerSpeed));
                             Scarlet.Communications.Server.Send(FingerPack);
@@ -370,6 +371,7 @@ namespace HuskyRobotics.BaseStation.Server
                             Packet BasePack = new Packet(0x9A, true, "MainArm");
                             BasePack.AppendData(UtilData.ToBytes(baseArmSpeed));
                             Scarlet.Communications.Server.Send(BasePack);
+                            */
                         }
 
                         

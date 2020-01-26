@@ -50,7 +50,7 @@ namespace MainRover
             DrivePackets = new QueueBuffer();
             StopPackets = new QueueBuffer();
             Parse.SetParseHandler(0x80, (Packet) => StopPackets.Enqueue(Packet, 0));
-            for (byte i = 0x9A; i <= 0xA3; i++)
+            for (byte i = 0x8E; i <= 0xA3; i++)
                 Parse.SetParseHandler(i, (Packet) => DrivePackets.Enqueue(Packet, 0));
         }
 
@@ -76,6 +76,44 @@ namespace MainRover
                 Packet p = DrivePackets.Dequeue();
                 switch ((PacketID)p.Data.ID)
                 {
+                    case PacketID.RPMFrontRight:
+                    case PacketID.RPMFrontLeft:
+                        byte driveaddress = (byte)(p.Data.ID - 0x8A + 18);
+                        byte drivedirection = 0x00;
+                        if (p.Data.Payload[0] > 0)
+                        {
+                            drivedirection = 0x01;
+                            UtilCan.SpeedDir(CANBBB.CANBus0, false, 2, driveaddress, (byte)(-p.Data.Payload[1]), drivedirection);
+                        }
+                        else
+                        {
+                            UtilCan.SpeedDir(CANBBB.CANBus0, false, 2, driveaddress, p.Data.Payload[1], drivedirection);
+                        }
+                        break;
+                    case PacketID.RPMBackRight:
+                        byte drivedirectionbr = 0x00;
+                        if (p.Data.Payload[0] > 0)
+                        {
+                            drivedirectionbr = 0x01;
+                            UtilCan.SpeedDir(CANBBB.CANBus0, false, 2, 0x11, (byte)(-p.Data.Payload[1]), drivedirectionbr);
+                        }
+                        else
+                        {
+                            UtilCan.SpeedDir(CANBBB.CANBus0, false, 2, 0x11, p.Data.Payload[1], drivedirectionbr);
+                        }
+                        break;
+                    case PacketID.RPMBackLeft:
+                        byte drivedirectionbl = 0x00;
+                        if (p.Data.Payload[0] > 0)
+                        {
+                            drivedirectionbl = 0x01;
+                            UtilCan.SpeedDir(CANBBB.CANBus0, false, 2, 0x1B, (byte)(-p.Data.Payload[1]), drivedirectionbl);
+                        }
+                        else
+                        {
+                            UtilCan.SpeedDir(CANBBB.CANBus0, false, 2, 0x1B, p.Data.Payload[1], drivedirectionbl);
+                        }
+                        break;
                     case PacketID.BaseSpeed:
                     case PacketID.ShoulderSpeed:
                     case PacketID.ElbowSpeed:
