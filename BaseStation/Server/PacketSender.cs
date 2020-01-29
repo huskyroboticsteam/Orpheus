@@ -148,13 +148,13 @@ namespace HuskyRobotics.BaseStation.Server
                     // Rover skid steering turn (uses x axis on right joystick)
                     short skidSteer = driveState.Gamepad.RightThumbX;
                     if (skidSteer > -JoystickTreshold && skidSteer < JoystickTreshold) { skidSteer = 0; }
-                    float skidSteerSpeed = (float)UtilMain.LinearMap(skidSteer, -32768, 32767, -0.5, 0.5);
+                    float skidSteerSpeed = (float)UtilMain.LinearMap(skidSteer, -32768, 32767, -1.0, 1.0);
                     if (Math.Abs(skidSteerSpeed) < 0.0001f) { skidSteerSpeed = 0; }
 
                     // Rover skid steering speed (uses y axis on right joystick)
                     short skidDriving = driveState.Gamepad.RightThumbY;
                     if (skidDriving > -JoystickTreshold && skidDriving < JoystickTreshold) { skidDriving = 0; }
-                    float skidDriveSpeed = (float)UtilMain.LinearMap(skidDriving, -32768, 32767, -0.5, 0.5);
+                    float skidDriveSpeed = (float)UtilMain.LinearMap(skidDriving, -32768, 32767, -1.0, 1.0);
 
                     if (skidDriving == 0) { skidDriveSpeed = 0; }
                     if (skidSteer == 0) { skidSteerSpeed = 0; }
@@ -170,6 +170,9 @@ namespace HuskyRobotics.BaseStation.Server
                     {
                         left_right = steerPos;
                     }
+
+                    float forward_back2 = forward_back * forward_back;
+                    float left_right2 = left_right * left_right; 
 
                     //Console.WriteLine(skidSteerSpeed + " and " + skidDriveSpeed);
 
@@ -316,19 +319,19 @@ namespace HuskyRobotics.BaseStation.Server
                                 laser = 1;
                             }
                             Packet SkidFrontRight = new Packet(0x90, true, "MainArm");
-                            SkidFrontRight.AppendData(UtilData.ToBytes((sbyte)Math.Round((-forward_back + left_right) * 254)));
+                            SkidFrontRight.AppendData(UtilData.ToBytes((short)MinMaxVal(-255, 255,(int)Math.Round((-forward_back + left_right) * 255))));
                             Scarlet.Communications.Server.Send(SkidFrontRight);
 
                             Packet SkidRearRight = new Packet(0x92, true, "MainArm");
-                            SkidRearRight.AppendData(UtilData.ToBytes((sbyte)Math.Round((forward_back - left_right) * 254)));
+                            SkidRearRight.AppendData(UtilData.ToBytes((short)MinMaxVal(-255, 255, (int)Math.Round((forward_back - left_right) * 255))));
                             Scarlet.Communications.Server.Send(SkidRearRight);
 
                             Packet SkidFrontLeft = new Packet(0x91, true, "MainArm");
-                            SkidFrontLeft.AppendData(UtilData.ToBytes((sbyte)Math.Round((forward_back + left_right) * 254)));
+                            SkidFrontLeft.AppendData(UtilData.ToBytes((short)MinMaxVal(-255, 255, (int)Math.Round((forward_back + left_right) * 255))));
                             Scarlet.Communications.Server.Send(SkidFrontLeft);
 
                             Packet SkidRearLeft = new Packet(0x93, true, "MainArm");
-                            SkidRearLeft.AppendData(UtilData.ToBytes((sbyte)Math.Round((forward_back - -left_right) * 254)));
+                            SkidRearLeft.AppendData(UtilData.ToBytes((short)MinMaxVal(-255, 255, (int)Math.Round((forward_back - -left_right) * 255))));
                             //Console.WriteLine("Test " + (-skidDriveSpeed - skidSteerSpeed));
                             Scarlet.Communications.Server.Send(SkidRearLeft);
                             /*
@@ -425,6 +428,14 @@ namespace HuskyRobotics.BaseStation.Server
 
         private static bool SendIntervalElapsed() => (TimeNanoseconds() - lastControlSend) > CONTROL_SEND_INTERVAL_NANOSECONDS;
         private static long TimeNanoseconds() => DateTime.UtcNow.Ticks * 100;
+
+        private static int MinMaxVal(int min, int max, int val)
+        {
+            int returnVal = val;
+            returnVal = Math.Max(min, returnVal);
+            returnVal = Math.Min(max, returnVal);
+            return returnVal;
+        }
 
         private static List<float> ConvertToFloatArray(Packet data)
         {
