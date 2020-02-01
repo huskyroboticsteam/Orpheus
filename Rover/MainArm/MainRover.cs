@@ -95,11 +95,11 @@ namespace MainRover
                         if (p.Data.Payload[0] > 0)
                         {
                             drivedirectionbr = 0x01;
-                            UtilCan.SpeedDir(CANBBB.CANBus0, false, 2, 0x11, (byte)(-p.Data.Payload[1]), drivedirectionbr);
+                            UtilCan.SpeedDir(CANBBB.CANBus0, false, 2, 0x1A, (byte)(-p.Data.Payload[1]), drivedirectionbr);
                         }
                         else
                         {
-                            UtilCan.SpeedDir(CANBBB.CANBus0, false, 2, 0x11, p.Data.Payload[1], drivedirectionbr);
+                            UtilCan.SpeedDir(CANBBB.CANBus0, false, 2, 0x1A, p.Data.Payload[1], drivedirectionbr);
                         }
                         break;
                     case PacketID.RPMBackLeft:

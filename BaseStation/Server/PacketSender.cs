@@ -104,8 +104,8 @@ namespace HuskyRobotics.BaseStation.Server
                     if (leftTrigger < TriggerThreshold) { leftTrigger = 0; }
                     if (Math.Abs(leftThumbX) < LeftThumbDeadzone) { leftThumbX = 0; }
 
-                    float speed = (float)UtilMain.LinearMap(rightTrigger - leftTrigger, -255, 255, -0.5, 0.5);
-                    float steerPos = (float)UtilMain.LinearMap(leftThumbX, -32768, 32767, -0.5, 0.5);
+                    float speed = (float)UtilMain.LinearMap(rightTrigger - leftTrigger, -255, 255, -1.0, 1.0);
+                    float steerPos = (float)UtilMain.LinearMap(leftThumbX, -32768, 32767, -1.0, 1.0);
                     if (Math.Abs(speed) < 0.0001f) { speed = 0; }
                     if (Math.Abs(steerPos) < 0.0001f) { steerPos = 0; }
 
@@ -136,13 +136,13 @@ namespace HuskyRobotics.BaseStation.Server
                     // Rover skid steering turn (uses x axis on right joystick)
                     short diffHorz = armState.Gamepad.LeftThumbX;
                     if (diffHorz > -JoystickTreshold && diffHorz < JoystickTreshold) { diffHorz = 0; }
-                    short diffHorzShort = (short)UtilMain.LinearMap(diffHorz, -32768, 32767, -128, 128);
+                    short diffHorzShort = (short)UtilMain.LinearMap(diffHorz, -32768, 32767, -32, 32);
                     //if (Math.Abs(diffHorzShort) < 1) { diffHorzShort = 0; }
 
                     // Rover skid steering speed (uses y axis on right joystick)
                     short diffVert = armState.Gamepad.RightThumbY;
                     if (diffVert > -JoystickTreshold && diffVert < JoystickTreshold) { diffVert = 0; }
-                    short diffVertShort = (short)UtilMain.LinearMap(diffVert, -32768, 32767, -128, 128);
+                    short diffVertShort = (short)UtilMain.LinearMap(diffVert, -32768, 32767, -32, 32);
                     //------------------------------------------------------------------------------------------===
 
                     // Rover skid steering turn (uses x axis on right joystick)
@@ -227,27 +227,27 @@ namespace HuskyRobotics.BaseStation.Server
 
                     short wristArmSpeed = 0;
                     if (bPressedArm)
-                        wristArmSpeed = (short)(64 * scaler[3]);
+                        wristArmSpeed = (short)(24 * scaler[3]);
                     else if (xPressedArm)
-                        wristArmSpeed = (short)(-64 * scaler[3]);
+                        wristArmSpeed = (short)(-24 * scaler[3]);
 
                     short elbowArmSpeed = 0;
                     if (yPressedArm)
-                        elbowArmSpeed = (short)(64 * scaler[2]);
+                        elbowArmSpeed = (short)(-72 * scaler[2]);
                     else if (aPressedArm)
-                        elbowArmSpeed = (short)(-64 * scaler[2]);
+                        elbowArmSpeed = (short)(64 * scaler[2]);
 
                     short shoulderArmSpeed = 0;
                     if (downPressedArm)
-                        shoulderArmSpeed = (short)(128 * scaler[1]);
+                        shoulderArmSpeed = (short)(64 * scaler[1]);
                     else if (upPressedArm)
-                        shoulderArmSpeed = (short)(-128 * scaler[1]);
+                        shoulderArmSpeed = (short)(-64 * scaler[1]);
 
                     short baseArmSpeed = 0;
                     if (rightPressedArm)
-                        baseArmSpeed = (short)(-64 * scaler[0]);
+                        baseArmSpeed = (short)(-32 * scaler[0]);
                     else if (leftPressedArm)
-                        baseArmSpeed = (short)(64 * scaler[0]);
+                        baseArmSpeed = (short)(32* scaler[0]);
 
                     short cameraSpeed = 0;
                     if (leftPressedCamera)
@@ -334,7 +334,7 @@ namespace HuskyRobotics.BaseStation.Server
                             SkidRearLeft.AppendData(UtilData.ToBytes((short)MinMaxVal(-255, 255, (int)Math.Round((forward_back - -left_right) * 255))));
                             //Console.WriteLine("Test " + (-skidDriveSpeed - skidSteerSpeed));
                             Scarlet.Communications.Server.Send(SkidRearLeft);
-                            /*
+                            
                             Packet CameraPack = new Packet(0x98, true, "MainArm");
                             CameraPack.AppendData(UtilData.ToBytes((short)cameraSpeed));
                             Scarlet.Communications.Server.Send(CameraPack);
@@ -344,11 +344,11 @@ namespace HuskyRobotics.BaseStation.Server
                             Scarlet.Communications.Server.Send(FingerPack);
 
                             Packet DiffHorzPack = new Packet(0x9F, true, "MainArm");
-                            DiffHorzPack.AppendData(UtilData.ToBytes((short)((-diffVertShort + diffHorzShort) * 1)));
+                            DiffHorzPack.AppendData(UtilData.ToBytes((short)((diffVertShort + diffHorzShort) * 1)));
                             Scarlet.Communications.Server.Send(DiffHorzPack);
 
                             Packet DiffVertPack = new Packet(0x9E, true, "MainArm");
-                            DiffVertPack.AppendData(UtilData.ToBytes((short)((diffVertShort + diffHorzShort) * 1)));
+                            DiffVertPack.AppendData(UtilData.ToBytes((short)((-diffVertShort + diffHorzShort) * 1)));
                             Scarlet.Communications.Server.Send(DiffVertPack);
 
                             Packet WristPack = new Packet(0x9D, true, "MainArm");
@@ -374,7 +374,7 @@ namespace HuskyRobotics.BaseStation.Server
                             Packet BasePack = new Packet(0x9A, true, "MainArm");
                             BasePack.AppendData(UtilData.ToBytes(baseArmSpeed));
                             Scarlet.Communications.Server.Send(BasePack);
-                            */
+                            
                         }
 
                         

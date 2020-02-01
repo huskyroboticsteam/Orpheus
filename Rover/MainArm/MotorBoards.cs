@@ -34,7 +34,7 @@ namespace MainRover
 
             UtilCan.ModeSelect(CANBus, true, 2, Convert.ToByte(24), 0);
             UtilCan.ModeSelect(CANBus, true, 2, Convert.ToByte(25), 0);
-            UtilCan.ModeSelect(CANBus, true, 2, Convert.ToByte(17), 0);
+            UtilCan.ModeSelect(CANBus, true, 2, Convert.ToByte(26), 0);
             UtilCan.ModeSelect(CANBus, true, 2, Convert.ToByte(27), 0);
 
 
