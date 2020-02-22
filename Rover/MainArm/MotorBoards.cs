@@ -37,6 +37,9 @@ namespace MainRover
             UtilCan.ModeSelect(CANBus, true, 2, Convert.ToByte(26), 0);
             UtilCan.ModeSelect(CANBus, true, 2, Convert.ToByte(27), 0);
 
+            UtilCan.ModeSelect(CANBus, true, 2, Convert.ToByte(17), 1);
+            UtilCan.ModeSelect(CANBus, true, 2, Convert.ToByte(18), 1);
+
 
             /*
             int count = 10; // How many reads to do before giving up

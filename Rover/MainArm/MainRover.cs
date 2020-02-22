@@ -17,11 +17,16 @@ namespace MainRover
         public static string SERVER_IP = "192.168.0.5";
         public const int NUM_PACKETS_TO_PROCESS = 20;
 
+        private static double SHOULDER_LENGTH = 2.5;
+        private static double ELBOW_LENGTH = 2.5;
+
         public static bool Quit;
         public static List<ISensor> Sensors;
         public static QueueBuffer StopPackets;
         public static QueueBuffer DrivePackets;
         public static Arm armInterface;
+        private static double SetHeight;
+        private static double SetWidth;
 
         public static void PinConfig()
         {
@@ -41,6 +46,9 @@ namespace MainRover
             StateStore.Start("MainArm");
             BeagleBone.Initialize(SystemMode.NO_HDMI, true);
             PinConfig();
+
+            SetHeight = 0;
+            SetWidth = 0;
 
         }
 
@@ -114,9 +122,27 @@ namespace MainRover
                             UtilCan.SpeedDir(CANBBB.CANBus0, false, 2, 0x1B, p.Data.Payload[1], drivedirectionbl);
                         }
                         break;
-                    case PacketID.BaseSpeed:
                     case PacketID.ShoulderSpeed:
+                        if (p.Data.Payload[0] > 0)
+                        {
+                            SetArmPosition(0, -0.1);
+                        }
+                        else
+                        {
+                            SetArmPosition(0, 0.1);
+                        }
+                        break;
                     case PacketID.ElbowSpeed:
+                        if (p.Data.Payload[0] > 0)
+                        {
+                            SetArmPosition(-0.1, 0);
+                        }
+                        else
+                        {
+                            SetArmPosition(0.1, 0);
+                        }
+                        break;
+                    case PacketID.BaseSpeed:
                     case PacketID.WristSpeed:
                     case PacketID.DifferentialVert:
                     case PacketID.DifferentialRotate:
@@ -182,6 +208,48 @@ namespace MainRover
                 PacketType = CANPacket.SPEED_DIR,
                 Payload = new byte[] { (byte)(speed << 1 | direction) }
             });
+        }
+
+        private static void SetArmPosition(double forwardChange, double heightChange)
+        {
+
+
+            SetHeight = SetHeight + heightChange;
+            SetWidth = SetWidth + forwardChange;
+
+            double forward = SetWidth;
+            double height = SetHeight;
+            
+
+            double shoulderAngle;
+            double elbowAngle;
+
+            double crossSection = Math.Sqrt(height * height + forward * forward);
+
+            double shoulderAnglea = Math.Atan(height / forward);
+
+            elbowAngle = Math.Acos((crossSection * crossSection - ELBOW_LENGTH * ELBOW_LENGTH - SHOULDER_LENGTH * SHOULDER_LENGTH) /
+            (-2 * SHOULDER_LENGTH * ELBOW_LENGTH));
+
+            double shoulderAngleb = Math.Asin(Math.Sin(elbowAngle) * ELBOW_LENGTH / crossSection);
+
+            // Add in the two halves
+            if (forward == 0) // Vertical from origin
+            {
+                shoulderAngle = Math.PI / 2 - (shoulderAngleb);
+            }
+            else
+            {
+                shoulderAngle = Math.PI - (shoulderAnglea + shoulderAngleb);
+            }
+
+            // Convert to degrees then to short
+            UInt16 shoulderAngleInt = (UInt16)Math.Round(shoulderAngle * 57.2957795);
+            UInt16 elbowAngleInt = (UInt16)Math.Round(elbowAngle * 57.2957795);
+
+            UtilCan.AngleSpeed(CANBBB.CANBus0, false, 2, 0x11, shoulderAngleInt, 64);
+            UtilCan.AngleSpeed(CANBBB.CANBus0, false, 2, 0x12, elbowAngleInt, 96);
+
         }
 
         /// <summary>
